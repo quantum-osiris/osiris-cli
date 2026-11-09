@@ -43,7 +43,7 @@ class Limits:
     wall_s: float = 60.0
     cpu_s: int = 60
     mem_mb: int = 3072          # RLIMIT_AS
-    procs: int = 256            # RLIMIT_NPROC (per real uid; the namespace has its own uid map)
+    procs: int = 256            # NEW processes allowed; RLIMIT_NPROC = uid's live tasks + procs (see _nproc_ceiling)
     fsize_mb: int = 64          # RLIMIT_FSIZE per file
     nofile: int = 256
     out_bytes: int = 1_000_000  # captured output cap
@@ -123,13 +123,79 @@ def _argv_bwrap(argv: Sequence[str], workdir: str, ro_extra: Sequence[str]) -> L
     return cmd + ["--"] + list(argv)
 
 
+def _uid_tasks(uid: Optional[int] = None) -> int:
+    """Live tasks (threads) owned by `uid`, which is what the kernel counts against RLIMIT_NPROC."""
+    uid = os.getuid() if uid is None else uid
+    n = 0
+    for pid in os.listdir("/proc"):
+        if not pid.isdigit():
+            continue
+        try:
+            if os.stat("/proc/" + pid).st_uid == uid:
+                n += len(os.listdir(f"/proc/{pid}/task"))
+        except OSError:
+            continue
+    return n
+
+
+_NPROC_SLACK = 128   # tasks the kernel charges to the uid that /proc does not show us (measured ~30-60)
+
+
+def _nproc_ceiling(lim: Limits) -> int:
+    # RLIMIT_NPROC is checked against ALL of the real uid's tasks, not the sandbox's. An absolute
+    # ceiling of 256 made clone(CLONE_NEWUSER) fail with EAGAIN whenever the user already ran
+    # ~256 threads (e.g. an Ollama/llama-server owned by the same user), so every sandboxed run
+    # failed closed. Fallback only: "procs NEW processes" on top of what exists, plus slack,
+    # because the kernel's per-uid count is not exactly observable from /proc.
+    return _uid_tasks() + lim.procs + _NPROC_SLACK
+
+
+_SCOPE_OK: Optional[bool] = None
+_BUS_KEYS = ("XDG_RUNTIME_DIR", "DBUS_SESSION_BUS_ADDRESS")   # systemd-run only; bwrap --clearenv drops them
+
+
+def _launcher_env() -> Dict[str, str]:
+    env = {"PATH": "/usr/bin:/bin"}
+    if _SCOPE_OK:
+        env.update({k: os.environ[k] for k in _BUS_KEYS if k in os.environ})
+    return env
+
+
+def _cgroup_scope_ok() -> bool:
+    """A transient systemd user scope gives an exact per-sandbox task limit (pids.max)."""
+    global _SCOPE_OK
+    if _SCOPE_OK is None:
+        sr = shutil.which("systemd-run")
+        env = {"PATH": "/usr/bin:/bin", **{k: os.environ[k] for k in _BUS_KEYS if k in os.environ}}
+        try:
+            _SCOPE_OK = bool(sr) and subprocess.run(
+                [sr, "--user", "--scope", "-q", "-p", "TasksMax=8", "/usr/bin/true"], env=env,
+                stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, timeout=10).returncode == 0
+        except (OSError, subprocess.TimeoutExpired):
+            _SCOPE_OK = False
+    return _SCOPE_OK
+
+
+def _tasks_wrapper(lim: Limits) -> List[str]:
+    if _cgroup_scope_ok():
+        return [shutil.which("systemd-run") or "systemd-run", "--user", "--scope", "-q",
+                "-p", f"TasksMax={lim.procs}", "--"]
+    return []
+
+
 def _preexec(lim: Limits):
+    # With a cgroup scope, pids.max bounds the sandbox exactly and RLIMIT_NPROC is left as is.
+    nproc = None if _cgroup_scope_ok() else _nproc_ceiling(lim)   # computed in the parent
+
     def fn():
         os.setsid()
         mb = 1024 * 1024
-        for r, v in ((resource.RLIMIT_CPU, lim.cpu_s), (resource.RLIMIT_AS, lim.mem_mb * mb),
-                     (resource.RLIMIT_FSIZE, lim.fsize_mb * mb), (resource.RLIMIT_NOFILE, lim.nofile),
-                     (resource.RLIMIT_NPROC, lim.procs), (resource.RLIMIT_CORE, 0)):
+        lims = [(resource.RLIMIT_CPU, lim.cpu_s), (resource.RLIMIT_AS, lim.mem_mb * mb),
+                (resource.RLIMIT_FSIZE, lim.fsize_mb * mb), (resource.RLIMIT_NOFILE, lim.nofile),
+                (resource.RLIMIT_CORE, 0)]
+        if nproc is not None:
+            lims.append((resource.RLIMIT_NPROC, nproc))
+        for r, v in lims:
             try:
                 resource.setrlimit(r, (v, v))
             except (ValueError, OSError):
@@ -141,11 +207,11 @@ def run(argv: Sequence[str], workdir: str, *, limits: Limits = Limits(),
         ro_paths: Sequence[str] = ()) -> SandboxResult:
     if not available():
         raise SandboxUnavailable("bubblewrap with user namespaces is not available; refusing to run unsandboxed")
-    full = _argv_bwrap(argv, workdir, ro_paths)
+    full = _tasks_wrapper(limits) + _argv_bwrap(argv, workdir, ro_paths)
     # RLIMIT_AS applies to bwrap too; leave it headroom, the child inherits the same ceiling.
     with tempfile.TemporaryFile() as out:
         p = subprocess.Popen(full, stdout=out, stderr=subprocess.STDOUT, stdin=subprocess.DEVNULL,
-                             preexec_fn=_preexec(limits), env={"PATH": "/usr/bin:/bin"})
+                             preexec_fn=_preexec(limits), env=_launcher_env())
         timed_out = False
         try:
             p.wait(timeout=limits.wall_s)
