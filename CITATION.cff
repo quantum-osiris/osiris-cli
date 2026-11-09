@@ -5,13 +5,20 @@ authors:
     given-names: "Devin Phillip"
     affiliation: "Agile Defense Systems LLC"
 title: "OSIRIS: a governed, local-first console for testing whether a small language model learns from conversation"
-version: 4.5.3
-date-released: 2026-10-09
+version: 6.0.0+governed-trio.541187d7
+date-released: 2026-11-09
 url: "https://github.com/osiris-dnalang/osiris-cli"
 repository-code: "https://github.com/osiris-dnalang/osiris-cli"
 license: LicenseRef-OSIRIS-Dual-v1.0
 type: software
-doi: 10.5281/zenodo.23063462  # concept DOI (all versions)
+doi: 10.5281/zenodo.24082031  # this snapshot (feature/governed-trio @ 541187d7)
+identifiers:
+  - type: doi
+    value: 10.5281/zenodo.23063462
+    description: earlier concept DOI (all versions of the 4.x line)
+  - type: doi
+    value: 10.5281/zenodo.23991499
+    description: v6.0.0 record this snapshot is a new version of
 keywords:
   - language model
   - continual learning
