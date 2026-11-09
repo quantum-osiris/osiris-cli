@@ -129,10 +129,16 @@ class CandidateEvolutionLoop:
 
         return f"organism Gen_{gen_num} {{ quantum_state {{ h 0; cx 0, 1; rz 1; }} }}"
 
-    def parse_and_validate(self, source: str) -> Tuple[bool, Optional[QuantumCircuitIR], str]:
-        """Steps 4 & 5: Parse genome and enforce capability allowlist."""
+    def parse_and_validate(self, source: str, strict: bool = False
+                           ) -> Tuple[bool, Optional[QuantumCircuitIR], str]:
+        """Steps 4 & 5: Parse genome and enforce capability allowlist.
+
+        strict=True compiles with the converter's strict mode so the allowlist is checked against
+        the genome's own operations. run_cycle always uses it; the default keeps the legacy
+        behavior (bare organism names, skipped bodies) for existing callers."""
         try:
-            circuit = self.converter.compile(source)
+            circuit = self.converter.compile(source, strict=True) if strict \
+                else self.converter.compile(source)
             # Capability enforcement
             for op in circuit.operations:
                 op_name = op.op_type.name
@@ -181,7 +187,7 @@ class CandidateEvolutionLoop:
         t0 = time.monotonic()
 
         # 4 & 5. Parse and validate against capability policy
-        is_valid, ir, val_reason = self.parse_and_validate(candidate.genome_source)
+        is_valid, ir, val_reason = self.parse_and_validate(candidate.genome_source, strict=True)
         if not is_valid:
             candidate.rejection_reason = val_reason
             candidate.passed_acceptance = False
