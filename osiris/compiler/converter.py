@@ -20,6 +20,7 @@ from .dna_ir import (
 from .dna_parser import Lexer, Parser
 from .dna_runtime import ExecutionResult
 from .backends.registry import BackendRegistry
+from .gate_map import QUBIT_COUNT
 
 
 @dataclass
@@ -58,8 +59,14 @@ class OrganismConverter:
         source: str,
         backend: str = "sovereign",
         optimize: bool = True,
+        strict: bool = False,
     ) -> QuantumCircuitIR:
         """Compile DNA-Lang source code into a QuantumCircuitIR.
+
+        ``strict=True`` (used by the evolutionary loop's promotion path) accepts only an explicit
+        ``organism NAME { quantum_state { op q[, q]; ... } }``: no bare-name convenience input, no
+        skipped bodies, unknown operations and wrong qubit counts are errors. Default (False)
+        keeps the legacy behavior byte-for-byte.
 
         Parameters
         ----------
@@ -71,7 +78,7 @@ class OrganismConverter:
             Run IR optimizer after compilation.
         """
         tokens = Lexer(source).tokenize()
-        ast_nodes = Parser(tokens).parse()
+        ast_nodes = Parser(tokens, strict=strict).parse()
         if ast_nodes:
             organism = ast_nodes[0]
             name = getattr(organism, "name", "organism")
@@ -86,6 +93,12 @@ class OrganismConverter:
                     op_type = _resolve_op_type(qop.operation)
                     if op_type is None:
                         raise ValueError(f"Unsupported DNA-Lang operation: {qop.operation}")
+                    if strict:
+                        want = QUBIT_COUNT.get(op_type, 0)
+                        if want and len(qop.qubits) != want:
+                            raise ValueError(f"{qop.operation} takes {want} qubit(s), got {len(qop.qubits)}")
+                        if len(set(qop.qubits)) != len(qop.qubits):
+                            raise ValueError(f"{qop.operation} repeats a qubit: {qop.qubits}")
                     ops.append(IROperation(op_type, qop.qubits, params=qop.params))
                 if used:
                     qubits = max(used) + 1
