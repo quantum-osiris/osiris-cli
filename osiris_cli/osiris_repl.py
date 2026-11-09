@@ -1887,6 +1887,21 @@ CONSOLE_COMMANDS = {
 }
 
 
+def execute_trio(rest: str) -> None:
+    """/trio from the REPL: help and dry-run planning. Never executes a repository's tests."""
+    from osiris_cli import trio_command as tc
+    try:
+        args = tc.split(rest)
+        if args[:1] == ["run"]:
+            print("\n[!] /trio run is disabled in the REPL: no enforceable sandbox, resource limits or "
+                  "network restriction exist yet, and authorization must use a signed grant.\n"
+                  "    Use /trio plan <repo> [--patch FILE] to inspect what a run would do.\n")
+            return
+        print("\n" + tc.run_trio_command(args, workspace_root=os.getcwd()) + "\n")
+    except (tc.TrioCommandError, ValueError) as e:
+        print(f"\n[!] {e}\n")
+
+
 def dispatch_capturing(state: OsirisReplState, line: str) -> None:
     """safe_dispatch with keys typed during the command's output captured, not echoed into it
     (2026-10-25: '/architecture' typed while /check printed was scattered into the bench table,
@@ -1973,6 +1988,11 @@ def dispatch_command(state: OsirisReplState, line: str) -> None:
 
     parts = line_clean.split()
     cmd = parts[0].lower()
+
+    # /trio: planning and inspection only. `run` is disabled here until an enforceable sandbox exists.
+    if cmd == "/trio":
+        execute_trio(line_clean[len(parts[0]):].strip())
+        return
 
     # 2. Living Language Console commands run through the console's own router,
     # otc.run_command, so both front ends call its functions the same way.
