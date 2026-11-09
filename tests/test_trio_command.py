@@ -125,6 +125,16 @@ def test_run_requires_explicit_out_outside_the_repo_and_a_patch(ws):
         cmd(ws, "run", ws["repo"], "--out", ws["out"], "--approve", dg)
 
 
-def test_the_live_repl_does_not_know_about_trio_yet():
-    src = open(os.path.join(os.path.dirname(tc.__file__), "osiris_repl.py"), encoding="utf-8").read()
-    assert "trio_command" not in src and '"/trio"' not in src
+def test_repl_trio_is_plan_only_and_never_runs(ws, monkeypatch, capsys):
+    from osiris_cli import osiris_repl
+    monkeypatch.chdir(ws["root"])
+    monkeypatch.setattr(tc, "run_trio_command", lambda *a, **k: (_ for _ in ()).throw(AssertionError("must not be called")) if a and a[0] and a[0][0] == "run" else "PLAN-OK")
+    osiris_repl.execute_trio("run %s --patch %s --out %s --approve x" % (ws["repo"], ws["patch"], ws["out"]))
+    out = capsys.readouterr().out
+    assert "disabled in the REPL" in out and not os.path.exists(ws["out"])
+    osiris_repl.execute_trio("plan %s" % ws["repo"])
+    assert "PLAN-OK" in capsys.readouterr().out
+    monkeypatch.undo()
+    monkeypatch.chdir(ws["root"])
+    osiris_repl.execute_trio("plan /nonexistent/x")
+    assert "[!]" in capsys.readouterr().out
