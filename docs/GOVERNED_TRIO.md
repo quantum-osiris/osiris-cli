@@ -128,3 +128,22 @@ capability-policy digest. A gene-built `AgentSpec` equals the hand-built RESEARC
 specs (same digest). Duplicate keys (silently last-wins in the language) and duplicate agent ids are
 refused on the text path. 55 tests in `tests/test_agent_gene.py`. No grammar/parser/compiler change;
 Phase 1 is not started. Nothing consumes a gene at runtime yet: `run_trio` still uses its built-in specs.
+
+## 9. Execution sandbox (`osiris_cli/sandbox.py`)
+
+`run_pytest(..., sandboxed=True)` / `run_trio(..., sandboxed=True)` run the repo's tests inside
+bubblewrap with fresh user/pid/net/ipc/uts/mount namespaces: no network interface (loopback to the host
+and the internet both unreachable), only the interpreter prefix and system dirs read-only, private tmpfs
+`/tmp`, the workdir as the only writable path, home directory not visible (only the interpreter's own venv
+path component is mounted), scrubbed environment, rlimits (CPU, address space, procs, file size, nofile),
+wall timeout that kills the process group, and a capped output buffer. If the sandbox is not available,
+`SandboxUnavailable` is raised and nothing executes: there is no unsandboxed fallback. `/trio run` (the
+`trio_command` function) always passes `sandboxed=True`.
+
+Verified on this machine (WSL2, kernel 6.18) by `python -m osiris_cli.sandbox` / `tests/test_sandbox.py`:
+all ten selftest probes contained (loopback, internet, home visibility, tmp isolation, read-only system
+dirs, env scrub, memory limit, process limit, wall timeout, output cap).
+
+Not claimed: this is not a container or VM. It shares the host kernel (a kernel/bwrap escape defeats it),
+CPU is rlimit-bounded not cgroup-metered, and untested on other hosts. The REPL `/trio run` stays disabled
+until signed-grant authorization replaces the digest-bound `--approve`.

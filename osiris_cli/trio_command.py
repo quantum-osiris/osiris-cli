@@ -67,7 +67,7 @@ class TrioPlan:
         for a in self.agents:
             lines.append(f"  agent {a['role']:9} {a['digest'][:16]}…  caps={a['capabilities']}"
                          f"{'  [needs human approval]' if a['requires_human_approval'] else ''}")
-        lines += ["  'run' would EXECUTE this repo's tests (arbitrary code, scrubbed env, repo copy, no container).",
+        lines += ["  'run' would EXECUTE this repo's tests inside a bwrap namespace sandbox (no network, no home dir, rlimits; refuses if unavailable).",
                   "  'run' never applies the patch and never promotes; best outcome VERIFIED_PENDING_AUTHORIZATION.",
                   f"  plan digest     {self.plan_digest}",
                   "  to run:  /trio run <repo> --patch FILE --out DIR --approve " + self.plan_digest]
@@ -181,7 +181,8 @@ def run_trio_command(argv: Sequence[str], *, workspace_root: Optional[str] = Non
     if _within(out, plan.repo) or _within(plan.repo, out):
         raise TrioCommandError("--out must not be inside the repo (or contain it)")
     os.makedirs(out, exist_ok=True)
-    res = run_trio(plan.repo, lambda f, sb: patch, out, timeout=TEST_TIMEOUT_S, budget=RunBudget())
+    res = run_trio(plan.repo, lambda f, sb: patch, out, timeout=TEST_TIMEOUT_S, budget=RunBudget(),
+                   sandboxed=True)     # fail closed: SandboxUnavailable if no namespace sandbox
     dec = eb.evaluate_candidate(res, os.path.join(out, "lineage.jsonl"))     # no authorizer: cannot promote
     assert dec.status != "PROMOTED"
     return "\n".join([

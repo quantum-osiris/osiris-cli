@@ -64,18 +64,26 @@ def tree_digest(root: str) -> str:
     return h.hexdigest()
 
 
-def run_pytest(workdir: str, timeout: float = 60.0) -> Tuple[ExecutionEvidence, Set[str], Set[str]]:
-    """Run pytest in workdir. Returns (evidence, passed test ids, failed test ids)."""
+def run_pytest(workdir: str, timeout: float = 60.0, sandboxed: bool = False
+               ) -> Tuple[ExecutionEvidence, Set[str], Set[str]]:
+    """Run pytest in workdir. Returns (evidence, passed test ids, failed test ids).
+    sandboxed=True runs inside osiris_cli.sandbox (namespaces, no network, rlimits) and raises
+    SandboxUnavailable instead of ever falling back to an unsandboxed run."""
     argv = (sys.executable, "-m", "pytest", "-q", "-rA", "-p", "no:cacheprovider", "--tb=short")
-    env = {"PATH": os.environ.get("PATH", "/usr/bin:/bin"), "HOME": workdir,
-           "PYTHONDONTWRITEBYTECODE": "1", "PYTHONPATH": workdir, "PYTHONHASHSEED": "0"}
-    try:
-        p = subprocess.run(argv, cwd=workdir, env=env, capture_output=True, text=True,
-                           timeout=timeout, shell=False)
-        out, rc = p.stdout + p.stderr, p.returncode
-    except subprocess.TimeoutExpired as e:
-        out, rc = ((e.stdout or b"").decode("utf-8", "replace") if isinstance(e.stdout, bytes)
-                   else (e.stdout or "")) + "\n[TIMEOUT]", 124
+    if sandboxed:
+        from osiris_cli import sandbox
+        r = sandbox.run(argv, workdir, limits=sandbox.Limits(wall_s=timeout, cpu_s=int(timeout) + 5))
+        out, rc = r.output + ("\n[TIMEOUT]" if r.timed_out else ""), r.returncode
+    else:
+        env = {"PATH": os.environ.get("PATH", "/usr/bin:/bin"), "HOME": workdir,
+               "PYTHONDONTWRITEBYTECODE": "1", "PYTHONPATH": workdir, "PYTHONHASHSEED": "0"}
+        try:
+            p = subprocess.run(argv, cwd=workdir, env=env, capture_output=True, text=True,
+                               timeout=timeout, shell=False)
+            out, rc = p.stdout + p.stderr, p.returncode
+        except subprocess.TimeoutExpired as e:
+            out, rc = ((e.stdout or b"").decode("utf-8", "replace") if isinstance(e.stdout, bytes)
+                       else (e.stdout or "")) + "\n[TIMEOUT]", 124
     passed = set(re.findall(r"^PASSED (\S+)", out, re.M))
     failed = set(re.findall(r"^FAILED (\S+)", out, re.M))
     errors = len(re.findall(r"^ERROR ", out, re.M))
@@ -229,7 +237,8 @@ class CriticVerdict:
 def critic_review(repo: str, diffs: Dict[str, str], patched: Dict[str, str], refused: List[str],
                   f: ResearchFindings,
                   baseline_passed: Set[str], dev_report: str, timeout: float,
-                  work_parent: str, supplementary_fn: Optional[Callable[[str], str]] = None
+                  work_parent: str, supplementary_fn: Optional[Callable[[str], str]] = None,
+                  sandboxed: bool = False
                   ) -> Tuple[CriticVerdict, ExecutionEvidence, FirewallResult]:
     """Independent of the Developer: fresh sandbox, fresh patch application from the diff-bound
     content, its own test run, its own firewall pass over the Developer's report."""
@@ -250,8 +259,8 @@ def critic_review(repo: str, diffs: Dict[str, str], patched: Dict[str, str], ref
         full = _safe_rel(sb, rel)
         if full:
             Path(full).write_text(patched[rel])
-    ev, passed, failed = run_pytest(sb, timeout)
-    ev2, passed2, _ = run_pytest(sb, timeout)
+    ev, passed, failed = run_pytest(sb, timeout, sandboxed)
+    ev2, passed2, _ = run_pytest(sb, timeout, sandboxed)
     if passed2 != passed or ev2.returncode != ev.returncode:
         reasons.append("candidate suite is not reproducible across two runs")
     fail_to_pass = sorted(set(f.failing_tests) & passed)
@@ -324,9 +333,13 @@ def verify_chain(path: str) -> bool:
 
 def run_trio(repo: str, propose_fn: ProposeFn, out_dir: str, *, timeout: float = 60.0,
              budget: Optional[RunBudget] = None,
-             supplementary_fn: Optional[Callable[[str], str]] = None) -> TrioResult:
+             supplementary_fn: Optional[Callable[[str], str]] = None, sandboxed: bool = False) -> TrioResult:
     """Run the slice. ``repo`` is only read. ``out_dir`` receives the run record (and must not be
     inside ``repo``); the receipt chain there is its own file, not the live genome ledger."""
+    if sandboxed:
+        from osiris_cli import sandbox
+        if not sandbox.available():
+            raise sandbox.SandboxUnavailable("sandboxed run requested but no namespace sandbox is available")
     repo, out_dir = os.path.realpath(repo), os.path.realpath(out_dir)
     if out_dir == repo or out_dir.startswith(repo + os.sep):
         raise ValueError("out_dir must be outside the repo under test")
@@ -342,7 +355,7 @@ def run_trio(repo: str, propose_fn: ProposeFn, out_dir: str, *, timeout: float =
     try:
         # frozen baseline
         base_sb = make_sandbox(repo, work)
-        res.baseline, base_pass, base_fail = run_pytest(base_sb, timeout)
+        res.baseline, base_pass, base_fail = run_pytest(base_sb, timeout, sandboxed)
         if res.baseline.green:
             res.outcome, res.reasons = "NO_DEFECT", ["baseline suite is already green"]
             return res
@@ -379,7 +392,7 @@ def run_trio(repo: str, propose_fn: ProposeFn, out_dir: str, *, timeout: float =
         runs.append(c)
         c.start({"diffs": digest(diffs), "refused": refused})
         verdict, res.candidate, fw = critic_review(
-            repo, diffs, out.patched_files, refused, findings, base_pass, out.report, timeout, work, supplementary_fn)
+            repo, diffs, out.patched_files, refused, findings, base_pass, out.report, timeout, work, supplementary_fn, sandboxed)
         res.critic, res.firewall, res.candidate_status = verdict, fw, "MEASURED"
         c.finish({"approve": verdict.approve, "reasons": verdict.reasons})
 
