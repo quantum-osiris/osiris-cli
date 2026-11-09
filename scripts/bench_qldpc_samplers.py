@@ -56,7 +56,10 @@ for cls in qs.SAMPLERS:
         ubs = []; t2 = time.process_time()
         for ell, m, A, Bt in sub:
             HX, HZ = bb.build_bb(ell, m, A, Bt)
-            ubs.append(min(int(surrogate.distance_rand(HX, HZ, trials=200, seed=s)) for s in (101, 211, 307)))
+            w = [surrogate.distance_rand(HX, HZ, trials=200, seed=s) for s in (101, 211, 307)]
+            fin = [int(x) for x in w if x != float("inf")]
+            # inf = the surrogate found NO logical in its trials: bound unknown, not a distance. Recorded as None.
+            ubs.append(min(fin) if len(fin) == len(w) else None)
         scr_cpu = time.process_time() - t2
         ev.append("REPLICATE", {
             "sampler": cls.name, "seed": seed, "candidates": 400, "proposals": smp.proposals,
@@ -68,6 +71,7 @@ for cls in qs.SAMPLERS:
             "valid_construction_checked": [valid, 20], "generation_cpu_s": round(gen_cpu, 3),
             "cpu_s_per_unique_k_pos": round(gen_cpu / max(1, len(kpos_unique)), 4),
             "surrogate_screened": len(ubs), "surrogate_min_ub": ubs, "surrogate_cpu_s": round(scr_cpu, 2),
-            "n_ge6": sum(1 for u in ubs if u >= 6)})
+            "surrogate_no_logical_found": sum(1 for u in ubs if u is None),
+            "n_ge6": sum(1 for u in ubs if u is not None and u >= 6)})
 ev.append("BENCH_END", {"wall_cpu_s": round(time.process_time() - t0, 1)})
 print("done", OUT)
