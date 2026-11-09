@@ -32,3 +32,11 @@ Written 2026-11-09, BEFORE any search. Status: **NOT EXECUTED. Blocked by the ca
 
 ## To execute
 The owner sets the campaign non-draft; then run `osiris_cli.qldpc_adapter.run_campaign` with the settings above.
+
+## Addendum A (2026-11-09, before the run): owner authorization and binding budget
+- The owner authorized marking `smoke-bb-72` non-draft. Only the `status` field was changed
+  (`draft` -> `active`); campaign.json sha256 8d37142f... -> 67ab19fc.... The challenge repo is not committed.
+- The campaign's own budget is binding and narrower than the plan above: `candidates_screened: 1`,
+  screening seed [0], 200 trials, stop on `candidates_found: 1`. Exactly ONE candidate is run:
+  BB [[72,12,6]] (l=6, m=6, A = x^3+y+y^2, B = y^3+x+x^2). The 16-candidate and seed-101 settings above
+  are superseded. Expected verdict: REJECTED as an exact duplicate of board entry 72-12-6.
