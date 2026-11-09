@@ -251,6 +251,9 @@ def critic_review(repo: str, diffs: Dict[str, str], patched: Dict[str, str], ref
         if full:
             Path(full).write_text(patched[rel])
     ev, passed, failed = run_pytest(sb, timeout)
+    ev2, passed2, _ = run_pytest(sb, timeout)
+    if passed2 != passed or ev2.returncode != ev.returncode:
+        reasons.append("candidate suite is not reproducible across two runs")
     fail_to_pass = sorted(set(f.failing_tests) & passed)
     pass_to_fail = sorted(baseline_passed - passed)
     if not ev.green:
@@ -286,6 +289,11 @@ class TrioResult:
     baseline: Optional[ExecutionEvidence] = None
     candidate: Optional[ExecutionEvidence] = None
     reasons: List[str] = field(default_factory=list)
+    findings: Optional[ResearchFindings] = None
+    proposed_files: Dict[str, str] = field(default_factory=dict)   # everything the Developer sent
+    patched_files: Dict[str, str] = field(default_factory=dict)    # only edits that passed Developer-side checks
+    refused: List[str] = field(default_factory=list)
+    dev_report: str = ""
 
 
 def _append_chained(path: str, kind: str, payload: dict) -> str:
@@ -357,6 +365,12 @@ def run_trio(repo: str, propose_fn: ProposeFn, out_dir: str, *, timeout: float =
         out = propose_fn(findings, dev_sb)
         diffs, refused = apply_to_sandbox(dev_sb, out)
         d.finish({"files": sorted(out.patched_files), "report": out.report})
+        res.findings, res.proposed_files, res.refused = findings, dict(out.patched_files), refused
+        res.patched_files = {k: v for k, v in out.patched_files.items() if k in diffs}
+        res.dev_report = out.report
+        Path(run_dir, "candidate.json").write_text(json.dumps(
+            {"proposed_files": out.patched_files, "accepted": sorted(diffs), "refused": refused,
+             "report": out.report}, indent=2, sort_keys=True))
         for rel, df in diffs.items():
             Path(run_dir, "candidate_" + rel.replace("/", "__") + ".diff").write_text(df)
 
