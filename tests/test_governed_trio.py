@@ -144,7 +144,8 @@ def test_state_machine_and_budget():
     run = AgentRun(spec, "r", b)
     with pytest.raises(IllegalTransition):
         run.to(AgentState.DONE)           # CREATED -> DONE is not allowed
-    run.start({"x": 1}); run.finish({"y": 2})
+    run.start({"x": 1})
+    run.finish({"y": 2})
     assert run.receipt().state == "DONE" and len(run.receipt().input_digest) == 64
     with pytest.raises(BudgetExceeded):
         AgentRun(spec, "r", b)            # second agent exceeds max_agents
