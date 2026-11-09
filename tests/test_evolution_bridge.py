@@ -7,6 +7,7 @@ import subprocess
 
 import pytest
 
+import genome_ledger as gl
 from osiris_cli import grants
 from osiris_cli.orchestration import evolution_bridge as eb
 from osiris_cli.orchestration.trio import DeveloperOutput, run_trio, tree_digest
@@ -15,6 +16,19 @@ BUGGY = "def mean(xs):\n    return sum(xs) / (len(xs) + 1)\n"
 FIXED = "def mean(xs):\n    return sum(xs) / len(xs)\n"
 TESTS = ("from calc import mean\n\ndef test_mean():\n    assert mean([2, 4]) == 3\n\n"
          "def test_single():\n    assert mean([5]) == 5\n")
+
+
+# dnalang-core is a separate package; without it, use the pinned copy of its ledger.py
+# (v0.2.0) so these cases run everywhere instead of failing (same as test_genome_ledger_supersession).
+FIXTURE_LEDGER = os.path.join(os.path.dirname(os.path.abspath(__file__)), "fixtures",
+                              "dnalang_ledger_v0_2_0.py")
+
+
+@pytest.fixture(autouse=True)
+def _dnalang_ledger_source(monkeypatch):
+    if not os.path.exists(gl.LEDGER_SRC):
+        monkeypatch.setattr(gl, "LEDGER_SRC", FIXTURE_LEDGER)
+        monkeypatch.setattr(gl, "_ledger_mod", None)
 
 
 @pytest.fixture
