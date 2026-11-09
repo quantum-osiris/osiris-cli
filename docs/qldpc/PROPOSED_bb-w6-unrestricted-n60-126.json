@@ -1,0 +1,22 @@
+{
+  "campaign": {
+    "schema_version": 1,
+    "id": "osiris-bb-w6-unrestricted-n60-126",
+    "name": "OSIRIS BB exhaustive-small sweep, weight-6 unrestricted, n 60-126",
+    "status": "PROPOSED_NOT_APPROVED",
+    "objective": {"metric": "nondominated_in_cell", "cell": "weight-6/unrestricted", "note": "kd2/n is a headline only"},
+    "constraints": {"css": true, "max_check_weight": 6, "n": [60, 126], "min_distance": 6},
+    "methods": {
+      "families": ["bivariate-bicycle"],
+      "generators": ["research/kit/bb.py::build_bb"],
+      "search_space": "(l,m) with 2*l*m in [60,126]; A,B each exactly 3 distinct monomials x^i y^j; canonicalised under translation/swap; k>0; deduplicated by structure before screening",
+      "screening": {"trials_per_candidate": 200, "seeds": [101, 211, 307], "use": "ranking only; never reported as a distance"}
+    },
+    "budget": {"candidates_screened": 400, "gate_candidates": 12, "walltime_hours": 6, "mem_mb": 3072, "concurrency": 1, "cpu_hours": 6},
+    "validation": "only verify/validate_candidate.py: passed:true AND exit 0 AND validator sha256 546915a6... AND integrity check passes; staging only for those. 'Advances the board' additionally requires gates.novelty.board_advancing non-null; literature novelty stays 'unverified'.",
+    "stopping": [{"type": "budget_exhausted"}, {"type": "no_progress", "experiments": 8}, {"type": "candidates_found", "count": 3}],
+    "required_outputs": ["experiment_ledger", "surviving_candidates", "negative_results", "campaign_summary"],
+    "prior": "Most or all gate candidates expected to be exact duplicates or dominated; zero advances is a complete, reportable result.",
+    "forbidden": ["editing any existing campaign.json", "touching verify/", "commits/PRs/submission", "hardware", "OSIRIS learning state"]
+  }
+}
