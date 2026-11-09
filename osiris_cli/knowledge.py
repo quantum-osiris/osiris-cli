@@ -102,9 +102,32 @@ def scorecard_verdicts(readme_text: str) -> List[str]:
     return rows
 
 
+NOTE_PREFIX = "approved-note:"
+
+
+def active_notes(living_home: str) -> List[dict]:
+    """Retrieval notes Devin approved through paste learning (notes.jsonl), status
+    "active" only: /unlearn rewrites a note's status to "tombstoned" in place, so a
+    withdrawn note drops out on the next load. Malformed lines are skipped."""
+    out = []
+    try:
+        with open(os.path.join(living_home, "notes.jsonl"), encoding="utf-8") as f:
+            for line in f:
+                try:
+                    rec = json.loads(line)
+                except ValueError:
+                    continue
+                if (isinstance(rec, dict) and rec.get("status") == "active"
+                        and rec.get("id") and isinstance(rec.get("content"), str)):
+                    out.append(rec)
+    except OSError:
+        pass
+    return out
+
+
 class Knowledge:
     def __init__(self, living_home: str = LIVING_HOME, base: str = HOME,
-                 sources: Optional[List[str]] = None):
+                 sources: Optional[List[str]] = None, notes: Optional[bool] = None):
         self.base = base
         paths = sources if sources is not None else _sources(living_home, base)
         self.texts: Dict[str, str] = {}
@@ -115,6 +138,16 @@ class Knowledge:
             except OSError:
                 continue
         self.chunks = [(src, h, t) for src, text in self.texts.items() for h, t in chunk_markdown(text)]
+        # Approved notes join the lookup index only. They stay out of self.texts, so
+        # brief() and on_record() (scorecard verdicts) are unchanged. Default: on unless
+        # an explicit source list was given.
+        self.note_ids: List[str] = []
+        if notes if notes is not None else sources is None:
+            for rec in active_notes(living_home):
+                src = NOTE_PREFIX + rec["id"]
+                title = str(rec.get("title") or "").strip()
+                self.note_ids.append(rec["id"])
+                self.chunks += [(src, h or title, t) for h, t in chunk_markdown(rec["content"])]
         self._tf = [Counter(_tokens(h + " " + t)) for _, h, t in self.chunks]
         self._len = [sum(tf.values()) for tf in self._tf]
         self._avg = (sum(self._len) / len(self._len)) if self._len else 1.0
@@ -176,5 +209,8 @@ class Knowledge:
 
     @staticmethod
     def format_notes(hits: List[dict]) -> str:
-        return "\n\n".join(f"[{h['source']}" + (f" § {h['heading']}" if h["heading"] else "") + "]\n"
-                           + h["text"] for h in hits)
+        def label(h: dict) -> str:
+            tag = ("  (approved by Devin; user-provided, unverified -- not a measurement record)"
+                   if h["source"].startswith(NOTE_PREFIX) else "")
+            return f"[{h['source']}" + (f" § {h['heading']}" if h["heading"] else "") + "]" + tag
+        return "\n\n".join(label(h) + "\n" + h["text"] for h in hits)
