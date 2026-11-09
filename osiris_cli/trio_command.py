@@ -30,17 +30,20 @@ import shlex
 from dataclasses import dataclass
 from typing import List, Optional, Sequence
 
+from osiris_cli import trio_authz
 from osiris_cli.orchestration import evolution_bridge as eb
 from osiris_cli.orchestration.agent_gene import spec_digest
 from osiris_cli.orchestration.agent_spec import RunBudget
-from osiris_cli.orchestration.trio import CRITIC, DEVELOPER, RESEARCH, DeveloperOutput, run_trio, tree_digest
+from osiris_cli.orchestration.trio import (CRITIC, DEVELOPER, RESEARCH, DeveloperOutput, run_trio,
+                                           sandbox_limits, tree_digest)
 
 MAX_FILES = 2000
 MAX_BYTES = 50 * 1024 * 1024
 MAX_PATCH_BYTES = 256 * 1024
 TEST_TIMEOUT_S = 60.0
 USAGE = ("usage: /trio plan <repo> [--patch FILE]\n"
-         "       /trio run <repo> --patch FILE --out DIR --approve <plan_digest>")
+         "       /trio run <repo> --patch FILE --out DIR --grant FILE --ledger FILE [--signature FILE] "
+         "[--allowed-signers FILE]")
 
 
 class TrioCommandError(ValueError):
@@ -57,6 +60,8 @@ class TrioPlan:
     agents: List[dict]
     budget: dict
     plan_digest: str
+    bundle: Optional[dict] = None
+    bundle_digest: str = ""
 
     def render(self) -> str:
         lines = ["/trio plan (dry run; nothing executed, nothing written)",
@@ -70,7 +75,12 @@ class TrioPlan:
         lines += ["  'run' would EXECUTE this repo's tests inside a bwrap namespace sandbox (no network, no home dir, rlimits; refuses if unavailable).",
                   "  'run' never applies the patch and never promotes; best outcome VERIFIED_PENDING_AUTHORIZATION.",
                   f"  plan digest     {self.plan_digest}",
-                  "  to run:  /trio run <repo> --patch FILE --out DIR --approve " + self.plan_digest]
+                  f"  bundle digest   {self.bundle_digest}",
+                  "  to authorize, the owner signs a grant for exactly this bundle digest:",
+                  f"    python -m osiris_cli.grants draft --payload-digest {self.bundle_digest} "
+                  f"--scope {trio_authz.SCOPE} > grant.json",
+                  "    ssh-keygen -Y sign -f <owner key> -n osiris-grant grant.json",
+                  "  then: /trio run <repo> --patch FILE --out DIR --grant grant.json --ledger FILE"]
         return "\n".join(lines)
 
 
@@ -137,10 +147,14 @@ def build_plan(repo: str, patch_file: Optional[str] = None, *, workspace_root: O
     tdig = tree_digest(real)
     pd = hashlib.sha256(json.dumps({"v": 1, "tree": tdig, "patch": pdg, "agents": [a["digest"] for a in agents],
                                     "budget": budget}, sort_keys=True).encode()).hexdigest()
-    return TrioPlan(real, tdig, n, pdg, paths, agents, budget, pd), patch
+    cand = eb.candidate_digest(patch.patched_files) if patch else ""
+    bundle = trio_authz.make_bundle(plan_digest=pd, candidate_digest=cand, agents=agents, budget=budget,
+                                    limits=sandbox_limits(TEST_TIMEOUT_S))
+    return TrioPlan(real, tdig, n, pdg, paths, agents, budget, pd, bundle, trio_authz.bundle_digest(bundle)), patch
 
 
-def run_trio_command(argv: Sequence[str], *, workspace_root: Optional[str] = None) -> str:
+def run_trio_command(argv: Sequence[str], *, workspace_root: Optional[str] = None,
+                     _grant_kw: Optional[dict] = None) -> str:
     """argv is what follows ``/trio``. Returns text for the REPL to print; raises nothing user-facing
     except TrioCommandError, which callers print."""
     args = list(argv)
@@ -148,7 +162,8 @@ def run_trio_command(argv: Sequence[str], *, workspace_root: Optional[str] = Non
         return USAGE
     sub = args[0] if args[0] in ("plan", "run") else "plan"
     rest = args[1:] if args[0] in ("plan", "run") else args
-    opts = {"--patch": None, "--out": None, "--approve": None}
+    opts = {"--patch": None, "--out": None, "--grant": None, "--ledger": None, "--signature": None,
+            "--allowed-signers": None}
     pos: List[str] = []
     i = 0
     while i < len(rest):
@@ -157,6 +172,9 @@ def run_trio_command(argv: Sequence[str], *, workspace_root: Optional[str] = Non
                 raise TrioCommandError(f"{rest[i]} needs a value\n{USAGE}")
             opts[rest[i]] = rest[i + 1]
             i += 2
+        elif rest[i] == "--approve":
+            raise TrioCommandError("--approve (a bare digest) is no longer accepted: it is not human authorization. "
+                                   "Use a signed single-use grant (--grant/--ledger); see `/trio plan`.")
         elif rest[i].startswith("--"):
             raise TrioCommandError(f"unknown option {rest[i]}\n{USAGE}")
         else:
@@ -173,26 +191,49 @@ def run_trio_command(argv: Sequence[str], *, workspace_root: Optional[str] = Non
         raise TrioCommandError("run needs --patch FILE (the Developer's proposal)")
     if not opts["--out"]:
         raise TrioCommandError("run needs an explicit --out DIR (outside the repo); there is no default location")
-    if opts["--approve"] != plan.plan_digest:
-        raise TrioCommandError("approval missing or does not match the current plan digest (the repo, patch, "
-                               "agents or budget changed, or the plan was not reviewed). Run `/trio plan` and "
-                               "pass its digest with --approve.\n" + plan.render())
+    if not opts["--grant"] or not opts["--ledger"]:
+        raise TrioCommandError("run needs --grant FILE (signed, single-use, bound to the bundle digest) and an "
+                               "explicit --ledger FILE for its consumption record.\n" + plan.render())
     out = os.path.realpath(opts["--out"])
     if _within(out, plan.repo) or _within(plan.repo, out):
         raise TrioCommandError("--out must not be inside the repo (or contain it)")
+    if _within(os.path.realpath(opts["--ledger"]), plan.repo):
+        raise TrioCommandError("--ledger must not be inside the repo")
+    from osiris_cli import grants, sandbox
+    if not sandbox.available():          # checked BEFORE the grant is consumed: no sandbox, no spend, no run
+        raise TrioCommandError("no namespace sandbox is available here; refusing (there is no unsandboxed mode)")
     os.makedirs(out, exist_ok=True)
+    receipts = trio_authz.Receipts(os.path.join(out, "authz_receipts.jsonl"))
+    kw = dict(_grant_kw or {})
+    d = trio_authz.authorize_execution(
+        plan.bundle, opts["--grant"], allowed_signers=opts["--allowed-signers"] or grants.ALLOWED_SIGNERS,
+        ledger_path=opts["--ledger"], receipts=receipts, signature_path=opts["--signature"], **kw)
+    if not d.authorized:
+        raise TrioCommandError(f"not authorized: {d.reason}")
+    # the grant is now spent; re-derive the bundle from disk so a swap after planning cannot ride on it
+    plan2, patch2 = build_plan(pos[0], opts["--patch"], workspace_root=workspace_root)
+    if plan2.bundle_digest != plan.bundle_digest:
+        receipts.append("EXECUTION_ABORTED", {"reason": "inputs changed after authorization",
+                                              "authorized_bundle": plan.bundle_digest,
+                                              "current_bundle": plan2.bundle_digest})
+        raise TrioCommandError("inputs changed between authorization and execution; nothing was run (grant spent)")
     res = run_trio(plan.repo, lambda f, sb: patch, out, timeout=TEST_TIMEOUT_S, budget=RunBudget(),
-                   sandboxed=True)     # fail closed: SandboxUnavailable if no namespace sandbox
+                   sandboxed=True)
     dec = eb.evaluate_candidate(res, os.path.join(out, "lineage.jsonl"))     # no authorizer: cannot promote
     assert dec.status != "PROMOTED"
+    receipts.append("EXECUTION", {"run_id": res.run_id, "outcome": res.outcome, "candidate_status": dec.status,
+                                  "candidate_digest": dec.candidate_digest, "bundle_digest": plan.bundle_digest,
+                                  "sandboxed": True, "applied_to_repo": False,
+                                  "grant_id": (d.record or {}).get("grant_id")})
     return "\n".join([
         f"/trio run {res.run_id}: trio outcome {res.outcome}; candidate {dec.status}",
+        f"  authorized once by grant {(d.record or {}).get('grant_id', '')[:16]}… (key {(d.record or {}).get('key_fingerprint')})",
         f"  candidate {dec.candidate_id} ({dec.candidate_digest[:16]}…)  "
         f"baseline→candidate fitness: {dec.baseline_fitness}→{dec.candidate_fitness}",
         *[f"  - {r[:200]}" for r in dec.reasons[:4]],
-        f"  record: {res.run_dir}   lineage: {os.path.join(out, 'lineage.jsonl')}",
-        "  repo NOT modified; patch NOT applied; nothing promoted. Promotion needs a signed grant bound to "
-        f"digest {dec.candidate_digest} (see osiris_cli.grants)."])
+        f"  record: {res.run_dir}   lineage: {os.path.join(out, 'lineage.jsonl')}   receipts: {receipts.path}",
+        "  repo NOT modified; patch NOT applied; nothing promoted (promotion needs its own grant, scope "
+        f"{eb.SCOPE}, bound to {dec.candidate_digest})."])
 
 
 def split(line: str) -> List[str]:

@@ -64,6 +64,12 @@ def tree_digest(root: str) -> str:
     return h.hexdigest()
 
 
+def sandbox_limits(timeout: float):
+    """The one place the sandbox limits for a test run are derived (also bound into the grant)."""
+    from osiris_cli import sandbox
+    return sandbox.Limits(wall_s=timeout, cpu_s=int(timeout) + 5)
+
+
 def run_pytest(workdir: str, timeout: float = 60.0, sandboxed: bool = False
                ) -> Tuple[ExecutionEvidence, Set[str], Set[str]]:
     """Run pytest in workdir. Returns (evidence, passed test ids, failed test ids).
@@ -72,7 +78,7 @@ def run_pytest(workdir: str, timeout: float = 60.0, sandboxed: bool = False
     argv = (sys.executable, "-m", "pytest", "-q", "-rA", "-p", "no:cacheprovider", "--tb=short")
     if sandboxed:
         from osiris_cli import sandbox
-        r = sandbox.run(argv, workdir, limits=sandbox.Limits(wall_s=timeout, cpu_s=int(timeout) + 5))
+        r = sandbox.run(argv, workdir, limits=sandbox_limits(timeout))
         out, rc = r.output + ("\n[TIMEOUT]" if r.timed_out else ""), r.returncode
     else:
         env = {"PATH": os.environ.get("PATH", "/usr/bin:/bin"), "HOME": workdir,

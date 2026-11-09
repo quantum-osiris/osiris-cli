@@ -147,3 +147,25 @@ dirs, env scrub, memory limit, process limit, wall timeout, output cap).
 Not claimed: this is not a container or VM. It shares the host kernel (a kernel/bwrap escape defeats it),
 CPU is rlimit-bounded not cgroup-metered, and untested on other hosts. The REPL `/trio run` stays disabled
 until signed-grant authorization replaces the digest-bound `--approve`.
+
+## 10. Authorization for `/trio run` (`osiris_cli/trio_authz.py`)
+
+`/trio run` no longer accepts a bare `--approve <digest>`. It needs `--grant FILE --ledger FILE`
+(`--signature`, `--allowed-signers` optional). Reuses `osiris_cli.grants` unchanged (ssh-keygen ed25519,
+namespace `osiris-grant`, NTP-synchronized clock, expiry window, revocation, GRANTED+CONSUMED written
+atomically under the ledger file lock). The grant's payload digest is the **bundle digest** over: candidate
+digest, per-agent validated spec digests, plan digest (repo tree, patch, agents, budget), requested
+capabilities, budgets, sandbox policy (incl. limits), capability-policy digest and `trio-authz/1`; scope
+`trio.run.execute`. Order: build plan → sandbox availability check (before any spend) → verify+consume →
+re-derive the bundle from disk (changed inputs abort; the grant stays spent) → sandboxed run → receipts.
+Receipts (`<out>/authz_receipts.jsonl`, hash-chained) hold decisions, grant id, key fingerprint, digests and
+outcomes, never grant/signature bytes. 15 tests in `tests/test_trio_authz.py` cover valid run, replay, wrong
+digest, changed repo/patch/scope/budget/capability/sandbox policy/policy version, expiry, future grant,
+revocation, tampering, foreign signer, unavailable clock/ledger/trust root, no sandbox (grant not spent),
+swap-after-authorization, 12-way concurrent use (exactly one winner) and REPL still disabled.
+
+Limitations: authorization proves a key holder approved a digest, not that the code is safe; the sandbox is
+not a hardened container (see section 9); the owner chooses `--ledger` (use a dedicated file; the live
+`~/.osiris` ledger is never defaulted); NTP check fails closed where `timedatectl` can't report (it reports synchronized on
+this host, but tests inject a clock so they don't depend on it); a spent grant is not refunded by an abort. Live REPL `/trio run` is
+still disabled.

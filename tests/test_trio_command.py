@@ -1,4 +1,4 @@
-"""/trio front end: dry-run default, digest-bound approval, no apply, no promote, no network, no model.
+"""/trio front end: dry-run default; planning, parsing and REPL checks (authorization: test_trio_authz.py).
 Not wired into the live REPL; these tests call the command function directly."""
 
 import json
@@ -32,11 +32,6 @@ def cmd(ws, *a):
     return tc.run_trio_command(list(a), workspace_root=ws["root"])
 
 
-def digest_of(ws):
-    out = cmd(ws, "plan", ws["repo"], "--patch", ws["patch"])
-    return out.split("plan digest")[1].split()[0]
-
-
 def test_plan_is_a_pure_dry_run(ws, monkeypatch):
     def boom(*a, **k):
         raise AssertionError("dry run must not spawn processes or open sockets")
@@ -48,45 +43,6 @@ def test_plan_is_a_pure_dry_run(ws, monkeypatch):
     assert "dry run" in text and "plan digest" in text and "[needs human approval]" in text   # critic: SUBPROCESS_EXEC
     assert tree_digest(ws["root"]) == before and not os.path.exists(ws["out"])
     assert cmd(ws, ws["repo"]).startswith("/trio plan")            # bare form defaults to plan
-
-
-def test_run_without_or_with_wrong_approval_is_refused_and_executes_nothing(ws, monkeypatch):
-    monkeypatch.setattr(subprocess, "run", lambda *a, **k: (_ for _ in ()).throw(AssertionError("executed")))
-    for approve in ([], ["--approve", "0" * 64], ["--approve", "deadbeef"]):
-        with pytest.raises(tc.TrioCommandError, match="approval"):
-            cmd(ws, "run", ws["repo"], "--patch", ws["patch"], "--out", ws["out"], *approve)
-    assert not os.path.exists(ws["out"])
-
-
-def test_approval_is_invalidated_when_the_repo_or_patch_changes(ws):
-    dg = digest_of(ws)
-    open(os.path.join(ws["repo"], "calc.py"), "a").write("# changed after review\n")
-    with pytest.raises(tc.TrioCommandError, match="does not match"):
-        cmd(ws, "run", ws["repo"], "--patch", ws["patch"], "--out", ws["out"], "--approve", dg)
-    dg2 = digest_of(ws)
-    open(ws["patch"], "w").write(json.dumps({"patched_files": {"calc.py": FIXED + "#\n"}, "report": "x"}))
-    with pytest.raises(tc.TrioCommandError, match="does not match"):
-        cmd(ws, "run", ws["repo"], "--patch", ws["patch"], "--out", ws["out"], "--approve", dg2)
-
-
-def test_approved_run_records_but_never_applies_or_promotes_or_uses_network(ws, monkeypatch):
-    dg = digest_of(ws)
-    monkeypatch.setattr(socket, "socket", lambda *a, **k: (_ for _ in ()).throw(AssertionError("network")))
-    before = tree_digest(ws["repo"])
-    text = cmd(ws, "run", ws["repo"], "--patch", ws["patch"], "--out", ws["out"], "--approve", dg)
-    assert "VERIFIED_PENDING_AUTHORIZATION" in text and "nothing promoted" in text
-    assert tree_digest(ws["repo"]) == before and open(os.path.join(ws["repo"], "calc.py")).read() == BUGGY
-    rows = [json.loads(line) for line in open(os.path.join(ws["out"], "lineage.jsonl"))]
-    assert [r["kind"] for r in rows] == ["CANDIDATE_VERIFIED_PENDING_AUTHORIZATION"]
-    assert rows[0]["payload"]["applied_to_repo"] is False
-
-
-def test_unsupported_claims_in_the_patch_report_are_quarantined_through_the_command(ws):
-    open(ws["patch"], "w").write(json.dumps({"patched_files": {"calc.py": FIXED},
-                                             "report": "Fixed. Accuracy up 37.2% on ibm_torino."}))
-    dg = digest_of(ws)
-    text = cmd(ws, "run", ws["repo"], "--patch", ws["patch"], "--out", ws["out"], "--approve", dg)
-    assert "QUARANTINED" in text
 
 
 def test_only_provider_none_and_no_model_calls(ws):
@@ -113,16 +69,6 @@ def test_bad_patch_files_and_options(ws):
     with pytest.raises(tc.TrioCommandError, match="unknown option"):
         cmd(ws, "plan", ws["repo"], "--apply")
     assert cmd(ws) == tc.USAGE
-
-
-def test_run_requires_explicit_out_outside_the_repo_and_a_patch(ws):
-    dg = digest_of(ws)
-    with pytest.raises(tc.TrioCommandError, match="explicit --out"):
-        cmd(ws, "run", ws["repo"], "--patch", ws["patch"], "--approve", dg)
-    with pytest.raises(tc.TrioCommandError, match="inside the repo"):
-        cmd(ws, "run", ws["repo"], "--patch", ws["patch"], "--out", os.path.join(ws["repo"], "o"), "--approve", dg)
-    with pytest.raises(tc.TrioCommandError, match="--patch"):
-        cmd(ws, "run", ws["repo"], "--out", ws["out"], "--approve", dg)
 
 
 def test_repl_trio_is_plan_only_and_never_runs(ws, monkeypatch, capsys):
