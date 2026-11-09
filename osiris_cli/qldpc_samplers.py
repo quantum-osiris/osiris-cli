@@ -24,7 +24,7 @@ from __future__ import annotations
 
 import itertools
 import random
-from typing import Dict, Iterable, List, Optional, Sequence, Tuple
+from typing import Dict, Iterable, List, Sequence, Tuple
 
 from osiris_cli import qldpc_sweep as sw
 
