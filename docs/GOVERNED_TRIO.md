@@ -102,3 +102,19 @@ instead of putting orchestration inside the language runtime.
 3. `agent` gene RFC + adapter; frozen-baseline benchmark set for prompt/routing candidates.
 4. Provider/GPU budgeting (Ollama unload, VRAM telemetry) behind `RunBudget`.
 5. REPL surface (`/trio <repo>`), approval via the existing `HumanApproval` flow.
+
+## 7. Governed evolutionary candidate (`orchestration/evolution_bridge.py`)
+
+`evaluate_candidate(trio_result, lineage_ledger, authorizer=None)` appends exactly one lineage row
+(`CANDIDATE_UNMEASURED | _QUARANTINED | _REJECTED | _VERIFIED_PENDING_AUTHORIZATION | _PROMOTED`)
+with the candidate id/digest, criticism (Critic reasons, firewall findings, regressions),
+evidence references (record/candidate.json sha256, baseline/candidate stdout digests, agent
+receipt digests) and reasons. Rules enforced and tested: Critic approval is necessary, never
+sufficient; promotion needs firewall ACCEPT + measured green candidate reproduced twice +
+`PromotionPolicy` pass + an authorizer accepting the exact candidate digest
+(`grants_authorizer` adapts the signed, single-use SYS-021 grant); "promoted" is only a ledger
+row, the patch is never applied; ledger paths under `~/.osiris` are refused without
+`allow_live=True`. The only fitness is `frozen_suite_pass_rate` (passed/(passed+failed+errors),
+runner-measured, one deterministic measurement, uncertainty not estimated). Rejected and
+quarantined candidates keep `candidate.json` and their rows.
+Demo: `python scripts/demo_governed_candidate.py` (temp dir only). Language: `docs/rfc/RFC-0001-agent-gene.md`.
