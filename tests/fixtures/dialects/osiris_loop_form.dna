@@ -1,0 +1,1 @@
+organism Gen_1 { quantum_state { h 0; cx 0, 1; } }
