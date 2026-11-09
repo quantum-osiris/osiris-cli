@@ -7,8 +7,8 @@ authors:
 title: "OSIRIS: a governed, local-first console for testing whether a small language model learns from conversation"
 version: 6.0.0+governed-trio.541187d7
 date-released: 2026-11-09
-url: "https://github.com/osiris-dnalang/osiris-cli"
-repository-code: "https://github.com/osiris-dnalang/osiris-cli"
+url: "https://github.com/quantum-osiris/osiris-cli"
+repository-code: "https://github.com/quantum-osiris/osiris-cli"
 license: LicenseRef-OSIRIS-Dual-v1.0
 type: software
 doi: 10.5281/zenodo.24082031  # this snapshot (feature/governed-trio @ 541187d7)

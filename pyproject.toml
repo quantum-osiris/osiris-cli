@@ -86,9 +86,9 @@ osiris = "osiris_cli.osiris_repl:main"
 osiris-nclm = "osiris_nclm_cli:main"
 
 [project.urls]
-Homepage = "https://github.com/osiris-dnalang/osiris-cli"
-Repository = "https://github.com/osiris-dnalang/osiris-cli"
-Issues = "https://github.com/osiris-dnalang/osiris-cli/issues"
+Homepage = "https://github.com/quantum-osiris/osiris-cli"
+Repository = "https://github.com/quantum-osiris/osiris-cli"
+Issues = "https://github.com/quantum-osiris/osiris-cli/issues"
 
 [tool.setuptools]
 py-modules = [
