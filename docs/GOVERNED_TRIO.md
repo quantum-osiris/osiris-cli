@@ -42,7 +42,7 @@ is a separate, still-unmeasured property.
 ## 4. What was built (commit `29b2a016`)
 
 * `orchestration/agent_spec.py` — `AgentSpec` (identity, version, role, capabilities using
-  `CapabilityGovernor` names, tool permissions, provider/model, schemas, token/deadline budgets,
+  governor capability names (mirrored in `agent_gene.CAPABILITY_TIERS`; the governor itself lives in `~/osiris/agents/gateway/`, not in this repo), tool permissions, provider/model, schemas, token/deadline budgets,
   `evidence_required`), `AgentRun` with a checked state machine
   (`CREATED→RUNNING→DONE|FAILED|REJECTED|QUARANTINED`), `RunBudget` (max agents, depth, wall
   time — no recursive spawning), `AgentReceipt` (input/output digests + transitions).
@@ -118,3 +118,13 @@ row, the patch is never applied; ledger paths under `~/.osiris` are refused with
 runner-measured, one deterministic measurement, uncertainty not estimated). Rejected and
 quarantined candidates keep `candidate.json` and their rows.
 Demo: `python scripts/demo_governed_candidate.py` (temp dir only). Language: `docs/rfc/RFC-0001-agent-gene.md`.
+
+## 8. RFC-0001 Phase 0 (`orchestration/agent_gene.py`)
+
+`validate_agent_gene(name, fields)` / `agent_genes_from_dna(text)`: closed schema, explicit capability
+allowlist + per-role ceiling (WORKSPACE_WRITE is not expressible in a gene), validated budgets,
+canonical JSON + sha256 over every authorization-relevant field plus the schema and the
+capability-policy digest. A gene-built `AgentSpec` equals the hand-built RESEARCH/DEVELOPER/CRITIC
+specs (same digest). Duplicate keys (silently last-wins in the language) and duplicate agent ids are
+refused on the text path. 55 tests in `tests/test_agent_gene.py`. No grammar/parser/compiler change;
+Phase 1 is not started. Nothing consumes a gene at runtime yet: `run_trio` still uses its built-in specs.

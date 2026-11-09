@@ -54,7 +54,7 @@ class AgentSpec:
     agent_id: str
     version: str
     role: str                                   # "research" | "developer" | "critic"
-    capabilities: FrozenSet[str]                # CapabilityGovernor names, e.g. READ_ONLY_ANALYSIS
+    capabilities: FrozenSet[str]                # governor capability names (see agent_gene.CAPABILITY_TIERS)
     tool_permissions: FrozenSet[str] = frozenset()
     provider: str = "none"                      # provider registry name, or "none" if deterministic
     model: str = ""

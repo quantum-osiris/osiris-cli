@@ -1,6 +1,6 @@
 # RFC-0001 (DRAFT): `agent` genes in dna::}{::lang
 
-Status: **draft for review. The language does not support agent genes today.** Nothing in this
+Status: **draft for review. The language does not support agent genes today.** Phase 0 (OSIRIS-side adapter, `osiris_cli/orchestration/agent_gene.py`) is implemented and tested; Phase 1 is not started. Nothing in this
 RFC is implemented; no grammar, parser, sema or runtime was modified. Evidence below was produced
 by probing `dnalang-core` @ `3de9177` and `osiris.compiler` on 2026-11-09 (throwaway `.dna`
 snippets, read-only); the probes that are stable are pinned in
