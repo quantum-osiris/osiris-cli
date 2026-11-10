@@ -406,6 +406,7 @@ def test_verdict_shown_even_when_no_model_is_reachable(tmp_path):
     "OSIRIS is designed to work with quantum hardware, such as the IBM Heron r2 with 156 qubits, which has "
     "been utilized in the model's training.",
     "OSIRIS is integrated with IBM Heron hardware, specifically the r2 version with 156 qubits.",
+    "I am currently running on an IBM Heron system, which is equipped with IBM Quantum's hardware.",
 ])
 def test_the_voices_own_quantum_inventions_are_registered(text):
     # all three said by qwen2.5:1.5b on 2026-11-09
@@ -417,6 +418,8 @@ def test_the_voices_own_quantum_inventions_are_registered(text):
     "The core is a small transformer trained on this computer.",
     "Quantum computers with 156 qubits exist today.",
     "The model runs on your CPU with Ollama.",
+    "I ran your decoupling job on ibm_marrakesh last month.",
+    "I am a small transformer trained on this computer.",
 ])
 def test_true_statements_about_osiris_and_hardware_are_not_flagged(text):
     assert claims.flagged_in_reply(text) == []
@@ -440,12 +443,31 @@ def test_a_reply_bringing_up_a_not_legit_claim_shows_the_verdict_and_is_not_lear
     assert row["learnable"] is False and row["flagged_claims"] == ["OSIRIS_ON_QPU"]
 
 
+@pytest.mark.parametrize("text", [
+    "OSIRIS does not run on a quantum computer; the core trains on your CPU.",
+    "No, I was never trained on 156 qubits.",
+    "the tau-phase anomaly, as hardware audits refuted it",                  # real replies, 2026-11-09 ledger
+    "the organism layer proved redundant",
+    "The main points include retiring constants like θ_lock and χ_PC.",
+    "Investigate the role of regulatory genes",
+])
+def test_reporting_a_verdict_or_naming_a_topic_is_not_an_assertion(text):
+    assert claims.flagged_in_reply(text) == []
+
+
+def test_assertion_patterns_compile_and_flag_only_their_own_entry():
+    with_asserts = [c for c in claims.REGISTER if c.asserts]
+    assert [c.id for c in with_asserts] == ["OSIRIS_ON_QPU"]
+    for c in with_asserts:
+        assert all(re.compile(p) for p in c.asserts)
+
+
 def test_a_claim_the_user_raised_is_not_flagged_again_on_the_reply(tmp_path):
-    mentor = ScriptedMentor(reply="It was refuted: theta lock 51.843 showed no resonance.")
+    mentor = ScriptedMentor(reply="OSIRIS runs on a quantum computer with 156 qubits.")
     o, out = make(tmp_path, mentor)
-    o.converse("is the 51.843 theta lock real?")
+    o.converse("does OSIRIS run on a quantum computer with 156 qubits?")
     text = "".join(out)
-    assert "REFUTED" in text and "Claims register, on the reply" not in text
+    assert "OVERCLAIM" in text and "Claims register, on the reply" not in text
 
 
 def test_an_ordinary_reply_is_not_flagged(tmp_path):

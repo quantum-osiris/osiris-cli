@@ -273,3 +273,20 @@ def test_frozen_corpus_gives_identical_documents_after_files_change(tmp_path):
     corpus, archive, roots = train.load_frozen_corpus(snap)
     assert len(corpus["docs"]) == info["docs"] and "docs/new_file.md" not in {d.path for d in corpus["docs"]}
     assert archive["docs"] == [] and roots == []
+
+
+def test_chat_lessons_leave_out_replies_that_bring_up_not_legit_claims(tmp_path):
+    log = tmp_path / "exchanges.jsonl"
+    invented = "I am currently running on an IBM Heron system with 156 qubits."   # qwen2.5:1.5b, 2026-11-09
+    rows = [{"user": "what hardware do you run on?", "reply": invented, "learnable": True,
+             "heldout": False, "voice": "mentor:x", "hash": "f507"},
+            {"user": "hi", "reply": "Hello Devin.", "learnable": True, "heldout": False, "voice": "mentor:x"},
+            {"user": "is theta lock 51.843 real?", "reply": "No: theta lock 51.843 was refuted.",
+             "learnable": True, "heldout": False, "voice": "mentor:x"},             # the user raised it
+            {"user": "x", "reply": invented, "learnable": True, "heldout": True, "voice": "mentor:x"}]
+    log.write_text("\n".join(json.dumps(r) for r in rows))
+    out = train.chat_lessons(str(log))
+    assert out["flagged"] == ["f507"]
+    assert out["train"] == ["User: hi\nOSIRIS: Hello Devin.\n",
+                            "User: is theta lock 51.843 real?\nOSIRIS: No: theta lock 51.843 was refuted.\n"]
+    assert out["heldout"] == [f"User: x\nOSIRIS: {invented}\n"]          # the gate's measurement is unchanged
