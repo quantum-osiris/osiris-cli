@@ -178,14 +178,17 @@ def classify(req: CommandRequest) -> Classification:
     given = os.path.basename(inner[0])
     verdict = _rules((given,) + inner[1:], pol)
     if resolved:
-        target = os.path.realpath(resolved)
-        target_name = os.path.basename(target)
-        if target_name != given:
-            # A symlink named ls that points at rm must be judged as rm. An unknown name inside a
-            # system directory is a distribution alternative (which -> which.debianutils), not a risk.
-            current = _rules((target_name,) + inner[1:], pol)
-            if not (current.unknown and target.startswith(_SYSTEM_DIRS)):
-                verdict = _merge(verdict, current)
+        # A symlink named ls that points at rm must be judged as rm. Every hop counts, not only the
+        # final file: on Ubuntu 26.04 /usr/bin/rm -> gnurm, so the last name alone is unknown. An
+        # unknown name inside a system directory is a distribution alternative
+        # (which -> which.debianutils), not a risk; gnu<name> is judged as <name>.
+        for hop in _link_chain(resolved):
+            for name in _hop_names(os.path.basename(hop)):
+                if name == given:
+                    continue
+                current = _rules((name,) + inner[1:], pol)
+                if not (current.unknown and hop.startswith(_SYSTEM_DIRS)):
+                    verdict = _merge(verdict, current)
     if any(tok in pol["publish_flags"] for tok in inner):
         verdict = _merge(verdict, _Verdict(agent_deny=True, reasons=["publish flag"]))
     if wrappers:
@@ -291,6 +294,29 @@ def _resolve_program(name: str, cwd: str, path_env: str) -> Optional[str]:
         return None
     found = shutil.which(name, path=path_env or None)
     return os.path.abspath(found) if found else None
+
+
+def _link_chain(path: str, max_hops: int = 40) -> List[str]:
+    """Each path a symlink chain passes through after the first, ending at the realpath."""
+    chain: List[str] = []
+    current = path
+    for _ in range(max_hops):
+        if not os.path.islink(current):
+            break
+        target = os.readlink(current)
+        current = os.path.normpath(os.path.join(os.path.dirname(current), target))
+        chain.append(current)
+    real = os.path.realpath(path)
+    if not chain or chain[-1] != real:
+        chain.append(real)
+    return chain
+
+
+def _hop_names(base: str) -> Tuple[str, ...]:
+    """Names to judge a hop by: the name itself and, for gnu<name> (Ubuntu 26.04), <name>."""
+    if base.startswith("gnu") and len(base) > 3:
+        return (base, base[3:])
+    return (base,)
 
 
 def _rules(args: Tuple[str, ...], pol: dict) -> _Verdict:
