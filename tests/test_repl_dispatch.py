@@ -246,6 +246,34 @@ if pytest is not None:
         assert calls == [("_unknown_command", ("/stauts",))]
         assert capsys.readouterr().out.count("No menu item") == 2
 
+    def test_a_bare_command_word_is_not_sent_to_the_model(calls, capsys):
+        run("code")
+        run("status")
+        run("publish")
+        out = capsys.readouterr().out
+        assert not [c for c in calls if c[0] == "model"]
+        assert "looks like the command /code" in out and "/code explain" in out
+        assert "[1] Run /status (read-only)" in out
+        assert "Type /publish to run it" in out and "[1] Run /publish" not in out
+        assert otc._pending_suggestions == {"1": "/status"}          # publish is never offered
+
+    def test_sentences_and_unknown_words_still_go_to_osiris(calls):
+        run("code review my parser please")
+        run("hello")
+        assert calls == [("model", "code review my parser please"), ("model", "hello")]
+
+    def test_repl_commands_set_matches_the_dispatch_source():
+        found = set(re.findall(r'cmd (?:==|in) \(?"(/[a-z0-9_-]+)"', REPL_SRC))
+        assert found <= osiris_repl.REPL_COMMANDS | osiris_repl.CONSOLE_COMMANDS, \
+            found - osiris_repl.REPL_COMMANDS - osiris_repl.CONSOLE_COMMANDS
+
+    def test_charger_note_only_on_the_phone(monkeypatch):
+        import osiris.substrate as sub
+        monkeypatch.setattr(sub, "node_type", lambda: "NODE_BETA_COMPUTE")
+        assert otc._charger_note() == []
+        monkeypatch.setattr(sub, "node_type", lambda: "NODE_ALPHA_MOBILE")
+        assert "charger" in " ".join(otc._charger_note())
+
     def test_plain_text_still_goes_to_osiris(calls):
         run("hello osiris")
         run("/home/enki/log.txt line 1\nline 2")          # a pasted log is conversation

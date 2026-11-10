@@ -3161,7 +3161,7 @@ def _bench_preflight(command, argv, label, ui):
                                     + ("" if argv[3] in ("gemini", "gateway") else ", or use cloud quota"))]
     inner = osiris_ui.Canvas(ui.mode, ui.cols - 4)
     print("\n" + ui.panel("MENTOR ROUND · PREFLIGHT", inner.facts(rows).split("\n") + [
-        "", ui.dim("Plug in the charger: the phone works hard for the whole round.")]))
+        *[ui.dim(t) if t else t for t in _charger_note()]]))
     _pending_suggestions.clear()
     _pending_suggestions.update({"1": command.strip() + " now", "0": "/home"})
     print(ui.actions("START?", [("1", "Start the round"), ("0", "Not now")]) + "\n")
@@ -5374,6 +5374,16 @@ def _is_unknown_command(text: str) -> bool:
     if not stripped.startswith("/") or "\n" in stripped:
         return False
     return stripped.split()[0].lower() not in IMMEDIATE_COMMANDS
+
+
+def _charger_note() -> list:
+    """The charger reminder, only on the phone (Node Alpha); a desktop has no battery to drain."""
+    try:
+        from osiris.substrate import node_type
+        on_phone = node_type() == "NODE_ALPHA_MOBILE"
+    except Exception:  # noqa: BLE001 - no substrate module: say nothing rather than guess
+        on_phone = False
+    return ["", "Plug in the charger: the phone works hard for the whole round."] if on_phone else []
 
 
 def _unknown_command(text: str):

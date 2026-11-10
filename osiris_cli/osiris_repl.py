@@ -1902,6 +1902,53 @@ def execute_trio(rest: str) -> None:
         print(f"\n[!] {e}\n")
 
 
+# Commands this REPL handles itself (the command branches of dispatch_command); a test
+# keeps the set in step with the source.
+REPL_COMMANDS = {
+    "/apply", "/architecture", "/benchmark", "/bridges", "/chat", "/check", "/clean", "/closure",
+    "/code", "/core", "/digest", "/discard", "/dna", "/experiment", "/fast", "/firewall", "/forge",
+    "/forget", "/gemini", "/help", "/ignite", "/ingest", "/intent", "/introspect", "/learn",
+    "/ledger", "/legit", "/mentor", "/mesh", "/mutate", "/nclm", "/ollama", "/osiris", "/physics",
+    "/power", "/pr", "/publish", "/q", "/remember", "/retrieval", "/run", "/self", "/sim",
+    "/status", "/swarm", "/sync", "/tetra1d", "/tournament", "/train", "/trio", "/unlearn",
+    "/update", "/validate", "/voice", "/welcome",
+}
+# Safe to offer as a one-key [1]: they only read and print.
+READ_ONLY_COMMANDS = {
+    "/help", "/status", "/home", "/check", "/osiris", "/mentors", "/why", "/ledger",
+    "/architecture", "/lab", "/sources", "/hypotheses", "/gaps", "/runs", "/suggest", "/welcome",
+    "/power", "/firewall", "/ollama", "/facts", "/nclm", "/intent",
+}
+# Commands that need words after them to do anything.
+NEEDS_ARGUMENT = {"/code": "/code explain osiris_cli/living.py", "/legit": "/legit list",
+                  "/remember": "/remember <fact>", "/forget": "/forget <words>",
+                  "/self": "/self <text>", "/chat": "/chat <message>", "/dna": '/dna "<intent>"',
+                  "/gemini": "/gemini <question>", "/physics": "/physics chsh"}
+
+
+def bare_command(word: str) -> Optional[str]:
+    """``"/" + word`` when that is a command name, else None. Single letters are menu keys."""
+    if len(word) < 2 or not word.isalpha():
+        return None
+    name = "/" + word.lower()
+    known = REPL_COMMANDS | CONSOLE_COMMANDS | set(getattr(otc, "IMMEDIATE_COMMANDS", ()) or ())
+    return name if name in known else None
+
+
+def offer_bare_command(word: str) -> None:
+    name = bare_command(word)
+    print(f"\n[!] '{word}' on its own looks like the command {name} -- not sent to the model.")
+    if name in NEEDS_ARGUMENT:
+        print(f"    It needs more words, for example: {NEEDS_ARGUMENT[name]}")
+    elif name in READ_ONLY_COMMANDS and otc is not None:
+        otc._pending_suggestions.clear()
+        otc._pending_suggestions.update({"1": name})
+        print(f"    [1] Run {name} (read-only)")
+    else:
+        print(f"    Type {name} to run it.")
+    print("    To talk to OSIRIS instead, write a few more words.\n")
+
+
 def dispatch_capturing(state: OsirisReplState, line: str) -> None:
     """safe_dispatch with keys typed during the command's output captured, not echoed into it
     (2026-10-25: '/architecture' typed while /check printed was scattered into the bench table,
@@ -2028,6 +2075,14 @@ def dispatch_command(state: OsirisReplState, line: str) -> None:
         except Exception as e:
             print(f"\033[1;31m[!] Console command error ({cmd}): {e}\033[0m\n")
         return
+    # 3a. A lone word that is exactly a command name ("code", "status") is that command typed
+    # without its "/". It is not sent to the model: one word gives a small voice nothing to
+    # answer, and on 2026-11-09 "code" alone got a looping, invented description of OSIRIS.
+    # Read-only commands are offered as [1]; the rest are named, never run for you.
+    if len(parts) == 1 and not cmd.startswith("/") and bare_command(cmd):
+        offer_bare_command(cmd)
+        return
+
     # 3. Commands need a leading "/". Anything else is conversation with OSIRIS,
     # so a sentence that starts with "learn", "status" or "dna" is never hijacked.
     if not cmd.startswith("/") and cmd not in ("?",):
