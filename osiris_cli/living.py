@@ -83,6 +83,19 @@ MENTOR_NUM_CTX = int(os.environ.get("OSIRIS_MENTOR_NUM_CTX", "8192"))
 # num_ctx tokens: a 100k-character paste timed out twice (601 s, 406 s) on 2026-10-01.
 # Long messages go to the mentor as a bounded excerpt; the ledger keeps the full text.
 LONG_MESSAGE = 3000
+# A small voice can fall into a loop and repeat one block until the reply limit (qwen2.5:1.5b
+# wrote one ~1,500-character block seven times on 2026-11-09). Code stops the stream once the
+# last REPEAT_SPAN characters have appeared REPEAT_LIMIT times; the reply is marked incomplete.
+REPEAT_SPAN = 300
+REPEAT_LIMIT = 3
+
+
+def repeating(text: str, span: int = REPEAT_SPAN, limit: int = REPEAT_LIMIT) -> bool:
+    """True once the last ``span`` characters of ``text`` occur ``limit`` or more times in it."""
+    if len(text) < span * limit:
+        return False
+    return text.count(text[-span:]) >= limit
+
 MESSAGE_BUDGET = 6000
 # The voice: /mentor NAME, else OSIRIS_VOICE, else the first of these that is installed.
 # OSIRIS_CHAT_MODEL is the console's Architect (intent -> spec), not the voice: it is
@@ -1066,6 +1079,7 @@ class Osiris:
 
         sent_user = None
         incomplete = ""
+        looped = False
         force_core = getattr(self, "force_core_voice", None)
         use_core_voice = bool(force_core) if force_core is not None else (os.environ.get("OSIRIS_CORE_VOICE", "1") != "0")
         if gate["open"] and self.core is not None and use_core_voice:
@@ -1113,6 +1127,9 @@ class Osiris:
                                 first_word = time.time() - waiting.started
                             reply += piece
                             self.out(piece)
+                            if repeating(reply):
+                                looped = True
+                                break
                     except KeyboardInterrupt:
                         waiting.stop()
                         interrupted = True
@@ -1131,7 +1148,9 @@ class Osiris:
             if first_word is not None:
                 self._note_first_word(model, first_word)
             done = getattr(self.mentor, "last_done", None) or {}
-            if not interrupted and done.get("done_reason") == "length":
+            if not interrupted and looped:
+                incomplete = "stopped: the reply began repeating itself"
+            elif not interrupted and done.get("done_reason") == "length":
                 incomplete = f"cut off at the {MENTOR_MAX_TOKENS}-token reply limit"
             elif not interrupted and reply.count("```") % 2:
                 incomplete = "ends inside an unclosed code block"
