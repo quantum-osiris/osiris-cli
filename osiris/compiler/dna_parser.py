@@ -220,9 +220,14 @@ class Lexer:
 class Parser:
     """DNA-Lang recursive descent parser."""
 
-    def __init__(self, tokens: List[Token]):
+    # Strict mode (opt-in): the organism body is parsed and anything this parser cannot honor is
+    # an error instead of being skipped. Legacy (default) mode is unchanged: bodies are skipped.
+    MAX_STRICT_QUBIT = 63
+
+    def __init__(self, tokens: List[Token], strict: bool = False):
         self.tokens = [t for t in tokens if t.type != TokenType.NEWLINE]
         self.pos = 0
+        self.strict = strict
 
     def current(self) -> Token:
         return self.tokens[self.pos] if self.pos < len(self.tokens) else self.tokens[-1]
@@ -240,14 +245,21 @@ class Parser:
             t = self.current()
             if t.type == TokenType.KEYWORD and t.value == "organism":
                 nodes.append(self._parse_organism())
+            elif self.strict:
+                raise SyntaxError(f"strict: unexpected {t.value!r} outside an organism at {t.line}:{t.column}")
             else:
                 self.pos += 1
+        if self.strict and len(nodes) != 1:
+            raise SyntaxError(f"strict: expected exactly one organism declaration, found {len(nodes)}")
         return nodes
 
     def _parse_organism(self) -> OrganismNode:
         t = self.expect(TokenType.KEYWORD)
         name_t = self.expect(TokenType.IDENTIFIER)
         node = OrganismNode(node_type="organism", line=t.line, column=t.column, name=name_t.value)
+        if self.strict:
+            self._parse_strict_body(node)
+            return node
         if self.current().type == TokenType.LBRACE:
             self.pos += 1
             while self.current().type != TokenType.RBRACE and self.current().type != TokenType.EOF:
@@ -255,3 +267,47 @@ class Parser:
             if self.current().type == TokenType.RBRACE:
                 self.pos += 1
         return node
+
+    def _parse_strict_body(self, node: OrganismNode) -> None:
+        """organism NAME { quantum_state { (OP INT (, INT)* ;)+ } }  -- nothing else."""
+        def need(tt: TokenType, what: str) -> Token:
+            t = self.current()
+            if t.type != tt:
+                raise SyntaxError(f"strict: expected {what}, got {t.value!r} at {t.line}:{t.column}")
+            self.pos += 1
+            return t
+
+        need(TokenType.LBRACE, "'{' after organism name")
+        head = self.current()
+        if not (head.type == TokenType.KEYWORD and head.value == "quantum_state"):
+            raise SyntaxError(f"strict: organism body must be a quantum_state block, got "
+                              f"{head.value!r} at {head.line}:{head.column}")
+        self.pos += 1
+        need(TokenType.LBRACE, "'{' after quantum_state")
+        qs = QuantumStateNode(node_type="quantum_state", line=head.line, column=head.column)
+        while self.current().type != TokenType.RBRACE:
+            op = self.current()
+            if op.type not in (TokenType.IDENTIFIER, TokenType.QUANTUM_OP, TokenType.KEYWORD) \
+                    or not isinstance(op.value, str) or not op.value.replace("_", "a").isalnum():
+                raise SyntaxError(f"strict: expected an operation name, got {op.value!r} at {op.line}:{op.column}")
+            self.pos += 1
+            qubits: List[int] = []
+            while True:
+                n = need(TokenType.NUMBER, "a qubit index")
+                v = n.value
+                if isinstance(v, bool) or not isinstance(v, (int, float)) or v != int(v) \
+                        or not 0 <= int(v) <= self.MAX_STRICT_QUBIT:
+                    raise SyntaxError(f"strict: bad qubit index {v!r} at {n.line}:{n.column}")
+                qubits.append(int(v))
+                if self.current().type == TokenType.COMMA:
+                    self.pos += 1
+                    continue
+                break
+            need(TokenType.SEMICOLON, "';'")
+            qs.operations.append(QuantumOpNode(node_type="quantum_op", line=op.line, column=op.column,
+                                               operation=op.value, qubits=qubits))
+        self.pos += 1  # closing brace of quantum_state
+        if not qs.operations:
+            raise SyntaxError("strict: quantum_state block is empty")
+        need(TokenType.RBRACE, "'}' closing the organism")
+        node.quantum_state = qs

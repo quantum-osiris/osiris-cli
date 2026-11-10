@@ -176,6 +176,11 @@ ORGANISM_ARCHES = {
     "crsm": dict(torsion_lock=True, phase_conjugate=True, fractal_embedding=False, positional="phi"),
     "standard": dict(torsion_lock=False, phase_conjugate=False, fractal_embedding=False,
                      pilot_wave=False, golden_scale=False, positional="standard", ff_dim=384),
+    "standard_scale512": dict(torsion_lock=False, phase_conjugate=False, fractal_embedding=False,
+                              pilot_wave=False, golden_scale=False, positional="standard",
+                              dim=256, n_layers=6, n_heads=4, ff_dim=768, max_seq_len=512),
+    "crsm_scale512": dict(torsion_lock=True, phase_conjugate=True, fractal_embedding=False, positional="phi",
+                          dim=256, n_layers=6, n_heads=4, ff_dim=512, max_seq_len=512),
 }
 ORGANISM_MAX_BACKUPS = 5
 # Every ORGANISM_MILESTONE_EVERY steps the live core keeps one checkpoint for good (organism.milestone<N>.npz:
@@ -3156,7 +3161,7 @@ def _bench_preflight(command, argv, label, ui):
                                     + ("" if argv[3] in ("gemini", "gateway") else ", or use cloud quota"))]
     inner = osiris_ui.Canvas(ui.mode, ui.cols - 4)
     print("\n" + ui.panel("MENTOR ROUND · PREFLIGHT", inner.facts(rows).split("\n") + [
-        "", ui.dim("Plug in the charger: the phone works hard for the whole round.")]))
+        *[ui.dim(t) if t else t for t in _charger_note()]]))
     _pending_suggestions.clear()
     _pending_suggestions.update({"1": command.strip() + " now", "0": "/home"})
     print(ui.actions("START?", [("1", "Start the round"), ("0", "Not now")]) + "\n")
@@ -3585,7 +3590,10 @@ def _organism_build(arch=None):
     from osiris.nclm import AdamW, LRSchedule, SovereignConfig, SovereignTransformerV2
     arch = arch or _organism_arch()
     flags = dict(ORGANISM_ARCHES[arch])
-    geometry = dict(ORGANISM_GEOMETRY, ff_dim=flags.pop("ff_dim", ORGANISM_GEOMETRY["ff_dim"]))
+    geometry = dict(ORGANISM_GEOMETRY)
+    for k in ("dim", "n_layers", "n_heads", "ff_dim", "max_seq_len"):
+        if k in flags:
+            geometry[k] = flags.pop(k)
     cfg = SovereignConfig(vocab_size=256, dropout=0.0, **flags, **geometry)
     model = SovereignTransformerV2(cfg)
     model.organism_arch = arch
@@ -5366,6 +5374,16 @@ def _is_unknown_command(text: str) -> bool:
     if not stripped.startswith("/") or "\n" in stripped:
         return False
     return stripped.split()[0].lower() not in IMMEDIATE_COMMANDS
+
+
+def _charger_note() -> list:
+    """The charger reminder, only on the phone (Node Alpha); a desktop has no battery to drain."""
+    try:
+        from osiris.substrate import node_type
+        on_phone = node_type() == "NODE_ALPHA_MOBILE"
+    except Exception:  # noqa: BLE001 - no substrate module: say nothing rather than guess
+        on_phone = False
+    return ["", "Plug in the charger: the phone works hard for the whole round."] if on_phone else []
 
 
 def _unknown_command(text: str):

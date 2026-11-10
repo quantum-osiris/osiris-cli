@@ -86,15 +86,17 @@ REGISTER: Tuple[Claim, ...] = (
           testable="A pre-registered τ-sweep with controlled idle delays (K₈), as written in "
                    "10.5281/zenodo.22863245 -- not yet run."),
     Claim("K8_REVIVAL", "Bell-fidelity revival near τ ≈ 47 µs (the K₈ causality discriminator)", "REFUTED",
-          "Tested on hardware in February 2026: the 'revival' is T1 amplitude damping (R² = 0.976), "
-          "not a coherent oscillation.",
-          (SELFTEST,), (r"\bK\s*_?\s*8\b|K₈", r"(fidelity|coherence) revival", r"causality discriminator"),
-          testable="The K₈ sweep as pre-registered (10.5281/zenodo.22863245), with a 5σ-powered null."),
+          "Tested on hardware in February and October 2026: the 'revival' is T1 amplitude damping (R² = 0.971–0.976), "
+          "not a coherent oscillation. Full 3-basis tomography (ZZ, XX, YY) on ibm_fez (job dbiobimne4hc73bf2am0) "
+          "proved F_Bell = 0.3438 < 0.50 and transverse coherence C_perp = +0.0029 ± 0.0221 at 46 µs.",
+          (SELFTEST, ("doi", "10.5281/zenodo.23832283", "Oct 31, 2026 59-circuit 3-basis tomography, ibm_fez (job dbiobimne4hc73bf2am0): F_Bell(46us) = 0.3438, C_perp = +0.0029, theta_lock p = 0.3537")), (r"\bK\s*_?\s*8\b|K₈", r"(fidelity|coherence) revival", r"causality discriminator"),
+          testable="Completed on ibm_fez (Job dbiobimne4hc73bf2am0, Oct 2026): 3-basis tomography proved F_Bell = 0.3438, C_perp = 0.0029, definitively refuting revival (10.5281/zenodo.23832283)."),
     Claim("THETA_LOCK", "θ_lock = 51.843° is a resonance or lock angle", "REFUTED",
-          "No resonance on hardware: z = -1.0 at 51.843° (Feb 2026 self-test). The RZ 'correction' built "
-          "on it moved GHZ fidelity by +0.002 ± 0.006 against sign-flipped and random-angle controls "
-          "(N = 12). The angle is arctan(14/11), the slope of the Great Pyramid of Khufu (computed below).",
-          (SELFTEST, ("doi", "10.5281/zenodo.22855102", "controlled RZ-correction test, ibm_fez (job dannuhgpqrnc73991ntg)"), DNALANG),
+          "No resonance on hardware: z = -1.0 at 51.843° (Feb 2026 self-test). Re-tested on ibm_fez (job dbiobimne4hc73bf2am0, Oct 31, 2026; 10.5281/zenodo.23832283): "
+          "theta_lock vs 8 control angles yielded Delta C_perp = +0.0217 ± 0.0234 (z = +0.93, p = 0.3537, null); "
+          "chirality +51.843° vs -51.843° yielded z = +0.34, p = 0.7309. The angle is arctan(14/11), the slope of the Great Pyramid of Khufu (computed below).",
+          (SELFTEST, ("doi", "10.5281/zenodo.22855102", "controlled RZ-correction test, ibm_fez (job dannuhgpqrnc73991ntg)"),
+           ("doi", "10.5281/zenodo.23832283", "Oct 31, 2026 59-circuit 3-basis tomography, ibm_fez (job dbiobimne4hc73bf2am0): theta_lock vs 8 controls p = 0.3537, chirality p = 0.7309"), DNALANG),
           (r"51\.84", r"θ[\s_-]*lock|theta[\s_-]*lock", r"torsion[\s-]*lock", r"lock angle"),
           checks=(("arctan_degrees", (14, 11)),)),
     Claim("ERROR_SUPPRESSION_1E6", "10⁶× error suppression and 0.99999 logical fidelity from a 40-qubit "
@@ -114,6 +116,16 @@ REGISTER: Tuple[Claim, ...] = (
               ("doi", "10.5281/zenodo.23213023", "v4.2.0 erratum + re-analysis: nulls give the same 19.93 bits; scripts and results")),
           (r"negentrop\w*", r"136[\s-]*bit", r"\b19\.93", r"entropy gap"),
           checks=(("entropy_ceiling", (1e6, 19.9316)),)),
+    Claim("ENTROPY_SUPPRESSION_Z29", "Shannon entropy suppression at z = 29.83 (anomalies_week4.csv)", "ARTIFACT",
+          "anomalies_week4.csv is demo output, not a measurement. Its 20 rows are named demo_0 to demo_19 and hold "
+          "four distinct entropies. Every z is (5 - H) / 0.1 and every p is 0.0100, because AnomalyDetector takes "
+          "the 5-qubit maximum (5 bits) as the baseline by default, fixes its standard deviation at 0.1 and sets "
+          "permutation_p_value to 0.01; Phase1Executor scores synthetic counts when a circuit has none.",
+          (("file", "osiris-cli/anomalies_week4.csv", "the 20 demo rows"),
+           ("file", "osiris-cli/quantum_discovery/phase1_analysis/anomaly_detector.py", "baseline, its 0.1 spread and p = 0.01, fixed in code"),
+           ("file", "osiris-cli/quantum_discovery/phase1_analysis/phase1_executor.py", "_generate_synthetic_counts, used when a circuit has no counts")),
+          (r"\bz\s*[=≈:]\s*29\.83", r"entropy[\s_-]*suppression", r"anomalies_week4"),
+          testable="Recompute entropy, baseline spread and p from hardware counts that carry job IDs."),
     Claim("PHI_THRESHOLD", "Φ = 0.7734 consciousness threshold and phase transition (51× enhancement, d = 1.65)",
           "ARTIFACT",
           "The corpus mixes 2- to 127-qubit circuits, all scored with the Bell-state formula P(00)+P(11); "
@@ -278,6 +290,23 @@ REGISTER: Tuple[Claim, ...] = (
                r"\bfips[- ](signed|verified|compliant|certified)")),
 
     # ── hardware results that hold up ────────────────────────────────────────
+    Claim("HERON_R2_STAG_XY8", "Staggered XY8 decoupling validated across 156-qubit IBM Heron r2 ibm_marrakesh (663,552 shots, 648 circuits)",
+          "SUPPORTED",
+          "Physical QPU campaign (4 jobs: dblrpnt8ft8s738tlgcg, dblsnal8mdtc73d6pkmg, dblt471kbkrc73coc33g, dbltkdd8ft8s738toef0): "
+          "Decisive protection against environmental decoherence across all seven physical heavy-hex edges (Δ⟨XX⟩ up to +0.4360 at 4.0 µs). "
+          "Statistically significant gain on benchmark edge (14, 15) over synchronous XY8: Δ⟨XX⟩ = +0.0186 (95% bootstrap CI [+0.0107, +0.0264], "
+          "p < 0.001). Historical job dblr6lhkbkrc73co9h30 transpiler pulse-collapse artifact resolved with 4.0 ns dt delays.",
+          (("doi", "10.5281/zenodo.23967473", "Heron r2 physical validation"),),
+          (r"heron|marrakesh", r"stag\w*|stagger\w*", r"xy8|dynamical decoupling|dd")),
+    Claim("AMOC_PROVENANCE", "Prior art and bitwise provenance for AMOC ocean observing telemetry, payload hash-locking, and parametric settlement chains",
+          "SUPPORTED",
+          "Forensic Bitwise & Structural Audit Supplement (Case #564883754, Zenodo DOI 10.5281/zenodo.23968474) and Formal Notice of IP "
+          "Encumbrance and Litigation Hold (Zenodo DOI 10.5281/zenodo.23968569): Confirms strict prior art and ledgered provenance against "
+          "derivative commercializations (e.g. X5 Convergence / QE Channel) dating from baseline deposition 10.5281/zenodo.19482796.",
+          (("doi", "10.5281/zenodo.23968474", "AMOC forensic audit supplement"),
+           ("doi", "10.5281/zenodo.23968569", "IP encumbrance notice"),
+           ("doi", "10.5281/zenodo.19482796", "prior art baseline")),
+          (r"amoc|sverdrup", r"hash lock|payload fingerprint|parametric|settlement")),
     Claim("STAGGERED_DD", "Staggered XY4 decoupling (odd sublattice offset half a slot) preserves |+⟩ on ibm_fez "
           "chains far better than simultaneous XY4 or CPMG", "SUPPORTED",
           "8-qubit chain: 0.946 / 0.888 / 0.795 at 8 / 16 / 32 µs, against about 0.59 (simultaneous) and "
@@ -451,6 +480,23 @@ REGISTER: Tuple[Claim, ...] = (
           (CARD_V2_NOTE,),
           (r"\bpqc\b", r"post[- ]quantum", r"fips[- ]20[3456]", r"ml[- ]dsa", r"ml[- ]kem"),
           testable="Verified against FIPS 204 test vectors with hybrid EVM signature verifier."),
+    Claim("RQC_APPLICATIONS", "RQC application gains: -8.3% portfolio variance, +65% evaluations reduction (VQE), "
+          "+43.5% topological-order fidelity, +3900% high-Tc screening success rate", "NO_EVIDENCE",
+          "APPLICATION_RESULTS.txt reports these gains and names ibm_brisbane and ibm_torino, but gives no job IDs, "
+          "data or scripts: nothing on record supports the numbers.",
+          (("file", "osiris-cli/APPLICATION_RESULTS.txt", "the reported gains, with no runs behind them"),
+           ("file", "osiris-cli/RQC_RESEARCH_METHODOLOGY.md", "the proposed method")),
+          (r"8\.3\s*%.*portfolio|portfolio[\s_-]*variance.*8\.3", r"\b43\.5\s*%", r"\b3900(\.0)?\s*%",
+           r"vqe.*aspirin", r"application[\s_-]*results"),
+          testable="Pre-registered runs that record job IDs, data and a baseline for each gain."),
+    Claim("RQC_MANIFEST_CITATION", "RQC results published in Nature Quantum Information (2026) and archived on Zenodo",
+          "NO_EVIDENCE",
+          "RESEARCH_ARCHIVE_MANIFEST.txt cites a Nature Quantum Information (2026) article and the DOIs "
+          "10.5281/zenodo.9729504 and 10.5281/zenodo.9340128 with the URL 'https://zenodo.org/record/[id]'. "
+          "Zenodo's API returns 404 for both records (checked 2026-10-29), and nothing on record shows the article.",
+          (("file", "osiris-cli/RESEARCH_ARCHIVE_MANIFEST.txt", "the draft manifest and its placeholder URLs"),),
+          (r"zenodo\.org/record/\[id\]", r"zenodo\.9729504", r"zenodo\.9340128", r"research_archive_manifest"),
+          testable="A published article and Zenodo records that resolve."),
 )
 
 _COMPILED = [(c, [re.compile(p, re.I) for p in c.patterns]) for c in REGISTER]

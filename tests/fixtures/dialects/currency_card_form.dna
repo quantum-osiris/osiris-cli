@@ -1,0 +1,7 @@
+organism CurrencyCardV2 {
+    quantum_state {
+        H 0
+        CNOT 0 1
+    }
+    locus 0x01: bind_enclave(account="0xabc");
+}

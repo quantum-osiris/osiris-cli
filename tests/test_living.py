@@ -554,3 +554,33 @@ def test_the_voice_is_osiris_voice_not_the_architects_chat_model(monkeypatch):
     assert m.model() == "qwen2.5:3b"
     m.set_model("qwen2.5:7b")                                            # /mentor wins
     assert m.model() == "qwen2.5:7b"
+
+
+class LoopingMentor(ScriptedMentor):
+    """Repeats one block forever, like qwen2.5:1.5b on 2026-11-09."""
+
+    def stream(self, messages, model=None):
+        self.calls.append(messages)
+        self.sent = 0
+        block = ("### Key Components\n1. **Quantum Computing Engine**: a block the voice repeats, "
+                 "word for word, until the reply limit stops it. ") * 3
+        while self.sent < 200:
+            self.sent += 1
+            yield block
+
+
+def test_repeating_spots_a_loop_and_not_ordinary_text():
+    assert not living.repeating("a short reply")
+    prose = " ".join(f"sentence {i} says something new." for i in range(200))
+    assert not living.repeating(prose)
+    assert living.repeating(("the same paragraph again and again. " * 12) * 4)
+
+
+def test_a_looping_voice_is_stopped_by_code_and_not_learned(tmp_path):
+    mentor = LoopingMentor()
+    o, out = make(tmp_path, mentor=mentor)
+    o.converse("tell me about the code")
+    said = "".join(out)
+    assert mentor.sent < 10                      # stopped long before 200 blocks
+    assert "stopped: the reply began repeating itself" in said
+    assert "not learned: incomplete reply" in said

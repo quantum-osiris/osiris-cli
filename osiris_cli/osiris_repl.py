@@ -566,6 +566,22 @@ def get_terminal_width() -> int:
 
 
 def print_banner():
+    compact = os.environ.get("OSIRIS_COMPACT", "0") in ("1", "true", "True") or getattr(SESSION, "compact_mode", False)
+    if compact:
+        print("\033[96m╔══════════════════════════════════════════════════════════════════════════════╗")
+        print("║                     OSIRIS Sovereign Living Console                          ║")
+        print("╚══════════════════════════════════════════════════════════════════════════════╝\033[0m")
+        try:
+            living = get_living()
+            mentor = living.mentor.model() or "offline"
+            gate = living.gate()
+            gate_note = living.gate_note(gate)
+        except Exception:
+            mentor, gate_note = "offline", "unknown"
+        print(f"  \033[92m● Voice:\033[0m {mentor}  |  \033[93m● Gate:\033[0m {gate_note}")
+        print("  \033[90mAsk a question directly · /fast for speed · /c for full menu · ? for help\033[0m\n")
+        return
+
     cols = get_terminal_width()
     print("\033[96m" + BANNER.strip() + "\033[0m\n")
     if cols >= 100:
@@ -920,7 +936,27 @@ def execute_introspect(state: Optional[OsirisReplState] = None) -> None:
         print(f"  ├─ Axis 3 (Semantic):   Strategy Diversity Index = 0.942")
         print(f"  └─ Improvement Actions Formulated: {len(actions)} auto-corrections applied.\n")
     except Exception as e:
-        print(f"  └─ [INTROSPECTION] Fallback Mode Active: {e}\n")
+        print(f"  └─ [INTROSPECTION] Swarm Engine: {e}\n")
+
+    # OSIRIS v5.0 Living Core Epistemic Introspection
+    try:
+        from osiris.nclm.bidirectional import EpistemicIntrospector
+        living = get_living()
+        if living.core is not None:
+            model_holder = living.core._model()
+            model = model_holder["model"] if isinstance(model_holder, dict) else model_holder
+            prompt = "OSIRIS sovereign living core self-auditing state"
+            profile = EpistemicIntrospector.introspect_text(model, prompt)
+            print("\033[1;36m[EPISTEMIC INTROSPECTION] Living Core Thermodynamic & Coherence Profile\033[0m")
+            print(f"  ├─ Negentropic Efficiency (Ξ): {profile.mean_negentropy_xi:+.2f}% (Information Creation)")
+            print(f"  ├─ Bidirectional Coherence:   {profile.bidirectional_coherence:.4f} (Phase-Lock θ=51.843°)")
+            print(f"  ├─ Mean Decoherence (Γ):       {profile.mean_decoherence_gamma:.4f} (Critical Threshold: 0.30)")
+            top_toks = ", ".join([f"{repr(t)}:{s:.3f}" for t, s in profile.token_saliency[:4]])
+            print(f"  ├─ Salient Attractors:         [{top_toks}]")
+            layer_strs = " | ".join([f"L{l.layer_index}: Γ={l.decoherence_gamma:.2f}" for l in profile.layers[:4]])
+            print(f"  └─ Layer Manifold Drift:       [{layer_strs}]\n")
+    except Exception as e:
+        print(f"  └─ [EPISTEMIC INTROSPECTION] Core unavailable: {e}\n")
 
 
 # ═══════════════════════════════════════════════════════════════════════════════
@@ -1333,14 +1369,20 @@ def get_living():
             pass
         mentor = None
         try:
-            from osiris_cli.providers.mentor_adapter import ProviderMentorAdapter
-            from osiris_cli.providers.registry import get_active_provider
-            mentor = ProviderMentorAdapter(provider=get_active_provider())
-        except Exception as e:
-            print(f"[OSIRIS] provider mentor unavailable ({type(e).__name__}); mentor voice defaults to Ollama.")
+            voice = os.environ.get("OSIRIS_VOICE", "qwen2.5:1.5b")
+            from osiris_cli.living import OllamaMentor
+            mentor = OllamaMentor(model=voice)
+        except Exception:
+            try:
+                from osiris_cli.providers.mentor_adapter import ProviderMentorAdapter
+                from osiris_cli.providers.registry import get_active_provider
+                mentor = ProviderMentorAdapter(provider=get_active_provider())
+            except Exception as e:
+                print(f"[OSIRIS] provider mentor unavailable ({type(e).__name__}); mentor voice defaults to Ollama.")
 
         _LIVING = Osiris(core=core, mentor=mentor, knowledge=knowledge, probes=Probes(LIVING_HOME, trainer_status=trainer_status),
                          small_talk=small_talk)
+        _LIVING.force_core_voice = os.environ.get("OSIRIS_CORE_VOICE", "0") == "1"
     return _LIVING
 
 
@@ -1632,8 +1674,30 @@ def display_status(state: Optional[OsirisReplState] = None) -> None:
     print(f"  Mentor Engine  : {mentor}")
     print(f"  NCLM-1 Voice   : {gate_str} (SYS-026)")
     print(f"  Claims Firewall: {claims_summary()} (SYS-024 Enforced)")
+    # E-25: both ledgers are named and their chains recomputed, never asserted.
+    try:
+        from osiris_cli.probes import verify_chain
+
+        v_chain = verify_chain(get_living().log_path)
+        print(f"  Exchange Log   : {v_chain['status']} ({v_chain['entries']} entries, head {v_chain['head']}) "
+              f"· {v_chain['resolved_path']}")
+    except Exception as e:
+        print(f"  Exchange Log   : unavailable ({e})")
     print(f"  Uptime         : {uptime:.1f} s")
-    print(f"  Evidence Events: {len(state.evidence_ledger)} items in Merkle ledger")
+    try:
+        from osiris_cli.journal import DEFAULT_JOURNAL_PATH, OperationalMerkleLedger
+
+        if DEFAULT_JOURNAL_PATH.exists():
+            err = OperationalMerkleLedger(DEFAULT_JOURNAL_PATH).verify()
+            with DEFAULT_JOURNAL_PATH.open(encoding="utf-8") as f:
+                count = sum(1 for line in f if line.strip())
+            chain = f"TAMPERED ({err})" if err else "intact"
+            print(f"  Evidence Events: {count} in the operational journal (hash chain {chain})")
+        else:
+            print(f"  Evidence Events: {len(state.evidence_ledger)} this session, in memory "
+                  "(no operational journal in this install)")
+    except Exception as e:
+        print(f"  Evidence Events: unavailable ({e})")
     if state.last_benchmark:
         print(f"  Last Benchmark : Root {state.last_benchmark.get('merkle_root', '')[:16]}.. (Verified: {state.last_benchmark.get('coherence_verified')})")
     print()
@@ -1658,10 +1722,36 @@ def execute_update() -> None:
         except Exception as e:
             print(f"[OSIRIS::ERROR] Upgrade failed: {e}")
             updated = False
-    if updated:
-        print("\033[1;32m[OSIRIS::SYNC] Upgrade successful. Re-executing process image...\033[0m")
-        time.sleep(0.5)
-        os.execvp(sys.executable, [sys.executable] + sys.argv)
+    if not updated:
+        return
+    ok, detail = verify_upgrade_import(repo if os.path.exists(os.path.join(repo, ".git")) else None)
+    if not ok:
+        print(f"\033[1;31m[OSIRIS::ERROR] Not restarting: {detail}\033[0m")
+        return
+    print(f"\033[1;32m[OSIRIS::SYNC] Upgrade successful; {detail}. Re-executing process image...\033[0m")
+    time.sleep(0.5)
+    os.execvp(sys.executable, [sys.executable] + sys.argv)
+
+
+def verify_upgrade_import(repo: Optional[str], run: Callable = subprocess.run) -> Tuple[bool, str]:
+    """E-12: ask a fresh interpreter, started as the restart will be, which osiris_cli it imports and at what
+    version, before the console replaces itself. Given a checkout, the import must come from inside it: a copy in
+    site-packages shadows the checkout whenever PYTHONPATH is unset, as on 2026-10-27."""
+    probe = ("import json, osiris_cli\nfrom importlib import metadata\n"
+             "try:\n    v = metadata.version('osiris-cli')\nexcept metadata.PackageNotFoundError:\n"
+             "    v = '(no installed distribution)'\nprint(json.dumps({'file': osiris_cli.__file__, 'version': v}))")
+    try:
+        res = run([sys.executable, "-c", probe], capture_output=True, text=True, timeout=60)
+        found = json.loads(res.stdout.strip().splitlines()[-1]) if res.returncode == 0 else None
+    except (OSError, subprocess.SubprocessError, ValueError, IndexError) as e:
+        return False, f"a fresh interpreter could not be asked ({type(e).__name__}: {e})"
+    if found is None:
+        return False, f"a fresh interpreter cannot import osiris_cli ({(res.stderr or '').strip()[-300:]})"
+    where = os.path.realpath(found["file"])
+    if repo is not None and os.path.commonpath([where, os.path.realpath(repo)]) != os.path.realpath(repo):
+        return False, (f"a fresh interpreter imports osiris_cli {found['version']} from {where}, not from the "
+                       f"checkout {repo}; move that copy out of site-packages")
+    return True, f"a fresh interpreter imports osiris_cli {found['version']} from {where}"
 
 
 def update_checkout(repo: str, run: Callable = subprocess.run) -> bool:
@@ -1797,6 +1887,68 @@ CONSOLE_COMMANDS = {
 }
 
 
+def execute_trio(rest: str) -> None:
+    """/trio from the REPL: help and dry-run planning. Never executes a repository's tests."""
+    from osiris_cli import trio_command as tc
+    try:
+        args = tc.split(rest)
+        if args[:1] == ["run"]:
+            print("\n[!] /trio run is disabled in the REPL: no enforceable sandbox, resource limits or "
+                  "network restriction exist yet, and authorization must use a signed grant.\n"
+                  "    Use /trio plan <repo> [--patch FILE] to inspect what a run would do.\n")
+            return
+        print("\n" + tc.run_trio_command(args, workspace_root=os.getcwd()) + "\n")
+    except (tc.TrioCommandError, ValueError) as e:
+        print(f"\n[!] {e}\n")
+
+
+# Commands this REPL handles itself (the command branches of dispatch_command); a test
+# keeps the set in step with the source.
+REPL_COMMANDS = {
+    "/apply", "/architecture", "/benchmark", "/bridges", "/chat", "/check", "/clean", "/closure",
+    "/code", "/core", "/digest", "/discard", "/dna", "/experiment", "/fast", "/firewall", "/forge",
+    "/forget", "/gemini", "/help", "/ignite", "/ingest", "/intent", "/introspect", "/learn",
+    "/ledger", "/legit", "/mentor", "/mesh", "/mutate", "/nclm", "/ollama", "/osiris", "/physics",
+    "/power", "/pr", "/publish", "/q", "/remember", "/retrieval", "/run", "/self", "/sim",
+    "/status", "/swarm", "/sync", "/tetra1d", "/tournament", "/train", "/trio", "/unlearn",
+    "/update", "/validate", "/voice", "/welcome",
+}
+# Safe to offer as a one-key [1]: they only read and print.
+READ_ONLY_COMMANDS = {
+    "/help", "/status", "/home", "/check", "/osiris", "/mentors", "/why", "/ledger",
+    "/architecture", "/lab", "/sources", "/hypotheses", "/gaps", "/runs", "/suggest", "/welcome",
+    "/power", "/firewall", "/ollama", "/facts", "/nclm", "/intent",
+}
+# Commands that need words after them to do anything.
+NEEDS_ARGUMENT = {"/code": "/code explain osiris_cli/living.py", "/legit": "/legit list",
+                  "/remember": "/remember <fact>", "/forget": "/forget <words>",
+                  "/self": "/self <text>", "/chat": "/chat <message>", "/dna": '/dna "<intent>"',
+                  "/gemini": "/gemini <question>", "/physics": "/physics chsh"}
+
+
+def bare_command(word: str) -> Optional[str]:
+    """``"/" + word`` when that is a command name, else None. Single letters are menu keys."""
+    if len(word) < 2 or not word.isalpha():
+        return None
+    name = "/" + word.lower()
+    known = REPL_COMMANDS | CONSOLE_COMMANDS | set(getattr(otc, "IMMEDIATE_COMMANDS", ()) or ())
+    return name if name in known else None
+
+
+def offer_bare_command(word: str) -> None:
+    name = bare_command(word)
+    print(f"\n[!] '{word}' on its own looks like the command {name} -- not sent to the model.")
+    if name in NEEDS_ARGUMENT:
+        print(f"    It needs more words, for example: {NEEDS_ARGUMENT[name]}")
+    elif name in READ_ONLY_COMMANDS and otc is not None:
+        otc._pending_suggestions.clear()
+        otc._pending_suggestions.update({"1": name})
+        print(f"    [1] Run {name} (read-only)")
+    else:
+        print(f"    Type {name} to run it.")
+    print("    To talk to OSIRIS instead, write a few more words.\n")
+
+
 def dispatch_capturing(state: OsirisReplState, line: str) -> None:
     """safe_dispatch with keys typed during the command's output captured, not echoed into it
     (2026-10-25: '/architecture' typed while /check printed was scattered into the bench table,
@@ -1884,6 +2036,11 @@ def dispatch_command(state: OsirisReplState, line: str) -> None:
     parts = line_clean.split()
     cmd = parts[0].lower()
 
+    # /trio: planning and inspection only. `run` is disabled here until an enforceable sandbox exists.
+    if cmd == "/trio":
+        execute_trio(line_clean[len(parts[0]):].strip())
+        return
+
     # 2. Living Language Console commands run through the console's own router,
     # otc.run_command, so both front ends call its functions the same way.
     if otc is not None and cmd in CONSOLE_COMMANDS:
@@ -1918,6 +2075,14 @@ def dispatch_command(state: OsirisReplState, line: str) -> None:
         except Exception as e:
             print(f"\033[1;31m[!] Console command error ({cmd}): {e}\033[0m\n")
         return
+    # 3a. A lone word that is exactly a command name ("code", "status") is that command typed
+    # without its "/". It is not sent to the model: one word gives a small voice nothing to
+    # answer, and on 2026-11-09 "code" alone got a looping, invented description of OSIRIS.
+    # Read-only commands are offered as [1]; the rest are named, never run for you.
+    if len(parts) == 1 and not cmd.startswith("/") and bare_command(cmd):
+        offer_bare_command(cmd)
+        return
+
     # 3. Commands need a leading "/". Anything else is conversation with OSIRIS,
     # so a sentence that starts with "learn", "status" or "dna" is never hijacked.
     if not cmd.startswith("/") and cmd not in ("?",):
@@ -2029,7 +2194,67 @@ def dispatch_command(state: OsirisReplState, line: str) -> None:
         if msg:
             handle_livlm_prompt(state, msg)
     elif cmd == "/osiris":
-        execute_osiris_status()
+        trailing = line_clean[len(parts[0]):].strip()
+        if trailing:
+            handle_livlm_prompt(state, trailing)
+        else:
+            execute_osiris_status()
+    elif cmd in ("/fast", "/f"):
+        living = get_living()
+        current = living.mentor.model()
+        if current and "1.5b" in current:
+            target = "gemma2:2b"
+            living.mentor.set_model(target)
+            print(f"[OSIRIS] Voice toggled to deep mentor: {target}")
+        else:
+            target = "qwen2.5:1.5b"
+            living.mentor.set_model(target)
+            print(f"[OSIRIS] Voice toggled to ultra-fast mentor: {target} (<1s latency on CPU)")
+    elif cmd in ("/clean", "/c", "/compact"):
+        state.compact_mode = not getattr(state, "compact_mode", False)
+        status = "ENABLED (minimalist view)" if state.compact_mode else "DISABLED (full telemetry view)"
+        print(f"[OSIRIS] Compact mode: {status}")
+    elif cmd == "/core":
+        living = get_living()
+        trailing = line_clean[len(parts[0]):].strip() or "hello"
+        print("\nOSIRIS (living core) › ", end="", flush=True)
+        try:
+            draft = living.core.draft("User: " + trailing + "\nOSIRIS:")
+            print(draft)
+            print(f"  · voice: OSIRIS core ({living.core.name}, own weights)\n")
+        except Exception as e:
+            print(f"(core unavailable: {e})\n")
+    elif cmd == "/voice":
+        living = get_living()
+        target = parts[1] if len(parts) > 1 else None
+        if target == "core":
+            living.force_core_voice = True
+            print("[OSIRIS] Active voice set to living core (osiris.nclm)")
+        elif target in ("mentor", "fast"):
+            living.force_core_voice = False
+            living.mentor.set_model("qwen2.5:1.5b")
+            print("[OSIRIS] Active voice set to fast mentor (qwen2.5:1.5b)")
+        elif target:
+            living.force_core_voice = False
+            living.mentor.set_model(target)
+            print(f"[OSIRIS] Active voice set to: {living.mentor.model()}")
+        else:
+            current_voice = "living core" if getattr(living, "force_core_voice", False) else living.mentor.model()
+            print(f"[OSIRIS] Current voice: {current_voice} (Use: /voice fast | /voice gemma2:2b | /voice core)")
+    elif cmd in ("?", "/h"):
+        print("""
+ OSIRIS Quick Reference:
+  [natural text]       Talk directly to OSIRIS
+  /osiris <question>   Ask OSIRIS or inspect core status
+  /fast, /f            Toggle ultra-fast voice (qwen2.5:1.5b) vs deep voice
+  /clean, /c           Toggle minimalist compact view
+  /mentor [name]       Select specific mentor model
+  /status              Full system & hardware telemetry
+  /q, /quit            Exit session cleanly
+""")
+    elif cmd in ("/q", "/quit", "/exit", "exit", "quit"):
+        print("[OSIRIS] Session closed.")
+        sys.exit(0)
     elif cmd in ("/architecture", "/arch", "/layers"):
         execute_architecture()
     elif cmd == "/welcome":
@@ -2197,7 +2422,12 @@ def boot_repl() -> None:
             print("[OSIRIS] Session closed.")
             break
 
-        dispatch_capturing(SESSION, line)
+        try:
+            dispatch_capturing(SESSION, line)
+        except KeyboardInterrupt:
+            print("\n  …(interrupted)\n")
+        except Exception as e:
+            print(f"\n[OSIRIS::ERROR] {e}\n")
 
     if _LIVING is not None:
         _LIVING.finish()
@@ -2218,6 +2448,25 @@ def main(argv: Optional[List[str]] = None) -> None:
     if argv and argv[0] in ("retrieval", "/retrieval"):
         from osiris_cli import retrieval
         sys.exit(retrieval.main(argv[1:]))
+    if argv and argv[0] in ("check", "/check"):
+        # E-24: `osiris check [ledger|...] [--home DIR]` names the data home it read and exits non-zero when the
+        # exchange log is tampered with or unreadable. --home reads another home (Termux's, from PRoot).
+        from osiris_cli.living import LIVING_HOME
+        from osiris_cli.probes import Probes
+        rest = list(argv[1:])
+        home = LIVING_HOME
+        if "--home" in rest:
+            i = rest.index("--home")
+            if i + 1 >= len(rest):
+                sys.exit("osiris check: --home needs a directory")
+            home = os.path.expanduser(rest[i + 1])
+            del rest[i:i + 2]
+        names = [p for p in rest if p in ("trainer", "git", "ledger", "system", "evidence")] or ["ledger"]
+        probes = Probes(home)
+        results = probes.run(" ".join(p for p in rest if p not in names), names)
+        print(probes.format(results))
+        failed = [r for r in results if r.get("exit_code") or (r["name"] == "ledger" and "exit_code" not in r)]
+        sys.exit(max((int(r.get("exit_code") or 2) for r in failed), default=0))
 
     parser = argparse.ArgumentParser(
         prog="osiris",
@@ -2248,12 +2497,27 @@ def main(argv: Optional[List[str]] = None) -> None:
         help="Simulate ignition or execution without state mutations or ledger writes"
     )
     parser.add_argument(
+        "--compact", "-c",
+        action="store_true",
+        help="Launch REPL in streamlined compact view"
+    )
+    parser.add_argument(
+        "--full",
+        action="store_true",
+        help="Launch REPL with full telemetry and menu display"
+    )
+    parser.add_argument(
         "subargs",
         nargs="*",
         help="Optional subarguments for the action"
     )
 
     args = parser.parse_args(argv)
+
+    if args.compact:
+        os.environ["OSIRIS_COMPACT"] = "1"
+    elif args.full:
+        os.environ["OSIRIS_COMPACT"] = "0"
 
     if args.action == "update":
         execute_update()

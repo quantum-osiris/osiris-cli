@@ -1,0 +1,6 @@
+organism Agents {
+  gene Researcher {
+    condition: "1#"
+    action: "(emit found)"
+  }
+}

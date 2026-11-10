@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "osiris-cli"
-version = "4.7.0"
+version = "6.0.0"
 description = "OSIRIS: a governed local console for a living language model that learns from every conversation and speaks only after passing a held-out gate"
 readme = "README.md"
 license = {text = "LicenseRef-OSIRIS-Dual-v1.0"}
@@ -86,9 +86,9 @@ osiris = "osiris_cli.osiris_repl:main"
 osiris-nclm = "osiris_nclm_cli:main"
 
 [project.urls]
-Homepage = "https://github.com/osiris-dnalang/osiris-cli"
-Repository = "https://github.com/osiris-dnalang/osiris-cli"
-Issues = "https://github.com/osiris-dnalang/osiris-cli/issues"
+Homepage = "https://github.com/quantum-osiris/osiris-cli"
+Repository = "https://github.com/quantum-osiris/osiris-cli"
+Issues = "https://github.com/quantum-osiris/osiris-cli/issues"
 
 [tool.setuptools]
 py-modules = [
@@ -183,6 +183,7 @@ namespaces = true   # bench_tasks has no __init__.py: a .py there would change o
 [tool.setuptools.package-data]
 # the benchmark task definitions are data the console and osiris_bench read from <site-packages>/bench_tasks
 bench_tasks = ["*/*", "*/*/*"]
+osiris_cli = ["policy/*.json"]
 
 [tool.ruff]
 target-version = "py39"

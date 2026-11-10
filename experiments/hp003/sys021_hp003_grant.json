@@ -1,0 +1,57 @@
+{
+  "grant_id": "GRANT-SYS021-HP003-F4C27E913039",
+  "status": "ACTIVE_AUTHORIZED_GRANT",
+  "operator_id": "Devin Phillip Davis / Enki",
+  "operation": "OSIRIS_HP003_MULTIQUBIT_CAPACITY_CERTIFICATION_V1",
+  "timestamp": 1794039404.6777642,
+  "payload_file": "experiments/hp003/stage_hp003_harness.py",
+  "payload_sha256": "68174cfdef1eebd0d633edf69387fb6d54f32f602b70661e49dd3bb34416beb4",
+  "operation_schema": {
+    "protocol": "OSIRIS-HP-003",
+    "target_hardware": "ibm_fez",
+    "qubit_registers": {
+      "R1": 0,
+      "R2": 1,
+      "M1": 2,
+      "M2": 3,
+      "B1": 4,
+      "B2": 5,
+      "E1": 6,
+      "E2": 7
+    },
+    "total_circuits": 45,
+    "shots_per_circuit": 1024,
+    "total_physical_shots": 46080,
+    "arms": [
+      "Arm A: Full-Access Inverse Control",
+      "Arm B: Restricted Hayden-Preskill Recovery (Full 2 Photons)",
+      "Arm B-Def: Sub-Capacity Quantum Threshold (Single Photon)",
+      "Arm B-Ctrl: No-Early-Entanglement Separable Control",
+      "Arm B-Held: Held-Out Scrambler Specificity Gate"
+    ],
+    "tomography_bases": [
+      "XX",
+      "YY",
+      "ZZ"
+    ],
+    "randomized_blocks": 3
+  },
+  "operation_schema_sha256": "89b53834e7daeb31fe9eeff37c4915321fd8a45cad8b62f17b0cefc8a06089b7",
+  "authority_permit": {
+    "issuer": "Devin Phillip Davis / Node Beta (Standalone)",
+    "scope": "OSIRIS_HP003_MULTIQUBIT_CAPACITY_CERTIFICATION_V1",
+    "target_digest": "68174cfdef1eebd0d633edf69387fb6d54f32f602b70661e49dd3bb34416beb4",
+    "nonce": "6c9f61837f71c0751f5f392eb34da4fb",
+    "issued_at_utc": "2026-11-07T08:16:44.676507+00:00",
+    "expires_at_utc": "2026-11-08T08:16:44.676507+00:00",
+    "policy_version": "OSIRIS-SPEC-VERIF-015",
+    "signature": "8328634ac85603c63c13a8af0b9a6d8b6c9674c344dc6e054bd8fabb40e24398"
+  },
+  "signature_receipt": {
+    "sequence_index": 47,
+    "prev_block_hash": "11da5b599ecae57f81b3285b22b09766c318d6063994084bd24742b99fa33f2a",
+    "timestamp": 1794039404.6777642,
+    "nonce": "OSIRIS-HP003-DISPATCH-1794039404677",
+    "block_hash": "74a0987e6baf92c7205a65170eaf6fcc4b74718ce26128a4a09e57baa040b041"
+  }
+}

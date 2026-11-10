@@ -1,9 +1,9 @@
 {
-  "title": "OSIRIS v4.7.0: The Sovereign Dual-Substrate Architecture, Epistemic Self-Correction, and Quantum Hardware Control",
+  "title": "OSIRIS governed multi-agent execution: development snapshot (feature/governed-trio @ 541187d7)",
   "upload_type": "software",
-  "version": "4.7.0",
-  "publication_date": "2026-10-31",
-  "description": "<p><strong>OSIRIS v4.7.0 Monograph & Governed Release Package</strong></p><p>This release delivers the complete sovereign architecture, operational history, and automated self-correction framework of the <strong>OSIRIS</strong> and <strong>dna::}{::lang</strong> project. Developed across severely constrained consumer silicon\u2014a handheld Google Pixel Fold (<strong>Node Alpha</strong>, running Termux with ARM64 NEON SIMD kernels and a 300s thermal horizon; retired post-campaign) and a GPU-less HP laptop powered by an Intel Core i7 CPU (<strong>Node Beta</strong>, executing local quantized mentor models and NCLM continual training within WSL2)\u2014OSIRIS proves that sovereign, verifiable scientific agency can be achieved without enterprise server clusters.</p><p><strong>Key Empirical & Architectural Contributions:</strong></p><ul><li><strong>Governed Execution (SYS-021):</strong> Enforces the foundational axiom <em>'Cognition may be distributed; authority is not.'</em> Unverified generative models propose; deterministic AST firewalls constrain; cryptographic receipts authorize (H_payload = SHA-256(code)); and immutable Merkle DAGs record.</li><li><strong>Automated Falsification of the &tau;-Phase Anomaly:</strong> Under strict budget limits on the IBM Quantum Open Plan (Job <code>dbiobimne4hc73bf2am0</code> on IBM Heron r2 <code>ibm_fez</code>), OSIRIS autonomously audited and conclusively refuted the historical December 2025 hypothesis (&tau;0 = 46 &mu;s, &theta;_lock = 51.843&deg;). Using 3-basis Pauli tomography (ZZ, XX, YY), OSIRIS proved that apparent 'entanglement revivals' were classical T1 relaxation artifacts to |00&gt; (P_Bell drops to a minimum at T1*ln(2) and rebounds as qubits decay to ground; transverse coherence C_perp measures dead zero: +0.0029 &plusmn; 0.0221; &theta;_lock p = 0.3537). The erratum is permanently anchored under Merkle Root <code>7e8f20c2e0ce...</code>.</li><li><strong>Genuine Quantum Advantage in Multi-Qubit Crosstalk Refocusing:</strong> On 156-qubit heavy-hex architecture (<code>ibm_kingston</code>, Job <code>dbb4ppk24mrc73bo8ntg</code>), OSIRIS evolved bipartite sublattice pulse-timing staggering (<code>xy4x2_stag</code> and <code>osiris_evolved_g1</code>) that crushes standard unstaggered dynamical decoupling (retaining 0.9602 and 0.9373 vs 0.8625 ground state probability) by canceling static spectator ZZ crosstalk.</li><li><strong>Continual Living Intelligence (osiris.nclm):</strong> Operates an online, byte-level transformer core governed by a permanently held-out speaking gate (&le; 2.0 bits/byte vs unigram baseline), actively distilling mentor lessons from verified writing.</li><li><strong>Systems Engineering & Pure L4&rarr;L5 Analyzer:</strong> Integrates the Capability Gap Analyzer, CUSUM process control suite, and Sprint 3 Adversarial Falsification Engine.</li></ul><p>Accompanied by the foundational research monograph: <code>docs/SOVEREIGN_DUAL_SUBSTRATE_MONOGRAPH.md</code>.</p>",
+  "version": "6.0.0+governed-trio.541187d7",
+  "publication_date": "2026-11-09",
+  "description": "<p><strong>Development snapshot, not a release.</strong> Source tree of the OSIRIS repository at branch <code>feature/governed-trio</code>, commit <code>541187d7d11f497f1a448b80c928222691339adc</code> (7 commits on top of upstream <code>origin/main</code> @ <code>9896f04a</code>). The branch is unreviewed and unmerged.</p><p>Added on this branch: a prototype governed Research/Developer/Critic execution slice (agent contracts with checked state transitions and digests); a deterministic evidence firewall that quarantines or rejects unsupported test and measurement claims; an evolutionary-candidate bridge that records every outcome in an append-only lineage ledger and never applies a patch, with promotion requiring PromotionPolicy plus a signed, single-use, payload-bound grant; an OSIRIS-side agent-gene adapter (RFC-0001 Phase 0, no language change); a <code>/trio</code> command module that is not wired into the REPL; and a fix so approved paste-learning notes are retrievable in conversation.</p><p><strong>Evidence status:</strong> all tests for these additions use synthetic fixtures. Full suite on this commit: 1674 passed, 13 skipped, 1 failed; the one failure (<code>tests/test_exec_policy.py::test_symlink_named_ls_pointing_at_rm_is_treated_as_rm</code>) also fails on upstream main and was not investigated here. Nothing here demonstrates reliability with a live language model, and the record makes no new scientific or quantum-hardware claim. The archive contains the complete repository tree at that commit, including earlier research artifacts already covered by prior records.</p><p>Secret scan (detect-secrets 1.5.0) over the full tree: no credentials found; hits were high-entropy hashes, base64 circuit blobs, and test fixtures.</p>",
   "creators": [
     {
       "name": "Davis, Devin Phillip",
@@ -31,13 +31,13 @@
   ],
   "related_identifiers": [
     {
-      "identifier": "https://github.com/osiris-dnalang/osiris-cli/releases/tag/v4.7.0",
-      "relation": "isSupplementTo",
-      "scheme": "url"
+      "identifier": "10.5281/zenodo.23991499",
+      "relation": "isNewVersionOf",
+      "scheme": "doi"
     },
     {
-      "identifier": "10.5281/zenodo.23832085",
-      "relation": "isNewVersionOf",
+      "identifier": "10.5281/zenodo.24082031",
+      "relation": "isIdenticalTo",
       "scheme": "doi"
     },
     {

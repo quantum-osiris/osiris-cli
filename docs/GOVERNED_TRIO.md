@@ -1,0 +1,171 @@
+# Governed three-agent slice (Research → Developer → Critic)
+
+Branch `feature/governed-trio` (worktree `~/osiris-cli-wt/governed-trio`), from `main` @ `9896f04a`.
+Nothing here is merged, deployed, or wired into the live REPL.
+
+## 1. Baseline (before any change)
+
+`main` @ `9896f04a`, `osiris_env` pytest: **1589 passed, 13 skipped, 1 failed**
+(`tests/test_exec_policy.py::test_symlink_named_ls_pointing_at_rm_is_treated_as_rm`, pre-existing,
+unrelated). Learning ledger `~/.osiris/living/learning_ledger.jsonl`: 1 line; `notes.jsonl`: 1 note
+(`note-9a9bd331`, status `active`). None of those files were written by this work.
+After: **1595 passed, 13 skipped, same 1 failure** on this branch (the count differs from the
+baseline run partly because the baseline ran in the main checkout, which also holds untracked
+`tests/test_nclm_corpus.py`; this worktree does not).
+
+## 2. Layer inventory (what exists, as found)
+
+| Layer | State | Where |
+|---|---|---|
+| L0 Intake | implemented | `orchestration/run_record.py` (`TaskRunRecord`: budget, walltime, permissions) |
+| L1 Intent | implemented, keyword/provider-based | `orchestration/agents.py:34` `IntentAgent`, `intent_router.py` |
+| L2 Orchestration | implemented, single linear engine | `orchestration/engine.py:41` `GovernedAgentEngine` |
+| L3 Evidence | partial: provenance records + claims register; no gate on agent prose until this branch | `evidence_provenance.py`, `osiris_cli/claims.py` |
+| L4 Proposal | implemented | `schemas.py` `CodeProposal`, `agents.py:95` |
+| L5 Verification | **partial**: `VerificationAgent` (`agents.py:158`) only AST-checks and `compile()`s; it never runs tests | `agents.py`, `critic_verifier.py` |
+| L6 Benchmark | exists separately, not wired to agents | `dnalang/loop.py`, `dnalang/receipts.py` |
+| L7 Promotion | exists separately (`PromotionPolicy`, `promotion_gate.py`), not wired to agents | `dnalang/receipts.py:84`, `promotion_gate.py:193` |
+| L8 Ledger | implemented (hash-chained genome ledger) | `agents.py` `MemoryLineageAgent` → `genome_ledger` |
+
+## 3. Approved-note retrieval defect (fixed, commit `a5cdc075`)
+
+Root cause (confirmed in source): `Knowledge` (`osiris_cli/knowledge.py`) built its index from markdown
+files only; `paste_learning.confirm_proposal` writes approved notes to `notes.jsonl`, which nothing
+read for conversation. So the note was authorized and stored but never retrieved.
+Fix: active notes join `lookup()` only (not `brief()`/`on_record()`), source `approved-note:<id>`
+(stable id), labelled *user-provided, unverified*, bounded by the existing per-message
+`NOTES_PER_MESSAGE`/chunking, tombstoned/malformed/non-`active` records skipped, never turned into
+training data. Tests: `tests/test_knowledge_notes.py` (synthetic only).
+Caveat: this makes the note *reachable*; whether the mentor model reproduces its contents faithfully
+is a separate, still-unmeasured property.
+
+## 4. What was built (commit `29b2a016`)
+
+* `orchestration/agent_spec.py` — `AgentSpec` (identity, version, role, capabilities using
+  governor capability names (mirrored in `agent_gene.CAPABILITY_TIERS`; the governor itself lives in `~/osiris/agents/gateway/`, not in this repo), tool permissions, provider/model, schemas, token/deadline budgets,
+  `evidence_required`), `AgentRun` with a checked state machine
+  (`CREATED→RUNNING→DONE|FAILED|REJECTED|QUARANTINED`), `RunBudget` (max agents, depth, wall
+  time — no recursive spawning), `AgentReceipt` (input/output digests + transitions).
+* `orchestration/evidence_firewall.py` — deterministic checks over report sentences:
+  test-result claims vs `ExecutionEvidence`; completed-action claims; numbers/intervals needing an
+  `[evidence:<id>]` citation whose artifact contains those numbers; backend names; restatements of
+  registered REFUTED/ARTIFACT/NULL claims (skipped when the sentence negates them). Verdicts
+  `SUPPORTED/REFUTED/ARTIFACT/UNVERIFIED/UNMEASURED`; any REFUTED/ARTIFACT → REJECT, else any
+  UNVERIFIED/UNMEASURED → QUARANTINE. No model is consulted.
+* `orchestration/trio.py` — `run_trio(repo, propose_fn, out_dir)`: frozen baseline run → Research
+  (traceback frames + modules imported by failing tests, each with sha256) → Developer
+  (`propose_fn`; `provider_propose_fn(provider)` adapts an existing `osiris_cli.providers`
+  provider) in a sandbox copy → Critic (fresh sandbox, own pytest run, fail→pass / pass→fail vs
+  baseline, patch-scope/size checks, firewall over the Developer's report, optional model critique
+  recorded as non-authoritative). Developer cannot edit/add tests, escape the repo, or pass the AST
+  firewall with `exec/eval/os.system`. Outcome is at best `PENDING_HUMAN_APPROVAL`; the repo's
+  tree digest is asserted unchanged; the run record (`record.json`, candidate diffs) and a
+  hash-chained `receipts.jsonl` go in `out_dir` (refused if inside the repo). Candidates are
+  `UNMEASURED` until the runner measures them; rejected/quarantined ones keep their diff + evidence.
+
+Run it: `pytest tests/test_governed_trio.py -v` (12 tests, ~3 s). Covered: honest fix → pending
+approval; **Developer claims "all tests pass / I ran pytest" with a failing patch → REJECTED**;
+**invented 37.2 % / CI / `ibm_torino` figures with a working patch → QUARANTINED**; test-editing and
+path escape refused; dangerous AST refused; regression vs baseline rejected; already-green repo;
+out_dir-in-repo refused; supplementary critic never overrides; firewall verdict table; state
+machine and budgets.
+
+## 4b. dna::}{::lang integration — analysis only, nothing implemented
+
+`dnalang-core/docs/LANGUAGE.md` defines three gene kinds (circuit, rule, regulator) with fixed
+key-value fields, an organism `fitness` clause, and canonical JSON + SHA-256 per compiled target.
+`osiris_cli/dnalang/loop.py` already runs a parent→candidate→receipt→promotion loop over `.dna`
+genomes through `osiris.compiler`. I did **not** verify that either parser accepts extra fields
+such as `capabilities` / `budget` on a key-value gene, so I have not claimed an agent genome
+exists in the language. Recommended next step: an RFC (syntax example, parser change, back-compat,
+tests) for an `agent` gene kind, with a typed adapter `AgentSpec ⇄ canonical organism JSON`
+instead of putting orchestration inside the language runtime.
+
+## 5. Limitations / not done
+
+* The Research agent is deterministic (no retrieval over docs/experiment records); the Developer is
+  only exercised with scripted proposers. `provider_propose_fn` is untested against a live model.
+* Tests run through `subprocess` with a scrubbed environment and a copy of the repo, **not** a
+  container/namespace sandbox and not via `exec_kernel`'s grant path; do not run untrusted repos.
+* Firewall is regex-based: it will miss paraphrases and can flag benign numbers (it errs toward
+  QUARANTINE). It does not check "confusion between observables" or contradictions beyond the claims
+  register.
+* The trio's receipt chain is its own file; it is not appended to the genome ledger and does not
+  feed `PromotionPolicy`/`promotion_gate`, so L6/L7 are not yet wired.
+* No evolutionary loop over agent prompts/routing was added; no GPU telemetry/scheduling; no
+  live-REPL command. No scores were produced, so nothing is claimed as improved.
+
+## 6. Next steps
+
+1. Wire `run_trio` outcomes into `PromotionPolicy` + `exec_kernel` grants and the genome ledger.
+2. Retrieval-backed Research agent (reuse `Knowledge` incl. approved notes, with citations).
+3. `agent` gene RFC + adapter; frozen-baseline benchmark set for prompt/routing candidates.
+4. Provider/GPU budgeting (Ollama unload, VRAM telemetry) behind `RunBudget`.
+5. REPL surface (`/trio <repo>`), approval via the existing `HumanApproval` flow.
+
+## 7. Governed evolutionary candidate (`orchestration/evolution_bridge.py`)
+
+`evaluate_candidate(trio_result, lineage_ledger, authorizer=None)` appends exactly one lineage row
+(`CANDIDATE_UNMEASURED | _QUARANTINED | _REJECTED | _VERIFIED_PENDING_AUTHORIZATION | _PROMOTED`)
+with the candidate id/digest, criticism (Critic reasons, firewall findings, regressions),
+evidence references (record/candidate.json sha256, baseline/candidate stdout digests, agent
+receipt digests) and reasons. Rules enforced and tested: Critic approval is necessary, never
+sufficient; promotion needs firewall ACCEPT + measured green candidate reproduced twice +
+`PromotionPolicy` pass + an authorizer accepting the exact candidate digest
+(`grants_authorizer` adapts the signed, single-use SYS-021 grant); "promoted" is only a ledger
+row, the patch is never applied; ledger paths under `~/.osiris` are refused without
+`allow_live=True`. The only fitness is `frozen_suite_pass_rate` (passed/(passed+failed+errors),
+runner-measured, one deterministic measurement, uncertainty not estimated). Rejected and
+quarantined candidates keep `candidate.json` and their rows.
+Demo: `python scripts/demo_governed_candidate.py` (temp dir only). Language: `docs/rfc/RFC-0001-agent-gene.md`.
+
+## 8. RFC-0001 Phase 0 (`orchestration/agent_gene.py`)
+
+`validate_agent_gene(name, fields)` / `agent_genes_from_dna(text)`: closed schema, explicit capability
+allowlist + per-role ceiling (WORKSPACE_WRITE is not expressible in a gene), validated budgets,
+canonical JSON + sha256 over every authorization-relevant field plus the schema and the
+capability-policy digest. A gene-built `AgentSpec` equals the hand-built RESEARCH/DEVELOPER/CRITIC
+specs (same digest). Duplicate keys (silently last-wins in the language) and duplicate agent ids are
+refused on the text path. 55 tests in `tests/test_agent_gene.py`. No grammar/parser/compiler change;
+Phase 1 is not started. Nothing consumes a gene at runtime yet: `run_trio` still uses its built-in specs.
+
+## 9. Execution sandbox (`osiris_cli/sandbox.py`)
+
+`run_pytest(..., sandboxed=True)` / `run_trio(..., sandboxed=True)` run the repo's tests inside
+bubblewrap with fresh user/pid/net/ipc/uts/mount namespaces: no network interface (loopback to the host
+and the internet both unreachable), only the interpreter prefix and system dirs read-only, private tmpfs
+`/tmp`, the workdir as the only writable path, home directory not visible (only the interpreter's own venv
+path component is mounted), scrubbed environment, rlimits (CPU, address space, procs, file size, nofile),
+wall timeout that kills the process group, and a capped output buffer. If the sandbox is not available,
+`SandboxUnavailable` is raised and nothing executes: there is no unsandboxed fallback. `/trio run` (the
+`trio_command` function) always passes `sandboxed=True`.
+
+Verified on this machine (WSL2, kernel 6.18) by `python -m osiris_cli.sandbox` / `tests/test_sandbox.py`:
+all ten selftest probes contained (loopback, internet, home visibility, tmp isolation, read-only system
+dirs, env scrub, memory limit, process limit, wall timeout, output cap).
+
+Not claimed: this is not a container or VM. It shares the host kernel (a kernel/bwrap escape defeats it),
+CPU is rlimit-bounded not cgroup-metered, and untested on other hosts. The REPL `/trio run` stays disabled
+until signed-grant authorization replaces the digest-bound `--approve`.
+
+## 10. Authorization for `/trio run` (`osiris_cli/trio_authz.py`)
+
+`/trio run` no longer accepts a bare `--approve <digest>`. It needs `--grant FILE --ledger FILE`
+(`--signature`, `--allowed-signers` optional). Reuses `osiris_cli.grants` unchanged (ssh-keygen ed25519,
+namespace `osiris-grant`, NTP-synchronized clock, expiry window, revocation, GRANTED+CONSUMED written
+atomically under the ledger file lock). The grant's payload digest is the **bundle digest** over: candidate
+digest, per-agent validated spec digests, plan digest (repo tree, patch, agents, budget), requested
+capabilities, budgets, sandbox policy (incl. limits), capability-policy digest and `trio-authz/1`; scope
+`trio.run.execute`. Order: build plan → sandbox availability check (before any spend) → verify+consume →
+re-derive the bundle from disk (changed inputs abort; the grant stays spent) → sandboxed run → receipts.
+Receipts (`<out>/authz_receipts.jsonl`, hash-chained) hold decisions, grant id, key fingerprint, digests and
+outcomes, never grant/signature bytes. 15 tests in `tests/test_trio_authz.py` cover valid run, replay, wrong
+digest, changed repo/patch/scope/budget/capability/sandbox policy/policy version, expiry, future grant,
+revocation, tampering, foreign signer, unavailable clock/ledger/trust root, no sandbox (grant not spent),
+swap-after-authorization, 12-way concurrent use (exactly one winner) and REPL still disabled.
+
+Limitations: authorization proves a key holder approved a digest, not that the code is safe; the sandbox is
+not a hardened container (see section 9); the owner chooses `--ledger` (use a dedicated file; the live
+`~/.osiris` ledger is never defaulted); NTP check fails closed where `timedatectl` can't report (it reports synchronized on
+this host, but tests inject a clock so they don't depend on it); a spent grant is not refunded by an abort. Live REPL `/trio run` is
+still disabled.
