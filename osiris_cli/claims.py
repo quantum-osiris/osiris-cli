@@ -54,6 +54,10 @@ CARD_V2_NOTE = ("file", "notes/dnal_currency_card_v2.md", "DNAL Currency Card Ki
 _DUR46 = r"(?<![\d.,])46(?:\.(?:0+|9\d*))?\s*(?:[µμ]s(?:ec)?|us|micro-?\s?seconds?|microsec)\b"
 _CTX46 = r"(?:τ|\btau|revival|anomal\w*|oscillat\w*|period|phase|φ)"
 _TAU46 = rf"{_CTX46}[^\n;]{{0,40}}?{_DUR46}|{_DUR46}[^\n;]{{0,40}}?{_CTX46}"
+# OSIRIS_ON_QPU: OSIRIS (or "the model", "the core") as the subject, quantum hardware as the object.
+_SELF = r"\b(?:the osiris model|osiris|the model|the core|nclm)\b"
+_QHW = r"(?:\b\d+[\s-]*qubits?\b|quantum (?:computer|hardware|processor|computing engine)s?|\bibm heron\b|" \
+       r"\bheron r2\b|\bqpu\b)"
 
 
 @dataclass(frozen=True)
@@ -391,6 +395,20 @@ REGISTER: Tuple[Claim, ...] = (
           (r"\bnclm\b", r"(core|osiris)[^.\n]{0,30}\blearn\w*", r"living (language )?model"),
           testable="A confirmatory run that replicates the training run (about 4 runs for a 0.05 "
                    "bits/byte minimum effect), not only held-out items."),
+    # The voice's own most frequent invention (2026-11-09, qwen2.5:1.5b): "OSIRIS operates on a quantum
+    # computer with 156 qubits", "IBM Heron ... utilized in the model's training".
+    Claim("OSIRIS_ON_QPU", "OSIRIS (its language model) runs on, is trained on, or is integrated with quantum "
+          "hardware", "OVERCLAIM",
+          "OSIRIS's core (osiris.nclm) is a small NumPy transformer trained on this computer's CPU by "
+          "osiris train; its voice is a local Ollama model. Quantum hardware appears only in separate, "
+          "recorded experiments that OSIRIS's tools submitted (for example staggered dynamical decoupling on "
+          "ibm_marrakesh). No OSIRIS model has been trained or run on a quantum processor.",
+          (("file", "osiris_cli/train.py", "the core's trainer: NumPy on the local CPU, no quantum backend"),
+           ("doi", "10.5281/zenodo.23967473", "the Heron r2 decoupling campaign: an experiment, not the model")),
+          (_SELF + r"[^.\n]{0,60}?\b(?:operates? on|runs? on|running on|(?:is |was |been )?trained (?:on|with|"
+           r"using)|integrated with|built on|powered by|works? with|utiliz\w+|executes? on)\b[^.\n]{0,60}?" + _QHW,
+           _QHW + r"[^.\n]{0,80}?\b(?:utiliz\w*|used|employed)\b[^.\n]{0,20}?\b(?:in|for) (?:the model'?s|"
+           r"osiris'?s?|its) training")),
     Claim("NCLM_MECHANICS", "The NCLM core is a non-causal, physics-based model: pilot-wave non-local attention, "
           "torsion-locked attention and phase-conjugate positional encoding", "NOT_MEASURED",
           "Ordinary transformer parts under physics names (osiris/nclm). The core is a causal decoder: it masks "
@@ -516,6 +534,32 @@ def match(text: str, limit: Optional[int] = None) -> List[Claim]:
     scored.sort(key=lambda t: (t[0], t[1]))
     out = [c for _, _, c in scored]
     return out[:limit] if limit else out
+
+
+# A reply is flagged for a claim it brings up only when the register says the claim is not legit or
+# has nothing behind it; pilots and untested proposals are open questions, not errors.
+FLAG_STANDINGS = ("not supported", "not legit", "not legit as worded")
+
+
+def flagged_in_reply(reply: str, already: Sequence[Claim] = ()) -> List[Claim]:
+    """Not-legit (or evidence-free) claims a model's reply brings up that the user's message did not.
+
+    Like match(), this finds references, not endorsements: a reply saying a claim was refuted is
+    flagged too. The flag shows the register's verdict next to the reply and keeps the reply out
+    of training; it does not say the reply was wrong."""
+    seen = {c.id for c in already}
+    return [c for c in match(reply) if c.id not in seen
+            and (c.standing() in FLAG_STANDINGS or c.verdict == "NO_EVIDENCE")]
+
+
+def reply_block(claims: Sequence[Claim]) -> str:
+    """Shown under a reply: the register's verdicts on claims the voice brought up."""
+    lines = []
+    for c in claims:
+        standing, meaning = VERDICTS[c.verdict]
+        lines.append(f"  {MARK[standing]} {c.id}: {c.verdict} -- {standing}: {meaning}. /legit {c.id}")
+    return ("Claims register, on the reply (the voice brought these up; checked by OSIRIS's code):\n"
+            + "\n".join(lines) + "\n")
 
 
 def by_id(claim_id: str) -> Optional[Claim]:
