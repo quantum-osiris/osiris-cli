@@ -83,6 +83,35 @@ def test_symlink_named_ls_pointing_at_rm_is_treated_as_rm(tmp_path):
     assert cls.tier == "MUTATE"
 
 
+def test_symlink_chain_through_renamed_rm_in_a_system_dir_is_treated_as_rm(tmp_path, monkeypatch):
+    # Ubuntu 26.04: /usr/bin/rm -> gnurm. The final name is unknown and sits in a system dir, so
+    # judging only the last hop let ./ls -> rm -> gnurm through as ls.
+    sysdir = tmp_path / "sysbin"
+    sysdir.mkdir()
+    real = sysdir / "gnurm"
+    real.write_text("#!/bin/sh\n")
+    real.chmod(0o755)
+    (sysdir / "rm").symlink_to("gnurm")
+    (tmp_path / "ls").symlink_to(sysdir / "rm")
+    monkeypatch.setattr(exec_policy, "_SYSTEM_DIRS", (str(sysdir) + os.sep,))
+    cls = classify(_req(["./ls", "-rf", "x"], "model", tmp_path))
+    assert cls.decision == "DENY"
+    assert cls.tier == "MUTATE"
+
+
+def test_symlink_straight_to_gnu_prefixed_rm_is_treated_as_rm(tmp_path, monkeypatch):
+    sysdir = tmp_path / "sysbin"
+    sysdir.mkdir()
+    real = sysdir / "gnurm"
+    real.write_text("#!/bin/sh\n")
+    real.chmod(0o755)
+    (tmp_path / "ls").symlink_to(real)
+    monkeypatch.setattr(exec_policy, "_SYSTEM_DIRS", (str(sysdir) + os.sep,))
+    cls = classify(_req(["./ls", "-rf", "x"], "model", tmp_path))
+    assert cls.decision == "DENY"
+    assert cls.tier == "MUTATE"
+
+
 def test_cwd_outside_root_is_denied(tmp_path):
     root = tmp_path / "root"
     outside = tmp_path / "outside"
