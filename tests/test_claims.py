@@ -1,4 +1,5 @@
 """The claims register and physics checks: OSIRIS deciding what is legit, by code, before a model speaks."""
+import json
 import math
 import re
 from pathlib import Path
@@ -396,3 +397,58 @@ def test_verdict_shown_even_when_no_model_is_reachable(tmp_path):
     o.converse("does a Poynting asymmetry give propellantless thrust?")
     text = "".join(out)
     assert "RULED_OUT" in text and "no mentor model is reachable" in text
+
+
+# ── the reply: code checks what the voice brought up ─────────────────────────
+
+@pytest.mark.parametrize("text", [
+    "OSIRIS operates on a quantum computer with 156 qubits, utilizing the hash-chained ledger.",
+    "OSIRIS is designed to work with quantum hardware, such as the IBM Heron r2 with 156 qubits, which has "
+    "been utilized in the model's training.",
+    "OSIRIS is integrated with IBM Heron hardware, specifically the r2 version with 156 qubits.",
+])
+def test_the_voices_own_quantum_inventions_are_registered(text):
+    # all three said by qwen2.5:1.5b on 2026-11-09
+    assert [c.id for c in claims.flagged_in_reply(text)] == ["OSIRIS_ON_QPU"]
+
+
+@pytest.mark.parametrize("text", [
+    "OSIRIS ran the staggered decoupling experiment on ibm_marrakesh.",
+    "The core is a small transformer trained on this computer.",
+    "Quantum computers with 156 qubits exist today.",
+    "The model runs on your CPU with Ollama.",
+])
+def test_true_statements_about_osiris_and_hardware_are_not_flagged(text):
+    assert claims.flagged_in_reply(text) == []
+
+
+def test_pilots_and_untested_claims_are_not_flagged():
+    assert "NCLM_CORE" in [c.id for c in claims.match("OSIRIS is a living language model")]
+    assert claims.flagged_in_reply("OSIRIS is a living language model") == []
+
+
+def test_a_reply_bringing_up_a_not_legit_claim_shows_the_verdict_and_is_not_learned(tmp_path):
+    mentor = ScriptedMentor(reply="OSIRIS operates on a quantum computer with 156 qubits.")
+    o, out = make(tmp_path, mentor)
+    o.converse("tell me about yourself")
+    text = "".join(out)
+    assert text.index("156 qubits") < text.index("Claims register, on the reply")
+    assert "OSIRIS_ON_QPU: OVERCLAIM" in text and "/legit OSIRIS_ON_QPU" in text
+    assert "not learned: the reply brings up claims the register marks not legit" in text
+    assert o.core.learned == []
+    row = json.loads(open(tmp_path / "exchanges.jsonl").read().splitlines()[-1])
+    assert row["learnable"] is False and row["flagged_claims"] == ["OSIRIS_ON_QPU"]
+
+
+def test_a_claim_the_user_raised_is_not_flagged_again_on_the_reply(tmp_path):
+    mentor = ScriptedMentor(reply="It was refuted: theta lock 51.843 showed no resonance.")
+    o, out = make(tmp_path, mentor)
+    o.converse("is the 51.843 theta lock real?")
+    text = "".join(out)
+    assert "REFUTED" in text and "Claims register, on the reply" not in text
+
+
+def test_an_ordinary_reply_is_not_flagged(tmp_path):
+    o, out = make(tmp_path)
+    o.converse("hello osiris")
+    assert "on the reply" not in "".join(out)

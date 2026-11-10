@@ -1080,6 +1080,7 @@ class Osiris:
         sent_user = None
         incomplete = ""
         looped = False
+        flagged_claims: list = []
         force_core = getattr(self, "force_core_voice", None)
         use_core_voice = bool(force_core) if force_core is not None else (os.environ.get("OSIRIS_CORE_VOICE", "1") != "0")
         if gate["open"] and self.core is not None and use_core_voice:
@@ -1157,11 +1158,21 @@ class Osiris:
             if incomplete:
                 self.out(f" …[incomplete: {incomplete}]")
             self.out("\n")
+            if not interrupted and reply:
+                try:
+                    from osiris_cli import claims as claims_mod
+                    flagged_claims = claims_mod.flagged_in_reply(reply, self._claims_hit)
+                except Exception:  # noqa: BLE001 - a broken register must not lose the reply
+                    flagged_claims = []
+                if flagged_claims:
+                    self.out(claims_mod.reply_block(flagged_claims))
             idx = self.stats["exchanges"]
             if interrupted:
                 note = "not learned: interrupted"
             elif incomplete:
                 note = "not learned: incomplete reply"
+            elif flagged_claims:
+                note = "not learned: the reply brings up claims the register marks not legit"
             elif effective_learnable and self.core is None:
                 note = "recorded; no core is loaded, so nothing is learned"
             elif effective_learnable and idx % HELDOUT_EVERY == 0:
@@ -1209,7 +1220,8 @@ class Osiris:
             "t": time.strftime("%Y-%m-%dT%H:%M:%S"),
             "voice": voice,
             "heldout": heldout,
-            "learnable": effective_learnable and not interrupted and not incomplete,
+            "learnable": effective_learnable and not interrupted and not incomplete and not flagged_claims,
+            "flagged_claims": [c.id for c in flagged_claims] or None,
             "incomplete": incomplete or None,
             "user": text,
             "reply": reply,
@@ -1225,7 +1237,8 @@ class Osiris:
         if (resolved_transport in ("bracketed_paste", "unknown")) or not effective_learnable:
             self.last_paste = dict(rec_data, hash=key)
         self._save_stats()
-        if effective_learnable and not interrupted and not incomplete and voice != "core" and self.core is not None:
+        if effective_learnable and not interrupted and not incomplete and not flagged_claims \
+                and voice != "core" and self.core is not None:
             self._after(lesson, reply, heldout, key, idx)
         return reply
 
