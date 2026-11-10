@@ -1,34 +1,31 @@
 #!/usr/bin/env python3
 """
-OSIRIS Universal REPL & CLI Interface — Apex Sovereign Executable
-================================================================
-Unified Sovereign Truth Architecture Interactive Prompt & Execution Substrate.
+OSIRIS interactive console (REPL) and command-line interface.
 
 Co-authored by Devin Phillip Davis & OSIRIS dna::}{::lang NCLM
 
-Subsystems Unified:
-  1. 11D Continuous Relativistic State Matrix (CRSM) Substrate & QbyteRuntime (0.092 Coherence Floor)
-  2. Cl(3,0) Clifford Multivector Algebra & Torsion Mechanics (θ_lock = 51.843°)
-  3. 9-Agent Cognitive Mesh (Bayesian Trust, Shapley Attribution, Nash Equilibrium, Hebbian Plasticity)
-  4. Introspection Engine (CUSUM Drift Detection, Cognitive Entropy, Echo-Chamber Suppression)
-  5. Deterministic NLP Intent Classifier & Mode Scorer (Explain vs Execute, Domain Routing)
-  6. Hysteretic Power Governor (Fail-Open Desktop Mains / Termux Thermal-Battery Gate)
-  7. L0 AST & Source Firewall (Anti-Loop Transcript Quarantine, Sensitive Token Gate)
-  8. Local Ollama LLM Bridge (Model Auto-Detection, CCCE Consciousness Scoring, Swarm Integration)
-  9. Flywheel 2026 Pre-registered K8 Tau-Sweep Benchmark Suite with Merkle Cryptographic Proof
- 10. Comparative LivLM vs LLM Empirical Benchmark Suite
- 11. 21 Sovereign Command Modules (Bridges, Validation, ELO Tournament, Forge, Policy, Fabric, Demo)
- 12. Dynamic Terminal Fold-Aware UX (Automatic adaptation for mobile Termux and desktop displays)
+What this module wires together:
+  1. Command routing for the console and the batch CLI (argparse below).
+  2. The 9-agent deliberation swarm and cognitive mesh (Bayesian trust, Shapley attribution).
+  3. An introspection report (cognitive entropy, echo-chamber score) over swarm rounds.
+  4. A deterministic intent classifier (explain vs execute, domain routing).
+  5. A power governor for mobile/Termux nodes (thermal and battery gate).
+  6. The L0 source firewall (transcript quarantine, sensitive-token gate).
+  7. A local Ollama bridge (model auto-detection).
+  8. Benchmark commands, including the pre-registered K8 tau sweep (its result was a refutation).
+  9. Terminal layout that adapts to narrow (phone) and desktop displays.
 
-Historical constants (hypotheses from the CRSM framework, kept because older
-commands still compute with them; Devin's own hardware audits refuted theta_lock,
-the tau-phase anomaly and the CCCE "consciousness" metrics -- see
-~/docs/HONEST_ASSESSMENT.md -- so they are not shown as physical invariants):
-  • Locking Resonance:  θ_lock = 51.843° (arctan(14/11) pyramid slope)
-  • Coherence Floor:    Γ_floor = 0.0920 (Fail-closed decoherence ceiling)
-  • Memory Invariant:   Λ_Φ = 2.176435e-8 kg (Universal Memory Constant)
-  • Predicted Peak F:   F_max = 0.97871 (1 - φ^-8)
-  • Characteristic Tau: τ_0 = 46.9787 µs (φ^8)
+Execution governance (exec_policy.py, the SYS-021/SYS-025 controller, journal.py) lives in its own
+modules; this file calls them and does not reimplement them.
+
+Historical constants (hypotheses from the CRSM framework, kept because older commands still compute
+with them). Devin's own hardware audits refuted theta_lock, the tau-phase anomaly and the CCCE
+"consciousness" metrics -- see ~/docs/HONEST_ASSESSMENT.md and the claims register
+(osiris_cli/claims.py) -- so none of these is a physical invariant:
+  • θ_lock = 51.843° (arctan(14/11)); no resonance on hardware
+  • Γ_floor = 0.0920 (qbyte coherence floor; an engineering threshold)
+  • Λ_Φ = 2.176435e-8 (CRSM hypothesis; no measurement supports it)
+  • F_max = 0.97871 (1 - φ^-8) and τ_0 = 46.9787 µs (φ^8); the tau-phase prediction was refuted
 """
 
 from __future__ import annotations
@@ -930,10 +927,10 @@ def execute_introspect(state: Optional[OsirisReplState] = None) -> None:
             engine.observe_round(resps, "approve", 0.85)
 
         actions = engine.run_improvement_cycle()
-        print(f"  ├─ Axis 1 (Temporal):  CUSUM Drift Anomaly Score = 0.012 (Nominal)")
+        print("  ├─ Axis 1 (Temporal):  CUSUM drift              = not measured in this check")
         print(f"  ├─ Axis 2 (Structural): Cognitive Entropy       = {engine.structural.cognitive_entropy():.4f}")
         print(f"  ├─ Axis 2 (Structural): Echo-Chamber Score      = {engine.structural.echo_chamber_score():.4f} (Suppressed)")
-        print(f"  ├─ Axis 3 (Semantic):   Strategy Diversity Index = 0.942")
+        print("  ├─ Axis 3 (Semantic):   Strategy diversity       = not measured in this check")
         print(f"  └─ Improvement Actions Formulated: {len(actions)} auto-corrections applied.\n")
     except Exception as e:
         print(f"  └─ [INTROSPECTION] Swarm Engine: {e}\n")
@@ -949,7 +946,7 @@ def execute_introspect(state: Optional[OsirisReplState] = None) -> None:
             profile = EpistemicIntrospector.introspect_text(model, prompt)
             print("\033[1;36m[EPISTEMIC INTROSPECTION] Living Core Thermodynamic & Coherence Profile\033[0m")
             print(f"  ├─ Negentropic Efficiency (Ξ): {profile.mean_negentropy_xi:+.2f}% (Information Creation)")
-            print(f"  ├─ Bidirectional Coherence:   {profile.bidirectional_coherence:.4f} (Phase-Lock θ=51.843°)")
+            print(f"  ├─ Bidirectional Coherence:   {profile.bidirectional_coherence:.4f} ")
             print(f"  ├─ Mean Decoherence (Γ):       {profile.mean_decoherence_gamma:.4f} (Critical Threshold: 0.30)")
             top_toks = ", ".join([f"{repr(t)}:{s:.3f}" for t, s in profile.token_saliency[:4]])
             print(f"  ├─ Salient Attractors:         [{top_toks}]")
@@ -2470,7 +2467,7 @@ def main(argv: Optional[List[str]] = None) -> None:
 
     parser = argparse.ArgumentParser(
         prog="osiris",
-        description="OSIRIS Sovereign Truth Architecture - Universal CLI & Apex REPL"
+        description="OSIRIS interactive console and command-line interface"
     )
     parser.add_argument(
         "action",
