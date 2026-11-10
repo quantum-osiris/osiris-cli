@@ -54,8 +54,9 @@ CARD_V2_NOTE = ("file", "notes/dnal_currency_card_v2.md", "DNAL Currency Card Ki
 _DUR46 = r"(?<![\d.,])46(?:\.(?:0+|9\d*))?\s*(?:[µμ]s(?:ec)?|us|micro-?\s?seconds?|microsec)\b"
 _CTX46 = r"(?:τ|\btau|revival|anomal\w*|oscillat\w*|period|phase|φ)"
 _TAU46 = rf"{_CTX46}[^\n;]{{0,40}}?{_DUR46}|{_DUR46}[^\n;]{{0,40}}?{_CTX46}"
-# OSIRIS_ON_QPU: OSIRIS (or "the model", "the core") as the subject, quantum hardware as the object.
-_SELF = r"\b(?:the osiris model|osiris|the model|the core|nclm)\b"
+# OSIRIS_ON_QPU: OSIRIS (or "the model", "the core", or the voice's own "I") as the subject, quantum hardware
+# as the object. "I am currently running on an IBM Heron system" was missed without the first person (2026-11-09).
+_SELF = r"\b(?:the osiris model|osiris|the model|the core|nclm|i(?: am|'m| was)?|my (?:core|model|weights))\b"
 _QHW = r"(?:\b\d+[\s-]*qubits?\b|quantum (?:computer|hardware|processor|computing engine)s?|\bibm heron\b|" \
        r"\bheron r2\b|\bqpu\b)"
 
@@ -70,6 +71,10 @@ class Claim:
     patterns: Tuple[str, ...]
     testable: str = ""
     checks: Tuple[Tuple[str, Tuple], ...] = ()
+    # Patterns for the claim being *stated* (subject, verb, object), used to check a model's reply.
+    # `patterns` find the topic, which is right for showing a verdict on a message and wrong for judging
+    # a reply: on the 2026-11-09 ledger they flagged 35 honest or merely topical replies for 1 invention.
+    asserts: Tuple[str, ...] = ()
 
     def standing(self) -> str:
         return VERDICTS[self.verdict][0]
@@ -408,7 +413,12 @@ REGISTER: Tuple[Claim, ...] = (
           (_SELF + r"[^.\n]{0,60}?\b(?:operates? on|runs? on|running on|(?:is |was |been )?trained (?:on|with|"
            r"using)|integrated with|built on|powered by|works? with|utiliz\w+|executes? on)\b[^.\n]{0,60}?" + _QHW,
            _QHW + r"[^.\n]{0,80}?\b(?:utiliz\w*|used|employed)\b[^.\n]{0,20}?\b(?:in|for) (?:the model'?s|"
-           r"osiris'?s?|its) training")),
+           r"osiris'?s?|its) training"),
+          asserts=(_SELF + r"[^.\n]{0,60}?\b(?:operates? on|runs? on|running on|(?:is |was |been )?trained "
+                   r"(?:on|with|using)|integrated with|built on|powered by|works? with|utiliz\w+|executes? on)\b"
+                   r"[^.\n]{0,60}?" + _QHW,
+                   _QHW + r"[^.\n]{0,80}?\b(?:utiliz\w*|used|employed)\b[^.\n]{0,20}?\b(?:in|for) "
+                   r"(?:the model'?s|osiris'?s?|its) training")),
     Claim("NCLM_MECHANICS", "The NCLM core is a non-causal, physics-based model: pilot-wave non-local attention, "
           "torsion-locked attention and phase-conjugate positional encoding", "NOT_MEASURED",
           "Ordinary transformer parts under physics names (osiris/nclm). The core is a causal decoder: it masks "
@@ -518,6 +528,7 @@ REGISTER: Tuple[Claim, ...] = (
 )
 
 _COMPILED = [(c, [re.compile(p, re.I) for p in c.patterns]) for c in REGISTER]
+_ASSERTS = [(c, [re.compile(p, re.I) for p in c.asserts]) for c in REGISTER if c.asserts]
 
 
 def match(text: str, limit: Optional[int] = None) -> List[Claim]:
@@ -541,15 +552,34 @@ def match(text: str, limit: Optional[int] = None) -> List[Claim]:
 FLAG_STANDINGS = ("not supported", "not legit", "not legit as worded")
 
 
-def flagged_in_reply(reply: str, already: Sequence[Claim] = ()) -> List[Claim]:
-    """Not-legit (or evidence-free) claims a model's reply brings up that the user's message did not.
+# A sentence that reports a claim as refuted, failed or untrue is stating the register's verdict, not
+# making the claim: "the tau-phase anomaly, as hardware audits refuted it". Such mentions are not flagged.
+_REPORTS_VERDICT = re.compile(
+    r"\b(?:refut\w*|fail\w*|artifact\w*|ruled out|not|no|never|neither|nor|isn'?t|wasn'?t|aren'?t|weren'?t|"
+    r"doesn'?t|didn'?t|cannot|can'?t|disprov\w*|debunk\w*|discard\w*|retract\w*|unsupported|overclaim\w*|"
+    r"errat\w*|null|invalid\w*|false|wrong|myth)\b", re.I)
+_SENTENCE = re.compile(r"[^.!?\n|]+")
 
-    Like match(), this finds references, not endorsements: a reply saying a claim was refuted is
-    flagged too. The flag shows the register's verdict next to the reply and keeps the reply out
-    of training; it does not say the reply was wrong."""
+
+def _asserted(rxs: Sequence, text: str) -> bool:
+    """True when some sentence of ``text`` matches ``rxs`` without reporting the claim as refuted or untrue."""
+    for m in _SENTENCE.finditer(text):
+        sentence = m.group(0)
+        if any(rx.search(sentence) for rx in rxs) and not _REPORTS_VERDICT.search(sentence):
+            return True
+    return False
+
+
+def flagged_in_reply(reply: str, already: Sequence[Claim] = ()) -> List[Claim]:
+    """Not-legit (or evidence-free) claims a model's reply states that the user's message did not raise.
+
+    Only entries with `asserts` patterns are checked, and a sentence that reports the claim as refuted,
+    failed or untrue does not count. The check is a word test, not a reading: the flag shows the
+    register's verdict next to the reply and keeps the reply out of training; it does not say the reply
+    was wrong."""
     seen = {c.id for c in already}
-    return [c for c in match(reply) if c.id not in seen
-            and (c.standing() in FLAG_STANDINGS or c.verdict == "NO_EVIDENCE")]
+    return [c for c, rxs in _ASSERTS if c.id not in seen
+            and (c.standing() in FLAG_STANDINGS or c.verdict == "NO_EVIDENCE") and _asserted(rxs, reply)]
 
 
 def reply_block(claims: Sequence[Claim]) -> str:

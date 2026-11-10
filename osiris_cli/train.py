@@ -210,8 +210,17 @@ def load_frozen_corpus(path: str):
 
 
 def chat_lessons(log_path: str) -> Dict[str, List[str]]:
-    """Train and held-out lesson texts from the conversation log."""
-    train, held = [], []
+    """Train and held-out lesson texts from the conversation log.
+
+    A learnable exchange whose reply brings up a claim the register marks not legit (and the user's
+    message did not) is left out of training and listed under "flagged" -- the same check the live
+    console applies since 2026-11-09, so rows recorded before it are filtered too. Held-out rows are
+    not filtered: they are the gate's fixed measurement, and changing them would change the gate."""
+    train, held, flagged = [], [], []
+    try:
+        from osiris_cli import claims as claims_mod
+    except Exception:  # noqa: BLE001 - without the register, train as before
+        claims_mod = None
     try:
         with open(log_path, encoding="utf-8") as f:
             for line in f:
@@ -222,10 +231,14 @@ def chat_lessons(log_path: str) -> Dict[str, List[str]]:
                 if not r.get("learnable") or r.get("voice") == "core":
                     continue
                 lesson = f"User: {r['user']}\nOSIRIS: {r['reply']}\n"
+                if not r.get("heldout") and claims_mod is not None and claims_mod.flagged_in_reply(
+                        r["reply"], claims_mod.match(r["user"])):
+                    flagged.append(r.get("hash", ""))
+                    continue
                 (held if r.get("heldout") else train).append(lesson)
     except OSError:
         pass
-    return {"train": train, "heldout": held}
+    return {"train": train, "heldout": held, "flagged": flagged}
 
 
 def distill_lessons(path: str = DISTILL_LOG) -> List[str]:
@@ -465,6 +478,7 @@ def run(core, *, hours: float, batch: int = 8, max_steps: Optional[int] = None, 
         "skipped": corpus["skipped"], "archive_roots": archive_roots,
         "archive_files": [{"path": d.path, "sha256": d.sha256, "heldout": d.heldout} for d in arch_docs],
         "archive_skipped": archive["skipped"], "pool_weights": weights, "chat_train": len(chat["train"]), "chat_heldout": len(chat["heldout"]),
+        "chat_flagged": chat["flagged"],
         "distill_lessons": len(lessons) - len(chat["train"]),
         "bytes": {"doc_train": int(len(doc_train)), "doc_heldout": int(len(doc_held)),
                   "lessons": int(0 if lesson_train is None else len(lesson_train)),
@@ -476,7 +490,8 @@ def run(core, *, hours: float, batch: int = 8, max_steps: Optional[int] = None, 
         json.dump(manifest, f, indent=1)
     log(f"OSIRIS train {run_id}: {len(docs)} verified files ({sum(d.heldout for d in docs)} held out), "
         f"{len(arch_docs)} archive files, "
-        f"{len(chat['train'])} chat lessons, {manifest['distill_lessons']} distilled; "
+        f"{len(chat['train'])} chat lessons ({len(chat['flagged'])} left out: the reply brings up a "
+        f"claim the register marks not legit), {manifest['distill_lessons']} distilled; "
         f"core step {start_step}; up to {hours} h")
 
     def evaluate(tag: str) -> dict:
