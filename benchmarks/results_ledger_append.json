@@ -1,0 +1,42 @@
+{
+  "benchmark": "ledger_append",
+  "timestamp_utc": "2026-11-10T05:17:15+00:00",
+  "host": {
+    "machine": "x86_64",
+    "system": "Linux",
+    "release": "6.18.54.1-microsoft-standard-WSL2",
+    "cpus": 32,
+    "python": "3.14.4"
+  },
+  "n_appends": 2000,
+  "append_ms": {
+    "median": 0.0598,
+    "p95": 0.0979,
+    "p99": 0.1643,
+    "max": 0.6281
+  },
+  "verify_ms": 9.33,
+  "verify_clean": true,
+  "tamper": {
+    "edit_field": {
+      "detected": true,
+      "fault": "Entry 1000: hash mismatch (expected 7afbed5337f0008e56d3816c25de8c62a8990d6d46cffea2c9a29e7c58408e96, got 1ac24f86306dcbab03cf46fb68ab6f3d24a939d70c1e8283e8c7de2184994310)"
+    },
+    "edit_hash": {
+      "detected": true,
+      "fault": "Entry 1000: hash mismatch (expected 1ac24f86306dcbab03cf46fb68ab6f3d24a939d70c1e8283e8c7de2184994310, got ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff)"
+    },
+    "delete_middle": {
+      "detected": true,
+      "fault": "Entry 1000: prev-hash mismatch (expected 4efa0f20fcfe8457db60d479a155f8333d5d28f39a4e27b7d00186e1cafbc988, got 1ac24f86306dcbab03cf46fb68ab6f3d24a939d70c1e8283e8c7de2184994310)"
+    },
+    "swap_adjacent": {
+      "detected": true,
+      "fault": "Entry 1000: prev-hash mismatch (expected 4efa0f20fcfe8457db60d479a155f8333d5d28f39a4e27b7d00186e1cafbc988, got 1ac24f86306dcbab03cf46fb68ab6f3d24a939d70c1e8283e8c7de2184994310)"
+    },
+    "truncate_tail": {
+      "detected": false,
+      "fault": null
+    }
+  }
+}
