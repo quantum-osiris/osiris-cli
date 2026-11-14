@@ -29,8 +29,12 @@ if [[ -z "${IBM_QUANTUM_TOKEN}" ]]; then
     echo ""
     echo "      export IBM_QUANTUM_TOKEN='paste_your_token_here'"
     echo ""
-    echo "   Then add to ~/.bashrc or ~/.zshrc to persist:"
-    echo "      echo \"export IBM_QUANTUM_TOKEN='your_token'\" >> ~/.bashrc"
+    echo "   To persist it, do NOT append it to ~/.bashrc (plaintext, world-readable by default)."
+    echo "   Prefer Google Secret Manager (OSIRIS_SECRETS_SOURCE=gcp; see osiris_cli/gcp_secrets.py)"
+    echo "   or a file readable only by you, sourced from your shell profile:"
+    echo "      install -m 600 /dev/null ~/.osiris_secrets"
+    echo "      echo \"export IBM_QUANTUM_TOKEN='your_token'\" >> ~/.osiris_secrets"
+    echo "      echo '[ -f ~/.osiris_secrets ] && . ~/.osiris_secrets' >> ~/.bashrc"
     echo ""
     read -p "Do you want to set IBM_QUANTUM_TOKEN now? (y/n) " -n 1 -r
     echo ""
@@ -41,8 +45,8 @@ if [[ -z "${IBM_QUANTUM_TOKEN}" ]]; then
     fi
 else
     echo "   ✓ SET"
-    TOKEN_SHORT="${IBM_QUANTUM_TOKEN:0:20}...${IBM_QUANTUM_TOKEN: -10}"
-    echo "      $TOKEN_SHORT"
+    # Never echo any part of the token (Sprint 0, F-06): terminals, scrollback and logs retain it.
+    echo "      (${#IBM_QUANTUM_TOKEN} characters; value not shown)"
 fi
 
 echo ""

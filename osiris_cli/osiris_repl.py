@@ -1712,7 +1712,9 @@ def execute_update() -> None:
     if os.path.exists(os.path.join(repo, ".git")):
         updated = update_checkout(repo)
     else:
-        repo_url = "git+https://github.com/osiris-dnalang/osiris-cli.git"
+        # Sprint 0 / F-02: the legacy osiris-dnalang account is no longer under the maintainer's control,
+        # so installing from it would run whatever that account serves. quantum-osiris is the canonical home.
+        repo_url = "git+https://github.com/quantum-osiris/osiris-cli.git"
         cmd = [sys.executable, "-m", "pip", "install", "--upgrade", repo_url]
         try:
             updated = subprocess.run(cmd, check=True).returncode == 0

@@ -1,4 +1,10 @@
 #!/bin/bash
+# QUARANTINED (Sprint 0, finding F-05). Do not run.
+# This script deletes .git history from cloned repositories, rewrites every URL and IP in
+# .py/.md/.txt/.json files to "localhost/PURIFIED" (destroying DOI and provenance links), and
+# merges third-party code into one tree. It is kept only as a historical record.
+echo "sovereign_substrate.sh is quarantined (provenance-destroying); see attic/README.md" >&2
+exit 1
 
 # Sovereign Substrate Management Script
 # Consolidates repositories, neutralizes URLs, removes .git metadata
