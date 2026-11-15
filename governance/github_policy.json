@@ -1,0 +1,21 @@
+{
+  "schema": "osiris-github-policy/v1",
+  "policy_version": "2026-11-14/sprint1",
+  "expected_login": "quantum-osiris",
+  "writes_enabled": false,
+  "security_gates": {
+    "S0-1_ACCOUNT_SECURITY_CHECKLIST": "NOT_MET",
+    "S0-2_INC-20260927-01_ROTATION_CONFIRMED": "NOT_MET",
+    "S0-3_LEGACY_ACCOUNT_STATUS_KNOWN": "NOT_MET",
+    "S0-6_BRANCH_PROTECTION_ON_MAIN": "NOT_MET"
+  },
+  "repositories": {
+    "quantum-osiris/osiris-cli": ["github.repo.read", "github.branch.read", "github.commit.read", "github.issue.read", "github.pr.read", "github.workflow.read", "github.contents.read", "github.pr.create", "github.issue.create", "github.issue.comment"],
+    "quantum-osiris/osiris-governance": ["github.repo.read", "github.branch.read", "github.commit.read", "github.issue.read", "github.pr.read", "github.workflow.read", "github.contents.read", "github.pr.create", "github.issue.create", "github.issue.comment"],
+    "quantum-osiris/dnalang-core": ["github.repo.read", "github.branch.read", "github.commit.read", "github.issue.read", "github.pr.read", "github.workflow.read", "github.contents.read", "github.pr.create", "github.issue.create", "github.issue.comment"],
+    "quantum-osiris/organism_sim": ["github.repo.read", "github.branch.read", "github.commit.read", "github.issue.read", "github.pr.read", "github.workflow.read", "github.contents.read", "github.pr.create", "github.issue.create", "github.issue.comment"],
+    "quantum-osiris/bridge": ["github.repo.read", "github.branch.read", "github.commit.read", "github.issue.read", "github.pr.read", "github.workflow.read", "github.contents.read", "github.pr.create", "github.issue.create", "github.issue.comment"],
+    "quantum-osiris/quantum-osiris": ["github.repo.read", "github.branch.read", "github.commit.read", "github.contents.read"],
+    "enki-420/quantum-ide": ["github.repo.read", "github.branch.read", "github.commit.read", "github.issue.read", "github.pr.read", "github.workflow.read", "github.contents.read"]
+  }
+}
