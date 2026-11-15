@@ -16,9 +16,10 @@ This module never creates, rotates or enrolls a key. A process that could mint i
 could also approve its own permits, and SYS-021 forbids that. Two things must therefore come
 from the owner, outside any OSIRIS process:
 
-1. **The operator key.** 32 or more random bytes in a regular file (not a symlink) that the
-   current user owns, with mode 0600 or stricter. The default path is
-   ``~/.osiris/keystore/node_beta_operator.key``; ``$OSIRIS_OPERATOR_KEY_FILE`` overrides it.
+1. **The permit key.** A typed key file: the line ``OSIRIS-PERMIT-HMAC-KEY-V1`` followed by a
+   line of 64 or more hex digits (32+ random bytes). It must be a regular file (not a symlink)
+   that the current user owns, with mode 0600 or stricter. The default path is
+   ``~/.osiris/keystore/node_beta_permit_hmac.key``; ``$OSIRIS_OPERATOR_KEY_FILE`` overrides it.
 2. **Its enrollment.** The key's fingerprint, ``python -m osiris_cli.node_beta_governance
    fingerprint``, must appear in ``governance/operator_keys``. That file is changed only by a
    reviewed commit.
@@ -27,6 +28,15 @@ If either is missing, malformed or does not match, every issue fails and every v
 DENY. Once both are enrolled, a permit verifies only if every byte it covers (issuer, scope,
 target digest, nonce, validity window and policy version) is unchanged and it is within its
 validity window.
+
+Key separation (F-21): ``node_beta_operator.key`` is the raw Ed25519 signing seed that the QPU
+dispatch scripts read. It is never accepted here, under any path, and a raw (untyped) key file
+is refused, so a signing seed cannot double as the shared permit secret. The typed file is not
+32 bytes long, so it cannot be loaded as an Ed25519 seed either.
+
+Import resolution (F-22): the permit contracts come only from the installed
+``osiris_governance`` package. This module does not add a sibling checkout to ``sys.path``; if
+the package is not installed, every issue fails and every verify is DENY.
 
 Limits: HMAC is symmetric, so any process that can read the key can both issue and verify.
 Same-user isolation therefore rests on the key file's permissions and on who may change
@@ -43,21 +53,24 @@ import sys
 from pathlib import Path
 from typing import FrozenSet, Optional, Tuple
 
-# Locate and import governance contracts
-GOV_SRC = Path(__file__).resolve().parents[2] / "osiris-governance" / "src"
-if GOV_SRC.exists() and str(GOV_SRC) not in sys.path:
-    sys.path.insert(0, str(GOV_SRC))
-
+# The permit contracts come from the installed osiris_governance only. sys.path is not changed
+# here: a sibling checkout must never take precedence over the installed authority code (F-22).
 try:
+    from osiris_governance import contracts as _contracts
     from osiris_governance.contracts import PermitAuthority, AuthorityPermit, PROMOTION_SCOPE, VERIFICATION_SCOPE
+    GOVERNANCE_ORIGIN: Optional[str] = getattr(_contracts, "__file__", None)
 except ImportError:
     PermitAuthority = None
     AuthorityPermit = None
+    GOVERNANCE_ORIGIN = None
     PROMOTION_SCOPE = "PROMOTION_AUTHORITY_VERIFIED"
     VERIFICATION_SCOPE = "VERIFICATION_AUTHORITY_VERIFIED"
 
 KEY_DIR = Path.home() / ".osiris" / "keystore"
-KEY_FILE = KEY_DIR / "node_beta_operator.key"
+KEY_FILE = KEY_DIR / "node_beta_permit_hmac.key"
+SIGNING_SEED_NAME = "node_beta_operator.key"   # raw Ed25519 seed used by the QPU dispatch scripts; never an HMAC key
+KEY_FILE_HEADER = "OSIRIS-PERMIT-HMAC-KEY-V1"
+MAX_KEY_FILE_BYTES = 4096
 KEY_FILE_ENV = "OSIRIS_OPERATOR_KEY_FILE"
 TRUST_ROOT = Path(__file__).resolve().parents[1] / "governance" / "operator_keys"
 DEFAULT_ISSUER = "Devin Phillip Davis / Node Beta (Standalone)"
@@ -99,10 +112,33 @@ def _key_path(path: Optional[os.PathLike]) -> Path:
     return Path(env) if env else KEY_FILE
 
 
+def _decode_key_file(p: Path, raw: bytes) -> bytes:
+    """The key bytes of a typed permit-key file. Anything else, including a raw 32-byte seed, is refused."""
+    wrong = OperatorAuthorityError("OPERATOR_KEY_WRONG_TYPE",
+                                   f"{p} is not a {KEY_FILE_HEADER} key file; raw key or seed files are not accepted")
+    if len(raw) > MAX_KEY_FILE_BYTES:
+        raise wrong
+    try:
+        lines = raw.decode("ascii").split("\n")
+    except UnicodeDecodeError:
+        raise wrong
+    if lines and lines[-1] == "":
+        lines.pop()
+    if len(lines) != 2 or lines[0] != KEY_FILE_HEADER:
+        raise wrong
+    hexkey = lines[1]
+    if len(hexkey) % 2 or any(c not in "0123456789abcdef" for c in hexkey):
+        raise wrong
+    return bytes.fromhex(hexkey)
+
+
 def read_operator_key(path: Optional[os.PathLike] = None) -> bytes:
     """Read an owner-provisioned key without creating, repairing or re-permissioning anything."""
     p = _key_path(path)
-    provision = ("the owner must provision it outside OSIRIS (32+ random bytes, mode 0600) "
+    if p.name == SIGNING_SEED_NAME:
+        raise OperatorAuthorityError("OPERATOR_KEY_RESERVED_FOR_SIGNING",
+                                     f"{p.name} is the Ed25519 signing seed; the permit HMAC key must be a separate file")
+    provision = (f"the owner must provision it outside OSIRIS (a {KEY_FILE_HEADER} file, mode 0600) "
                  "and enroll its fingerprint in governance/operator_keys by a reviewed commit")
     try:
         st = os.lstat(p)
@@ -131,10 +167,11 @@ def read_operator_key(path: Optional[os.PathLike] = None) -> bytes:
             raise OperatorAuthorityError("OPERATOR_KEY_REPLACED", f"{p} changed while it was being opened")
         with os.fdopen(fd, "rb") as fh:
             fd = -1
-            key = fh.read()
+            raw = fh.read(MAX_KEY_FILE_BYTES + 1)
     finally:
         if fd != -1:
             os.close(fd)
+    key = _decode_key_file(p, raw)
     if len(key) < MIN_KEY_BYTES:
         raise OperatorAuthorityError("OPERATOR_KEY_TOO_SHORT",
                                      f"{p} holds {len(key)} bytes; at least {MIN_KEY_BYTES} are required")

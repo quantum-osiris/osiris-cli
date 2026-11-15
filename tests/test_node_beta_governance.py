@@ -29,7 +29,7 @@ def isolated(tmp_path, monkeypatch):
     monkeypatch.setenv("HOME", str(home))
     monkeypatch.delenv(nbg.KEY_FILE_ENV, raising=False)
     monkeypatch.setattr(nbg, "KEY_DIR", home / ".osiris" / "keystore")
-    monkeypatch.setattr(nbg, "KEY_FILE", home / ".osiris" / "keystore" / "node_beta_operator.key")
+    monkeypatch.setattr(nbg, "KEY_FILE", home / ".osiris" / "keystore" / "node_beta_permit_hmac.key")
     monkeypatch.setattr(nbg, "TRUST_ROOT", tmp_path / "empty_operator_keys")
     return home
 
@@ -37,13 +37,18 @@ def isolated(tmp_path, monkeypatch):
 def provision(directory: Path, name="operator.key", mode=0o600, key=None) -> Path:
     """What the owner does outside OSIRIS."""
     path = directory / name
-    path.write_bytes(key if key is not None else secrets.token_bytes(32))
+    key = key if key is not None else secrets.token_bytes(32)
+    path.write_text(f"{nbg.KEY_FILE_HEADER}\n{key.hex()}\n")
     os.chmod(path, mode)
     return path
 
 
+def key_bytes(path: Path) -> bytes:
+    return bytes.fromhex(path.read_text().split("\n")[1])
+
+
 def enroll(trust_root: Path, *keys: Path) -> Path:
-    lines = ["# test trust root"] + [nbg.operator_key_fingerprint(k.read_bytes()) for k in keys]
+    lines = ["# test trust root"] + [nbg.operator_key_fingerprint(key_bytes(k)) for k in keys]
     trust_root.write_text("\n".join(lines) + "\n")
     return trust_root
 
@@ -248,7 +253,7 @@ def test_fingerprint_cli_reads_only(tmp_path, capsys, isolated):
     before = key.read_bytes()
     assert nbg._main(["fingerprint", str(key)]) == 0
     out = capsys.readouterr().out
-    assert out.startswith(nbg.operator_key_fingerprint(before)) and "NOT enrolled" in out
+    assert out.startswith(nbg.operator_key_fingerprint(key_bytes(key))) and "NOT enrolled" in out
     assert key.read_bytes() == before
     assert nbg._main(["fingerprint"]) == 1  # default path absent
     assert nbg._main(["self-test"]) == 1
@@ -259,3 +264,138 @@ def test_fingerprint_is_domain_separated_and_does_not_contain_the_key():
     key = secrets.token_bytes(32)
     fp = nbg.operator_key_fingerprint(key)
     assert key.hex() not in fp and fp != "sha256:" + hashlib.sha256(key).hexdigest()
+
+
+# --- F-21: the signing seed and the permit HMAC key are different keys ------------------------
+
+def test_default_permit_key_is_not_the_signing_seed_file():
+    import importlib
+    fresh = importlib.reload(importlib.import_module("osiris_cli.node_beta_governance"))
+    assert fresh.KEY_FILE.name == "node_beta_permit_hmac.key" != fresh.SIGNING_SEED_NAME
+    assert fresh.SIGNING_SEED_NAME == "node_beta_operator.key"
+
+
+def test_signing_seed_filename_is_refused_whatever_it_holds(tmp_path, monkeypatch):
+    # Even a correctly typed, enrolled key is refused under the Ed25519 seed's name...
+    seed_named = provision(tmp_path, nbg.SIGNING_SEED_NAME)
+    root = enroll(tmp_path / "root", seed_named)
+    for attempt in (lambda: nbg.NodeBetaGovernor(key_path=seed_named, trust_root=root),
+                    lambda: nbg.read_operator_key(seed_named)):
+        with pytest.raises(nbg.OperatorAuthorityError) as e:
+            attempt()
+        assert e.value.reason == "OPERATOR_KEY_RESERVED_FOR_SIGNING"
+    # ...and through the environment override.
+    monkeypatch.setenv(nbg.KEY_FILE_ENV, str(seed_named))
+    monkeypatch.setattr(nbg, "TRUST_ROOT", root)
+    with pytest.raises(nbg.OperatorAuthorityError) as e:
+        nbg.sign_payload_grant(DIGEST)
+    assert e.value.reason == "OPERATOR_KEY_RESERVED_FOR_SIGNING"
+
+
+def test_raw_ed25519_seed_is_refused_as_a_permit_key(tmp_path):
+    seed = secrets.token_bytes(32)                      # what the QPU dispatch scripts read
+    raw = tmp_path / "copied_seed.key"
+    raw.write_bytes(seed)
+    os.chmod(raw, 0o600)
+    root = tmp_path / "root"
+    root.write_text(nbg.operator_key_fingerprint(seed) + "\n")   # even if someone enrolled it
+    with pytest.raises(nbg.OperatorAuthorityError) as e:
+        nbg.NodeBetaGovernor(key_path=raw, trust_root=root)
+    assert e.value.reason == "OPERATOR_KEY_WRONG_TYPE"
+
+
+@pytest.mark.parametrize("content", [
+    b"", b"OSIRIS-PERMIT-HMAC-KEY-V1\n", b"OSIRIS-PERMIT-HMAC-KEY-V2\n" + b"ab" * 32 + b"\n",
+    b"OSIRIS-PERMIT-HMAC-KEY-V1\n" + b"AB" * 32 + b"\n",          # uppercase hex
+    b"OSIRIS-PERMIT-HMAC-KEY-V1\n" + b"ab" * 32 + b"\nextra\n",
+    b"OSIRIS-PERMIT-HMAC-KEY-V1\r\n" + b"ab" * 32 + b"\r\n",
+    b"ab" * 32, b"x" * 5000,
+])
+def test_malformed_key_files_are_refused(tmp_path, content):
+    path = tmp_path / "k"
+    path.write_bytes(content)
+    os.chmod(path, 0o600)
+    with pytest.raises(nbg.OperatorAuthorityError) as e:
+        nbg.read_operator_key(path)
+    assert e.value.reason == "OPERATOR_KEY_WRONG_TYPE"
+
+
+def test_permit_key_file_cannot_be_loaded_as_an_ed25519_seed(tmp_path):
+    ed = pytest.importorskip("cryptography.hazmat.primitives.asymmetric.ed25519")
+    path = provision(tmp_path)
+    assert len(path.read_bytes()) != 32
+    with pytest.raises(ValueError):
+        ed.Ed25519PrivateKey.from_private_bytes(path.read_bytes())
+
+
+# --- F-22: the permit contracts come from the installed package, not a sibling checkout -------
+
+def _run(code, cwd=None, env=None):
+    import subprocess, sys
+    return subprocess.run([sys.executable, "-c", code], capture_output=True, text=True, cwd=cwd,
+                          env={**os.environ, **(env or {})}, timeout=120)
+
+
+def test_import_does_not_change_sys_path():
+    r = _run("import sys; before = list(sys.path); import osiris_cli.node_beta_governance; "
+             "assert sys.path == before, [p for p in sys.path if p not in before]")
+    assert r.returncode == 0, r.stderr
+
+
+def test_module_source_does_not_touch_sys_path():
+    import ast
+    tree = ast.parse(Path(nbg.__file__).read_text())
+    touched = [n.lineno for n in ast.walk(tree) if isinstance(n, ast.Attribute) and n.attr in ("path", "meta_path", "modules")
+               and isinstance(n.value, ast.Name) and n.value.id == "sys"]
+    assert touched == []
+
+
+def test_loaded_contracts_are_the_installed_package():
+    import importlib.util
+    spec = importlib.util.find_spec("osiris_governance.contracts")
+    assert nbg.GOVERNANCE_ORIGIN == spec.origin
+    assert nbg.PermitAuthority is PermitAuthority
+
+
+def test_planted_sibling_checkout_is_not_loaded(tmp_path):
+    """A copy of the module with a hostile ../osiris-governance/src next to it, as F-22 described."""
+    import importlib.util, shutil
+    installed = importlib.util.find_spec("osiris_governance.contracts").origin
+    checkout = tmp_path / "checkout" / "osiris_cli"
+    checkout.mkdir(parents=True)
+    shutil.copy(nbg.__file__, checkout / "node_beta_governance.py")
+    planted = tmp_path / "osiris-governance" / "src" / "osiris_governance"
+    planted.mkdir(parents=True)
+    (planted / "__init__.py").write_text("")
+    marker = tmp_path / "planted_was_imported"
+    (planted / "contracts.py").write_text(
+        f"open({str(marker)!r}, 'w').close()\n"
+        "class PermitAuthority:\n    def __init__(self, key): pass\n"
+        "    def check(self, permit, now=None): return None\n"
+        "class AuthorityPermit: pass\nPROMOTION_SCOPE = VERIFICATION_SCOPE = 'x'\n")
+    code = ("import importlib.util, sys\n"
+            f"spec = importlib.util.spec_from_file_location('planted_nbg', {str(checkout / 'node_beta_governance.py')!r})\n"
+            "m = importlib.util.module_from_spec(spec); spec.loader.exec_module(m)\n"
+            "print(m.GOVERNANCE_ORIGIN)\n")
+    r = _run(code, cwd=str(tmp_path))
+    assert r.returncode == 0, r.stderr
+    assert r.stdout.strip() == installed
+    assert not marker.exists()
+
+
+def test_without_the_installed_package_everything_is_denied(tmp_path):
+    """Hide osiris_governance: issue raises, verify is DENY, even with a sibling checkout present."""
+    code = ("import sys\n"
+            "class Block:\n"
+            "    def find_spec(self, name, path=None, target=None):\n"
+            "        if name == 'osiris_governance' or name.startswith('osiris_governance.'):\n"
+            "            raise ImportError(name)\n"
+            "sys.meta_path.insert(0, Block())\n"
+            "import osiris_cli.node_beta_governance as m\n"
+            "assert m.PermitAuthority is None and m.GOVERNANCE_ORIGIN is None\n"
+            "assert m.check_payload_grant(object()) == (False, 'GOVERNANCE_MODULE_MISSING')\n"
+            "try:\n    m.sign_payload_grant('ab' * 32)\n"
+            "except m.OperatorAuthorityError as e:\n    assert e.reason == 'GOVERNANCE_MODULE_MISSING'\n"
+            "else:\n    raise SystemExit('issued without the governance package')\n")
+    r = _run(code)
+    assert r.returncode == 0, r.stderr
