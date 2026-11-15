@@ -31,7 +31,7 @@ from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from typing import Any, Callable, Dict, Optional, Tuple
 from urllib.parse import urlparse
 
-API_VERSION = "1.0.0"
+API_VERSION = "1.1.0"
 MAX_BODY = 256 * 1024
 TOKEN_HEADER = "X-OSIRIS-Token"
 TOKEN_PLACEHOLDER = "__OSIRIS_SESSION_TOKEN__"
@@ -74,13 +74,18 @@ class Backend:
     """The service logic behind the HTTP layer. Tests call it directly as well as over HTTP."""
 
     def __init__(self, *, gateway_factory: Callable[[], Any], slice_receipts: str, examples_dir: str,
-                 workspace_dirs: Tuple[str, ...] = (), slice_runner: Optional[Callable[..., Dict[str, Any]]] = None):
+                 workspace_dirs: Tuple[str, ...] = (), slice_runner: Optional[Callable[..., Dict[str, Any]]] = None,
+                 agent_receipts: Optional[str] = None, agent_model_fn: Optional[Callable[..., Any]] = None):
         self._gateway_factory = gateway_factory
         self._gateway = None
         self.slice_receipts = slice_receipts
         self.examples_dir = examples_dir
         self.workspace_dirs = workspace_dirs
         self._slice_runner = slice_runner
+        self.agent_receipts = agent_receipts or os.path.join(os.path.dirname(os.path.abspath(slice_receipts)),
+                                                             "agent_receipts.jsonl")
+        self._agent_model_fn = agent_model_fn
+        self._agent_lock = threading.Lock()
         self._cache: Dict[str, Tuple[float, Any]] = {}
         self._lock = threading.Lock()
 
@@ -220,6 +225,20 @@ class Backend:
                             "evidence": [{"kind": k, "ref": r, "note": n} for k, r, n in c.evidence]}
                            for c in claims.REGISTER]}
 
+    def agent_task(self, body: Dict[str, Any]) -> Dict[str, Any]:
+        """OSIRIS runs AURA, AIDEN and IRIS on one objective and records the decision. Nothing is executed."""
+        from osiris_cli.orchestration import council
+        with self._agent_lock:  # one task at a time: the receipt chain is appended in order
+            try:
+                return council.run_task(body.get("objective"), body.get("context"),
+                                        receipts_path=self.agent_receipts, model_fn=self._agent_model_fn)
+            except council.CouncilError as e:
+                raise ApiError(400, "INVALID_INPUT", str(e))
+
+    def agent_tasks(self) -> Dict[str, Any]:
+        from osiris_cli.orchestration import council
+        return council.task_receipts(self.agent_receipts)
+
     def experiments(self) -> Dict[str, Any]:
         rows = self.receipts()["slice"]
         runs = [{"run_id": r["payload"].get("run_id"), "kind": r["kind"], "ts": r["ts"], "hash": r["hash"],
@@ -241,6 +260,8 @@ ROUTES = {
     ("POST", "/api/v1/governance/github/propose"): "propose",
     ("GET", "/api/v1/research/claims"): "claims",
     ("GET", "/api/v1/research/experiments"): "experiments",
+    ("POST", "/api/v1/agents/task"): "agent_task",
+    ("GET", "/api/v1/agents/tasks"): "agent_tasks",
 }
 
 
@@ -365,7 +386,8 @@ def serve(backend: Backend, *, host: str = "127.0.0.1", port: int = 8765, consol
 
 
 def default_backend(examples_dir: Optional[str] = None, workspace_dirs: Tuple[str, ...] = (),
-                    slice_receipts: Optional[str] = None, github_receipts: Optional[str] = None) -> Backend:
+                    slice_receipts: Optional[str] = None, github_receipts: Optional[str] = None,
+                    agent_receipts: Optional[str] = None) -> Backend:
     from osiris_cli.github_gateway import DEFAULT_RECEIPTS_PATH, GitHubGateway
     from osiris_cli.vertical_slice import DEFAULT_RECEIPTS_PATH as SLICE_DEFAULT
     if examples_dir is None:
@@ -376,7 +398,7 @@ def default_backend(examples_dir: Optional[str] = None, workspace_dirs: Tuple[st
             examples_dir = ""
     return Backend(gateway_factory=lambda: GitHubGateway(receipts_path=github_receipts or DEFAULT_RECEIPTS_PATH),
                    slice_receipts=slice_receipts or SLICE_DEFAULT, examples_dir=examples_dir,
-                   workspace_dirs=workspace_dirs)
+                   workspace_dirs=workspace_dirs, agent_receipts=agent_receipts)
 
 
 def main(argv=None) -> int:
@@ -388,9 +410,11 @@ def main(argv=None) -> int:
     ap.add_argument("--workspace", action="append", default=[], help="local git checkout to report (repeatable)")
     ap.add_argument("--slice-receipts")
     ap.add_argument("--github-receipts")
+    ap.add_argument("--agent-receipts", help="receipt chain for AURA/AIDEN/IRIS tasks (default: beside --slice-receipts)")
     ap.add_argument("--token-file", default=os.path.join(os.path.expanduser("~"), ".osiris", "ide_session.token"))
     a = ap.parse_args(argv)
-    backend = default_backend(a.examples_dir, tuple(a.workspace), a.slice_receipts, a.github_receipts)
+    backend = default_backend(a.examples_dir, tuple(a.workspace), a.slice_receipts, a.github_receipts,
+                              a.agent_receipts)
     httpd, _ = serve(backend, host=a.host, port=a.port, console_dir=a.console_dir, token_file=a.token_file)
     print(f"OSIRIS IDE API v{API_VERSION} on http://{a.host}:{httpd.server_address[1]}/  "
           f"(session token in {a.token_file})", flush=True)

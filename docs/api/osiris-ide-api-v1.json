@@ -1,6 +1,6 @@
 {
   "contract": "osiris-ide-api",
-  "api_version": "1.0.0",
+  "api_version": "1.1.0",
   "compatibility": "Clients must check api_version from GET /api/v1/meta and refuse a different MAJOR version. MINOR versions only add optional fields.",
   "transport": {
     "bind": "127.0.0.1 or ::1 only",
@@ -22,7 +22,7 @@
   "routes": {
     "GET /api/v1/meta": {
       "response": {"type": "object", "required": ["api_version", "service", "github_writes_via_api", "evidence_labels"],
-        "properties": {"api_version": {"const": "1.0.0"}, "service": {"const": "osiris-ide-api"},
+        "properties": {"api_version": {"const": "1.1.0"}, "service": {"const": "osiris-ide-api"},
           "contract_sha256": {"type": ["string", "null"]}, "github_writes_via_api": {"const": false},
           "evidence_labels": {"type": "array", "items": {"type": "string"}}}}
     },
@@ -97,6 +97,8 @@
     "GET /api/v1/research/experiments": {
       "response": {"type": "object", "required": ["chain_valid", "runs"],
         "properties": {"runs": {"type": "array", "items": {"type": "object", "required": ["run_id", "kind", "hash"]}}}}
-    }
+    },
+    "POST /api/v1/agents/task": {"request": {"type": "object", "required": ["objective"], "properties": {"objective": {"type": "string"}, "context": {"type": "string"}}}, "response": {"type": "object", "required": ["schema", "task_id", "objective", "evidence_class", "decision", "reason", "authority", "agents", "events", "receipt"], "properties": {"schema": {"const": "osiris-agent-task/v1"}, "task_id": {"type": "string"}, "objective": {"type": "string"}, "evidence_class": {"const": "MODEL_OUTPUT"}, "decision": {"enum": ["PENDING_HUMAN_APPROVAL", "REVISION_REQUESTED", "HELD_BY_REVIEW", "QUARANTINED", "REJECTED", "FAILED"]}, "reason": {"type": "string"}, "aiden_verdict": {"enum": ["PROCEED", "REVISE", "STOP", null]}, "authority": {"type": "object", "required": ["execution", "executed"], "properties": {"execution": {"const": "NONE"}, "executed": {"const": false}}}, "agents": {"type": "array", "items": {"type": "object", "required": ["role", "text", "provider", "text_sha256", "firewall", "findings"], "properties": {"role": {"enum": ["AURA", "AIDEN", "IRIS"]}, "text": {"type": "string"}, "provider": {"type": "string"}, "text_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}, "firewall": {"enum": ["ACCEPT", "QUARANTINE", "REJECT"]}, "findings": {"type": "array", "items": {"type": "object", "required": ["kind", "verdict", "reason", "sentence"]}}}}}, "events": {"type": "array", "items": {"type": "object", "required": ["seq", "actor", "event", "detail"], "properties": {"seq": {"type": "integer"}, "actor": {"enum": ["OSIRIS", "AURA", "AIDEN", "IRIS"]}, "event": {"type": "string"}, "detail": {"type": "string"}}}}, "receipt": {"type": "object", "required": ["kind", "hash", "prev", "chain_valid"], "properties": {"kind": {"const": "agents.task"}, "chain_valid": {"type": "boolean"}}}}}},
+    "GET /api/v1/agents/tasks": {"response": {"type": "object", "required": ["chain_valid", "count", "rows"], "properties": {"chain_valid": {"type": "boolean"}, "count": {"type": "integer"}, "rows": {"type": "array"}}}}
   }
 }

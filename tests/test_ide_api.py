@@ -20,6 +20,14 @@ CONTRACT = json.load(open(ide_api.CONTRACT_PATH))
 BELL = "organism B { gene g() on a, b { helix a; bond a, b; cleave a -> x; cleave b -> y; } genome { g() @ [0, 1]; } }"
 
 
+def fake_agent_model(role, system, prompt):
+    """Stands in for the model gateway: fixed text per role, no network."""
+    text = {"AURA": "Proposal: compile the Bell organism, then simulate it. Risk: none known.",
+            "AIDEN": "The proposal names no receipt to check.\nVERDICT: PROCEED",
+            "IRIS": "Objective: a Bell baseline. AURA proposes a simulator run. AIDEN asks for a receipt."}[role]
+    return text, "fake:test-model"
+
+
 @pytest.fixture(scope="module")
 def server(tmp_path_factory):
     import threading
@@ -35,7 +43,8 @@ def server(tmp_path_factory):
     policy = write_policy(tmp)
     backend = ide_api.Backend(
         gateway_factory=lambda: GitHubGateway(policy_path=policy, receipts_path=str(tmp / "gh.jsonl"), bridge=FakeBridge()),
-        slice_receipts=str(tmp / "slice.jsonl"), examples_dir=str(examples), workspace_dirs=(str(tmp / "nope"),))
+        slice_receipts=str(tmp / "slice.jsonl"), examples_dir=str(examples), workspace_dirs=(str(tmp / "nope"),),
+        agent_model_fn=fake_agent_model)
     httpd, token = ide_api.serve(backend, port=0, console_dir=str(console), token_file=str(tmp / "tok"))
     t = threading.Thread(target=httpd.serve_forever, daemon=True)
     t.start()
@@ -100,6 +109,8 @@ def test_console_endpoints_are_in_the_contract():
     ("GET /api/v1/governance/receipts", None),
     ("GET /api/v1/research/claims", None),
     ("GET /api/v1/research/experiments", None),
+    ("POST /api/v1/agents/task", {"objective": "Establish a Bell baseline on the simulator"}),
+    ("GET /api/v1/agents/tasks", None),
 ])
 def test_every_response_matches_the_contract(server, route, body):
     method, path = route.split(" ")

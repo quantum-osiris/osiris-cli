@@ -1,0 +1,215 @@
+"""OSIRIS orchestrates AURA, AIDEN and IRIS on one task.
+
+    objective -> AURA proposes -> AIDEN reviews -> IRIS writes the operator brief -> OSIRIS decides
+
+The three roles are language-model calls. They hold no authority and cannot run anything:
+
+  * AURA  proposes a plan for the objective.
+  * AIDEN reviews AURA's proposal and ends with one line ``VERDICT: PROCEED | REVISE | STOP``.
+  * IRIS  integrates both into a short brief for the operator. It adds no claims of its own.
+
+OSIRIS is ordinary code. It runs the roles in order, puts every output through the evidence
+firewall (which flags statements that tests passed, that something was executed or measured, or
+that restate a claim the register records as refuted), reads AIDEN's verdict line, and derives
+the decision. The best possible decision is PENDING_HUMAN_APPROVAL: nothing here approves,
+executes, merges or submits. Each task ends with one row on a hash-chained receipt file that
+holds digests, the firewall findings and the decision.
+
+The model call is injected (``model_fn``), so tests run without a network. The default goes
+through ``osiris_cli.gemini_gateway``, the only path from OSIRIS to Google's model APIs.
+"""
+
+from __future__ import annotations
+
+import hashlib
+import os
+import re
+import secrets
+from typing import Any, Callable, Dict, List, Optional, Tuple
+
+from ..trio_authz import Receipts
+from .evidence_firewall import check_report
+
+ROLES = ("AURA", "AIDEN", "IRIS")
+RECEIPT_KIND = "agents.task"
+EVIDENCE_CLASS = "MODEL_OUTPUT"
+MAX_OBJECTIVE, MAX_CONTEXT, MAX_OUTPUT = 4000, 12000, 6000
+
+DECISIONS = ("PENDING_HUMAN_APPROVAL", "REVISION_REQUESTED", "HELD_BY_REVIEW", "QUARANTINED", "REJECTED",
+             "FAILED")
+
+_RULES = (
+    "You are one role inside OSIRIS, a governed research and engineering workspace for DNA-Lang.\n"
+    "You cannot execute, approve, verify, deploy or submit anything, and you must not say that you did.\n"
+    "Do not state that a test passed, that something ran or that a value was measured.\n"
+    "Only the simulator is connected; no quantum hardware is available.\n"
+    "Do not present a claim as true when the claims register below records it as refuted, an artifact, "
+    "not measured or without evidence.\n"
+    "Plain text only. Be concrete and brief."
+)
+
+_ROLE_TEXT = {
+    "AURA": ("You are AURA, the proposing role. Write a proposal for the objective: the approach, three to "
+             "six numbered steps, what evidence each step would produce, and the main risk. Every item is a "
+             "proposal, not a result."),
+    "AIDEN": ("You are AIDEN, the reviewing role. Review AURA's proposal: what is unsupported, what could go "
+              "wrong, and what evidence or receipt would settle it. Do not add new ideas of your own. "
+              "End with exactly one line: 'VERDICT: PROCEED', 'VERDICT: REVISE' or 'VERDICT: STOP'."),
+    "IRIS": ("You are IRIS, the integrating role. Write the brief for the human operator in at most 150 "
+             "words: the objective in one line, what AURA proposes, AIDEN's objections, and the single next "
+             "action the operator could approve. Add no claims that are not in AURA's or AIDEN's text."),
+}
+
+_VERDICT = re.compile(r"^\s*VERDICT:\s*(PROCEED|REVISE|STOP)\s*$", re.I | re.M)
+
+# (role, system prompt, user prompt) -> (text, provider label)
+ModelFn = Callable[[str, str, str], Tuple[str, str]]
+
+
+class CouncilError(Exception):
+    """Bad input. Model failures are not raised: they end the task with decision FAILED."""
+
+
+def _sha(text: str) -> str:
+    return hashlib.sha256(text.encode("utf-8")).hexdigest()
+
+
+def _system(role: str, claims: List[str]) -> str:
+    register = ("Claims register (verdict per claim):\n" + "\n".join(claims[:120])) if claims else \
+        "Claims register: not available. Treat every scientific claim as unverified."
+    return f"{_RULES}\n\n{_ROLE_TEXT[role]}\n\n{register}"
+
+
+def gateway_model_fn(role: str, system: str, prompt: str) -> Tuple[str, str]:
+    """The default model call: OSIRIS's own Gemini gateway (redaction, token budget, call ledger)."""
+    from .. import gemini_gateway
+    out = gemini_gateway.generate(prompt, purpose=f"agents.task/{role}", system=system,
+                                  max_output_tokens=1500, temperature=0.3)
+    return out["text"], f"{out['backend']}:{out.get('model_version') or 'gemini'}"
+
+
+def claim_lines() -> List[str]:
+    from .. import claims
+    return [f"{c.id}: {c.verdict}" for c in claims.REGISTER]
+
+
+def aiden_verdict(text: str) -> Optional[str]:
+    """The last VERDICT line in AIDEN's review, or None when there is none."""
+    found = _VERDICT.findall(text or "")
+    return found[-1].upper() if found else None
+
+
+def decide(firewall: Dict[str, str], verdict: Optional[str]) -> Tuple[str, str]:
+    """The decision and its reason, from the firewall results and AIDEN's verdict line only."""
+    for role in ROLES:
+        if firewall.get(role) == "REJECT":
+            return "REJECTED", f"the evidence firewall rejected {role}'s text"
+    for role in ROLES:
+        if firewall.get(role) == "QUARANTINE":
+            return "QUARANTINED", f"{role}'s text asserts something no evidence supports"
+    if verdict == "STOP":
+        return "HELD_BY_REVIEW", "AIDEN's verdict is STOP"
+    if verdict == "REVISE":
+        return "REVISION_REQUESTED", "AIDEN's verdict is REVISE"
+    if verdict == "PROCEED":
+        return "PENDING_HUMAN_APPROVAL", "no firewall finding and AIDEN's verdict is PROCEED; the operator decides"
+    return "REVISION_REQUESTED", "AIDEN gave no verdict line"
+
+
+def run_task(objective: Any, context: Any = None, *, receipts_path: str, model_fn: Optional[ModelFn] = None,
+             claims: Optional[List[str]] = None) -> Dict[str, Any]:
+    if not isinstance(objective, str) or not objective.strip():
+        raise CouncilError("objective must be a non-empty string")
+    objective = objective.strip()
+    if len(objective) > MAX_OBJECTIVE:
+        raise CouncilError(f"objective is longer than {MAX_OBJECTIVE} characters")
+    if context is None:
+        context = ""
+    if not isinstance(context, str) or len(context) > MAX_CONTEXT:
+        raise CouncilError(f"context must be a string of at most {MAX_CONTEXT} characters")
+    context = context.strip()
+
+    model_fn = model_fn or gateway_model_fn
+    claims = claim_lines() if claims is None else claims
+    task_id = "task-" + secrets.token_hex(6)
+    events: List[Dict[str, Any]] = []
+
+    def emit(actor: str, event: str, detail: str) -> None:
+        events.append({"seq": len(events) + 1, "actor": actor, "event": event, "detail": detail})
+
+    emit("OSIRIS", "TASK_ACCEPTED", f"{task_id}: objective {_sha(objective)[:16]}, {len(claims)} claims in context")
+
+    outputs: Dict[str, Dict[str, Any]] = {}
+    firewall: Dict[str, str] = {}
+    failure: Optional[str] = None
+    base = f"Objective:\n{objective}" + (f"\n\nContext from the workspace:\n{context}" if context else "")
+    prompts = {
+        "AURA": lambda: base,
+        "AIDEN": lambda: f"{base}\n\nAURA's proposal:\n{outputs['AURA']['text']}",
+        "IRIS": lambda: (f"{base}\n\nAURA's proposal:\n{outputs['AURA']['text']}\n\n"
+                         f"AIDEN's review:\n{outputs['AIDEN']['text']}"),
+    }
+    stage = {"AURA": "PROPOSAL", "AIDEN": "REVIEW", "IRIS": "BRIEF"}
+
+    for role in ROLES:
+        try:
+            text, provider = model_fn(role, _system(role, claims), prompts[role]())
+        except Exception as e:  # noqa: BLE001 - any model failure ends the task; no key material is in e
+            failure = f"{role}: {type(e).__name__}: {str(e)[:200]}"
+            emit("OSIRIS", "MODEL_UNAVAILABLE", failure)
+            break
+        text = (text or "").strip()[:MAX_OUTPUT]
+        if not text:
+            failure = f"{role}: the model returned no text"
+            emit("OSIRIS", "MODEL_UNAVAILABLE", failure)
+            break
+        result = check_report(text)
+        firewall[role] = result.decision
+        findings = [{"kind": f.kind, "verdict": f.verdict, "reason": f.reason, "sentence": f.sentence[:240]}
+                    for f in result.findings]
+        outputs[role] = {"role": role, "text": text, "provider": str(provider)[:80], "text_sha256": _sha(text),
+                         "firewall": result.decision, "findings": findings}
+        emit(role, stage[role], f"{len(text)} characters via {str(provider)[:80]}")
+        emit("OSIRIS", "FIREWALL_" + result.decision, f"{role}: {len(findings)} finding(s)")
+
+    verdict = aiden_verdict(outputs["AIDEN"]["text"]) if "AIDEN" in outputs else None
+    if failure:
+        decision, reason = "FAILED", failure
+    else:
+        emit("AIDEN", "VERDICT", verdict or "none given")
+        decision, reason = decide(firewall, verdict)
+    emit("OSIRIS", "DECISION_" + decision, reason)
+
+    os.makedirs(os.path.dirname(os.path.abspath(receipts_path)), mode=0o700, exist_ok=True)
+    row = Receipts(receipts_path).append(RECEIPT_KIND, {
+        "task_id": task_id, "objective_sha256": _sha(objective), "context_sha256": _sha(context),
+        "evidence_class": EVIDENCE_CLASS, "decision": decision, "reason": reason, "aiden_verdict": verdict,
+        "roles": [{"role": r, "provider": outputs[r]["provider"], "text_sha256": outputs[r]["text_sha256"],
+                   "firewall": outputs[r]["firewall"], "findings": len(outputs[r]["findings"])}
+                  for r in ROLES if r in outputs],
+        "events": len(events) + 1, "executed": False,
+    })
+    emit("OSIRIS", "RECEIPT_RECORDED", f"{RECEIPT_KIND} {row['hash'][:16]}")
+
+    return {
+        "schema": "osiris-agent-task/v1", "task_id": task_id, "objective": objective,
+        "evidence_class": EVIDENCE_CLASS, "orchestrator": "osiris_cli.orchestration.council",
+        "decision": decision, "reason": reason, "aiden_verdict": verdict,
+        "authority": {"execution": "NONE", "executed": False,
+                      "note": "Model text is not an approval or evidence. The operator decides what happens next."},
+        "agents": [outputs[r] for r in ROLES if r in outputs],
+        "events": events,
+        "receipt": {"kind": row["kind"], "hash": row["hash"], "prev": row["prev"],
+                    "chain_valid": Receipts.verify(receipts_path)},
+    }
+
+
+def task_receipts(receipts_path: str) -> Dict[str, Any]:
+    import json
+    rows: List[Dict[str, Any]] = []
+    valid = True
+    if os.path.isfile(receipts_path):
+        valid = Receipts.verify(receipts_path)
+        with open(receipts_path, encoding="utf-8") as fh:
+            rows = [json.loads(line) for line in fh if line.strip()]
+    return {"path": receipts_path, "chain_valid": valid, "count": len(rows), "rows": rows[-50:]}
