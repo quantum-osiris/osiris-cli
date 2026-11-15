@@ -84,7 +84,7 @@ def gateway_model_fn(role: str, system: str, prompt: str) -> Tuple[str, str]:
     """The default model call: OSIRIS's own Gemini gateway (redaction, token budget, call ledger)."""
     from .. import gemini_gateway
     out = gemini_gateway.generate(prompt, purpose=f"agents.task/{role}", system=system,
-                                  max_output_tokens=1500, temperature=0.3)
+                                  max_output_tokens=4096, temperature=0.3)
     return out["text"], f"{out['backend']}:{out.get('model_version') or 'gemini'}"
 
 
