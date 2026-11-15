@@ -60,4 +60,4 @@ Compile errors stop the flow before admission, and nothing is receipted because 
 - **Python 3.11+ only for dependency inspection.** `GitHubGateway.dependencies()` needs `tomllib`; it raises `UNSUPPORTED` on older versions.
 - **New tests skip in CI.** They need the sibling repos installed, and `osiris-cli` CI does not install them.
 - **No Next.js integration.** The console is served by the OSIRIS service, not by Next.js; see `quantum-ide/docs/OSIRIS_CONSOLE.md`.
-- **The key-creation problem is still open.** `node_beta_governance.get_or_create_operator_key()` creates its own HMAC key in-process. The gateway does not use it, because SYS-021 ssh grants are the write authority. The issue itself remains.
+- **Key creation fixed (F-16, Sprint 1.1).** `node_beta_governance` no longer creates a key. It uses only an owner-provisioned 0600 key whose fingerprint is enrolled in `governance/operator_keys`, which ships empty. Without one, issuing raises and verifying is DENY. HMAC is symmetric, so a same-user process that can read the key can still issue. The gateway does not use this module: its write authority is the SYS-021 ssh grant.
