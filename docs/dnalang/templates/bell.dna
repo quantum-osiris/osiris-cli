@@ -1,0 +1,15 @@
+// The smallest organism: one gene, one instance, a Bell pair.
+organism Bell {
+  meta { author: "Devin Phillip Davis", purpose: "smoke test" }
+
+  gene bell_pair() on a, b {
+    helix a;          // H
+    bond a, b;        // CX
+    cleave a -> ca;
+    cleave b -> cb;
+  }
+
+  genome {
+    bell_pair() @ [0, 1];
+  }
+}
