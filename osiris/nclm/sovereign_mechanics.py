@@ -118,16 +118,17 @@ class TorsionLockedAttention(Module):
         # === T-Lock Stabilization ===
         # R_stabilized = alpha * R + beta * diag(R)
         # Diagonal reinforcement prevents eigenvalue collapse
-        diag_vals = np.diagonal(scores.data, axis1=-2, axis2=-1).copy()  # (B,H,T)
+        # diag(R) is taken with a constant identity mask so it stays in the autograd graph. Until
+        # 2026-11-16 the diagonal was copied out of scores.data, which gave the same forward values but
+        # dropped this term from the backward pass: q_proj, k_proj and everything below them received a
+        # gradient that differed from the true one by 10-30% (test_nclm_gradients.py). The forward pass,
+        # the checkpoint format and held-out scoring are unchanged.
+        eye = Tensor(np.eye(T, dtype=np.float32)[np.newaxis, np.newaxis, :, :], requires_grad=False)
+        diag_part = scores * eye
 
         alpha = self.tlock_alpha.reshape(1, H, 1, 1)
-        scores = scores * alpha
-
         beta = self.tlock_beta.reshape(1, H, 1, 1)
-        diag_matrix = np.zeros((B, H, T, T), dtype=np.float32)
-        idx = np.arange(T)
-        diag_matrix[:, :, idx, idx] = diag_vals
-        scores = scores + Tensor(diag_matrix, requires_grad=False) * beta
+        scores = scores * alpha + diag_part * beta
 
         # === Pilot-wave non-local modulation ===
         pw = self._pilot_wave_factor(T)

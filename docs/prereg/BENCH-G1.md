@@ -118,3 +118,11 @@ On pass@1, G passed 6 tasks Q did not and Q passed 1 task G did not (one-sided s
 registered outcome). Read together with the arm G observation above: Gemini writes code the hidden tests accept far
 more often, but the loop delivers little of it because the candidate's own test fails; delivery, the registered
 measure, does not separate the two models at n = 9.
+
+## Clarification 1 (appended 2026-11-16; the text above is unchanged)
+
+The decision rule's parenthesis lists "6 of 7" discordant tasks favouring G as enough for p < 0.05. It is not:
+the exact one-sided sign test for 6 of 7 gives p = (C(7,6) + C(7,7)) / 2^7 = 8/128 = 0.0625. At α = 0.05 the
+rule needs 5 of 5, 6 of 6, 7 of 7 or 7 of 8 (p = 0.031, 0.016, 0.008, 0.035). This does not change the
+registered result: delivery had 3 discordant tasks (p = 0.500), so the outcome stays "no difference shown".
+Any later benchmark that changes the runner or the acceptance loop is a new version, not a re-reading of this one.
