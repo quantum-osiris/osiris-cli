@@ -1,0 +1,128 @@
+{
+  "n_conditions_in_suite": 27,
+  "dt_aligned_4ns": true,
+  "shots_per_basis_total": 33600,
+  "effective_sigma_per_condition": 0.002181,
+  "mde_80pct_power_alpha_0_01_student_t_pp": 1.3942,
+  "overall_identifiability_accuracy": 1.0,
+  "null_h0_specificity": 1.0,
+  "confusion_matrix": {
+    "H0": {
+      "H0": 10,
+      "H1": 0,
+      "H2": 0,
+      "H3": 0,
+      "Apparatus": 0
+    },
+    "H1": {
+      "H0": 0,
+      "H1": 10,
+      "H2": 0,
+      "H3": 0,
+      "Apparatus": 0
+    },
+    "H2": {
+      "H0": 0,
+      "H1": 0,
+      "H2": 10,
+      "H3": 0,
+      "Apparatus": 0
+    },
+    "H3": {
+      "H0": 0,
+      "H1": 0,
+      "H2": 0,
+      "H3": 10,
+      "Apparatus": 0
+    },
+    "Apparatus": {
+      "H0": 0,
+      "H1": 0,
+      "H2": 0,
+      "H3": 0,
+      "Apparatus": 10
+    }
+  },
+  "held_out_transfer": {
+    "held_out_rmse_h3": 0.00309,
+    "held_out_rmse_h0": 0.01705,
+    "held_out_latent_rmse_h3": 0.00068,
+    "held_out_latent_rmse_h0": 0.01598,
+    "predicted_optimal_offset_ns_h3": 0,
+    "true_stagger_gain_on_held_out_pp": 0.014,
+    "parameter_leakage_from_truth": false,
+    "evaluated_on_noisy_observations": true
+  },
+  "marrakesh_disjoint_5hop_couplers": [
+    {
+      "coupler": [
+        13,
+        14
+      ],
+      "twoq_error": 0.00104
+    },
+    {
+      "coupler": [
+        1,
+        2
+      ],
+      "twoq_error": 0.00155
+    },
+    {
+      "coupler": [
+        46,
+        47
+      ],
+      "twoq_error": 0.00168
+    },
+    {
+      "coupler": [
+        98,
+        111
+      ],
+      "twoq_error": 0.0017
+    },
+    {
+      "coupler": [
+        136,
+        143
+      ],
+      "twoq_error": 0.00172
+    },
+    {
+      "coupler": [
+        62,
+        63
+      ],
+      "twoq_error": 0.00176
+    },
+    {
+      "coupler": [
+        135,
+        139
+      ],
+      "twoq_error": 0.00178
+    },
+    {
+      "coupler": [
+        54,
+        55
+      ],
+      "twoq_error": 0.00202
+    },
+    {
+      "coupler": [
+        7,
+        8
+      ],
+      "twoq_error": 0.00222
+    },
+    {
+      "coupler": [
+        127,
+        128
+      ],
+      "twoq_error": 0.00241
+    }
+  ]
+}

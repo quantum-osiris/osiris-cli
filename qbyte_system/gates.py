@@ -201,6 +201,16 @@ def s_gate() -> np.ndarray:
     return phase_gate(np.pi / 2)
 
 
+def s_dg() -> np.ndarray:
+    """S† gate (inverse √Z) = P(-π/2)."""
+    return phase_gate(-np.pi / 2)
+
+
+def t_dg() -> np.ndarray:
+    """T† gate (inverse π/8 gate) = P(-π/4)."""
+    return phase_gate(-np.pi / 4)
+
+
 # ═══════════════════════════════════════════════════════════════════════════════
 # TWO-QUBIT GATES
 # ═══════════════════════════════════════════════════════════════════════════════
@@ -487,7 +497,9 @@ RXX = xx_rotation
 RYY = yy_rotation
 RZZ = zz_rotation
 T = t_gate
+Tdg = t_dg
 S = s_gate
+Sdg = s_dg
 CCX = toffoli
 CSWAP = fredkin
 
@@ -497,10 +509,10 @@ __all__ = [
     # DNA metaphors
     'helix', 'unwind', 'cleave', 'twist', 'fold', 'splice', 'bond',
     # Standard names
-    'H', 'X', 'Y', 'Z', 'RX', 'RY', 'RZ', 'T', 'S',
+    'H', 'X', 'Y', 'Z', 'RX', 'RY', 'RZ', 'T', 'Tdg', 'S', 'Sdg',
     'CNOT', 'CZ', 'SWAP', 'CP', 'iswap',
     'RXX', 'RYY', 'RZZ',
-    'CCX', 'CSWAP', 'toffoli', 'fredkin',
+    'CCX', 'CSWAP', 'toffoli', 'fredkin', 's_gate', 's_dg', 't_gate', 't_dg',
     # Utilities
     'tensor', 'identity', 'adjoint', 'compose', 'is_unitary', 'fidelity',
     'phase_gate', 'controlled_phase', 'phase_flip', 'rotate_y',
