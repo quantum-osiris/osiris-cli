@@ -1,0 +1,118 @@
+%PDF-1.4
+%‚„œ”
+1 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>
+endobj
+2 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica-Bold >>
+endobj
+3 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Courier >>
+endobj
+4 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Times-Roman >>
+endobj
+5 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Times-Bold >>
+endobj
+6 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Times-Italic >>
+endobj
+7 0 obj
+<< /Type /Pages /Kids [9 0 R] /Count 1 >>
+endobj
+8 0 obj
+<< /Length 5011 >>
+stream
+1 1 1 rg
+0 0 540.00 340.00 re f
+BT /F2 11.0 Tf 0.067 0.094 0.153 rg 13.48 318.00 Td (OSIRIS-HP-004 \(ibm_marrakesh, Job dbti1fbsbsbs73cb2vu0\): 9-Basis 4Q Joint Bell Overlap) Tj ET
+BT /F1 8.5 Tf 0.294 0.333 0.388 rg 44.75 304.00 Td (286 circuits x 1,024 shots = 292,864 shots | Pinned 8Q tree [34,52,32,33,39,53,54,55] | Zero postselection) Tj ET
+0.996 0.949 0.949 rg 64.00 60.00 446.00 114.00 re f
+0.941 0.992 0.957 rg 64.00 174.00 446.00 114.00 re f
+1.00 w 0.216 0.255 0.318 RG 64.00 60.00 446.00 228.00 re S
+q [5 3] 0 d 0.80 w 0.082 0.502 0.239 RG 64.00 288.00 m 510.00 288.00 l S Q
+BT /F3 8.0 Tf 0.067 0.094 0.153 rg 38.80 285.00 Td (1.00) Tj ET
+BT /F1 7.2 Tf 0.082 0.502 0.239 rg 401.60 291.00 Td (1.0000 \(16/16 Ideal 2-Ebit\)) Tj ET
+q [5 3] 0 d 1.20 w 0.725 0.110 0.110 RG 64.00 174.00 m 510.00 174.00 l S Q
+BT /F3 8.0 Tf 0.067 0.094 0.153 rg 38.80 171.00 Td (0.50) Tj ET
+BT /F2 7.2 Tf 0.725 0.110 0.110 rg 303.75 177.00 Td (0.5000 \(8/16 Exact 1-Ebit / Schmidt-Rank-2 Ceiling\)) Tj ET
+q [5 3] 0 d 0.80 w 0.573 0.251 0.055 RG 64.00 117.00 m 510.00 117.00 l S Q
+BT /F3 8.0 Tf 0.067 0.094 0.153 rg 38.80 114.00 Td (0.25) Tj ET
+BT /F1 7.2 Tf 0.573 0.251 0.055 rg 362.00 120.00 Td (0.2500 \(4/16 0-Ebit Separable Ceiling\)) Tj ET
+q [5 3] 0 d 0.80 w 0.420 0.447 0.502 RG 64.00 88.50 m 510.00 88.50 l S Q
+BT /F3 8.0 Tf 0.067 0.094 0.153 rg 38.80 85.50 Td (0.12) Tj ET
+BT /F1 7.2 Tf 0.420 0.447 0.502 rg 344.00 91.50 Td (0.1250 \(2/16 1-Photon Sub-Capacity Ceiling\)) Tj ET
+q [5 3] 0 d 0.80 w 0.612 0.639 0.686 RG 64.00 74.25 m 510.00 74.25 l S Q
+BT /F3 8.0 Tf 0.067 0.094 0.153 rg 38.80 71.25 Td (0.06) Tj ET
+BT /F1 7.2 Tf 0.612 0.639 0.686 rg 372.80 77.25 Td (0.0625 \(1/16 Maximally Mixed Floor\)) Tj ET
+0.80 w 0.145 0.388 0.922 rg 0.067 0.094 0.153 RG 81.60 60.00 26.00 150.27 re B
+q [] 0 d 1.20 w 0.067 0.094 0.153 RG 94.60 213.21 m 94.60 207.33 l S Q
+q [] 0 d 1.20 w 0.067 0.094 0.153 RG 90.60 213.21 m 98.60 213.21 l S Q
+q [] 0 d 1.20 w 0.067 0.094 0.153 RG 90.60 207.33 m 98.60 207.33 l S Q
+1.10 w 0.898 0.906 0.922 rg 0.145 0.388 0.922 RG 110.60 60.00 18.00 164.02 re B
+BT /F3 7.8 Tf 0.145 0.388 0.922 rg 80.56 216.27 Td (0.6591) Tj ET
+BT /F2 8.5 Tf 0.067 0.094 0.153 rg 97.34 46.00 Td (Arm A) Tj ET
+BT /F1 7.5 Tf 0.294 0.333 0.388 rg 76.72 35.00 Td (\(Inverse 38 CZ\)) Tj ET
+0.80 w 0.020 0.588 0.412 rg 0.067 0.094 0.153 RG 170.80 60.00 26.00 144.42 re B
+q [] 0 d 1.20 w 0.067 0.094 0.153 RG 183.80 207.42 m 183.80 201.42 l S Q
+q [] 0 d 1.20 w 0.067 0.094 0.153 RG 179.80 207.42 m 187.80 207.42 l S Q
+q [] 0 d 1.20 w 0.067 0.094 0.153 RG 179.80 201.42 m 187.80 201.42 l S Q
+1.10 w 0.898 0.906 0.922 rg 0.020 0.588 0.412 RG 199.80 60.00 18.00 157.79 re B
+BT /F3 7.8 Tf 0.020 0.588 0.412 rg 169.76 210.42 Td (0.6334) Tj ET
+BT /F2 8.5 Tf 0.067 0.094 0.153 rg 186.54 46.00 Td (Arm B) Tj ET
+BT /F1 7.5 Tf 0.294 0.333 0.388 rg 160.30 35.00 Td (\(Restricted 32 CZ\)) Tj ET
+0.80 w 0.851 0.467 0.024 rg 0.067 0.094 0.153 RG 260.00 60.00 26.00 41.03 re B
+q [] 0 d 1.20 w 0.067 0.094 0.153 RG 273.00 104.15 m 273.00 97.91 l S Q
+q [] 0 d 1.20 w 0.067 0.094 0.153 RG 269.00 104.15 m 277.00 104.15 l S Q
+q [] 0 d 1.20 w 0.067 0.094 0.153 RG 269.00 97.91 m 277.00 97.91 l S Q
+1.10 w 0.898 0.906 0.922 rg 0.851 0.467 0.024 RG 289.00 60.00 18.00 44.01 re B
+BT /F3 7.8 Tf 0.851 0.467 0.024 rg 258.96 107.03 Td (0.1799) Tj ET
+BT /F2 8.5 Tf 0.067 0.094 0.153 rg 264.48 46.00 Td (Arm B-Ctrl) Tj ET
+BT /F1 7.5 Tf 0.294 0.333 0.388 rg 251.38 35.00 Td (\(|0000>_BE 30 CZ\)) Tj ET
+0.80 w 0.486 0.227 0.929 rg 0.067 0.094 0.153 RG 349.20 60.00 26.00 24.77 re B
+q [] 0 d 1.20 w 0.067 0.094 0.153 RG 362.20 88.72 m 362.20 80.82 l S Q
+q [] 0 d 1.20 w 0.067 0.094 0.153 RG 358.20 88.72 m 366.20 88.72 l S Q
+q [] 0 d 1.20 w 0.067 0.094 0.153 RG 358.20 80.82 m 366.20 80.82 l S Q
+1.10 w 0.898 0.906 0.922 rg 0.486 0.227 0.929 RG 378.20 60.00 18.00 25.60 re B
+BT /F3 7.8 Tf 0.486 0.227 0.929 rg 348.16 91.60 Td (0.1086) Tj ET
+BT /F2 8.5 Tf 0.067 0.094 0.153 rg 355.93 46.00 Td (Arm B-Def) Tj ET
+BT /F1 7.5 Tf 0.294 0.333 0.388 rg 342.45 35.00 Td (\(1-Photon 25 CZ\)) Tj ET
+0.80 w 0.420 0.447 0.502 rg 0.067 0.094 0.153 RG 438.40 60.00 26.00 14.45 re B
+q [] 0 d 1.20 w 0.067 0.094 0.153 RG 451.40 77.47 m 451.40 71.43 l S Q
+q [] 0 d 1.20 w 0.067 0.094 0.153 RG 447.40 77.47 m 455.40 77.47 l S Q
+q [] 0 d 1.20 w 0.067 0.094 0.153 RG 447.40 71.43 m 455.40 71.43 l S Q
+1.10 w 0.898 0.906 0.922 rg 0.420 0.447 0.502 RG 467.40 60.00 18.00 14.40 re B
+BT /F3 7.8 Tf 0.420 0.447 0.502 rg 437.36 80.45 Td (0.0634) Tj ET
+BT /F2 8.5 Tf 0.067 0.094 0.153 rg 442.88 46.00 Td (Arm B-Held) Tj ET
+BT /F1 7.5 Tf 0.294 0.333 0.388 rg 431.65 35.00 Td (\(Wrong U2 35 CZ\)) Tj ET
+0.70 w 0.020 0.588 0.412 rg 0.067 0.094 0.153 RG 72.00 16.00 12.00 8.00 re B
+BT /F1 8.0 Tf 0.067 0.094 0.153 rg 88.00 17.00 Td (Primary: Raw Unmitigated 9-Basis F_joint \(+/- 5 SE_eff\)) Tj ET
+1.00 w 0.898 0.906 0.922 rg 0.020 0.588 0.412 RG 330.00 16.00 12.00 8.00 re B
+BT /F1 8.0 Tf 0.067 0.094 0.153 rg 346.00 17.00 Td (Secondary: Same-Job 16-State SPAM Sensitivity) Tj ET
+endstream
+endobj
+9 0 obj
+<< /Type /Page /Parent 7 0 R /MediaBox [0 0 540.00 340.00] /Resources << /Font << /F1 1 0 R /F2 2 0 R /F3 3 0 R /F4 4 0 R /F5 5 0 R /F6 6 0 R >> >> /Contents 8 0 R >>
+endobj
+10 0 obj
+<< /Type /Catalog /Pages 7 0 R >>
+endobj
+xref
+0 11
+0000000000 65535 f 
+0000000015 00000 n 
+0000000085 00000 n 
+0000000160 00000 n 
+0000000228 00000 n 
+0000000300 00000 n 
+0000000371 00000 n 
+0000000444 00000 n 
+0000000501 00000 n 
+0000005563 00000 n 
+0000005745 00000 n 
+trailer
+<< /Size 11 /Root 10 0 R >>
+startxref
+5795
+%%EOF
