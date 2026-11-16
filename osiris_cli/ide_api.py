@@ -31,7 +31,7 @@ from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from typing import Any, Callable, Dict, Optional, Tuple
 from urllib.parse import urlparse
 
-API_VERSION = "1.2.0"
+API_VERSION = "1.3.0"
 MAX_BODY = 256 * 1024
 TOKEN_HEADER = "X-OSIRIS-Token"
 TOKEN_PLACEHOLDER = "__OSIRIS_SESSION_TOKEN__"
@@ -76,7 +76,11 @@ class Backend:
     def __init__(self, *, gateway_factory: Callable[[], Any], slice_receipts: str, examples_dir: str,
                  workspace_dirs: Tuple[str, ...] = (), slice_runner: Optional[Callable[..., Dict[str, Any]]] = None,
                  agent_receipts: Optional[str] = None, agent_model_fn: Optional[Callable[..., Any]] = None,
-                 store_factory: Optional[Callable[[], Any]] = None):
+                 store_factory: Optional[Callable[[], Any]] = None,
+                 editor_store_factory: Optional[Callable[[], Any]] = None,
+                 assist_route_fn: Optional[Callable[..., Any]] = None):
+        self._editor_store_factory = editor_store_factory
+        self._assist_route_fn = assist_route_fn
         self._gateway_factory = gateway_factory
         self._gateway = None
         self._store_factory = store_factory
@@ -320,6 +324,146 @@ class Backend:
         except StoreError as e:
             raise self._store_api_error(e)
 
+    # ── DNA-Lang editor (API 1.3.0): compiler identity, sign-in, a user's project files, bound runs ──
+    def dnalang_info(self) -> Dict[str, Any]:
+        """What this service can actually do for the editor. Versions come from the imported packages."""
+        from osiris_cli import vertical_slice as vs
+        from osiris_cli.editor_store import MAX_FILE_BYTES, target_status
+        return {"compiler": {"name": "dnalang", "version": vs._versions()["dnalang"]},
+                "versions": vs._versions(),
+                "operations": {"parse": True, "check": True, "compile": True, "simulate": True,
+                               "evolve": False, "hardware": False},
+                "simulator": {"backend": "qiskit_aer.AerSimulator (noiseless, optimization_level=0)", "label": "SIMULATED",
+                              "limits": {"qubits": vs.MAX_QUBITS, "operations": vs.MAX_OPS, "depth": vs.MAX_DEPTH,
+                                         "shots": vs.MAX_SHOTS, "source_bytes": vs.MAX_SOURCE_BYTES}},
+                "hardware": {"available": False,
+                             "reason": "this API has no route that submits to a quantum processor"},
+                "queue": {"supported": False, "cancel_supported": False,
+                          "reason": "a run is one synchronous request; nothing is queued and nothing can be cancelled"},
+                "files": {**(self._editor_status()), "max_file_bytes": MAX_FILE_BYTES}}
+
+    def _editor_status(self) -> Dict[str, Any]:
+        from osiris_cli.editor_store import target_status
+        from osiris_cli.workspace_store import StoreError
+        if self._editor_store_factory is not None:
+            try:
+                return {"configured": True, "target": self._editor_store_factory().target, "reason": None}
+            except StoreError as e:
+                return {"configured": False, "target": None, "reason": e.code}
+        return target_status()
+
+    def _editor(self):
+        from osiris_cli.editor_store import EditorStore
+        from osiris_cli.workspace_store import StoreError
+        try:
+            return self._editor_store_factory() if self._editor_store_factory is not None else EditorStore()
+        except StoreError as e:
+            raise self._editor_error(e)
+
+    @staticmethod
+    def _editor_error(e: Any) -> ApiError:
+        status = {"INVALID_INPUT": 400, "CODE_REJECTED": 400, "UNAUTHORIZED": 401, "FORBIDDEN": 403, "NOT_FOUND": 404,
+                  "PATH_EXISTS": 409, "CONFLICT": 409, "TOO_LARGE": 413, "RATE_LIMITED": 429,
+                  "NOT_CONFIGURED": 503, "BAD_CONFIG": 503, "WRONG_PROJECT": 503, "UNAVAILABLE": 503}.get(e.code, 502)
+        return ApiError(status, f"EDITOR_{e.code}", str(e))
+
+    def _editor_call(self, fn: Callable[[Any], Dict[str, Any]]) -> Dict[str, Any]:
+        from osiris_cli.workspace_store import StoreError
+        store = self._editor()
+        try:
+            return fn(store)
+        except StoreError as e:
+            raise self._editor_error(e)
+
+    def auth_request_code(self, body: Dict[str, Any]) -> Dict[str, Any]:
+        return self._editor_call(lambda s: s.request_code(body.get("email")))
+
+    def auth_verify(self, body: Dict[str, Any]) -> Dict[str, Any]:
+        return self._editor_call(lambda s: {"session": s.verify_code(body.get("email"), body.get("code"))})
+
+    def auth_refresh(self, body: Dict[str, Any]) -> Dict[str, Any]:
+        return self._editor_call(lambda s: {"session": s.refresh(body.get("refresh_token"))})
+
+    def auth_user(self, body: Dict[str, Any]) -> Dict[str, Any]:
+        return self._editor_call(lambda s: {"user": s.user(body.get("user_token")), "target": s.target})
+
+    def auth_signout(self, body: Dict[str, Any]) -> Dict[str, Any]:
+        return self._editor_call(lambda s: s.sign_out(body.get("user_token")))
+
+    def files_projects(self, body: Dict[str, Any]) -> Dict[str, Any]:
+        tok = body.get("user_token")
+        if body.get("name") is not None:
+            return self._editor_call(lambda s: {"project": s.create_project(tok, body.get("name"))})
+        return self._editor_call(lambda s: {"projects": s.projects(tok)})
+
+    def files_list(self, body: Dict[str, Any]) -> Dict[str, Any]:
+        return self._editor_call(lambda s: {"files": s.files(body.get("user_token"), body.get("project_id"))})
+
+    def files_open(self, body: Dict[str, Any]) -> Dict[str, Any]:
+        return self._editor_call(lambda s: {"file": s.file(body.get("user_token"), body.get("file_id"))})
+
+    def files_create(self, body: Dict[str, Any]) -> Dict[str, Any]:
+        return self._editor_call(lambda s: {"file": s.create_file(body.get("user_token"), body.get("project_id"),
+                                                                  body.get("path"), body.get("content", ""))})
+
+    def files_save(self, body: Dict[str, Any]) -> Dict[str, Any]:
+        return self._editor_call(lambda s: s.save_file(body.get("user_token"), body.get("file_id"),
+                                                       body.get("base_revision"), body.get("content")))
+
+    def files_delete(self, body: Dict[str, Any]) -> Dict[str, Any]:
+        return self._editor_call(lambda s: s.delete_file(body.get("user_token"), body.get("file_id")))
+
+    def files_run(self, body: Dict[str, Any]) -> Dict[str, Any]:
+        """Simulate one stored revision of a file the caller can read. The source is read from the store
+        with the caller's token, never taken from the request, so the result is bound to that revision."""
+        from osiris_cli.vertical_slice import SliceInputError, run_slice
+        revision = body.get("revision")
+        if isinstance(revision, bool) or not isinstance(revision, int) or revision < 1:
+            raise ApiError(400, "INVALID_INPUT", "revision must be a positive integer")
+        row = self._editor_call(lambda s: s.file(body.get("user_token"), body.get("file_id")))
+        if row["revision"] != revision:
+            return {"status": "REVISION_MISMATCH", "requested_revision": revision,
+                    "current": {"revision": row["revision"], "content_sha256": row["content_sha256"]},
+                    "executed": False}
+        binding = {"project_id": row["project_id"], "file_id": row["id"], "path": row["path"],
+                   "revision": row["revision"], "content_sha256": "sha256:" + row["content_sha256"]}
+        runner = self._slice_runner or run_slice
+        try:
+            result = runner(row["content"], shots=body.get("shots", 2000), seed=body.get("seed", 1234),
+                            receipts_path=self.slice_receipts, binding=binding)
+        except SliceInputError as e:
+            raise ApiError(400, "INVALID_INPUT", str(e))
+        return {**result, "executed": result.get("status") in ("COMPLETED", "FAILED")}
+
+    def files_runs(self, body: Dict[str, Any]) -> Dict[str, Any]:
+        """Receipted runs of one file, read from the local receipt chain. The caller must be able to read the file."""
+        from osiris_cli.trio_authz import Receipts
+        row = self._editor_call(lambda s: s.file(body.get("user_token"), body.get("file_id")))
+        runs, valid = [], None
+        if os.path.isfile(self.slice_receipts):
+            valid = Receipts.verify(self.slice_receipts)
+            with open(self.slice_receipts, encoding="utf-8") as fh:
+                for line in fh:
+                    if not line.strip():
+                        continue
+                    r = json.loads(line)
+                    p = r.get("payload") or {}
+                    if (p.get("source_binding") or {}).get("file_id") == row["id"]:
+                        runs.append({"run_id": p.get("run_id"), "kind": r.get("kind"), "ts": r.get("ts"),
+                                     "receipt_hash": r.get("hash"), "source_binding": p.get("source_binding"),
+                                     "source_sha256": p.get("source_sha256"), "circuit_sha256": p.get("circuit_sha256"),
+                                     "shots": p.get("shots"), "seed": p.get("seed"), "counts": p.get("counts"),
+                                     "evidence_class": p.get("evidence_class"), "versions": p.get("versions"),
+                                     "failed_stage": p.get("failed_stage")})
+        return {"file_id": row["id"], "chain_valid": valid, "runs": runs[-50:]}
+
+    def assist(self, body: Dict[str, Any]) -> Dict[str, Any]:
+        from osiris_cli import editor_assist
+        try:
+            return editor_assist.assist(body, route_fn=self._assist_route_fn)
+        except editor_assist.AssistError as e:
+            raise ApiError(400, "INVALID_INPUT", str(e))
+
     def experiments(self) -> Dict[str, Any]:
         rows = self.receipts()["slice"]
         runs = [{"run_id": r["payload"].get("run_id"), "kind": r["kind"], "ts": r["ts"], "hash": r["hash"],
@@ -348,6 +492,21 @@ ROUTES = {
     ("POST", "/api/v1/store/projects"): "store_create_project",
     ("POST", "/api/v1/store/project"): "store_project_detail",
     ("POST", "/api/v1/store/tasks"): "store_tasks",
+    ("GET", "/api/v1/dnalang/info"): "dnalang_info",
+    ("POST", "/api/v1/auth/request-code"): "auth_request_code",
+    ("POST", "/api/v1/auth/verify"): "auth_verify",
+    ("POST", "/api/v1/auth/refresh"): "auth_refresh",
+    ("POST", "/api/v1/auth/user"): "auth_user",
+    ("POST", "/api/v1/auth/signout"): "auth_signout",
+    ("POST", "/api/v1/files/projects"): "files_projects",
+    ("POST", "/api/v1/files/list"): "files_list",
+    ("POST", "/api/v1/files/open"): "files_open",
+    ("POST", "/api/v1/files/create"): "files_create",
+    ("POST", "/api/v1/files/save"): "files_save",
+    ("POST", "/api/v1/files/delete"): "files_delete",
+    ("POST", "/api/v1/files/run"): "files_run",
+    ("POST", "/api/v1/files/runs"): "files_runs",
+    ("POST", "/api/v1/assist"): "assist",
 }
 
 

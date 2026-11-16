@@ -8,7 +8,10 @@ import json
 from pathlib import Path
 
 import pytest
-from qiskit import qpy
+
+pytest.importorskip("qiskit")
+
+from qiskit import qpy  # noqa: E402
 
 _EXP_DIR = Path(__file__).resolve().parent.parent / "experiments" / "hp004"
 _MOD_SPEC = importlib.util.spec_from_file_location("hp004_joint_stabilizer", _EXP_DIR / "hp004_joint_stabilizer.py")

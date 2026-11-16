@@ -6,6 +6,7 @@
 -- backend (service role) can. End-user access is a later, separate migration.
 -- Rollback: drop the three tables (they are new; nothing else depends on them):
 --   drop table public.osiris_dispositions, public.osiris_tasks, public.osiris_projects;
+--   drop function public.osiris_dispositions_append_only();
 
 create table public.osiris_projects (
   id          uuid primary key default gen_random_uuid(),
@@ -46,6 +47,18 @@ create table public.osiris_dispositions (
   created_at       timestamptz not null default now()
 );
 create index osiris_dispositions_project_idx on public.osiris_dispositions (project_id, created_at desc);
+
+-- A disposition is written once. No role, including the backend, can change or re-point one afterwards,
+-- so a recorded outcome cannot be edited into a different outcome. (Deleting a project still removes its rows.)
+-- receipt_hash is a reference to a row in OSIRIS's local receipt chain. This table has no "verified" column:
+-- a stored hash is not verification; the chain on the OSIRIS node is the evidence.
+create function public.osiris_dispositions_append_only() returns trigger language plpgsql as $$
+begin
+  raise exception 'osiris_dispositions is append-only';
+end $$;
+create trigger osiris_dispositions_no_update before update on public.osiris_dispositions
+  for each row execute function public.osiris_dispositions_append_only();
+revoke all on function public.osiris_dispositions_append_only() from public, anon, authenticated;
 
 alter table public.osiris_projects     enable row level security;
 alter table public.osiris_tasks        enable row level security;
