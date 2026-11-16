@@ -1,67 +1,71 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="540" height="340" viewBox="0 0 540 340">
-<rect x="0" y="0" width="540" height="340" fill="#ffffff"/>
-<text x="270.00" y="22.00" font-family="Helvetica, Arial, sans-serif" font-size="11.0" font-weight="bold" fill="#111827" text-anchor="middle">OSIRIS-HP-004 (ibm_marrakesh, Job dbti1fbsbsbs73cb2vu0): 9-Basis 4Q Joint Bell Overlap</text>
-<text x="270.00" y="36.00" font-family="Helvetica, Arial, sans-serif" font-size="8.5" font-weight="normal" fill="#4b5563" text-anchor="middle">286 circuits x 1,024 shots = 292,864 shots | Pinned 8Q tree [34,52,32,33,39,53,54,55] | Zero postselection</text>
-<rect x="64.00" y="166.00" width="446.00" height="114.00" fill="#fef2f2"/>
-<rect x="64.00" y="52.00" width="446.00" height="114.00" fill="#f0fdf4"/>
-<rect x="64.00" y="52.00" width="446.00" height="228.00" fill="none" stroke="#374151" stroke-width="1.00"/>
-<line x1="64.00" y1="52.00" x2="510.00" y2="52.00" stroke="#15803d" stroke-width="0.80" stroke-dasharray="5,3"/>
-<text x="58.00" y="55.00" font-family="monospace" font-size="8.0" font-weight="normal" fill="#111827" text-anchor="end">1.00</text>
-<text x="506.00" y="49.00" font-family="Helvetica, Arial, sans-serif" font-size="7.2" font-weight="normal" fill="#15803d" text-anchor="end">1.0000 (16/16 Ideal 2-Ebit)</text>
-<line x1="64.00" y1="166.00" x2="510.00" y2="166.00" stroke="#b91c1c" stroke-width="1.20" stroke-dasharray="5,3"/>
-<text x="58.00" y="169.00" font-family="monospace" font-size="8.0" font-weight="normal" fill="#111827" text-anchor="end">0.50</text>
-<text x="506.00" y="163.00" font-family="Helvetica, Arial, sans-serif" font-size="7.2" font-weight="bold" fill="#b91c1c" text-anchor="end">0.5000 (8/16 Exact 1-Ebit / Schmidt-Rank-2 Ceiling)</text>
-<line x1="64.00" y1="223.00" x2="510.00" y2="223.00" stroke="#92400e" stroke-width="0.80" stroke-dasharray="5,3"/>
-<text x="58.00" y="226.00" font-family="monospace" font-size="8.0" font-weight="normal" fill="#111827" text-anchor="end">0.25</text>
-<text x="506.00" y="220.00" font-family="Helvetica, Arial, sans-serif" font-size="7.2" font-weight="normal" fill="#92400e" text-anchor="end">0.2500 (4/16 0-Ebit Separable Ceiling)</text>
-<line x1="64.00" y1="251.50" x2="510.00" y2="251.50" stroke="#6b7280" stroke-width="0.80" stroke-dasharray="5,3"/>
-<text x="58.00" y="254.50" font-family="monospace" font-size="8.0" font-weight="normal" fill="#111827" text-anchor="end">0.12</text>
-<text x="506.00" y="248.50" font-family="Helvetica, Arial, sans-serif" font-size="7.2" font-weight="normal" fill="#6b7280" text-anchor="end">0.1250 (2/16 1-Photon Sub-Capacity Ceiling)</text>
-<line x1="64.00" y1="265.75" x2="510.00" y2="265.75" stroke="#9ca3af" stroke-width="0.80" stroke-dasharray="5,3"/>
-<text x="58.00" y="268.75" font-family="monospace" font-size="8.0" font-weight="normal" fill="#111827" text-anchor="end">0.06</text>
-<text x="506.00" y="262.75" font-family="Helvetica, Arial, sans-serif" font-size="7.2" font-weight="normal" fill="#9ca3af" text-anchor="end">0.0625 (1/16 Maximally Mixed Floor)</text>
-<rect x="81.60" y="129.73" width="26.00" height="150.27" fill="#2563eb" stroke="#111827" stroke-width="0.80"/>
-<line x1="94.60" y1="126.79" x2="94.60" y2="132.67" stroke="#111827" stroke-width="1.20"/>
-<line x1="90.60" y1="126.79" x2="98.60" y2="126.79" stroke="#111827" stroke-width="1.20"/>
-<line x1="90.60" y1="132.67" x2="98.60" y2="132.67" stroke="#111827" stroke-width="1.20"/>
-<rect x="110.60" y="115.98" width="18.00" height="164.02" fill="#e5e7eb" stroke="#2563eb" stroke-width="1.10"/>
-<text x="94.60" y="123.73" font-family="monospace" font-size="7.8" font-weight="bold" fill="#2563eb" text-anchor="middle">0.6591</text>
-<text x="108.60" y="294.00" font-family="Helvetica, Arial, sans-serif" font-size="8.5" font-weight="bold" fill="#111827" text-anchor="middle">Arm A</text>
-<text x="108.60" y="305.00" font-family="Helvetica, Arial, sans-serif" font-size="7.5" font-weight="normal" fill="#4b5563" text-anchor="middle">(Inverse 38 CZ)</text>
-<rect x="170.80" y="135.58" width="26.00" height="144.42" fill="#059669" stroke="#111827" stroke-width="0.80"/>
-<line x1="183.80" y1="132.58" x2="183.80" y2="138.58" stroke="#111827" stroke-width="1.20"/>
-<line x1="179.80" y1="132.58" x2="187.80" y2="132.58" stroke="#111827" stroke-width="1.20"/>
-<line x1="179.80" y1="138.58" x2="187.80" y2="138.58" stroke="#111827" stroke-width="1.20"/>
-<rect x="199.80" y="122.21" width="18.00" height="157.79" fill="#e5e7eb" stroke="#059669" stroke-width="1.10"/>
-<text x="183.80" y="129.58" font-family="monospace" font-size="7.8" font-weight="bold" fill="#059669" text-anchor="middle">0.6334</text>
-<text x="197.80" y="294.00" font-family="Helvetica, Arial, sans-serif" font-size="8.5" font-weight="bold" fill="#111827" text-anchor="middle">Arm B</text>
-<text x="197.80" y="305.00" font-family="Helvetica, Arial, sans-serif" font-size="7.5" font-weight="normal" fill="#4b5563" text-anchor="middle">(Restricted 32 CZ)</text>
-<rect x="260.00" y="238.97" width="26.00" height="41.03" fill="#d97706" stroke="#111827" stroke-width="0.80"/>
-<line x1="273.00" y1="235.85" x2="273.00" y2="242.09" stroke="#111827" stroke-width="1.20"/>
-<line x1="269.00" y1="235.85" x2="277.00" y2="235.85" stroke="#111827" stroke-width="1.20"/>
-<line x1="269.00" y1="242.09" x2="277.00" y2="242.09" stroke="#111827" stroke-width="1.20"/>
-<rect x="289.00" y="235.99" width="18.00" height="44.01" fill="#e5e7eb" stroke="#d97706" stroke-width="1.10"/>
-<text x="273.00" y="232.97" font-family="monospace" font-size="7.8" font-weight="bold" fill="#d97706" text-anchor="middle">0.1799</text>
-<text x="287.00" y="294.00" font-family="Helvetica, Arial, sans-serif" font-size="8.5" font-weight="bold" fill="#111827" text-anchor="middle">Arm B-Ctrl</text>
-<text x="287.00" y="305.00" font-family="Helvetica, Arial, sans-serif" font-size="7.5" font-weight="normal" fill="#4b5563" text-anchor="middle">(|0000&gt;_BE 30 CZ)</text>
-<rect x="349.20" y="255.23" width="26.00" height="24.77" fill="#7c3aed" stroke="#111827" stroke-width="0.80"/>
-<line x1="362.20" y1="251.28" x2="362.20" y2="259.18" stroke="#111827" stroke-width="1.20"/>
-<line x1="358.20" y1="251.28" x2="366.20" y2="251.28" stroke="#111827" stroke-width="1.20"/>
-<line x1="358.20" y1="259.18" x2="366.20" y2="259.18" stroke="#111827" stroke-width="1.20"/>
-<rect x="378.20" y="254.40" width="18.00" height="25.60" fill="#e5e7eb" stroke="#7c3aed" stroke-width="1.10"/>
-<text x="362.20" y="248.40" font-family="monospace" font-size="7.8" font-weight="bold" fill="#7c3aed" text-anchor="middle">0.1086</text>
-<text x="376.20" y="294.00" font-family="Helvetica, Arial, sans-serif" font-size="8.5" font-weight="bold" fill="#111827" text-anchor="middle">Arm B-Def</text>
-<text x="376.20" y="305.00" font-family="Helvetica, Arial, sans-serif" font-size="7.5" font-weight="normal" fill="#4b5563" text-anchor="middle">(1-Photon 25 CZ)</text>
-<rect x="438.40" y="265.55" width="26.00" height="14.45" fill="#6b7280" stroke="#111827" stroke-width="0.80"/>
-<line x1="451.40" y1="262.53" x2="451.40" y2="268.57" stroke="#111827" stroke-width="1.20"/>
-<line x1="447.40" y1="262.53" x2="455.40" y2="262.53" stroke="#111827" stroke-width="1.20"/>
-<line x1="447.40" y1="268.57" x2="455.40" y2="268.57" stroke="#111827" stroke-width="1.20"/>
-<rect x="467.40" y="265.60" width="18.00" height="14.40" fill="#e5e7eb" stroke="#6b7280" stroke-width="1.10"/>
-<text x="451.40" y="259.55" font-family="monospace" font-size="7.8" font-weight="bold" fill="#6b7280" text-anchor="middle">0.0634</text>
-<text x="465.40" y="294.00" font-family="Helvetica, Arial, sans-serif" font-size="8.5" font-weight="bold" fill="#111827" text-anchor="middle">Arm B-Held</text>
-<text x="465.40" y="305.00" font-family="Helvetica, Arial, sans-serif" font-size="7.5" font-weight="normal" fill="#4b5563" text-anchor="middle">(Wrong U2 35 CZ)</text>
-<rect x="72.00" y="316.00" width="12.00" height="8.00" fill="#059669" stroke="#111827" stroke-width="0.70"/>
-<text x="88.00" y="323.00" font-family="Helvetica, Arial, sans-serif" font-size="8.0" font-weight="normal" fill="#111827" text-anchor="start">Primary: Raw Unmitigated 9-Basis F_joint (+/- 5 SE_eff)</text>
-<rect x="330.00" y="316.00" width="12.00" height="8.00" fill="#e5e7eb" stroke="#059669" stroke-width="1.00"/>
-<text x="346.00" y="323.00" font-family="Helvetica, Arial, sans-serif" font-size="8.0" font-weight="normal" fill="#111827" text-anchor="start">Secondary: Same-Job 16-State SPAM Sensitivity</text>
+<svg xmlns="http://www.w3.org/2000/svg" width="540" height="345" viewBox="0 0 540 345">
+<rect x="0" y="0" width="540" height="345" fill="#ffffff"/>
+<text x="270.00" y="20.00" font-family="Helvetica, Arial, sans-serif" font-size="10.8" font-weight="bold" fill="#111827" text-anchor="middle">Dual-Processor 9-Basis 4Q Joint Bell Overlap (ibm_marrakesh &amp; ibm_fez)</text>
+<text x="270.00" y="34.00" font-family="Helvetica, Arial, sans-serif" font-size="8.3" font-weight="normal" fill="#4b5563" text-anchor="middle">572 circuits x 1,024 shots = 585,728 raw shots | routing_method='none' | Zero postselection</text>
+<rect x="62.00" y="164.00" width="452.00" height="116.00" fill="#fef2f2"/>
+<rect x="62.00" y="121.33" width="452.00" height="42.67" fill="#fffbeb"/>
+<rect x="62.00" y="48.00" width="452.00" height="73.33" fill="#f0fdf4"/>
+<rect x="62.00" y="48.00" width="452.00" height="232.00" fill="none" stroke="#374151" stroke-width="1.00"/>
+<line x1="62.00" y1="48.00" x2="514.00" y2="48.00" stroke="#15803d" stroke-width="0.75" stroke-dasharray="5,3"/>
+<text x="57.00" y="51.00" font-family="monospace" font-size="7.6" font-weight="normal" fill="#111827" text-anchor="end">1.00</text>
+<text x="510.00" y="45.50" font-family="Helvetica, Arial, sans-serif" font-size="6.8" font-weight="normal" fill="#15803d" text-anchor="end">1.0000 (16/16 Ideal 2-Bell Target)</text>
+<line x1="62.00" y1="121.33" x2="514.00" y2="121.33" stroke="#0369a1" stroke-width="1.20" stroke-dasharray="5,3"/>
+<text x="57.00" y="124.33" font-family="monospace" font-size="7.6" font-weight="normal" fill="#111827" text-anchor="end">0.68</text>
+<text x="510.00" y="118.83" font-family="Helvetica, Arial, sans-serif" font-size="6.8" font-weight="bold" fill="#0369a1" text-anchor="end">0.6839 (Vollbrecht-Werner E_F &gt; 1.0000 Ebit)</text>
+<line x1="62.00" y1="164.00" x2="514.00" y2="164.00" stroke="#b91c1c" stroke-width="1.20" stroke-dasharray="5,3"/>
+<text x="57.00" y="167.00" font-family="monospace" font-size="7.6" font-weight="normal" fill="#111827" text-anchor="end">0.50</text>
+<text x="510.00" y="161.50" font-family="Helvetica, Arial, sans-serif" font-size="6.8" font-weight="bold" fill="#b91c1c" text-anchor="end">0.5000 (Terhal-Horodecki SN &gt;= 3 Witness)</text>
+<line x1="62.00" y1="222.00" x2="514.00" y2="222.00" stroke="#92400e" stroke-width="0.75" stroke-dasharray="5,3"/>
+<text x="57.00" y="225.00" font-family="monospace" font-size="7.6" font-weight="normal" fill="#111827" text-anchor="end">0.25</text>
+<text x="510.00" y="219.50" font-family="Helvetica, Arial, sans-serif" font-size="6.8" font-weight="normal" fill="#92400e" text-anchor="end">0.2500 (4/16 Separable Ceiling)</text>
+<line x1="62.00" y1="251.00" x2="514.00" y2="251.00" stroke="#6b7280" stroke-width="0.75" stroke-dasharray="5,3"/>
+<text x="57.00" y="254.00" font-family="monospace" font-size="7.6" font-weight="normal" fill="#111827" text-anchor="end">0.12</text>
+<text x="333.20" y="248.50" font-family="Helvetica, Arial, sans-serif" font-size="6.4" font-weight="normal" fill="#6b7280" text-anchor="middle">2/16 Ceiling</text>
+<line x1="62.00" y1="265.50" x2="514.00" y2="265.50" stroke="#9ca3af" stroke-width="0.75" stroke-dasharray="5,3"/>
+<text x="57.00" y="268.50" font-family="monospace" font-size="7.6" font-weight="normal" fill="#111827" text-anchor="end">0.06</text>
+<text x="333.20" y="263.00" font-family="Helvetica, Arial, sans-serif" font-size="6.4" font-weight="normal" fill="#9ca3af" text-anchor="middle">1/16 Floor</text>
+<rect x="82.20" y="127.09" width="23.00" height="152.91" fill="#3b82f6" stroke="#111827" stroke-width="0.80"/>
+<line x1="93.70" y1="124.10" x2="93.70" y2="130.08" stroke="#111827" stroke-width="1.10"/>
+<rect x="109.20" y="107.27" width="23.00" height="172.73" fill="#059669" stroke="#111827" stroke-width="0.80"/>
+<line x1="120.70" y1="104.59" x2="120.70" y2="109.96" stroke="#111827" stroke-width="1.10"/>
+<text x="92.70" y="122.09" font-family="monospace" font-size="6.8" font-weight="bold" fill="#1d4ed8" text-anchor="middle">0.659</text>
+<text x="121.70" y="102.27" font-family="monospace" font-size="6.8" font-weight="bold" fill="#047857" text-anchor="middle">0.745</text>
+<text x="107.20" y="294.00" font-family="Helvetica, Arial, sans-serif" font-size="8.2" font-weight="bold" fill="#111827" text-anchor="middle">Arm A</text>
+<text x="107.20" y="304.00" font-family="Helvetica, Arial, sans-serif" font-size="7.2" font-weight="normal" fill="#4b5563" text-anchor="middle">(Inverse 38 CZ)</text>
+<rect x="172.60" y="133.05" width="23.00" height="146.95" fill="#3b82f6" stroke="#111827" stroke-width="0.80"/>
+<line x1="184.10" y1="129.99" x2="184.10" y2="136.10" stroke="#111827" stroke-width="1.10"/>
+<rect x="199.60" y="110.47" width="23.00" height="169.53" fill="#059669" stroke="#111827" stroke-width="0.80"/>
+<line x1="211.10" y1="107.31" x2="211.10" y2="113.64" stroke="#111827" stroke-width="1.10"/>
+<text x="183.10" y="128.05" font-family="monospace" font-size="6.8" font-weight="bold" fill="#1d4ed8" text-anchor="middle">0.633</text>
+<text x="212.10" y="105.47" font-family="monospace" font-size="6.8" font-weight="bold" fill="#047857" text-anchor="middle">0.731</text>
+<text x="197.60" y="294.00" font-family="Helvetica, Arial, sans-serif" font-size="8.2" font-weight="bold" fill="#111827" text-anchor="middle">Arm B</text>
+<text x="197.60" y="304.00" font-family="Helvetica, Arial, sans-serif" font-size="7.2" font-weight="normal" fill="#4b5563" text-anchor="middle">(Restricted 32 CZ)</text>
+<rect x="263.00" y="238.25" width="23.00" height="41.75" fill="#3b82f6" stroke="#111827" stroke-width="0.80"/>
+<line x1="274.50" y1="235.08" x2="274.50" y2="241.43" stroke="#111827" stroke-width="1.10"/>
+<rect x="290.00" y="232.37" width="23.00" height="47.63" fill="#059669" stroke="#111827" stroke-width="0.80"/>
+<line x1="301.50" y1="228.47" x2="301.50" y2="236.26" stroke="#111827" stroke-width="1.10"/>
+<text x="273.50" y="233.25" font-family="monospace" font-size="6.8" font-weight="bold" fill="#1d4ed8" text-anchor="middle">0.180</text>
+<text x="302.50" y="227.37" font-family="monospace" font-size="6.8" font-weight="bold" fill="#047857" text-anchor="middle">0.205</text>
+<text x="288.00" y="294.00" font-family="Helvetica, Arial, sans-serif" font-size="8.2" font-weight="bold" fill="#111827" text-anchor="middle">Arm B-Ctrl</text>
+<text x="288.00" y="304.00" font-family="Helvetica, Arial, sans-serif" font-size="7.2" font-weight="normal" fill="#4b5563" text-anchor="middle">(|0000&gt;_BE 30 CZ)</text>
+<rect x="353.40" y="254.79" width="23.00" height="25.21" fill="#3b82f6" stroke="#111827" stroke-width="0.80"/>
+<line x1="364.90" y1="250.77" x2="364.90" y2="258.82" stroke="#111827" stroke-width="1.10"/>
+<rect x="380.40" y="253.56" width="23.00" height="26.44" fill="#059669" stroke="#111827" stroke-width="0.80"/>
+<line x1="391.90" y1="250.30" x2="391.90" y2="256.81" stroke="#111827" stroke-width="1.10"/>
+<text x="363.90" y="249.79" font-family="monospace" font-size="6.8" font-weight="bold" fill="#1d4ed8" text-anchor="middle">0.109</text>
+<text x="392.90" y="248.56" font-family="monospace" font-size="6.8" font-weight="bold" fill="#047857" text-anchor="middle">0.114</text>
+<text x="378.40" y="294.00" font-family="Helvetica, Arial, sans-serif" font-size="8.2" font-weight="bold" fill="#111827" text-anchor="middle">Arm B-Def</text>
+<text x="378.40" y="304.00" font-family="Helvetica, Arial, sans-serif" font-size="7.2" font-weight="normal" fill="#4b5563" text-anchor="middle">(1-Photon 25 CZ)</text>
+<rect x="443.80" y="265.30" width="23.00" height="14.70" fill="#3b82f6" stroke="#111827" stroke-width="0.80"/>
+<line x1="455.30" y1="262.22" x2="455.30" y2="268.37" stroke="#111827" stroke-width="1.10"/>
+<rect x="470.80" y="266.93" width="23.00" height="13.07" fill="#059669" stroke="#111827" stroke-width="0.80"/>
+<line x1="482.30" y1="263.69" x2="482.30" y2="270.17" stroke="#111827" stroke-width="1.10"/>
+<text x="454.30" y="260.30" font-family="monospace" font-size="6.8" font-weight="bold" fill="#1d4ed8" text-anchor="middle">0.063</text>
+<text x="483.30" y="261.93" font-family="monospace" font-size="6.8" font-weight="bold" fill="#047857" text-anchor="middle">0.056</text>
+<text x="468.80" y="294.00" font-family="Helvetica, Arial, sans-serif" font-size="8.2" font-weight="bold" fill="#111827" text-anchor="middle">Arm B-Held</text>
+<text x="468.80" y="304.00" font-family="Helvetica, Arial, sans-serif" font-size="7.2" font-weight="normal" fill="#4b5563" text-anchor="middle">(Wrong U2 35 CZ)</text>
+<rect x="66.00" y="320.00" width="12.00" height="8.00" fill="#3b82f6" stroke="#111827" stroke-width="0.70"/>
+<text x="82.00" y="327.00" font-family="Helvetica, Arial, sans-serif" font-size="7.7" font-weight="normal" fill="#111827" text-anchor="start">ibm_marrakesh (Job dbti1fbsbsbs73cb2vu0, Raw +/- 5 SE)</text>
+<rect x="314.00" y="320.00" width="12.00" height="8.00" fill="#059669" stroke="#111827" stroke-width="0.70"/>
+<text x="330.00" y="327.00" font-family="Helvetica, Arial, sans-serif" font-size="7.7" font-weight="normal" fill="#111827" text-anchor="start">ibm_fez (Job dbtj61bnlcms73ajc380, Raw +/- 5 SE)</text>
 </svg>

@@ -1,47 +1,47 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="540" height="245" viewBox="0 0 540 245">
-<rect x="0" y="0" width="540" height="245" fill="#ffffff"/>
-<text x="270.00" y="20.00" font-family="Helvetica, Arial, sans-serif" font-size="10.2" font-weight="bold" fill="#111827" text-anchor="middle">Pinned Heavy-Hex 8-Transmon Tree &amp; Hardware Light-Cone Isolation (ibm_marrakesh)</text>
-<rect x="118.00" y="92.00" width="304.00" height="74.00" fill="#ecfdf5" stroke="#059669" stroke-width="1.20"/>
-<text x="270.00" y="104.00" font-family="Helvetica, Arial, sans-serif" font-size="7.5" font-weight="bold" fill="#065f46" text-anchor="middle">Arm B 2-Photon Decoder Support {q33, q39, q53, q54} (10 CZs; 0 gates on q32, q55, q34, q52)</text>
-<rect x="126.00" y="110.00" width="218.00" height="50.00" fill="#f5f3ff" stroke="#7c3aed" stroke-width="1.00"/>
-<text x="235.00" y="121.00" font-family="Helvetica, Arial, sans-serif" font-size="7.0" font-weight="normal" fill="#5b21b6" text-anchor="middle">Arm B-Def 1-Photon Support {q33, q39, q53} (3 CZs)</text>
-<line x1="62.00" y1="140.00" x2="152.00" y2="140.00" stroke="#1f2937" stroke-width="2.00"/>
-<text x="107.00" y="168.00" font-family="monospace" font-size="7.0" font-weight="normal" fill="#374151" text-anchor="middle">CZ 0.23%</text>
-<line x1="152.00" y1="140.00" x2="238.00" y2="140.00" stroke="#1f2937" stroke-width="2.00"/>
-<text x="195.00" y="168.00" font-family="monospace" font-size="7.0" font-weight="normal" fill="#374151" text-anchor="middle">CZ 0.21%</text>
-<line x1="238.00" y1="140.00" x2="324.00" y2="140.00" stroke="#1f2937" stroke-width="2.00"/>
-<text x="281.00" y="168.00" font-family="monospace" font-size="7.0" font-weight="normal" fill="#374151" text-anchor="middle">CZ 0.19%</text>
-<line x1="324.00" y1="140.00" x2="398.00" y2="140.00" stroke="#1f2937" stroke-width="2.00"/>
-<text x="361.00" y="168.00" font-family="monospace" font-size="7.0" font-weight="normal" fill="#374151" text-anchor="middle">CZ 0.13%</text>
-<line x1="398.00" y1="140.00" x2="480.00" y2="140.00" stroke="#1f2937" stroke-width="2.00"/>
-<text x="439.00" y="168.00" font-family="monospace" font-size="7.0" font-weight="normal" fill="#374151" text-anchor="middle">CZ 0.17%</text>
-<line x1="152.00" y1="140.00" x2="152.00" y2="56.00" stroke="#1f2937" stroke-width="2.00"/>
-<text x="180.00" y="88.00" font-family="monospace" font-size="7.0" font-weight="normal" fill="#374151" text-anchor="middle">CZ 0.21%</text>
-<line x1="324.00" y1="56.00" x2="324.00" y2="140.00" stroke="#1f2937" stroke-width="2.00"/>
-<text x="352.00" y="88.00" font-family="monospace" font-size="7.0" font-weight="normal" fill="#374151" text-anchor="middle">CZ 0.17%</text>
-<circle cx="62.00" cy="140.00" r="19.00" fill="#fee2e2" stroke="#991b1b" stroke-width="1.60"/>
-<text x="62.00" y="138.00" font-family="monospace" font-size="8.2" font-weight="bold" fill="#991b1b" text-anchor="middle">q32</text>
-<text x="62.00" y="148.00" font-family="Helvetica, Arial, sans-serif" font-size="6.8" font-weight="normal" fill="#111827" text-anchor="middle">C1 Leaf</text>
-<circle cx="152.00" cy="140.00" r="19.00" fill="#dcfce7" stroke="#065f46" stroke-width="1.60"/>
-<text x="152.00" y="138.00" font-family="monospace" font-size="8.2" font-weight="bold" fill="#065f46" text-anchor="middle">q33</text>
-<text x="152.00" y="148.00" font-family="Helvetica, Arial, sans-serif" font-size="6.8" font-weight="normal" fill="#111827" text-anchor="middle">E1</text>
-<circle cx="238.00" cy="140.00" r="19.00" fill="#dbeafe" stroke="#1e40af" stroke-width="1.60"/>
-<text x="238.00" y="138.00" font-family="monospace" font-size="8.2" font-weight="bold" fill="#1e40af" text-anchor="middle">q39</text>
-<text x="238.00" y="148.00" font-family="Helvetica, Arial, sans-serif" font-size="6.8" font-weight="normal" fill="#111827" text-anchor="middle">D1 / M1'*</text>
-<circle cx="324.00" cy="140.00" r="19.00" fill="#dbeafe" stroke="#1e40af" stroke-width="1.60"/>
-<text x="324.00" y="138.00" font-family="monospace" font-size="8.2" font-weight="bold" fill="#1e40af" text-anchor="middle">q53</text>
-<text x="324.00" y="148.00" font-family="Helvetica, Arial, sans-serif" font-size="6.8" font-weight="normal" fill="#111827" text-anchor="middle">E2 / M2'*</text>
-<circle cx="398.00" cy="140.00" r="19.00" fill="#dcfce7" stroke="#065f46" stroke-width="1.60"/>
-<text x="398.00" y="138.00" font-family="monospace" font-size="8.2" font-weight="bold" fill="#065f46" text-anchor="middle">q54</text>
-<text x="398.00" y="148.00" font-family="Helvetica, Arial, sans-serif" font-size="6.8" font-weight="normal" fill="#111827" text-anchor="middle">D2</text>
-<circle cx="480.00" cy="140.00" r="19.00" fill="#fee2e2" stroke="#991b1b" stroke-width="1.60"/>
-<text x="480.00" y="138.00" font-family="monospace" font-size="8.2" font-weight="bold" fill="#991b1b" text-anchor="middle">q55</text>
-<text x="480.00" y="148.00" font-family="Helvetica, Arial, sans-serif" font-size="6.8" font-weight="normal" fill="#111827" text-anchor="middle">C2 Leaf</text>
-<circle cx="152.00" cy="56.00" r="19.00" fill="#fef3c7" stroke="#92400e" stroke-width="1.60"/>
-<text x="152.00" y="54.00" font-family="monospace" font-size="8.2" font-weight="bold" fill="#92400e" text-anchor="middle">q34</text>
-<text x="152.00" y="64.00" font-family="Helvetica, Arial, sans-serif" font-size="6.8" font-weight="normal" fill="#111827" text-anchor="middle">R2 Ref*</text>
-<circle cx="324.00" cy="56.00" r="19.00" fill="#fef3c7" stroke="#92400e" stroke-width="1.60"/>
-<text x="324.00" y="54.00" font-family="monospace" font-size="8.2" font-weight="bold" fill="#92400e" text-anchor="middle">q52</text>
-<text x="324.00" y="64.00" font-family="Helvetica, Arial, sans-serif" font-size="6.8" font-weight="normal" fill="#111827" text-anchor="middle">R1 Ref*</text>
-<text x="270.00" y="226.00" font-family="Helvetica, Arial, sans-serif" font-size="7.6" font-weight="normal" fill="#374151" text-anchor="middle">* Identical 4-transmon unconditional readout across all 286 circuits: c0=q34(R2), c1=q39(M1'), c2=q52(R1), c3=q53(M2') | Mean CZ error = 0.185%</text>
+<svg xmlns="http://www.w3.org/2000/svg" width="540" height="238" viewBox="0 0 540 238">
+<rect x="0" y="0" width="540" height="238" fill="#ffffff"/>
+<text x="270.00" y="19.00" font-family="Helvetica, Arial, sans-serif" font-size="10.0" font-weight="bold" fill="#111827" text-anchor="middle">Pinned Heavy-Hex 8-Transmon Tree &amp; Light-Cone Isolation (ibm_marrakesh)</text>
+<rect x="118.00" y="88.00" width="304.00" height="74.00" fill="#ecfdf5" stroke="#059669" stroke-width="1.20"/>
+<text x="270.00" y="100.00" font-family="Helvetica, Arial, sans-serif" font-size="7.3" font-weight="bold" fill="#065f46" text-anchor="middle">Arm B Decoder Support {q33, q39, q53, q54} (10 CZs; 0 gates on q32, q55, q34, q52)</text>
+<rect x="126.00" y="106.00" width="218.00" height="50.00" fill="#f5f3ff" stroke="#7c3aed" stroke-width="1.00"/>
+<text x="235.00" y="117.00" font-family="Helvetica, Arial, sans-serif" font-size="6.9" font-weight="normal" fill="#5b21b6" text-anchor="middle">Arm B-Def 1-Photon Support {q33, q39, q53} (3 CZs)</text>
+<line x1="62.00" y1="136.00" x2="152.00" y2="136.00" stroke="#1f2937" stroke-width="2.00"/>
+<text x="107.00" y="172.00" font-family="monospace" font-size="6.9" font-weight="normal" fill="#374151" text-anchor="middle">CZ 0.23%</text>
+<line x1="152.00" y1="136.00" x2="238.00" y2="136.00" stroke="#1f2937" stroke-width="2.00"/>
+<text x="195.00" y="172.00" font-family="monospace" font-size="6.9" font-weight="normal" fill="#374151" text-anchor="middle">CZ 0.21%</text>
+<line x1="238.00" y1="136.00" x2="324.00" y2="136.00" stroke="#1f2937" stroke-width="2.00"/>
+<text x="281.00" y="172.00" font-family="monospace" font-size="6.9" font-weight="normal" fill="#374151" text-anchor="middle">CZ 0.19%</text>
+<line x1="324.00" y1="136.00" x2="398.00" y2="136.00" stroke="#1f2937" stroke-width="2.00"/>
+<text x="361.00" y="172.00" font-family="monospace" font-size="6.9" font-weight="normal" fill="#374151" text-anchor="middle">CZ 0.13%</text>
+<line x1="398.00" y1="136.00" x2="480.00" y2="136.00" stroke="#1f2937" stroke-width="2.00"/>
+<text x="439.00" y="172.00" font-family="monospace" font-size="6.9" font-weight="normal" fill="#374151" text-anchor="middle">CZ 0.17%</text>
+<line x1="152.00" y1="52.00" x2="152.00" y2="136.00" stroke="#1f2937" stroke-width="2.00"/>
+<text x="181.00" y="82.00" font-family="monospace" font-size="6.9" font-weight="normal" fill="#374151" text-anchor="middle">CZ 0.21%</text>
+<line x1="324.00" y1="52.00" x2="324.00" y2="136.00" stroke="#1f2937" stroke-width="2.00"/>
+<text x="353.00" y="82.00" font-family="monospace" font-size="6.9" font-weight="normal" fill="#374151" text-anchor="middle">CZ 0.17%</text>
+<circle cx="62.00" cy="136.00" r="18.50" fill="#fee2e2" stroke="#991b1b" stroke-width="1.60"/>
+<text x="62.00" y="134.00" font-family="monospace" font-size="8.0" font-weight="bold" fill="#991b1b" text-anchor="middle">q32</text>
+<text x="62.00" y="144.00" font-family="Helvetica, Arial, sans-serif" font-size="6.7" font-weight="normal" fill="#111827" text-anchor="middle">C1 Leaf</text>
+<circle cx="152.00" cy="136.00" r="18.50" fill="#dcfce7" stroke="#065f46" stroke-width="1.60"/>
+<text x="152.00" y="134.00" font-family="monospace" font-size="8.0" font-weight="bold" fill="#065f46" text-anchor="middle">q33</text>
+<text x="152.00" y="144.00" font-family="Helvetica, Arial, sans-serif" font-size="6.7" font-weight="normal" fill="#111827" text-anchor="middle">E1</text>
+<circle cx="238.00" cy="136.00" r="18.50" fill="#dbeafe" stroke="#1e40af" stroke-width="1.60"/>
+<text x="238.00" y="134.00" font-family="monospace" font-size="8.0" font-weight="bold" fill="#1e40af" text-anchor="middle">q39</text>
+<text x="238.00" y="144.00" font-family="Helvetica, Arial, sans-serif" font-size="6.7" font-weight="normal" fill="#111827" text-anchor="middle">D1 / M1'*</text>
+<circle cx="324.00" cy="136.00" r="18.50" fill="#dbeafe" stroke="#1e40af" stroke-width="1.60"/>
+<text x="324.00" y="134.00" font-family="monospace" font-size="8.0" font-weight="bold" fill="#1e40af" text-anchor="middle">q53</text>
+<text x="324.00" y="144.00" font-family="Helvetica, Arial, sans-serif" font-size="6.7" font-weight="normal" fill="#111827" text-anchor="middle">E2 / M2'*</text>
+<circle cx="398.00" cy="136.00" r="18.50" fill="#dcfce7" stroke="#065f46" stroke-width="1.60"/>
+<text x="398.00" y="134.00" font-family="monospace" font-size="8.0" font-weight="bold" fill="#065f46" text-anchor="middle">q54</text>
+<text x="398.00" y="144.00" font-family="Helvetica, Arial, sans-serif" font-size="6.7" font-weight="normal" fill="#111827" text-anchor="middle">D2</text>
+<circle cx="480.00" cy="136.00" r="18.50" fill="#fee2e2" stroke="#991b1b" stroke-width="1.60"/>
+<text x="480.00" y="134.00" font-family="monospace" font-size="8.0" font-weight="bold" fill="#991b1b" text-anchor="middle">q55</text>
+<text x="480.00" y="144.00" font-family="Helvetica, Arial, sans-serif" font-size="6.7" font-weight="normal" fill="#111827" text-anchor="middle">C2 Leaf</text>
+<circle cx="152.00" cy="52.00" r="18.50" fill="#fef3c7" stroke="#92400e" stroke-width="1.60"/>
+<text x="152.00" y="50.00" font-family="monospace" font-size="8.0" font-weight="bold" fill="#92400e" text-anchor="middle">q34</text>
+<text x="152.00" y="60.00" font-family="Helvetica, Arial, sans-serif" font-size="6.7" font-weight="normal" fill="#111827" text-anchor="middle">R2 Ref*</text>
+<circle cx="324.00" cy="52.00" r="18.50" fill="#fef3c7" stroke="#92400e" stroke-width="1.60"/>
+<text x="324.00" y="50.00" font-family="monospace" font-size="8.0" font-weight="bold" fill="#92400e" text-anchor="middle">q52</text>
+<text x="324.00" y="60.00" font-family="Helvetica, Arial, sans-serif" font-size="6.7" font-weight="normal" fill="#111827" text-anchor="middle">R1 Ref*</text>
+<text x="270.00" y="222.00" font-family="Helvetica, Arial, sans-serif" font-size="7.4" font-weight="normal" fill="#374151" text-anchor="middle">* Identical 4-transmon readout across all 286 circuits: c0=q34, c1=q39, c2=q52, c3=q53 | Mean CZ error = 0.185%</text>
 </svg>
