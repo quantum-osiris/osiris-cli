@@ -518,14 +518,51 @@ def _remaining_seconds(svc: Any) -> float:
     return float(svc.usage().get("usage_remaining_seconds", 0) or 0)
 
 
-def _job_usage_seconds(job: Any) -> float | None:
-    try:
-        return float(job.usage())
-    except Exception:
+_PUBLIC_USAGE_FIELDS = (
+    "usage_consumed_seconds",
+    "usage_consumed_ru",
+    "usage_limit_seconds",
+    "usage_limit_ru",
+    "usage_remaining_seconds",
+    "usage_remaining_ru",
+    "usage_limit_reached",
+    "usage_period",
+)
+
+
+def _public_usage(usage: Mapping[str, Any]) -> Dict[str, Any]:
+    """Account usage without the instance CRN and plan ID, which identify the IBM Cloud account."""
+    return {k: usage[k] for k in _PUBLIC_USAGE_FIELDS if k in usage}
+
+
+def _job_usage_seconds(job: Any, wait_s: float = 180.0, poll_s: float = 5.0) -> float | None:
+    """QPU seconds IBM charged for a finished job.
+
+    IBM finalises a job's usage shortly after its result is available, and until then `job.usage()`
+    reads 0 (TESSERACT-MAP-02's raw counts recorded 0.0 for a job later charged 53 s). Poll the job's
+    metrics until their usage status is "complete", or give up after `wait_s`.
+    """
+    deadline = time.monotonic() + wait_s
+    last: float | None = None
+    while True:
         try:
-            return float(job.metrics()["usage"]["quantum_seconds"])
+            usage = job.metrics().get("usage") or {}
+            value = usage.get("qpu_charge_time_seconds", usage.get("quantum_seconds"))
+            if value is not None:
+                last = float(value)
+                if usage.get("status") == "complete":
+                    return last
         except Exception:
-            return None
+            pass
+        try:
+            reported = float(job.usage())
+            if reported > 0.0:
+                return reported
+        except Exception:
+            pass
+        if time.monotonic() >= deadline:
+            return last
+        time.sleep(poll_s)
 
 
 def _run_or_resume(
@@ -595,7 +632,7 @@ def _run_or_resume(
         "completed_utc": datetime.now(timezone.utc).isoformat(),
         "job_usage_seconds": usage_s,
         "estimated_qpu_seconds": lock["estimated_qpu_seconds"],
-        "post_job_usage": svc.usage(),
+        "post_job_usage": _public_usage(svc.usage()),
         "execution_time_calibration": snapshot_backend_calibration(backend),
         "pub_counts": [extract_counts_from_pub_result(res[i]) for i in range(n_pubs)],
     }
