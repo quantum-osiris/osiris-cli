@@ -202,6 +202,10 @@ class OllamaCompatibilityProvider(BaseModelProvider):
         }
         if request.tools:
             payload["tools"] = request.tools
+        if request.think is not None:
+            payload["think"] = request.think
+        if request.num_ctx:
+            payload["options"]["num_ctx"] = int(request.num_ctx)
 
         req = urllib.request.Request(f"{self.host}/api/chat", data=json.dumps(payload).encode(),
                                      headers={"Content-Type": "application/json"}, method="POST")
@@ -217,7 +221,7 @@ class OllamaCompatibilityProvider(BaseModelProvider):
         message = data.get("message") or {}
         return ProviderResponse(
             content=message.get("content", "") or "",
-            model=model,
+            model=data.get("model") or model,
             provider="ollama_compat",
             request_id=request.request_id,
             finish_reason=FinishReason.STOP if data.get("done") else FinishReason.LENGTH,

@@ -93,6 +93,8 @@ class ProviderRequest:
     request_id: str = field(default_factory=lambda: str(uuid.uuid4()))
     timeout: float = 60.0
     stream: bool = False
+    num_ctx: Optional[int] = None  # Ollama context window in tokens; None keeps the server default
+    think: Optional[bool] = None  # Ollama reasoning models: False asks for the answer without a thinking pass
 
     def get_full_prompt(self) -> str:
         """Helper to get flattened prompt string if messages are used."""

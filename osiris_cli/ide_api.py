@@ -231,9 +231,12 @@ class Backend:
         with self._agent_lock:  # one task at a time: the receipt chain is appended in order
             try:
                 return council.run_task(body.get("objective"), body.get("context"),
-                                        receipts_path=self.agent_receipts, model_fn=self._agent_model_fn)
+                                        receipts_path=self.agent_receipts, model_fn=self._agent_model_fn,
+                                        allow_cloud=body.get("allow_cloud", False))
             except council.CouncilError as e:
                 raise ApiError(400, "INVALID_INPUT", str(e))
+            except council.ReceiptError as e:
+                raise ApiError(500, "RECEIPT_NOT_WRITTEN", str(e))
 
     def agent_tasks(self) -> Dict[str, Any]:
         from osiris_cli.orchestration import council
