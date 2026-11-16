@@ -270,11 +270,343 @@ def stage_fez() -> Dict[str, Any]:
     return manifest
 
 
+def _extract_counts(pub_result: Any) -> Dict[str, int]:
+    data_bin = pub_result.data
+    if hasattr(data_bin, "c"):
+        return {str(k): int(v) for k, v in data_bin.c.get_counts().items()}
+    if hasattr(data_bin, "meas"):
+        return {str(k): int(v) for k, v in data_bin.meas.get_counts().items()}
+    for field in dir(data_bin):
+        if not field.startswith("_"):
+            obj = getattr(data_bin, field)
+            if hasattr(obj, "get_counts"):
+                return {str(k): int(v) for k, v in obj.get_counts().items()}
+    raise RuntimeError("Could not locate BitArray with get_counts() in SamplerV2 PubResult")
+
+
+def _bootstrap_ci_joint(
+    pooled_counts: Mapping[str, Mapping[str, int]],
+    n_boot: int = 5000,
+    seed: int = 42,
+) -> Tuple[float, float]:
+    rng = np.random.default_rng(seed)
+    keys_and_probs = {}
+    for bkey, hist in pooled_counts.items():
+        labels = list(hist.keys())
+        tot = sum(hist.values())
+        probs = np.array([hist[k] / tot for k in labels], dtype=float)
+        keys_and_probs[bkey] = (labels, tot, probs)
+    samples = np.empty(n_boot, dtype=float)
+    for idx in range(n_boot):
+        sim_counts = {}
+        for bkey, (labels, tot, probs) in keys_and_probs.items():
+            draws = rng.multinomial(tot, probs)
+            sim_counts[bkey] = {lbl: int(n) for lbl, n in zip(labels, draws) if n > 0}
+        samples[idx] = hp004.estimate_joint_bell_fidelity(sim_counts)["f_joint"]
+    return float(np.percentile(samples, 2.5)), float(np.percentile(samples, 97.5))
+
+
+def _spam_mitigated_joint(
+    cal_matrix: np.ndarray,
+    pooled_counts: Mapping[str, Mapping[str, int]],
+) -> Dict[str, float]:
+    """Secondary sensitivity check ONLY: invert empirical 16x16 readout matrix from circuits 0..15."""
+    inv_m = np.linalg.pinv(cal_matrix, rcond=1e-4)
+    mit_counts: Dict[str, Dict[str, int]] = {}
+    for bkey, hist in pooled_counts.items():
+        tot = sum(hist.values())
+        y = np.zeros(16, dtype=float)
+        for bits, n in hist.items():
+            y[int(bits.replace(" ", ""), 2)] += n / tot
+        x = np.clip(inv_m @ y, 0.0, None)
+        s = float(x.sum())
+        if s > 0:
+            x /= s
+        mit_counts[bkey] = {
+            format(i, "04b"): max(1, int(round(x[i] * tot * 100)))
+            for i in range(16)
+            if x[i] * tot * 100 >= 0.5
+        }
+    est = hp004.estimate_joint_bell_fidelity(mit_counts)
+    return {
+        "f1_spam_mitigated": est["f1_marginal"],
+        "f2_spam_mitigated": est["f2_marginal"],
+        "f_joint_spam_mitigated": est["f_joint"],
+    }
+
+
+def submit_frozen_fez() -> str:
+    """Verify frozen `.qpy` SHA-256 against pre-registered manifest, snapshot live calibration, and dispatch 1 SamplerV2 job."""
+    qpy_path = EXPERIMENT_DIR / "hp004b_fez_staged_circuits.qpy"
+    manifest_path = EXPERIMENT_DIR / "hp004b_fez_staging_manifest.json"
+    manifest_bytes = manifest_path.read_bytes()
+    manifest = json.loads(manifest_bytes.decode("utf-8"))
+
+    actual_qpy_sha256 = hashlib.sha256(qpy_path.read_bytes()).hexdigest()
+    if actual_qpy_sha256 != manifest["qpy_sha256"]:
+        raise RuntimeError(
+            f"Pre-flight abort: frozen QPY SHA-256 mismatch ({actual_qpy_sha256} != {manifest['qpy_sha256']})"
+        )
+    manifest_sha256 = hashlib.sha256(manifest_bytes).hexdigest()
+
+    with open(qpy_path, "rb") as fh:
+        isa_circuits = qpy.load(fh)
+    if len(isa_circuits) != int(manifest["total_circuits"]):
+        raise RuntimeError(
+            f"Pre-flight abort: circuit count {len(isa_circuits)} != {manifest['total_circuits']}"
+        )
+
+    svc = _connect_service()
+    usage_before = svc.usage()
+    rem_sec = float(usage_before.get("usage_remaining_seconds", 0))
+    if rem_sec < 180:
+        raise RuntimeError(f"Pre-flight abort: usage_remaining_seconds={rem_sec} < 180s minimum")
+
+    backend = svc.backend(manifest["backend"])
+    status = backend.status()
+    if not status.operational:
+        raise RuntimeError(f"Pre-flight abort: {backend.name} operational={status.operational}")
+
+    props = backend.properties()
+    tgt = backend.target
+    validate_isa_circuits(isa_circuits, tgt)
+
+    # Enforce hardware calibration sanity gates on pinned 8-transmon tree before spending QPU seconds
+    tree_phys_edges = sorted({tuple(sorted((FEZ_LAYOUT[a], FEZ_LAYOUT[b]))) for a, b in hp004.TREE_EDGES_8Q})
+    edge_cal: Dict[str, Dict[str, float]] = {}
+    for u, v in tree_phys_edges:
+        pair = (u, v) if (u, v) in tgt["cz"] else (v, u)
+        err = float(tgt["cz"][pair].error)
+        dur = float(tgt["cz"][pair].duration)
+        if err > 0.02:
+            raise RuntimeError(f"Pre-flight abort: CZ error on {pair} is {err:.5f} > 0.02")
+        edge_cal[f"{u}-{v}"] = {"cz_error": err, "duration_s": dur}
+
+    qubit_cal: Dict[str, Dict[str, float]] = {}
+    for q in FEZ_LAYOUT:
+        ro = float(props.readout_error(q))
+        if q in READOUT_PHYS and ro > 0.05:
+            raise RuntimeError(f"Pre-flight abort: readout error on q{q} is {ro:.5f} > 0.05")
+        qubit_cal[str(q)] = {
+            "t1_s": float(props.t1(q)),
+            "t2_s": float(props.t2(q)),
+            "sx_error": float(tgt["sx"][(q,)].error or 0.0),
+            "readout_error": ro,
+            "prob_meas1_prep0": float(props.qubit_property(q, "prob_meas1_prep0")[0]),
+            "prob_meas0_prep1": float(props.qubit_property(q, "prob_meas0_prep1")[0]),
+        }
+
+    cal_snapshot = {
+        "benchmark_id": BENCHMARK_ID,
+        "captured_at_utc": _utc_now(),
+        "backend": backend.name,
+        "pending_jobs": int(status.pending_jobs),
+        "usage_before": {k: v for k, v in usage_before.items() if k != "instance_id"},
+        "pinned_tree_layout": list(FEZ_LAYOUT),
+        "readout_transmons_c0_c1_c2_c3": list(READOUT_PHYS),
+        "edge_calibration": edge_cal,
+        "qubit_calibration": qubit_cal,
+    }
+    (EXPERIMENT_DIR / "hp004b_fez_calibration_snapshot.json").write_text(
+        json.dumps(cal_snapshot, indent=2), encoding="utf-8"
+    )
+
+    sampler = SamplerV2(mode=backend)
+    job = sampler.run(isa_circuits, shots=int(manifest["shots_per_circuit"]))
+    job_id = job.job_id()
+    sub_record = {
+        "benchmark_id": BENCHMARK_ID,
+        "job_id": job_id,
+        "backend": backend.name,
+        "submitted_at_utc": _utc_now(),
+        "preregistered_git_commit": "0c5a5a39",
+        "qpy_sha256": actual_qpy_sha256,
+        "manifest_sha256": manifest_sha256,
+        "shots_per_circuit": int(manifest["shots_per_circuit"]),
+        "total_circuits": len(isa_circuits),
+        "total_shots": int(manifest["total_shots"]),
+        "pending_jobs_at_submission": int(status.pending_jobs),
+    }
+    (EXPERIMENT_DIR / "hp004b_fez_submitted_job.json").write_text(
+        json.dumps(sub_record, indent=2), encoding="utf-8"
+    )
+    print(
+        f"[SUBMITTED FROZEN QPY] Job ID: {job_id} on {backend.name} "
+        f"(pending_jobs={status.pending_jobs}) | QPY SHA-256: {actual_qpy_sha256}",
+        flush=True,
+    )
+    return job_id
+
+
+def harvest_fez_job(job_id: str, poll_seconds: int = 10) -> Dict[str, Any]:
+    svc = _connect_service()
+    manifest = json.loads((EXPERIMENT_DIR / "hp004b_fez_staging_manifest.json").read_text(encoding="utf-8"))
+    metadata: List[Dict[str, Any]] = manifest["circuit_metadata"]
+
+    job = svc.job(job_id)
+    while True:
+        st = str(job.status())
+        print(f"[{_utc_now()}] Job {job_id} status on {manifest['backend']}: {st}", flush=True)
+        if st in ("DONE", "ERROR", "CANCELLED"):
+            break
+        time.sleep(poll_seconds)
+
+    if str(job.status()) != "DONE":
+        raise RuntimeError(f"Job {job_id} ended with non-DONE status: {job.status()}")
+
+    result = job.result()
+    if len(result) != len(metadata):
+        raise RuntimeError(f"PubResult count {len(result)} != staged metadata count {len(metadata)}")
+
+    circuit_records: List[Dict[str, Any]] = []
+    cal_matrix = np.zeros((16, 16), dtype=float)
+    arm_block_counts: Dict[str, List[Dict[str, Dict[str, int]]]] = {
+        arm: [{} for _ in range(int(manifest["n_blocks"]))] for arm in hp004.ARMS
+    }
+
+    for idx, meta in enumerate(metadata):
+        counts = _extract_counts(result[idx])
+        shots = sum(counts.values())
+        if shots != int(manifest["shots_per_circuit"]):
+            raise RuntimeError(f"Shot count mismatch on circuit {idx}: {shots} != {manifest['shots_per_circuit']}")
+        rec = {**meta, "circuit_index": idx, "shots": shots, "raw_counts": dict(sorted(counts.items()))}
+        circuit_records.append(rec)
+
+        if meta["kind"] == "spam_cal":
+            prep_idx = int(str(meta["prepared_bits"]), 2)
+            for bits, n in counts.items():
+                cal_matrix[int(bits.replace(" ", ""), 2), prep_idx] += n / shots
+        else:
+            arm = str(meta["arm"])
+            b_idx = int(meta["block_index"])
+            basis = str(meta["basis"])
+            arm_block_counts[arm][b_idx][basis] = counts
+
+    arm_summaries: Dict[str, Any] = {}
+    for arm in hp004.ARMS:
+        blocks = arm_block_counts[arm]
+        summary = hp004.summarize_blocks(blocks)
+        pooled: Dict[str, Dict[str, int]] = {f"{p}{q}": {} for p, q in hp004.JOINT_BASES}
+        block_f_list: List[float] = []
+        for b_hist in blocks:
+            block_f_list.append(hp004.estimate_joint_bell_fidelity(b_hist)["f_joint"])
+            for bkey, hist in b_hist.items():
+                for bits, n in hist.items():
+                    clean = bits.replace(" ", "")
+                    pooled[bkey][clean] = pooled[bkey].get(clean, 0) + int(n)
+        ci_lo, ci_hi = _bootstrap_ci_joint(pooled)
+        spam_sec = _spam_mitigated_joint(cal_matrix, pooled)
+        arm_summaries[arm] = {
+            **summary,
+            "block_f_joints": block_f_list,
+            "f_joint_shot_boot_95ci": [ci_lo, ci_hi],
+            "secondary_spam_sensitivity": spam_sec,
+        }
+
+    a_sum = arm_summaries["Arm A"]
+    b_sum = arm_summaries["Arm B"]
+    c_sum = arm_summaries["Arm B-Ctrl"]
+    d_sum = arm_summaries["Arm B-Def"]
+    h_sum = arm_summaries["Arm B-Held"]
+
+    hypotheses = {
+        "H1_arm_a_inverse_above_0p60": {
+            "passed": bool(a_sum["f_joint"] > 0.6000),
+            "observed_raw_f_joint": a_sum["f_joint"],
+            "se_eff": a_sum["f_joint_se_eff"],
+        },
+        "H2_PRIMARY_arm_b_exceeds_1ebit_0p50_at_5sigma": {
+            "passed": bool((b_sum["f_joint"] - 5.0 * b_sum["f_joint_se_eff"]) > 0.5000),
+            "observed_raw_f_joint": b_sum["f_joint"],
+            "se_eff": b_sum["f_joint_se_eff"],
+            "lower_5sigma_bound": b_sum["f_joint"] - 5.0 * b_sum["f_joint_se_eff"],
+            "z_above_0p50_eff": b_sum["z_above_1ebit_eff"],
+        },
+        "H3_arm_b_ctrl_within_0ebit_separable_band": {
+            "passed": bool(
+                c_sum["f_joint"] <= (0.2500 + 3.0 * c_sum["f_joint_se_eff"])
+                and c_sum["f_joint"] > 0.1250
+            ),
+            "observed_raw_f_joint": c_sum["f_joint"],
+            "se_eff": c_sum["f_joint_se_eff"],
+        },
+        "H4_arm_b_def_sub_capacity_collapse": {
+            "passed": bool(
+                d_sum["f_joint"] <= (0.1250 + 3.0 * d_sum["f_joint_se_eff"])
+                and d_sum["f1_marginal"] <= (0.5000 + 3.0 * d_sum["f1_shot_se"])
+            ),
+            "observed_raw_f_joint": d_sum["f_joint"],
+            "observed_raw_f1": d_sum["f1_marginal"],
+            "se_eff": d_sum["f_joint_se_eff"],
+        },
+        "H5_arm_b_held_unitary_specificity": {
+            "passed": bool(0.0400 <= h_sum["f_joint"] <= 0.0900),
+            "observed_raw_f_joint": h_sum["f_joint"],
+            "se_eff": h_sum["f_joint_se_eff"],
+        },
+    }
+
+    usage_after = svc.usage()
+    metrics = {}
+    try:
+        metrics = job.metrics() or {}
+    except Exception:
+        metrics = {}
+
+    payload = {
+        "benchmark_id": BENCHMARK_ID,
+        "harvested_at_utc": _utc_now(),
+        "preregistered_git_commit": "0c5a5a39",
+        "replicates_marrakesh_job_id": "dbti1fbsbsbs73cb2vu0",
+        "job_id": job_id,
+        "backend": manifest["backend"],
+        "pinned_tree_layout": manifest["pinned_tree_layout"],
+        "readout_transmons_c0_c1_c2_c3": manifest["readout_transmons_c0_c1_c2_c3"],
+        "qpy_sha256": manifest["qpy_sha256"],
+        "kraus_noisy_predictions_at_staging": manifest["kraus_noisy_predictions"],
+        "total_circuits": manifest["total_circuits"],
+        "shots_per_circuit": manifest["shots_per_circuit"],
+        "total_shots": manifest["total_shots"],
+        "job_metrics": metrics,
+        "usage_after": {k: v for k, v in usage_after.items() if k != "instance_id"},
+        "spam_assignment_diagonal_mean": float(np.mean(np.diag(cal_matrix))),
+        "arm_summaries": arm_summaries,
+        "preregistered_hypotheses": hypotheses,
+        "circuit_records": circuit_records,
+    }
+    out_path = EXPERIMENT_DIR / "physical_hp004b_fez_results.json"
+    out_path.write_text(json.dumps(payload, indent=2), encoding="utf-8")
+    print(f"[HARVESTED] Saved complete raw counts + analysis to {out_path}", flush=True)
+    return payload
+
+
 def main() -> None:
     parser = argparse.ArgumentParser()
-    parser.add_argument("--stage-only", action="store_true", default=True)
-    parser.parse_args()
-    stage_fez()
+    parser.add_argument("--stage-only", action="store_true")
+    parser.add_argument("--submit-frozen-and-harvest", action="store_true")
+    parser.add_argument("--harvest-job", type=str, default=None)
+    args = parser.parse_args()
+
+    if args.harvest_job:
+        res = harvest_fez_job(args.harvest_job)
+    elif args.submit_frozen_and_harvest:
+        jid = submit_frozen_fez()
+        res = harvest_fez_job(jid)
+    elif args.stage_only:
+        stage_fez()
+        return
+    else:
+        parser.error("Specify --stage-only, --submit-frozen-and-harvest, or --harvest-job <JOB_ID>")
+        return
+
+    print("\n=== OSIRIS-HP-004B (ibm_fez) PHYSICAL HARDWARE SUMMARY ===")
+    for arm, s in res["arm_summaries"].items():
+        sec = s["secondary_spam_sensitivity"]["f_joint_spam_mitigated"]
+        print(
+            f"  {arm:10s}: Raw F_joint = {s['f_joint']:.4f} +/- {s['f_joint_se_eff']:.4f} "
+            f"(F1={s['f1_marginal']:.4f}, F2={s['f2_marginal']:.4f}, Z_>0.5={s['z_above_1ebit_eff']:+.2f}s | SPAM-sec={sec:.4f})"
+        )
+    print("  Pre-registered hypotheses:", {k: v["passed"] for k, v in res["preregistered_hypotheses"].items()})
 
 
 if __name__ == "__main__":
