@@ -1,0 +1,55 @@
+{
+  "n_qubits": 27,
+  "true_uniform_reference_prob": 7.450580596923828e-09,
+  "observed_mode_prob_theta1": 0.039794921875,
+  "enhancement_over_true_uniform": 5341184.0,
+  "paper_112x_reproduced_from_unique_support_bug": 112.1619873046875,
+  "analytic_defective_eq7_w2_on_identical_uniform": 0.5091750772173156,
+  "analytic_defective_eq7_R_hat_on_identical_uniform": 0.4908249227826844,
+  "raw_hardware_counts_available_in_workspace": false,
+  "phase_cancellation_8q_max_error": 4.440892098500626e-16,
+  "theta_sweep_reanalysis": [
+    {
+      "theta_rad": 2.118,
+      "p_dom_with_hadamard": 0.9269913956633902,
+      "ideal_mode_prob_27q": 0.12913500452689142,
+      "omitted_hadamard_prob_27q": 0.0006085422654537277,
+      "shots_per_rep_lp": 512,
+      "unique_outcomes_rep1": 313,
+      "defective_eq7_w2_self": 0.3107844311137651,
+      "exact_lp_w2_self": 0.0,
+      "defective_eq7_w2_noiseless_inter_rep": 0.31617052632234005,
+      "exact_lp_w2_noiseless_inter_rep": 0.07997006791724388,
+      "true_R_hat_noiseless_inter_rep": 0.9200299320827561,
+      "defective_R_hat_noiseless_inter_rep": 0.68382947367766
+    },
+    {
+      "theta_rad": 2.618034,
+      "p_dom_with_hadamard": 0.7499826313310256,
+      "ideal_mode_prob_27q": 0.00042304109365272867,
+      "omitted_hadamard_prob_27q": 0.1538473566845044,
+      "shots_per_rep_lp": 512,
+      "unique_outcomes_rep1": 512,
+      "defective_eq7_w2_self": 0.47219505037963994,
+      "exact_lp_w2_self": 0.0,
+      "defective_eq7_w2_noiseless_inter_rep": 0.47465926804149355,
+      "exact_lp_w2_noiseless_inter_rep": 0.18619516252027937,
+      "true_R_hat_noiseless_inter_rep": 0.8138048374797207,
+      "defective_R_hat_noiseless_inter_rep": 0.5253407319585064
+    },
+    {
+      "theta_rad": 3.118,
+      "p_dom_with_hadamard": 0.5117952324932814,
+      "ideal_mode_prob_27q": 1.3982936070695781e-08,
+      "omitted_hadamard_prob_27q": 0.9962498226077967,
+      "shots_per_rep_lp": 512,
+      "unique_outcomes_rep1": 512,
+      "defective_eq7_w2_self": 0.5085503058580187,
+      "exact_lp_w2_self": 0.0,
+      "defective_eq7_w2_noiseless_inter_rep": 0.5090994124859105,
+      "exact_lp_w2_noiseless_inter_rep": 0.22912574456925847,
+      "true_R_hat_noiseless_inter_rep": 0.7708742554307415,
+      "defective_R_hat_noiseless_inter_rep": 0.4909005875140895
+    }
+  ]
+}
