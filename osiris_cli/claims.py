@@ -561,9 +561,10 @@ REGISTER: Tuple[Claim, ...] = (
           "flagged false on its < 0.1200 defect ceiling because phase_flip_x R=7 mean detector probability reached "
           "0.1265-0.1284 over 7 mid-circuit readout/reset cycles (~23.4 us). Protects one Pauli sector at a time, "
           "not a full 2D quantum memory.",
-          (("file", "osiris-assessment/work/osiris-cli/experiments/qec001/RESULT.md", "OSIRIS-QEC-001 hardware result"),
+          (("doi", "10.5281/zenodo.24293756", "OSIRIS-QEC-001 standalone manuscript & 393,216-shot archive"),
+           ("file", "osiris-assessment/work/osiris-cli/experiments/qec001/RESULT.md", "OSIRIS-QEC-001 hardware result"),
            ("file", "osiris-assessment/work/osiris-cli/experiments/qec001/PRE_REGISTRATION.md", "pre-registered QEC-H1..H3")),
-          (r"\bqec[-_]?001\b", r"dbtl2vb2kf8s73c9a0d0",
+          (r"\bqec[-_]?001\b", r"dbtl2vb2kf8s73c9a0d0", r"zenodo\.2429375[56]",
            r"syndrome[\s-]*cycle[\s-]*scaling[^.\n]{0,40}?ibm_fez"),
           testable="Reproduce Blossom MWPM decoding from raw bitstrings: pytest tests/test_qec001_hardware_artifact.py."),
 )
