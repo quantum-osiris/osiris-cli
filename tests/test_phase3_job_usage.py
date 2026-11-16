@@ -4,7 +4,12 @@ from __future__ import annotations
 
 from typing import Any, Dict, List
 
-from phase3.execute_and_analyze_live import _job_usage_seconds
+import pytest
+
+pytest.importorskip("qiskit")
+pytest.importorskip("qiskit_ibm_runtime")
+
+from phase3.execute_and_analyze_live import _job_usage_seconds  # noqa: E402
 
 
 class _FakeJob:
