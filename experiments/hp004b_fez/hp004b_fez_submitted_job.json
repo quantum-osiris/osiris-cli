@@ -1,0 +1,13 @@
+{
+  "benchmark_id": "OSIRIS-HP-004B",
+  "job_id": "dbtj61bnlcms73ajc380",
+  "backend": "ibm_fez",
+  "submitted_at_utc": "2026-11-16T16:44:53.729678+00:00",
+  "preregistered_git_commit": "0c5a5a39",
+  "qpy_sha256": "6d7e5a6d17a002b5551eba35fb99b29661044477a9f6b91fb9dc51376a3025d9",
+  "manifest_sha256": "e4c94585de354c3e23253ea7f96daf4698a01a19f09d25174e24f88acaf3c26f",
+  "shots_per_circuit": 1024,
+  "total_circuits": 286,
+  "total_shots": 292864,
+  "pending_jobs_at_submission": 5
+}

@@ -474,3 +474,34 @@ def test_an_ordinary_reply_is_not_flagged(tmp_path):
     o, out = make(tmp_path)
     o.converse("hello osiris")
     assert "on the reply" not in "".join(out)
+
+
+def test_check_claim_number_provenance_and_e94_e95_register_entries():
+    bad = claims.check_claim("parity telemetry reached 0.9728", "median fidelity 0.9722 (FAIL)")
+    assert bad and any("0.9728" in p for p in bad)
+    assert claims.check_claim("fidelity 0.9722 on hardware", "median fidelity 0.9722.") == []
+    tricky = claims.check_claim("ran 3 seeds", "seeds 13")
+    assert tricky and any("3" in p for p in tricky)
+    assert claims.check_claim("ran 13 seeds", "seeds: 13") == []
+    assert claims.check_claim("the ledger is intact", "all chains verified") == []
+    assert "no evidence cited" in claims.check_claim("anything", "")
+
+    hp = claims.by_id("HP004_JOINT_STABILIZER")
+    assert hp is not None and hp.verdict == "SUPPORTED"
+    rendered = "\n".join(claims.render(hp))
+    assert "F* = 0.683900" in rendered
+    assert "0.845131 ebits" in rendered
+    assert "1.146530 ebits" in rendered
+    assert "1.124434 ebits" in rendered
+
+    # Verify E-95 step 3: HP004_JOINT_STABILIZER statement passes check_claim against archived RESULT.md files
+    ev_text = (
+        (REPO / "experiments" / "hp004" / "RESULT.md").read_text(encoding="utf-8")
+        + "\n"
+        + (REPO / "experiments" / "hp004b_fez" / "RESULT.md").read_text(encoding="utf-8")
+    )
+    assert claims.check_claim(hp.statement, ev_text) == []
+
+    qec = claims.by_id("QEC001_SYNDROME_SCALING")
+    assert qec is not None and qec.verdict == "SUPPORTED"
+    assert "QEC001_SYNDROME_SCALING" in [c.id for c in claims.match("what did QEC-001 measure on ibm_fez?")]
