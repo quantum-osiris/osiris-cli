@@ -8,8 +8,11 @@ from typing import Dict
 
 import numpy as np
 import pytest
-from qiskit import QuantumCircuit
-from qiskit.quantum_info import DensityMatrix, Statevector, partial_trace, state_fidelity
+
+pytest.importorskip("qiskit")
+
+from qiskit import QuantumCircuit  # noqa: E402
+from qiskit.quantum_info import DensityMatrix, Statevector, partial_trace, state_fidelity  # noqa: E402
 
 _MOD_PATH = Path(__file__).resolve().parent.parent / "experiments" / "hp004" / "hp004_joint_stabilizer.py"
 _SPEC = importlib.util.spec_from_file_location("hp004_joint_stabilizer", _MOD_PATH)
