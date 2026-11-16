@@ -549,6 +549,48 @@ REGISTER: Tuple[Claim, ...] = (
           (("file", "osiris-cli/RESEARCH_ARCHIVE_MANIFEST.txt", "the draft manifest and its placeholder URLs"),),
           (r"zenodo\.org/record/\[id\]", r"zenodo\.9729504", r"zenodo\.9340128", r"research_archive_manifest"),
           testable="A published article and Zenodo records that resolve."),
+    Claim("HP004_JOINT_STABILIZER",
+          "Layout-locked 8-qubit Hayden-Preskill 9-basis joint stabilizer recovery witnesses Schmidt number >= 3 "
+          "on ibm_marrakesh and ibm_fez, and witnesses entanglement of formation > 1 ebit on ibm_fez",
+          "SUPPORTED",
+          "Pre-registered 9-basis (16-stabilizer) hardware benchmarks across two independent 156-qubit Heron r2 "
+          "processors (585,728 raw shots, resilience_level=0, zero postselection): ibm_marrakesh (job "
+          "dbti1fbsbsbs73cb2vu0, F_joint = 0.633423, 95% t-LCL 0.626700, E_F >= 0.8451 ebits) certifies Schmidt "
+          "number >= 3 (+50.64 sigma above 0.5000) only; ibm_fez (job dbtj61bnlcms73ajc380, F_joint = 0.730713, "
+          "95% t-LCL 0.723700, E_F >= 1.1465 ebits point, >= 1.1244 ebits at 95% LCL) certifies both Schmidt "
+          "number >= 3 (+84.45 sigma) and E_F > 1 ebit (+17.13 sigma above F* = 0.683900) via the Terhal-Vollbrecht "
+          "isotropic-state witness (conditional on target-state mapping, Pauli basis settings, and block/shot "
+          "uncertainty model; not a direct von Neumann entropy measurement or new physical law; archived JSON key "
+          "z_above_1ebit_eff denotes z above the 0.5000 SN <= 2 bound).",
+          (("doi", "10.5281/zenodo.24287505", "OSIRIS-HP-004 & HP-004B v2 dual-processor archive (supersedes 24285577)"),
+           ("doi", "10.1103/PhysRevA.61.040301", "Terhal & Horodecki (2000): Schmidt number witness F <= k/d"),
+           ("doi", "10.1103/PhysRevLett.85.2625", "Terhal & Vollbrecht (2000): entanglement of formation for isotropic states"),
+           ("doi", "10.1103/PhysRevA.64.062307", "Vollbrecht & Werner (2001): convex-roof symmetry bounds"),
+           ("file", "osiris-assessment/work/osiris-cli/experiments/hp004b_fez/RESULT.md", "ibm_fez cross-processor result")),
+          (r"\bhp[-_]?004b?\b", r"dbti1fbsbsbs73cb2vu0|dbtj61bnlcms73ajc380",
+           r"zenodo\.24287505|zenodo\.24285577",
+           r"hayden[\s–-]*preskill[^.\n]{0,40}?(?:9[\s-]*basis|joint[\s-]*stabilizer|schmidt)"),
+          testable="Reproduce from raw 4-bit histograms: pytest tests/test_hp004_hardware_artifact.py tests/test_hp004b_fez_hardware_artifact.py.",
+          checks=(("terhal_vollbrecht_d4", (0.633423, 0.730713, 0.723700)),)),
+    Claim("QEC001_SYNDROME_SCALING",
+          "Multi-round 1D repetition-code syndrome-cycle logical error scaling across d in {3, 5, 7} and R in {1, 3, 5, 7} "
+          "on ibm_fez achieves sub-threshold suppression in both Z and X bases (QEC-H1 & QEC-H2 pass; QEC-H3 partial)",
+          "SUPPORTED",
+          "Pre-registered 192-circuit, 393,216-shot mid-circuit measure+reset benchmark on ibm_fez concentric 13Q "
+          "chain [111..121] (job dbtl2vb2kf8s73c9a0d0, QPY sha256 357a29ad2746e2be...): Blossom MWPM achieved "
+          "strict monotonic suppression eps_L(3) > eps_L(5) > eps_L(7) across all 8 (basis, R) curves -- at R=7, "
+          "bit_flip_z dropped 0.00731 -> 0.00211 -> 0.00195 (Lambda_3->7 = 3.75x, 7.22x fewer errors than final "
+          "majority vote) and phase_flip_x dropped 0.02301 -> 0.00592 -> 0.00265 (Lambda_3->7 = 8.69x, 4.86x vs "
+          "majority, actively suppressing a live q107 T2 = 18.17 us hotspot). Preserved un-doctored: QEC-H3 "
+          "flagged false on its < 0.1200 defect ceiling because phase_flip_x R=7 mean detector probability reached "
+          "0.1265-0.1284 over 7 mid-circuit readout/reset cycles (~23.4 us). Protects one Pauli sector at a time, "
+          "not a full 2D quantum memory.",
+          (("doi", "10.5281/zenodo.24293756", "OSIRIS-QEC-001 standalone manuscript & 393,216-shot archive"),
+           ("file", "osiris-assessment/work/osiris-cli/experiments/qec001/RESULT.md", "OSIRIS-QEC-001 hardware result"),
+           ("file", "osiris-assessment/work/osiris-cli/experiments/qec001/PRE_REGISTRATION.md", "pre-registered QEC-H1..H3")),
+          (r"\bqec[-_]?001\b", r"dbtl2vb2kf8s73c9a0d0", r"zenodo\.2429375[56]",
+           r"syndrome[\s-]*cycle[\s-]*scaling[^.\n]{0,40}?ibm_fez"),
+          testable="Reproduce Blossom MWPM decoding from raw bitstrings: pytest tests/test_qec001_hardware_artifact.py."),
 )
 
 _COMPILED = [(c, [re.compile(p, re.I) for p in c.patterns]) for c in REGISTER]
@@ -673,7 +715,41 @@ def _check_lines(name: str, args: Sequence) -> List[str]:
                 "rad/position",
                 f"longest period {2 * math.pi * span / c:.1f} positions; frequency span {span:.2f}x "
                 f"(base 10000: {10000 ** ((dim - 2) / dim):,.0f}x)"]
+    if name == "terhal_vollbrecht_d4":
+        f_mar, f_fez, f_fez_lcl = args
+        def _g4(f: float) -> float:
+            p0 = 0.25 * (math.sqrt(f) + math.sqrt(3.0 * (1.0 - f))) ** 2
+            q = (1.0 - p0) / 3.0
+            return -(p0 * math.log2(p0) + 3.0 * q * math.log2(q))
+        lo, hi = 0.5, 0.75
+        for _ in range(80):
+            mid = 0.5 * (lo + hi)
+            if _g4(mid) < 1.0:
+                lo = mid
+            else:
+                hi = mid
+        return [
+            f"d=4 Terhal-Vollbrecht E_F lower bound gamma_4(F): 1-ebit root F* = {hi:.6f} (SN<=2 ceiling = 0.5000)",
+            f"ibm_marrakesh F={f_mar:.6f} -> E_F >= {_g4(f_mar):.6f} ebits (< 1 ebit; SN >= 3 only)",
+            f"ibm_fez F={f_fez:.6f} -> E_F >= {_g4(f_fez):.6f} ebits; 95% t-LCL {f_fez_lcl:.6f} -> E_F >= {_g4(f_fez_lcl):.6f} ebits",
+        ]
     return getattr(pc, name)(*args).lines()
+
+
+_NUMBER_RE = re.compile(r"\d+(?:\.\d+)?")
+
+
+def check_claim(text: str, evidence: str) -> List[str]:
+    """Number-provenance check on a proposed claim against the text of its cited evidence."""
+    problems: List[str] = []
+    if not evidence or not evidence.strip():
+        problems.append("no evidence cited")
+        return problems
+    present = set(_NUMBER_RE.findall(evidence))
+    for n in _NUMBER_RE.findall(text):
+        if n not in present:
+            problems.append(f"number {n} not found in the cited evidence")
+    return problems
 
 
 def render(claim: Claim, base: str = HOME, detail: bool = True) -> List[str]:

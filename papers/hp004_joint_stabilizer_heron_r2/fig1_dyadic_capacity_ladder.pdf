@@ -1,0 +1,122 @@
+%PDF-1.4
+%‚„œ”
+1 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>
+endobj
+2 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica-Bold >>
+endobj
+3 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Courier >>
+endobj
+4 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Times-Roman >>
+endobj
+5 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Times-Bold >>
+endobj
+6 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Times-Italic >>
+endobj
+7 0 obj
+<< /Type /Pages /Kids [9 0 R] /Count 1 >>
+endobj
+8 0 obj
+<< /Length 5180 >>
+stream
+1 1 1 rg
+0 0 540.00 345.00 re f
+BT /F2 10.8 Tf 0.067 0.094 0.153 rg 63.94 325.00 Td (Dual-Processor 9-Basis 4Q Joint Bell Overlap \(ibm_marrakesh & ibm_fez\)) Tj ET
+BT /F1 8.3 Tf 0.294 0.333 0.388 rg 81.17 311.00 Td (572 circuits x 1,024 shots = 585,728 raw shots | routing_method='none' | Zero postselection) Tj ET
+0.996 0.949 0.949 rg 62.00 65.00 452.00 116.00 re f
+1.000 0.984 0.922 rg 62.00 181.00 452.00 42.67 re f
+0.941 0.992 0.957 rg 62.00 223.67 452.00 73.33 re f
+1.00 w 0.216 0.255 0.318 RG 62.00 65.00 452.00 232.00 re S
+q [5 3] 0 d 0.75 w 0.082 0.502 0.239 RG 62.00 297.00 m 514.00 297.00 l S Q
+BT /F3 7.6 Tf 0.067 0.094 0.153 rg 38.76 294.00 Td (1.00) Tj ET
+BT /F1 6.8 Tf 0.082 0.502 0.239 rg 387.60 299.50 Td (1.0000 \(16/16 Ideal 2-Bell Target\)) Tj ET
+q [5 3] 0 d 1.20 w 0.012 0.412 0.631 RG 62.00 223.67 m 514.00 223.67 l S Q
+BT /F3 7.6 Tf 0.067 0.094 0.153 rg 38.76 220.67 Td (0.68) Tj ET
+BT /F2 6.8 Tf 0.012 0.412 0.631 rg 344.22 226.17 Td (0.6839 \(Vollbrecht-Werner E_F > 1.0000 Ebit\)) Tj ET
+q [5 3] 0 d 1.20 w 0.725 0.110 0.110 RG 62.00 181.00 m 514.00 181.00 l S Q
+BT /F3 7.6 Tf 0.067 0.094 0.153 rg 38.76 178.00 Td (0.50) Tj ET
+BT /F2 6.8 Tf 0.725 0.110 0.110 rg 355.03 183.50 Td (0.5000 \(Terhal-Horodecki SN >= 3 Witness\)) Tj ET
+q [5 3] 0 d 0.75 w 0.573 0.251 0.055 RG 62.00 123.00 m 514.00 123.00 l S Q
+BT /F3 7.6 Tf 0.067 0.094 0.153 rg 38.76 120.00 Td (0.25) Tj ET
+BT /F1 6.8 Tf 0.573 0.251 0.055 rg 397.80 125.50 Td (0.2500 \(4/16 Separable Ceiling\)) Tj ET
+q [5 3] 0 d 0.75 w 0.420 0.447 0.502 RG 62.00 94.00 m 514.00 94.00 l S Q
+BT /F3 7.6 Tf 0.067 0.094 0.153 rg 38.76 91.00 Td (0.12) Tj ET
+BT /F1 6.4 Tf 0.420 0.447 0.502 rg 314.00 96.50 Td (2/16 Ceiling) Tj ET
+q [5 3] 0 d 0.75 w 0.612 0.639 0.686 RG 62.00 79.50 m 514.00 79.50 l S Q
+BT /F3 7.6 Tf 0.067 0.094 0.153 rg 38.76 76.50 Td (0.06) Tj ET
+BT /F1 6.4 Tf 0.612 0.639 0.686 rg 317.20 82.00 Td (1/16 Floor) Tj ET
+0.80 w 0.231 0.510 0.965 rg 0.067 0.094 0.153 RG 82.20 65.00 23.00 152.91 re B
+q [] 0 d 1.10 w 0.067 0.094 0.153 RG 93.70 220.90 m 93.70 214.92 l S Q
+0.80 w 0.020 0.588 0.412 rg 0.067 0.094 0.153 RG 109.20 65.00 23.00 172.73 re B
+q [] 0 d 1.10 w 0.067 0.094 0.153 RG 120.70 240.41 m 120.70 235.04 l S Q
+BT /F3 6.8 Tf 0.114 0.306 0.847 rg 82.50 222.91 Td (0.659) Tj ET
+BT /F3 6.8 Tf 0.016 0.471 0.341 rg 111.50 242.73 Td (0.745) Tj ET
+BT /F2 8.2 Tf 0.067 0.094 0.153 rg 96.34 51.00 Td (Arm A) Tj ET
+BT /F1 7.2 Tf 0.294 0.333 0.388 rg 76.60 41.00 Td (\(Inverse 38 CZ\)) Tj ET
+0.80 w 0.231 0.510 0.965 rg 0.067 0.094 0.153 RG 172.60 65.00 23.00 146.95 re B
+q [] 0 d 1.10 w 0.067 0.094 0.153 RG 184.10 215.01 m 184.10 208.90 l S Q
+0.80 w 0.020 0.588 0.412 rg 0.067 0.094 0.153 RG 199.60 65.00 23.00 169.53 re B
+q [] 0 d 1.10 w 0.067 0.094 0.153 RG 211.10 237.69 m 211.10 231.36 l S Q
+BT /F3 6.8 Tf 0.114 0.306 0.847 rg 172.90 216.95 Td (0.633) Tj ET
+BT /F3 6.8 Tf 0.016 0.471 0.341 rg 201.90 239.53 Td (0.731) Tj ET
+BT /F2 8.2 Tf 0.067 0.094 0.153 rg 186.74 51.00 Td (Arm B) Tj ET
+BT /F1 7.2 Tf 0.294 0.333 0.388 rg 161.60 41.00 Td (\(Restricted 32 CZ\)) Tj ET
+0.80 w 0.231 0.510 0.965 rg 0.067 0.094 0.153 RG 263.00 65.00 23.00 41.75 re B
+q [] 0 d 1.10 w 0.067 0.094 0.153 RG 274.50 109.92 m 274.50 103.57 l S Q
+0.80 w 0.020 0.588 0.412 rg 0.067 0.094 0.153 RG 290.00 65.00 23.00 47.63 re B
+q [] 0 d 1.10 w 0.067 0.094 0.153 RG 301.50 116.53 m 301.50 108.74 l S Q
+BT /F3 6.8 Tf 0.114 0.306 0.847 rg 263.30 111.75 Td (0.180) Tj ET
+BT /F3 6.8 Tf 0.016 0.471 0.341 rg 292.30 117.63 Td (0.205) Tj ET
+BT /F2 8.2 Tf 0.067 0.094 0.153 rg 266.27 51.00 Td (Arm B-Ctrl) Tj ET
+BT /F1 7.2 Tf 0.294 0.333 0.388 rg 253.80 41.00 Td (\(|0000>_BE 30 CZ\)) Tj ET
+0.80 w 0.231 0.510 0.965 rg 0.067 0.094 0.153 RG 353.40 65.00 23.00 25.21 re B
+q [] 0 d 1.10 w 0.067 0.094 0.153 RG 364.90 94.23 m 364.90 86.18 l S Q
+0.80 w 0.020 0.588 0.412 rg 0.067 0.094 0.153 RG 380.40 65.00 23.00 26.44 re B
+q [] 0 d 1.10 w 0.067 0.094 0.153 RG 391.90 94.70 m 391.90 88.19 l S Q
+BT /F3 6.8 Tf 0.114 0.306 0.847 rg 353.70 95.21 Td (0.109) Tj ET
+BT /F3 6.8 Tf 0.016 0.471 0.341 rg 382.70 96.44 Td (0.114) Tj ET
+BT /F2 8.2 Tf 0.067 0.094 0.153 rg 358.84 51.00 Td (Arm B-Def) Tj ET
+BT /F1 7.2 Tf 0.294 0.333 0.388 rg 346.00 41.00 Td (\(1-Photon 25 CZ\)) Tj ET
+0.80 w 0.231 0.510 0.965 rg 0.067 0.094 0.153 RG 443.80 65.00 23.00 14.70 re B
+q [] 0 d 1.10 w 0.067 0.094 0.153 RG 455.30 82.78 m 455.30 76.63 l S Q
+0.80 w 0.020 0.588 0.412 rg 0.067 0.094 0.153 RG 470.80 65.00 23.00 13.07 re B
+q [] 0 d 1.10 w 0.067 0.094 0.153 RG 482.30 81.31 m 482.30 74.83 l S Q
+BT /F3 6.8 Tf 0.114 0.306 0.847 rg 444.10 84.70 Td (0.063) Tj ET
+BT /F3 6.8 Tf 0.016 0.471 0.341 rg 473.10 83.07 Td (0.056) Tj ET
+BT /F2 8.2 Tf 0.067 0.094 0.153 rg 447.07 51.00 Td (Arm B-Held) Tj ET
+BT /F1 7.2 Tf 0.294 0.333 0.388 rg 436.40 41.00 Td (\(Wrong U2 35 CZ\)) Tj ET
+0.70 w 0.231 0.510 0.965 rg 0.067 0.094 0.153 RG 66.00 17.00 12.00 8.00 re B
+BT /F1 7.7 Tf 0.067 0.094 0.153 rg 82.00 18.00 Td (ibm_marrakesh \(Job dbti1fbsbsbs73cb2vu0, Raw +/- 5 SE\)) Tj ET
+0.70 w 0.020 0.588 0.412 rg 0.067 0.094 0.153 RG 314.00 17.00 12.00 8.00 re B
+BT /F1 7.7 Tf 0.067 0.094 0.153 rg 330.00 18.00 Td (ibm_fez \(Job dbtj61bnlcms73ajc380, Raw +/- 5 SE\)) Tj ET
+endstream
+endobj
+9 0 obj
+<< /Type /Page /Parent 7 0 R /MediaBox [0 0 540.00 345.00] /Resources << /Font << /F1 1 0 R /F2 2 0 R /F3 3 0 R /F4 4 0 R /F5 5 0 R /F6 6 0 R >> >> /Contents 8 0 R >>
+endobj
+10 0 obj
+<< /Type /Catalog /Pages 7 0 R >>
+endobj
+xref
+0 11
+0000000000 65535 f 
+0000000015 00000 n 
+0000000085 00000 n 
+0000000160 00000 n 
+0000000228 00000 n 
+0000000300 00000 n 
+0000000371 00000 n 
+0000000444 00000 n 
+0000000501 00000 n 
+0000005732 00000 n 
+0000005914 00000 n 
+trailer
+<< /Size 11 /Root 10 0 R >>
+startxref
+5964
+%%EOF

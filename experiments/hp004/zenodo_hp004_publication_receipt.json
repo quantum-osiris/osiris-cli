@@ -1,0 +1,92 @@
+{
+  "benchmark_id": "OSIRIS-HP-004",
+  "record_id": 24285577,
+  "doi": "10.5281/zenodo.24285577",
+  "doi_url": "https://doi.org/10.5281/zenodo.24285577",
+  "record_html": "https://zenodo.org/record/24285577",
+  "state": "done",
+  "submitted": true,
+  "created": "2026-11-16T16:10:45.857957+00:00",
+  "uploaded_files": [
+    {
+      "name": "hp004_joint_stabilizer_heron_r2.pdf",
+      "bytes": 32353,
+      "checksum": "md5:0862d370f94a917d959eeae5e911349d"
+    },
+    {
+      "name": "hp004_joint_stabilizer_heron_r2.tex",
+      "bytes": 18550,
+      "checksum": "md5:26068597786e75a1b6cfeccaff3bf570"
+    },
+    {
+      "name": "fig1_dyadic_capacity_ladder.pdf",
+      "bytes": 6082,
+      "checksum": "md5:ab1afdcb7b4a20bc9ef0fa4f9714336a"
+    },
+    {
+      "name": "fig2_block_stability_and_marginals.pdf",
+      "bytes": 13215,
+      "checksum": "md5:e346c103b6d51067e4f1c0fa9f6eb5ca"
+    },
+    {
+      "name": "fig3_marrakesh_tree_light_cone.pdf",
+      "bytes": 5845,
+      "checksum": "md5:2b778da29583fe8e12ffeed70ffde4c4"
+    },
+    {
+      "name": "SHA256SUMS.txt",
+      "bytes": 1424,
+      "checksum": "md5:6feefd032d98c80dc101bd6e8aca5974"
+    },
+    {
+      "name": "PRE_REGISTRATION.md",
+      "bytes": 3361,
+      "checksum": "md5:de1d17cc25520fc8589243d92d88fb5a"
+    },
+    {
+      "name": "RESULT.md",
+      "bytes": 3795,
+      "checksum": "md5:04157b07f2dd2d93d95b02103de04bcd"
+    },
+    {
+      "name": "physical_hp004_results.json",
+      "bytes": 177530,
+      "checksum": "md5:58cdef6f06da2ded6c99120857e4a1ef"
+    },
+    {
+      "name": "hp004_staged_circuits.qpy",
+      "bytes": 3410432,
+      "checksum": "md5:107b96570d6a07ca6d2863216f06ecf4"
+    },
+    {
+      "name": "hp004_staging_manifest.json",
+      "bytes": 59097,
+      "checksum": "md5:a04a0b0a3fdc81c223297b94f0b7b6d7"
+    },
+    {
+      "name": "hp004_calibration_snapshot.json",
+      "bytes": 3420,
+      "checksum": "md5:8c04a93858de4d57fe5f042d44bf4f07"
+    },
+    {
+      "name": "hp004_submitted_job.json",
+      "bytes": 413,
+      "checksum": "md5:c543686d2ecc48b3be836fd5dffade2e"
+    },
+    {
+      "name": "hp004_joint_stabilizer.py",
+      "bytes": 20072,
+      "checksum": "md5:9972680157b6d4915a4e7d1bbef9cdad"
+    },
+    {
+      "name": "execute_and_harvest_hp004.py",
+      "bytes": 22310,
+      "checksum": "md5:7efc1e49083b04b2939ce92335a5ec92"
+    },
+    {
+      "name": "test_hp004_hardware_artifact.py",
+      "bytes": 3873,
+      "checksum": "md5:9cc0ab62d2b0222ea45bfff388d926f9"
+    }
+  ]
+}

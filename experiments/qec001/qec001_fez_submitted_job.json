@@ -1,0 +1,13 @@
+{
+  "benchmark_id": "OSIRIS-QEC-001",
+  "job_id": "dbtl2vb2kf8s73c9a0d0",
+  "backend": "ibm_fez",
+  "submitted_at_utc": "2026-11-16T18:54:53.797784+00:00",
+  "preregistered_git_commit": "1a33ffe7",
+  "qpy_sha256": "357a29ad2746e2be94522702516dce3e04319894c1dc981596c9a3640041c056",
+  "manifest_sha256": "21d836567b4c50ce6138fc6a045d4ae4ebd2bf05eeb5a82b25e85ec421eedbc2",
+  "shots_per_circuit": 2048,
+  "total_circuits": 192,
+  "total_shots": 393216,
+  "pending_jobs_at_submission": 4
+}
