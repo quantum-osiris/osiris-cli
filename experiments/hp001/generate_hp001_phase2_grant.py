@@ -9,11 +9,11 @@ EXPERIMENT_DIR = Path("/mnt/c/Users/Ron/osiris-cli/experiments/hp001")
 DB_PATH = Path("/mnt/c/Users/Ron/evidence_ledger.db")
 
 payload_file = EXPERIMENT_DIR / "execute_hp001_phase2_fez.py"
-payload_h = hashlib.sha256(payload_file.read_bytes()).hexdigest()
+payload_h = hashlib.sha256(payload_file.read_bytes().replace(b"\r\n", b"\n")).hexdigest()
 op_schema_name = "OSIRIS_HP001_PHASE2_RECONSTRUCTED_RECOVERY_V1"
 schema_h = hashlib.sha256(op_schema_name.encode("utf-8")).hexdigest()
 
-# 1. Issue Node Beta Ed25519 Authority Permit
+# 1. Issue Node Beta 32-Byte Symmetric HMAC-SHA256 Authority Permit (not 64B Ed25519; see node_beta_governance.py)
 gov = NodeBetaGovernor()
 permit = gov.issue_grant(target_digest=payload_h, scope=op_schema_name, ttl_seconds=86400)
 

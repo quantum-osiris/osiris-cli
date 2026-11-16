@@ -1,0 +1,265 @@
+{
+  "benchmark_id": "OSIRIS-HP-003",
+  "analysis_type": "FORENSIC_REAUDITED_QPY_LAYOUT_BELL_LP_AND_CONSERVATIVE_UNCERTAINTY",
+  "job_id": "dbndsvoou4as73b4cvi0",
+  "backend": "ibm_fez",
+  "recorded_readout_calibration_subset": {
+    "146": 0.0048828125,
+    "143": 0.0029296875,
+    "123": 0.0078125,
+    "144": 0.001953125
+  },
+  "arm_reaudited_summary": {
+    "Arm A": {
+      "cz_count": 48,
+      "circuit_depth": 102,
+      "active_physical_qubits": [
+        2,
+        3,
+        4,
+        5,
+        16,
+        21,
+        22,
+        23
+      ],
+      "readout_quartet_c0_c1_c2_c3": [
+        5,
+        4,
+        21,
+        16
+      ],
+      "raw_f1": 0.732422,
+      "raw_f1_shot_se": 0.005944,
+      "raw_f2": 0.757812,
+      "raw_f2_shot_se": 0.005726,
+      "raw_mean_fidelity": 0.745117,
+      "raw_f_prod": 0.555014,
+      "sem_block_ddof1_df2": 0.000785,
+      "shot_se_mean_fidelity": 0.004127,
+      "conservative_se_eff": 0.004127,
+      "t_stat_df2_vs_050": 312.33,
+      "p_value_t_df2_vs_050": 5.1253539368064e-06,
+      "z_eff_vs_050_per_pair_witness": 59.4,
+      "z_eff_vs_075_gt1ebit_witness": -1.183,
+      "f_joint_bell_lp_bounds": [
+        0.490234,
+        0.732422
+      ],
+      "f_joint_lp_lower_shot_se": 0.008253,
+      "certifies_gt_1ebit_unconditionally": false,
+      "mitigation_status": "UNMITIGATED_DISJOINT_READOUT_SUBGRAPH",
+      "eta_pair1": null,
+      "eta_pair2": null,
+      "mitigated_f1": null,
+      "mitigated_f2": null,
+      "mitigated_mean_fidelity": null
+    },
+    "Arm B": {
+      "cz_count": 49,
+      "circuit_depth": 87,
+      "active_physical_qubits": [
+        123,
+        136,
+        142,
+        143,
+        144,
+        145,
+        146,
+        147
+      ],
+      "readout_quartet_c0_c1_c2_c3": [
+        147,
+        143,
+        123,
+        144
+      ],
+      "raw_f1": 0.737467,
+      "raw_f1_shot_se": 0.005927,
+      "raw_f2": 0.761556,
+      "raw_f2_shot_se": 0.005692,
+      "raw_mean_fidelity": 0.749512,
+      "raw_f_prod": 0.561644,
+      "sem_block_ddof1_df2": 0.003418,
+      "shot_se_mean_fidelity": 0.004109,
+      "conservative_se_eff": 0.004109,
+      "t_stat_df2_vs_050": 73.0,
+      "p_value_t_df2_vs_050": 9.380165520811658e-05,
+      "z_eff_vs_050_per_pair_witness": 60.73,
+      "z_eff_vs_075_gt1ebit_witness": -0.119,
+      "f_joint_bell_lp_bounds": [
+        0.499024,
+        0.737467
+      ],
+      "f_joint_lp_lower_shot_se": 0.008217,
+      "certifies_gt_1ebit_unconditionally": false,
+      "mitigation_status": "PARTIAL_PAIR2_ONLY_MISSING_QUBIT_147",
+      "eta_pair1": null,
+      "eta_pair2": 0.98053,
+      "mitigated_f1": null,
+      "mitigated_f2": 0.771714,
+      "mitigated_mean_fidelity": null
+    },
+    "Arm B-Def": {
+      "cz_count": 37,
+      "circuit_depth": 67,
+      "active_physical_qubits": [
+        123,
+        136,
+        141,
+        142,
+        143,
+        144,
+        145,
+        146
+      ],
+      "readout_quartet_c0_c1_c2_c3": [
+        146,
+        143,
+        123,
+        144
+      ],
+      "raw_f1": 0.424154,
+      "raw_f1_shot_se": 0.007189,
+      "raw_f2": 0.249023,
+      "raw_f2_shot_se": 0.007812,
+      "raw_mean_fidelity": 0.336589,
+      "raw_f_prod": 0.105629,
+      "sem_block_ddof1_df2": 0.003628,
+      "shot_se_mean_fidelity": 0.005308,
+      "conservative_se_eff": 0.005308,
+      "t_stat_df2_vs_050": -45.05,
+      "p_value_t_df2_vs_050": 0.9997537854112681,
+      "z_eff_vs_050_per_pair_witness": -30.78,
+      "z_eff_vs_075_gt1ebit_witness": -77.879,
+      "f_joint_bell_lp_bounds": [
+        0.0,
+        0.249023
+      ],
+      "f_joint_lp_lower_shot_se": 0.010617,
+      "certifies_gt_1ebit_unconditionally": false,
+      "mitigation_status": "FULL_PAIR1_PAIR2_READOUT_CALIBRATED",
+      "eta_pair1": 0.984432,
+      "eta_pair2": 0.98053,
+      "mitigated_f1": 0.426908,
+      "mitigated_f2": 0.249004,
+      "mitigated_mean_fidelity": 0.337956
+    },
+    "Arm B-Ctrl": {
+      "cz_count": 41,
+      "circuit_depth": 84,
+      "active_physical_qubits": [
+        3,
+        4,
+        16,
+        20,
+        21,
+        22,
+        23,
+        24
+      ],
+      "readout_quartet_c0_c1_c2_c3": [
+        20,
+        23,
+        4,
+        22
+      ],
+      "raw_f1": 0.261882,
+      "raw_f1_shot_se": 0.007811,
+      "raw_f2": 0.241374,
+      "raw_f2_shot_se": 0.007811,
+      "raw_mean_fidelity": 0.251628,
+      "raw_f_prod": 0.063181,
+      "sem_block_ddof1_df2": 0.002025,
+      "shot_se_mean_fidelity": 0.005523,
+      "conservative_se_eff": 0.005523,
+      "t_stat_df2_vs_050": -122.67,
+      "p_value_t_df2_vs_050": 0.9999667769730844,
+      "z_eff_vs_050_per_pair_witness": -44.97,
+      "z_eff_vs_075_gt1ebit_witness": -90.231,
+      "f_joint_bell_lp_bounds": [
+        0.0,
+        0.241374
+      ],
+      "f_joint_lp_lower_shot_se": 0.011047,
+      "certifies_gt_1ebit_unconditionally": false,
+      "mitigation_status": "UNMITIGATED_DISJOINT_READOUT_SUBGRAPH",
+      "eta_pair1": null,
+      "eta_pair2": null,
+      "mitigated_f1": null,
+      "mitigated_f2": null,
+      "mitigated_mean_fidelity": null
+    },
+    "Arm B-Held": {
+      "cz_count": 46,
+      "circuit_depth": 81,
+      "active_physical_qubits": [
+        3,
+        4,
+        16,
+        20,
+        21,
+        22,
+        23,
+        24
+      ],
+      "readout_quartet_c0_c1_c2_c3": [
+        20,
+        22,
+        24,
+        23
+      ],
+      "raw_f1": 0.261393,
+      "raw_f1_shot_se": 0.00781,
+      "raw_f2": 0.252767,
+      "raw_f2_shot_se": 0.007812,
+      "raw_mean_fidelity": 0.25708,
+      "raw_f_prod": 0.066169,
+      "sem_block_ddof1_df2": 0.008172,
+      "shot_se_mean_fidelity": 0.005523,
+      "conservative_se_eff": 0.008172,
+      "t_stat_df2_vs_050": -29.73,
+      "p_value_t_df2_vs_050": 0.9994351538280755,
+      "z_eff_vs_050_per_pair_witness": -29.73,
+      "z_eff_vs_075_gt1ebit_witness": -60.321,
+      "f_joint_bell_lp_bounds": [
+        0.0,
+        0.252767
+      ],
+      "f_joint_lp_lower_shot_se": 0.011046,
+      "certifies_gt_1ebit_unconditionally": false,
+      "mitigation_status": "UNMITIGATED_DISJOINT_READOUT_SUBGRAPH",
+      "eta_pair1": null,
+      "eta_pair2": null,
+      "mitigated_f1": null,
+      "mitigated_f2": null,
+      "mitigated_mean_fidelity": null
+    }
+  },
+  "cross_arm_coherence_comparison_audit": {
+    "arm_a_active_subgraph": [
+      2,
+      3,
+      4,
+      5,
+      16,
+      21,
+      22,
+      23
+    ],
+    "arm_b_active_subgraph": [
+      123,
+      136,
+      142,
+      143,
+      144,
+      145,
+      146,
+      147
+    ],
+    "subgraphs_disjoint": true,
+    "cross_subgraph_coherence_ratio_valid": false,
+    "retired_claim": "100.59% physical coherence ceiling parity (retired: Arm A and Arm B executed on disjoint 8-qubit regions of ibm_fez, and [146,143,123,144] SPAM calibration applied only to Arm B-Def).",
+    "multi_qubit_capacity_verdict": "Per-pair entanglement recovery (F1=0.7375, F2=0.7616 > 0.50) and single-photon sub-capacity collapse (Arm B-Def F1=0.4242, F2=0.2490) are confirmed, but 3-basis marginal tomography yields tight 4-qubit joint Bell overlap bounds F_joint in [0.499023, 0.737467], falling 0.0010 below the 0.5000 unconditional >1-ebit (Schmidt number >= 3) threshold. Full 9-basis joint stabilizer tomography on a pinned layout (OSIRIS-HP-004) is required to certify >1 ebit."
+  }
+}

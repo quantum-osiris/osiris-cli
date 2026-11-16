@@ -14,11 +14,11 @@ from osiris_cli.node_beta_governance import NodeBetaGovernor
 DB_PATH = Path(r"C:\Users\Ron\evidence_ledger.db") if Path(r"C:\Users\Ron\evidence_ledger.db").exists() else Path("/mnt/c/Users/Ron/evidence_ledger.db")
 
 payload_file = EXPERIMENT_DIR / "stage_hp002_harness.py"
-payload_h = hashlib.sha256(payload_file.read_bytes()).hexdigest()
+payload_h = hashlib.sha256(payload_file.read_bytes().replace(b"\r\n", b"\n")).hexdigest()
 op_schema_name = "OSIRIS_HP002_RESTRICTED_RECOVERY_CERTIFICATION_V1"
 schema_h = hashlib.sha256(op_schema_name.encode("utf-8")).hexdigest()
 
-# 1. Issue Node Beta Ed25519 Authority Permit
+# 1. Issue Node Beta 32-Byte Symmetric HMAC-SHA256 Authority Permit (not 64B Ed25519; see node_beta_governance.py)
 gov = NodeBetaGovernor()
 permit = gov.issue_grant(target_digest=payload_h, scope=op_schema_name, ttl_seconds=86400)
 
@@ -69,6 +69,8 @@ grant_data = {
         "issued_at_utc": permit.issued_at_utc,
         "expires_at_utc": permit.expires_at_utc,
         "policy_version": permit.policy_version,
+        "signature_algorithm": "HMAC-SHA256-32B",
+        "digest_canonicalization": "LF",
         "signature": permit.signature
     },
     "signature_receipt": {
