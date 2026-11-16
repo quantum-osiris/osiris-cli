@@ -3138,6 +3138,16 @@ def _bench_preflight(command, argv, label, ui):
                                          "Start Ollama before benchmarking, or benchmark gemini with: /bench gemini\n"
                                          "Refusing to execute to prevent evidence ledger contamination."))
             return
+        target_model = argv[argv.index("--model") + 1] if "--model" in argv else BENCH_DEFAULT_MODEL
+        if target_model and not (target_model in installed or f"{target_model}:latest" in installed):
+            avail = ", ".join(sorted(m for m in installed if m)) or "none"
+            hint = f"/bench {sorted(m for m in installed if m)[0]}" if installed else "ollama pull " + target_model
+            print("\n" + osiris_ui.notice(ui, "blocked", "MODEL NOT INSTALLED",
+                                         f"Cannot start benchmark: Ollama model '{target_model}' is not installed (HTTP 404 prevention).\n"
+                                         f"Installed Ollama models: {avail}\n"
+                                         f"Try '{hint}' or 'ollama pull {target_model}'.\n"
+                                         "Refusing to execute to prevent evidence ledger contamination."))
+            return
 
     est, base = "a few minutes per task on a phone", "no earlier round to compare with"
     entries, problem = protege.load_ledger()
@@ -3382,6 +3392,16 @@ def _bench(command: str = "/bench"):
             print("\n" + osiris_ui.notice(ui, "blocked", "BACKEND UNREACHABLE",
                                          f"Cannot start benchmark: Ollama daemon is offline (http://localhost:11434 unreachable).\n"
                                          "Start Ollama before benchmarking, or benchmark gemini with: /bench gemini\n"
+                                         "Refusing to execute to prevent evidence ledger contamination."))
+            return
+        target_model = argv[argv.index("--model") + 1] if "--model" in argv else BENCH_DEFAULT_MODEL
+        if target_model and not (target_model in installed or f"{target_model}:latest" in installed):
+            avail = ", ".join(sorted(m for m in installed if m)) or "none"
+            hint = f"/bench {sorted(m for m in installed if m)[0]}" if installed else "ollama pull " + target_model
+            print("\n" + osiris_ui.notice(ui, "blocked", "MODEL NOT INSTALLED",
+                                         f"Cannot start benchmark: Ollama model '{target_model}' is not installed (HTTP 404 prevention).\n"
+                                         f"Installed Ollama models: {avail}\n"
+                                         f"Try '{hint}' or 'ollama pull {target_model}'.\n"
                                          "Refusing to execute to prevent evidence ledger contamination."))
             return
     if "now" not in command.lower().split()[1:]:

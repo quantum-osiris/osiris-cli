@@ -22,19 +22,22 @@ Models that write tool calls as JSON text instead of structured tool_calls
 
 from __future__ import annotations
 
+import difflib
 import hashlib
 import json
 import os
 import re
 import shlex
+import signal
 import subprocess
 import time
 import uuid
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Any, Callable, Dict, Iterable, List, Optional
+from typing import Any, Callable, Dict, Iterable, List, Optional, Tuple
 
 DEFAULT_MODEL = os.environ.get("OSIRIS_CODE_MODEL", "qwen2.5-coder:7b")
+PREFERRED_CODE_MODELS = ("qwen2.5-coder:7b", "qwen3:8b", "gemma3:4b")
 MAX_STEPS = 8
 _MAX_TOOL_RESULT = 6000
 _MAX_READ_BYTES = 600_000
@@ -163,13 +166,22 @@ def text_tool_calls_enabled(model: Optional[str]) -> bool:
 @dataclass
 class CodeResult:
     answer: str
-    status: str  # SUCCESS | ERROR | MAX_STEPS
+    status: str  # SUCCESS | ERROR | MAX_STEPS | MODEL_UNAVAILABLE | UNAVAILABLE
     decisions: List[Dict[str, Any]] = field(default_factory=list)
     error: str = ""
+    run_id: str = ""
+    requested_model: Optional[str] = None
+    resolved_model: Optional[str] = None
+    resolved_digest: Optional[str] = None
+    receipt_hash: Optional[str] = None
 
 
 def _digest(payload: Dict[str, Any]) -> str:
     return hashlib.sha256(json.dumps(payload, sort_keys=True, separators=(",", ":")).encode()).hexdigest()
+
+
+def _sha256_bytes(data: bytes) -> str:
+    return hashlib.sha256(data).hexdigest()
 
 
 class CodeAgent:
@@ -186,9 +198,14 @@ class CodeAgent:
         log: Optional[Callable[[str, Dict[str, Any]], Any]] = None,
         out: Callable[[str], None] = print,
         max_steps: int = MAX_STEPS,
+        installed_fn: Optional[Callable[[], Dict[str, str]]] = None,
+        receipts_path: Optional[str] = None,
     ):
         self.root = os.path.realpath(root or os.getcwd())
-        self.model = model or DEFAULT_MODEL
+        env_model = os.environ.get("OSIRIS_CODE_MODEL", "").strip() or None
+        self._pinned_model: Optional[str] = model or env_model
+        self.model = self._pinned_model or DEFAULT_MODEL
+        self._live_ollama = chat is None
         self._chat = chat or self._ollama_chat
         self._confirm = confirm or _tty_confirm
         self._propose_write = propose_write or _otc_propose_write
@@ -196,10 +213,48 @@ class CodeAgent:
         self._log = log or (lambda event, details: None)
         self._out = out
         self.max_steps = max_steps
+        self._installed_fn = installed_fn
+        self.receipts_path = receipts_path
         self.decisions: List[Dict[str, Any]] = []
         self._wrote = False
+        self._pending_proposal: Optional[Dict[str, Any]] = None
+        self.resolved_digest: Optional[str] = None
 
     # ── model ────────────────────────────────────────────────────────────────
+    def _preflight_live_model(self) -> Optional[Tuple[str, str]]:
+        """Return (status, error) if live Ollama cannot serve an eligible model; None when ready."""
+        from osiris_cli.orchestration import model_router
+
+        fn = self._installed_fn or model_router.ollama_installed
+        try:
+            installed = fn()
+        except Exception as exc:  # noqa: BLE001
+            return "UNAVAILABLE", f"DAEMON_UNAVAILABLE: Ollama is not reachable ({type(exc).__name__}: {exc})"
+
+        if self._pinned_model is not None:
+            if self._pinned_model not in installed:
+                avail = ", ".join(sorted(k for k in installed if k)) or "none"
+                return (
+                    "MODEL_UNAVAILABLE",
+                    f"MODEL_NOT_INSTALLED: {self._pinned_model!r} is not installed in Ollama "
+                    f"(installed: {avail}); no other model was substituted",
+                )
+            self.model = self._pinned_model
+            self.resolved_digest = installed.get(self.model) or None
+            return None
+
+        for candidate in PREFERRED_CODE_MODELS:
+            if candidate in installed:
+                self.model = candidate
+                self.resolved_digest = installed.get(candidate) or None
+                return None
+        if installed:
+            chosen = sorted(k for k in installed if k)[0]
+            self.model = chosen
+            self.resolved_digest = installed.get(chosen) or None
+            return None
+        return "MODEL_UNAVAILABLE", "MODEL_NOT_INSTALLED: Ollama has 0 installed models"
+
     def _ollama_chat(self, messages, tools, model):
         from osiris_cli.providers.base import Message, ProviderRequest
         from osiris_cli.providers.ollama_compat import OllamaCompatibilityProvider
@@ -210,14 +265,99 @@ class CodeAgent:
         request = ProviderRequest(
             messages=[Message(m["role"], m.get("content", ""),
                               {k: m[k] for k in ("tool_calls", "name") if k in m}) for m in messages],
-            model=model, tools=tools, max_tokens=1024, timeout=execution_timeout_s(),
+            model=model, tools=tools, max_tokens=1024, temperature=0.0,
+            think=False, num_ctx=8192, timeout=execution_timeout_s(),
         )
         resp = provider.chat(request)
         if resp.error:
             return {"error": resp.error}
         return {"content": resp.content, "tool_calls": resp.tool_calls or []}
 
+    def _record_receipt(self, run_id: str, task: str, status: str, error: str = "") -> Optional[str]:
+        if not self.receipts_path:
+            return None
+        from osiris_cli.trio_authz import Receipts
+
+        os.makedirs(os.path.dirname(os.path.abspath(self.receipts_path)), exist_ok=True)
+        row = Receipts(self.receipts_path).append("code.agent.run", {
+            "run_id": run_id,
+            "root": self.root,
+            "task_sha256": _sha256_bytes(task.encode("utf-8")),
+            "requested_model": self._pinned_model,
+            "resolved_model": self.model if status not in ("UNAVAILABLE", "MODEL_UNAVAILABLE") else None,
+            "resolved_digest": self.resolved_digest,
+            "status": status,
+            "error": error[:400] if error else "",
+            "decisions": list(self.decisions),
+        })
+        return row["hash"]
+
+    def _finish(self, run_id: str, task: str, answer: str, status: str, error: str = "") -> CodeResult:
+        r_hash = self._record_receipt(run_id, task, status, error)
+        resolved = self.model if status not in ("UNAVAILABLE", "MODEL_UNAVAILABLE") else None
+        return CodeResult(
+            answer=answer,
+            status=status,
+            decisions=self.decisions,
+            error=error,
+            run_id=run_id,
+            requested_model=self._pinned_model,
+            resolved_model=resolved,
+            resolved_digest=self.resolved_digest,
+            receipt_hash=r_hash,
+        )
+
+    def apply_pending_write(self, approve: Callable[[Dict[str, Any]], bool]) -> Dict[str, Any]:
+        """Verify unchanged target, check explicit operator approval, atomically apply proposed write,
+        and record a receipted decision."""
+        if not self._pending_proposal:
+            raise Denied("no pending write proposal to apply")
+        prop = dict(self._pending_proposal)
+        target = prop["abs_path"]
+        existed_now = os.path.exists(target)
+        current_sha = _sha256_bytes(open(target, "rb").read()) if existed_now else None
+        if existed_now != prop["existed_at_proposal"] or current_sha != prop["before_sha256"]:
+            self._pending_proposal = None
+            raise Denied("target file changed on disk since the proposal was generated; refusing stale apply")
+        if not approve(prop):
+            rec = {"tool": "apply_write", "decision": "DENIED", "path": prop["rel_path"],
+                   "after_sha256": prop["after_sha256"], "reason": "operator declined patch"}
+            self.decisions.append(rec)
+            self._log("CODE_TOOL", rec)
+            return rec
+        os.makedirs(os.path.dirname(target), exist_ok=True)
+        tmp = f"{target}.osiris-tmp-{uuid.uuid4().hex[:8]}"
+        data = prop["content"].encode("utf-8")
+        with open(tmp, "wb") as f:
+            f.write(data)
+            f.flush()
+            os.fsync(f.fileno())
+        os.replace(tmp, target)
+        self._pending_proposal = None
+        self._wrote = False
+        rec = {
+            "tool": "apply_write",
+            "decision": "GRANTED",
+            "path": prop["rel_path"],
+            "before_sha256": prop["before_sha256"],
+            "after_sha256": _sha256_bytes(open(target, "rb").read()),
+        }
+        self.decisions.append(rec)
+        self._log("CODE_TOOL", rec)
+        if self.receipts_path:
+            from osiris_cli.trio_authz import Receipts
+            os.makedirs(os.path.dirname(os.path.abspath(self.receipts_path)), exist_ok=True)
+            row = Receipts(self.receipts_path).append("code.agent.apply_write", rec)
+            rec["receipt_hash"] = row["hash"]
+        return rec
+
     def run(self, task: str) -> CodeResult:
+        run_id = f"code-{uuid.uuid4().hex[:12]}"
+        if self._live_ollama:
+            fail = self._preflight_live_model()
+            if fail is not None:
+                st, err = fail
+                return self._finish(run_id, task, "", st, err)
         messages: List[Dict[str, Any]] = [
             {"role": "system", "content": f"{SYSTEM}\nWorking directory: {self.root}"},
             {"role": "user", "content": task},
@@ -225,14 +365,17 @@ class CodeAgent:
         for _ in range(self.max_steps):
             resp = self._chat(messages, TOOLS, self.model)
             if "error" in resp:
-                return CodeResult("", "ERROR", self.decisions, str(resp["error"]))
+                err = str(resp["error"])
+                st = ("MODEL_UNAVAILABLE" if "MODEL_NOT_INSTALLED" in err
+                      else "UNAVAILABLE" if "DAEMON_UNAVAILABLE" in err else "ERROR")
+                return self._finish(run_id, task, "", st, err)
             content = resp.get("content", "") or ""
             calls = list(resp.get("tool_calls") or [])
             origin = "native"
             if not calls and text_tool_calls_enabled(self.model):
                 calls, origin = parse_text_tool_calls(content), "text"
             if not calls:
-                return CodeResult(content or "(no answer)", "SUCCESS", self.decisions)
+                return self._finish(run_id, task, content or "(no answer)", "SUCCESS")
             messages.append({"role": "assistant", "content": content, "tool_calls": calls})
             for call in calls:
                 fn = call.get("function", {}) or {}
@@ -242,12 +385,18 @@ class CodeAgent:
                     args = json.loads(raw) if isinstance(raw, str) else dict(raw)
                 except (ValueError, TypeError):
                     args = None
-                result = (f"ERROR: arguments for {name} are not a JSON object" if args is None
-                          else self.call(name, args, origin))
+                if args is None:
+                    result = f"ERROR: arguments for {name} are not a JSON object"
+                    bad = {"tool": name, "origin": origin, "decision": "ERROR",
+                           "reason": "arguments are not a JSON object"}
+                    self.decisions.append(bad)
+                    self._log("CODE_TOOL", bad)
+                else:
+                    result = self.call(name, args, origin)
                 if len(result) > _MAX_TOOL_RESULT:
                     result = result[:3000] + f"\n...[{len(result) - 3000} chars omitted]...\n" + result[-1500:]
                 messages.append({"role": "tool", "content": result, "name": name})
-        return CodeResult("", "MAX_STEPS", self.decisions, f"no answer within {self.max_steps} steps")
+        return self._finish(run_id, task, "", "MAX_STEPS", f"no answer within {self.max_steps} steps")
 
     # ── one tool call ────────────────────────────────────────────────────────
     def call(self, name: str, args: Dict[str, Any], origin: str = "native") -> str:
@@ -328,14 +477,37 @@ class CodeAgent:
         return "\n".join(lines) or "(no matches)", {"path": p}
 
     def _write_file(self, path, content):
-        self._confine(path)  # refuse early with a reason the model can read
+        abs_path = self._confine(path)  # refuse early with a reason the model can read
         if self._wrote or self._has_pending_write():
             raise Denied("a write is already pending; the user must /apply or discard it first")
-        if not self._propose_write(str(path), str(content)):
+        rel_path = os.path.relpath(abs_path, self.root)
+        new_text = str(content)
+        existed = os.path.exists(abs_path)
+        old_bytes = open(abs_path, "rb").read() if existed else b""
+        old_text = old_bytes.decode("utf-8", errors="replace") if existed else ""
+        before_sha = _sha256_bytes(old_bytes) if existed else None
+        after_sha = _sha256_bytes(new_text.encode("utf-8"))
+        diff = "".join(difflib.unified_diff(
+            old_text.splitlines(keepends=True),
+            new_text.splitlines(keepends=True),
+            fromfile=f"a/{rel_path}" if existed else "/dev/null",
+            tofile=f"b/{rel_path}",
+        ))
+        if not self._propose_write(str(path), new_text):
             raise Denied("the REPL's write check refused this path")
         self._wrote = True
+        self._pending_proposal = {
+            "abs_path": abs_path,
+            "rel_path": rel_path,
+            "content": new_text,
+            "existed_at_proposal": existed,
+            "before_sha256": before_sha,
+            "after_sha256": after_sha,
+            "diff": diff,
+        }
         return ("PROPOSED: the diff is on the user's screen. It is applied only if they type /apply; "
-                "do not say the file was written."), {"path": str(path), "chars": len(str(content))}
+                "do not say the file was written."), {
+            "path": str(path), "chars": len(new_text), "before_sha256": before_sha, "after_sha256": after_sha}
 
     def _run_command(self, command, cwd=".", timeout=None):
         from osiris.substrate import interactive_timeout_s
@@ -371,15 +543,30 @@ class CodeAgent:
         if not grant.is_valid(_digest({"argv": argv, "cwd": work})):
             raise Denied("execution grant no longer matches the command")
         try:
-            r = subprocess.run(argv, shell=False, cwd=work, capture_output=True, text=True,
-                               timeout=limit, stdin=subprocess.DEVNULL)
-        except subprocess.TimeoutExpired:
-            return f"TIMEOUT after {limit:.0f}s", {"grant_id": grant.grant_id, "digest": digest}
+            proc = subprocess.Popen(
+                argv, shell=False, cwd=work, stdin=subprocess.DEVNULL,
+                stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True,
+                start_new_session=True,
+            )
         except FileNotFoundError:
             raise Denied(f"program not found: {argv[0]}")
-        out = r.stdout + (f"\n[stderr]\n{r.stderr}" if r.stderr.strip() else "")
-        return (out or f"(exit code {r.returncode}, no output)"), {
-            "grant_id": grant.grant_id, "digest": digest, "exit_code": r.returncode}
+        try:
+            stdout, stderr = proc.communicate(timeout=limit)
+        except subprocess.TimeoutExpired:
+            try:
+                os.killpg(proc.pid, signal.SIGKILL)
+            except OSError:
+                proc.kill()
+            proc.communicate()
+            return f"TIMEOUT after {limit:.0f}s", {"grant_id": grant.grant_id, "digest": digest, "timed_out": True}
+        out = stdout + (f"\n[stderr]\n{stderr}" if stderr.strip() else "")
+        return (out or f"(exit code {proc.returncode}, no output)"), {
+            "grant_id": grant.grant_id,
+            "digest": digest,
+            "exit_code": proc.returncode,
+            "stdout_sha256": _sha256_bytes(stdout.encode("utf-8")),
+            "stderr_sha256": _sha256_bytes(stderr.encode("utf-8")),
+        }
 
 
 # ── REPL bindings ────────────────────────────────────────────────────────────
