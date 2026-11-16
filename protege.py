@@ -144,7 +144,13 @@ def candidates(entries, suite=None, runner=None, bench_dir=BENCH_DIR):
                 "connection refused" in row_reason or
                 "connection error" in row_reason or
                 "errno 111" in row_reason or
-                "urlopen error" in row_reason
+                "urlopen error" in row_reason or
+                "http error 404" in row_reason or
+                "http 404" in row_reason or
+                "model_not_installed" in row_reason or
+                "model_unavailable" in row_reason or
+                "daemon_unavailable" in row_reason or
+                ("model '" in row_reason and "not found" in row_reason)
             )
             # Integrity exclusion keys strictly on registered quarantine or verified connection errors.
             # Raw duration <= 0.0s serves only as corroboration, never as standalone exclusion trigger.

@@ -62,7 +62,14 @@ class ProviderMentorAdapter:
         return f"{prov_name}://{endpoint}"
 
     def installed(self) -> List[str]:
-        """Return list of available models for the current provider."""
+        """Return list of actually installed/available models for the current provider."""
+        if hasattr(self.provider, "installed_model_names"):
+            try:
+                live_names = list(self.provider.installed_model_names())
+                if live_names:
+                    return live_names
+            except Exception as e:
+                logger.debug(f"Live model discovery failed: {e}")
         try:
             caps = self.provider.capabilities()
             return list(caps.supported_models)
