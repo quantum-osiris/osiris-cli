@@ -180,3 +180,42 @@ def reduce_commuting_cx_fanouts(qc: QuantumCircuit) -> Tuple[QuantumCircuit, Dic
         _flush_control(c)
 
     return out, {"edges_rewritten_to_chain": total_rewritten}
+
+
+def compile_with_degree_reduction(
+    qc: QuantumCircuit,
+    backend: object,
+    *,
+    optimization_level: int = 3,
+    qec_mode: bool = False,
+    seed_transpiler: int = 20261116,
+) -> Tuple[QuantumCircuit, Dict[str, object]]:
+    """
+    Turnkey OSIRIS topology-aware compilation wrapper:
+      - When `qec_mode=False` (default for state-prep / variational / algorithmic circuits),
+        applies `reduce_commuting_cx_fanouts` prior to Qiskit `transpile`, unlocking exact
+        `VF2Layout` error-weighted subgraph embedding on heavy-hex backends.
+      - When `qec_mode=True` (quantum error-correction syndrome extraction), skips relay
+        chain rewrites so mid-circuit X faults cannot propagate into higher-weight strings!
+    """
+    from qiskit import transpile
+
+    if qec_mode:
+        pre_qc = qc
+        rewrite_meta = {"edges_rewritten_to_chain": 0, "qec_guard_skipped_rewrite": True}
+    else:
+        pre_qc, stats = reduce_commuting_cx_fanouts(qc)
+        rewrite_meta = {**stats, "qec_guard_skipped_rewrite": False}
+
+    compiled = transpile(
+        pre_qc,
+        backend=backend,
+        optimization_level=optimization_level,
+        seed_transpiler=seed_transpiler,
+    )
+    twoq = sum(1 for inst in compiled.data if inst.operation.num_qubits == 2)
+    return compiled, {
+        **rewrite_meta,
+        "compiled_twoq_gates": twoq,
+        "compiled_depth": compiled.depth(),
+    }
