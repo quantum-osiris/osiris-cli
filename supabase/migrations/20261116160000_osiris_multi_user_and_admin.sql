@@ -1,7 +1,7 @@
 -- OSIRIS workspace v3 (delta): admin read-only subspace and owner project rename. NOT APPLIED until the owner approves it.
 --
 -- Target: Supabase project "osiris" (ref eirdsaeutzkzepibnfxf).
--- Depends on 20261116140000_osiris_hosted_workspace.sql (recorded on the hosted project as 20261116154042), which
+-- Depends on 20261116154042_osiris_hosted_workspace.sql, which
 -- already provides: owner_id default auth.uid(), owner insert policies on projects and tasks, owner task-status
 -- update, column-level insert grants, the append-only disposition triggers with a fixed search_path, the proposal
 -- queue and osiris_platform_developers. This migration adds only what that one does not.

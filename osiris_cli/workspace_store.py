@@ -7,7 +7,7 @@ Configuration, from the environment: ``OSIRIS_SUPABASE_URL`` (https://<ref>.supa
 ``OSIRIS_SUPABASE_SERVICE_KEY``. Without both, every call raises ``StoreError("NOT_CONFIGURED")``:
 there is no local stand-in that would make an unsaved record look saved.
 
-The tables are created by supabase/migrations/20261116120000_osiris_workspace.sql.
+The tables are created by supabase/migrations/20261116145612_osiris_workspace.sql.
 """
 
 from __future__ import annotations
