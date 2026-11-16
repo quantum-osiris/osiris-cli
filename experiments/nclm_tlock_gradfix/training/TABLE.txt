@@ -1,0 +1,8 @@
+arm     seed steps  initial   final    best   seconds   (held-out bits/byte, 64 fixed windows of 128 bytes, evaluated every 200 steps)
+before  11   1200   9.5557   4.6038  4.6038  266
+before  12   1200   9.4984   4.5733  4.5733  252
+before  13   1200   9.5018   4.6404  4.6404  296
+after   11   1200   9.5557   4.5991  4.5991  273
+after   12   1200   9.4984   4.6374  4.6374  259
+after   13   1200   9.5018   4.6414  4.6414  309
+corpus: 60 files, manifest sha256 202e515245243a028ef2cf152a141ea7173dc2e12089baf2bec44355041e278b, train bytes 620469, held-out bytes 67145
