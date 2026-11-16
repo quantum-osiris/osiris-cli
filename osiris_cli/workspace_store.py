@@ -20,9 +20,24 @@ import urllib.request
 from typing import Any, Callable, Dict, List, Optional
 
 PROJECT_REF = "eirdsaeutzkzepibnfxf"
+TASK_STATUSES = ("todo", "doing", "done")
 _URL = re.compile(r"^https://([a-z0-9]{20})\.supabase\.co/?$")
 _UUID = re.compile(r"^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$")
 Http = Callable[[str, str, Dict[str, str], Optional[bytes]], Any]
+
+
+def store_status(expected_ref: str = PROJECT_REF) -> Dict[str, Any]:
+    """Configuration readiness without exposing URLs or keys."""
+    url = os.environ.get("OSIRIS_SUPABASE_URL", "").strip()
+    key = os.environ.get("OSIRIS_SUPABASE_SERVICE_KEY", "").strip()
+    if not url or not key:
+        return {"configured": False, "project_ref": expected_ref, "reason": "NOT_CONFIGURED"}
+    m = _URL.match(url)
+    if not m:
+        return {"configured": False, "project_ref": expected_ref, "reason": "BAD_CONFIG"}
+    if m.group(1) != expected_ref:
+        return {"configured": False, "project_ref": expected_ref, "reason": "WRONG_PROJECT"}
+    return {"configured": True, "project_ref": expected_ref, "reason": None}
 
 
 class StoreError(Exception):
@@ -76,11 +91,34 @@ class WorkspaceStore:
             raise StoreError("INVALID_INPUT", "name must be 1 to 200 characters")
         return self._one(self._call("POST", "/osiris_projects", {"name": name.strip(), "description": str(description)[:4000]}))
 
-    def create_task(self, project_id: str, title: str) -> Dict[str, Any]:
+    def create_task(self, project_id: str, title: str, status: str = "todo") -> Dict[str, Any]:
         self._uuid(project_id)
         if not isinstance(title, str) or not 1 <= len(title.strip()) <= 400:
             raise StoreError("INVALID_INPUT", "title must be 1 to 400 characters")
-        return self._one(self._call("POST", "/osiris_tasks", {"project_id": project_id, "title": title.strip()}))
+        if status not in TASK_STATUSES:
+            raise StoreError("INVALID_INPUT", "status must be todo, doing or done")
+        body: Dict[str, Any] = {"project_id": project_id, "title": title.strip()}
+        if status != "todo":
+            body["status"] = status
+        return self._one(self._call("POST", "/osiris_tasks", body))
+
+    def update_task(self, task_id: str, *, status: Optional[str] = None, title: Optional[str] = None) -> Dict[str, Any]:
+        self._uuid(task_id)
+        patch: Dict[str, Any] = {}
+        if status is not None:
+            if status not in TASK_STATUSES:
+                raise StoreError("INVALID_INPUT", "status must be todo, doing or done")
+            patch["status"] = status
+        if title is not None:
+            if not isinstance(title, str) or not 1 <= len(title.strip()) <= 400:
+                raise StoreError("INVALID_INPUT", "title must be 1 to 400 characters")
+            patch["title"] = title.strip()
+        if not patch:
+            raise StoreError("INVALID_INPUT", "nothing to update")
+        rows = self._call("PATCH", f"/osiris_tasks?id=eq.{task_id}", patch)
+        if not rows:
+            raise StoreError("NOT_FOUND", "no such task")
+        return self._one(rows)
 
     def record_disposition(self, project_id: str, result: Dict[str, Any], task_id: Optional[str] = None) -> Dict[str, Any]:
         """Save the outcome of one council run (``council.run_task``'s result). Digests and references
@@ -95,6 +133,7 @@ class WorkspaceStore:
         row = {
             "project_id": project_id, "task_id": task_id, "council_task_id": result["task_id"],
             "objective_sha256": hashlib.sha256(result["objective"].encode("utf-8")).hexdigest(),
+            "objective_excerpt": str(result["objective"]).strip()[:280],
             "decision": result["decision"], "reason": str(result["reason"])[:2000], "aiden_verdict": result.get("aiden_verdict"),
             "allow_cloud": bool(result.get("allow_cloud", False)),
             "receipt_kind": result["receipt"]["kind"], "receipt_hash": result["receipt"]["hash"],
@@ -105,6 +144,14 @@ class WorkspaceStore:
             "executed": False,
         }
         return self._one(self._call("POST", "/osiris_dispositions", row))
+
+    def dispositions(self, project_id: str, task_id: Optional[str] = None) -> List[Dict[str, Any]]:
+        self._uuid(project_id)
+        filt = f"project_id=eq.{project_id}"
+        if task_id is not None:
+            self._uuid(task_id)
+            filt += f"&task_id=eq.{task_id}"
+        return self._call("GET", f"/osiris_dispositions?{filt}&order=created_at.desc&limit=100")
 
     def project(self, project_id: str) -> Dict[str, Any]:
         self._uuid(project_id)

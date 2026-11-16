@@ -121,6 +121,7 @@ class ProviderResponse:
     structured_output: Optional[Any] = None
     tool_calls: Optional[List[Dict[str, Any]]] = None
     error: str = ""
+    is_mock: bool = False
 
     @property
     def tokens_per_second(self) -> float:

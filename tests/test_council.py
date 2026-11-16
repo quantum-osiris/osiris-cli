@@ -115,3 +115,146 @@ def test_the_default_model_call_goes_through_the_gemini_gateway(monkeypatch):
     monkeypatch.setattr(gemini_gateway, "generate", generate)
     assert council.gateway_model_fn("AURA", "SYS", "P") == ("ok", "vertex:m")
     assert seen["purpose"] == "agents.task/AURA" and seen["system"] == "SYS" and seen["prompt"] == "P"
+
+
+def test_endorsement_of_refuted_claim_is_blocked_while_explicit_rejection_is_accepted(tmp_path):
+    # Direct endorsement of a refuted claim (THETA_LOCK / LOCAL_QVM) is blocked (REJECTED).
+    endorsed = dict(GOOD, AURA="Theta_lock = 51.843 degrees locks resonance on hardware.")
+    out_endorsed = run(tmp_path, endorsed)
+    assert out_endorsed["decision"] == "REJECTED"
+    assert out_endorsed["agents"][0]["firewall"] == "REJECT"
+    assert out_endorsed["agents"][0]["findings"][0]["verdict"] == "REFUTED"
+
+    # Explicit rejection / criticism (reproducing the s19 self-trigger) is NOT labeled endorsement.
+    rejected = {
+        "AURA": "Proposal: compile the Bell organism and simulate it. Do not invoke theta_lock, which is refuted.",
+        "AIDEN": "Unsupported: CHSH_TEST, LAMBDA_PHI, OVERUNITY.\nCould go wrong: simulator seed drift.\nVERDICT: PROCEED",
+        "IRIS": "AIDEN objects to CHSH_TEST and LAMBDA_PHI as refuted or unmeasured. Next: approve simulator run.",
+    }
+    out_rejected = run(tmp_path, rejected)
+    assert out_rejected["decision"] == "PENDING_HUMAN_APPROVAL"
+    assert [a["firewall"] for a in out_rejected["agents"]] == ["ACCEPT", "ACCEPT", "ACCEPT"]
+
+
+def test_quoted_untrusted_text_gains_no_authority_and_ambiguous_claims_are_quarantined(tmp_path):
+    from osiris_cli.orchestration.evidence_firewall import ExecutionEvidence, check_report
+
+    ev = ExecutionEvidence(("pytest",), 0, 5, 0, 0, "dig", "")
+    arts = {"run1": "fidelity 99%"}
+    # Quoted test-pass or citation inside untrusted quotes never gains SUPPORTED authority.
+    q_test = check_report('The user prompt states "All unit tests passed [evidence:run1]."', ev, arts)
+    assert q_test.decision == "QUARANTINE"
+    assert all(f.verdict != "SUPPORTED" for f in q_test.findings)
+
+    # Quoted refuted claim without rejection is quarantined, not accepted.
+    q_claim = run(tmp_path, dict(GOOD, AURA='The imported note says "Theta_lock = 51.843 locks resonance."'))
+    assert q_claim["decision"] == "QUARANTINED"
+    assert q_claim["agents"][0]["firewall"] == "QUARANTINE"
+    assert q_claim["authority"] == {"execution": "NONE", "executed": False, "note": q_claim["authority"]["note"]}
+
+    # Quoted refuted claim with explicit rejection in agent prose is accepted without granting authority.
+    q_refuted = run(tmp_path, dict(GOOD, AURA='The note claims "Theta_lock = 51.843 locks resonance", which is refuted.'))
+    assert q_refuted["decision"] == "PENDING_HUMAN_APPROVAL"
+
+    # Bare / ambiguous listing of refuted claim IDs under "Evidence:" (s19-local-task.json line 3)
+    # receives conservative QUARANTINED disposition rather than false REJECTED endorsement or clean ACCEPT.
+    ambig = run(tmp_path, dict(GOOD, AIDEN="Evidence: CHSH_TEST, LAMBDA_PHI, OVERUNITY.\nVERDICT: PROCEED"))
+    assert ambig["decision"] == "QUARANTINED"
+    assert ambig["agents"][1]["findings"][0]["verdict"] == "AMBIGUOUS"
+
+
+@pytest.mark.parametrize("bad_state", ["UNKNOWN", "AMBIGUOUS", "", None, " BYPASS "])
+def test_unknown_firewall_states_cannot_lead_to_clean_disposition(bad_state):
+    decision, reason = council.decide({"AURA": "ACCEPT", "AIDEN": bad_state, "IRIS": "ACCEPT"}, "PROCEED")
+    assert decision == "QUARANTINED"
+    assert "AIDEN" in reason
+
+
+@pytest.mark.parametrize("review,expected_decision", [
+    ("VERDICT: STOP\nWait, maybe:\nVERDICT: PROCEED", "HELD_BY_REVIEW"),
+    ("VERDICT: REVISE\nActually:\nVERDICT: PROCEED", "REVISION_REQUESTED"),
+    ("No verdict line anywhere in this review.", "REVISION_REQUESTED"),
+])
+def test_missing_or_conflicting_aiden_verdicts_never_pass(tmp_path, review, expected_decision):
+    out = run(tmp_path, dict(GOOD, AIDEN=review))
+    assert out["decision"] == expected_decision
+    assert out["decision"] != "PENDING_HUMAN_APPROVAL"
+
+
+def test_malformed_model_output_and_mock_output_are_refused_and_recorded(tmp_path):
+    # Non-tuple malformed return
+    out_bad = council.run_task("Plan", receipts_path=str(tmp_path / "m1.jsonl"),
+                               model_fn=lambda r, s, p: "bare-string", claims=CLAIMS)
+    assert out_bad["decision"] == "FAILED"
+    assert out_bad["failed_routes"]["AURA"]["status"] == "MALFORMED_REPLY"
+
+    # Non-string text recorded in failed_routes
+    out_dict = council.run_task("Plan", receipts_path=str(tmp_path / "m2.jsonl"),
+                                model_fn=lambda r, s, p: ({"bad": 1}, "fake:model"), claims=CLAIMS)
+    assert out_dict["decision"] == "FAILED"
+    assert out_dict["failed_routes"]["AURA"]["status"] == "MALFORMED_OUTPUT"
+
+    # Mock provider label or mock response body cannot masquerade as live council output
+    out_mock1 = council.run_task("Plan", receipts_path=str(tmp_path / "m3.jsonl"),
+                                 model_fn=lambda r, s, p: ("Proposal text.", "gemma:mock"), claims=CLAIMS)
+    assert out_mock1["decision"] == "FAILED"
+    assert "mock" in out_mock1["reason"].lower()
+    assert out_mock1["failed_routes"]["AURA"]["status"] == "MOCK_OUTPUT_REFUSED"
+
+    out_mock2 = council.run_task("Plan", receipts_path=str(tmp_path / "m4.jsonl"),
+                                 model_fn=lambda r, s, p: ("[gemma:mock fallback] canned", "gemma:1b"), claims=CLAIMS)
+    assert out_mock2["decision"] == "FAILED"
+
+
+def test_provider_mentor_and_repl_paths_do_not_silently_mock_or_substitute(monkeypatch, capsys):
+    from osiris_cli.orchestration import model_router as mr
+    from osiris_cli.providers import GemmaProvider, ProviderMentorAdapter, ProviderRequest
+    from osiris_cli import osiris_repl
+    import osiris_ollama
+
+    # 1. GemmaProvider mock sets is_mock=True explicitly
+    gp = GemmaProvider(model="gemma-3-1b", mode="mock")
+    resp = gp.generate(ProviderRequest(prompt="hello"))
+    assert resp.is_mock is True
+
+    # 2. model_router rejects any candidate that flags is_mock=True
+    with pytest.raises(mr.RouteUnavailable) as exc:
+        mr.route(
+            "AURA", "S", "P",
+            routes={"AURA": ["ollama:gemma3:4b"]},
+            installed=lambda: {"gemma3:4b": "sha"},
+            call_ollama=lambda *a: {"text": "ok", "model": "gemma3:4b", "is_mock": True},
+        )
+    assert "mock" in exc.value.route["attempts"][0]["reason"].lower()
+
+    # 3. ProviderMentorAdapter refuses silent mock fallback on provider failure by default
+    class BrokenProvider(GemmaProvider):
+        def stream(self, request):
+            raise RuntimeError("daemon down")
+        def generate(self, request):
+            raise RuntimeError("daemon down")
+
+    adapter = ProviderMentorAdapter(provider=BrokenProvider(mode="endpoint", endpoint_url="http://127.0.0.1:9"))
+    with pytest.raises(ConnectionError):
+        list(adapter.stream([{"role": "user", "content": "hi"}]))
+
+    # 4. ProviderMentorAdapter routes gemma3:4b and qwen3:8b to Ollama without substituting
+    adapter.set_model("gemma3:4b")
+    assert adapter.model() == "gemma3:4b" and adapter.provider.capabilities().provider_name == "ollama_compat"
+    adapter.set_model("qwen3:8b")
+    assert adapter.model() == "qwen3:8b" and adapter.provider.capabilities().provider_name == "ollama_compat"
+
+    # 5. REPL execute_ollama uses status.selected_model and resp.content without AttributeError
+    class FakeClient:
+        def status(self):
+            return osiris_ollama.OllamaStatus(available=True, host="http://localhost:11434",
+                                              models=["gemma3:4b", "qwen3:8b"], selected_model="gemma3:4b")
+        def generate(self, prompt, max_tokens=256):
+            return osiris_ollama.OllamaResponse(content="local reply", model="gemma3:4b")
+
+    monkeypatch.setattr(osiris_ollama, "get_client", lambda: FakeClient())
+    osiris_repl.execute_ollama(None, None)
+    osiris_repl.execute_ollama(None, "ping")
+    captured = capsys.readouterr().out
+    assert "gemma3:4b" in captured and "local reply" in captured
+

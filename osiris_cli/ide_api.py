@@ -31,7 +31,7 @@ from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from typing import Any, Callable, Dict, Optional, Tuple
 from urllib.parse import urlparse
 
-API_VERSION = "1.1.0"
+API_VERSION = "1.2.0"
 MAX_BODY = 256 * 1024
 TOKEN_HEADER = "X-OSIRIS-Token"
 TOKEN_PLACEHOLDER = "__OSIRIS_SESSION_TOKEN__"
@@ -75,9 +75,11 @@ class Backend:
 
     def __init__(self, *, gateway_factory: Callable[[], Any], slice_receipts: str, examples_dir: str,
                  workspace_dirs: Tuple[str, ...] = (), slice_runner: Optional[Callable[..., Dict[str, Any]]] = None,
-                 agent_receipts: Optional[str] = None, agent_model_fn: Optional[Callable[..., Any]] = None):
+                 agent_receipts: Optional[str] = None, agent_model_fn: Optional[Callable[..., Any]] = None,
+                 store_factory: Optional[Callable[[], Any]] = None):
         self._gateway_factory = gateway_factory
         self._gateway = None
+        self._store_factory = store_factory
         self.slice_receipts = slice_receipts
         self.examples_dir = examples_dir
         self.workspace_dirs = workspace_dirs
@@ -88,6 +90,21 @@ class Backend:
         self._agent_lock = threading.Lock()
         self._cache: Dict[str, Tuple[float, Any]] = {}
         self._lock = threading.Lock()
+
+    def _get_store(self):
+        from osiris_cli.workspace_store import StoreError, WorkspaceStore
+        try:
+            return self._store_factory() if self._store_factory is not None else WorkspaceStore()
+        except StoreError as e:
+            raise self._store_api_error(e)
+
+    @staticmethod
+    def _store_api_error(e: Any) -> ApiError:
+        status = (400 if e.code == "INVALID_INPUT"
+                  else 404 if e.code == "NOT_FOUND"
+                  else 503 if e.code in ("NOT_CONFIGURED", "BAD_CONFIG", "WRONG_PROJECT")
+                  else 502)
+        return ApiError(status, f"STORE_{e.code}", str(e))
 
     @property
     def gateway(self):
@@ -226,21 +243,82 @@ class Backend:
                            for c in claims.REGISTER]}
 
     def agent_task(self, body: Dict[str, Any]) -> Dict[str, Any]:
-        """OSIRIS runs AURA, AIDEN and IRIS on one objective and records the decision. Nothing is executed."""
+        """OSIRIS runs AURA, AIDEN and IRIS on one objective and records the decision. Nothing is executed.
+        When ``project_id`` is provided, the resulting disposition and receipt hash are persisted to Supabase."""
         from osiris_cli.orchestration import council
+        from osiris_cli.workspace_store import StoreError, WorkspaceStore
+        project_id = body.get("project_id")
+        task_id = body.get("task_id")
+        store = None
+        if project_id is not None:
+            try:
+                WorkspaceStore._uuid(project_id)
+                if task_id is not None:
+                    WorkspaceStore._uuid(task_id)
+            except StoreError as e:
+                raise self._store_api_error(e)
+            store = self._get_store()
         with self._agent_lock:  # one task at a time: the receipt chain is appended in order
             try:
-                return council.run_task(body.get("objective"), body.get("context"),
-                                        receipts_path=self.agent_receipts, model_fn=self._agent_model_fn,
-                                        allow_cloud=body.get("allow_cloud", False))
+                result = council.run_task(body.get("objective"), body.get("context"),
+                                          receipts_path=self.agent_receipts, model_fn=self._agent_model_fn,
+                                          allow_cloud=body.get("allow_cloud", False))
             except council.CouncilError as e:
                 raise ApiError(400, "INVALID_INPUT", str(e))
             except council.ReceiptError as e:
                 raise ApiError(500, "RECEIPT_NOT_WRITTEN", str(e))
+            if store is not None:
+                try:
+                    saved = store.record_disposition(project_id, result, task_id=task_id)
+                except StoreError as e:
+                    raise self._store_api_error(e)
+                result = {**result, "saved_disposition": saved}
+            return result
 
     def agent_tasks(self) -> Dict[str, Any]:
         from osiris_cli.orchestration import council
         return council.task_receipts(self.agent_receipts)
+
+    def store_status(self) -> Dict[str, Any]:
+        from osiris_cli.workspace_store import PROJECT_REF, StoreError, store_status
+        if self._store_factory is not None:
+            try:
+                self._store_factory()
+                return {"configured": True, "project_ref": PROJECT_REF, "reason": None}
+            except StoreError as e:
+                return {"configured": False, "project_ref": PROJECT_REF, "reason": e.code}
+        return store_status()
+
+    def store_projects(self) -> Dict[str, Any]:
+        from osiris_cli.workspace_store import StoreError
+        try:
+            return {"projects": self._get_store().projects()}
+        except StoreError as e:
+            raise self._store_api_error(e)
+
+    def store_create_project(self, body: Dict[str, Any]) -> Dict[str, Any]:
+        from osiris_cli.workspace_store import StoreError
+        try:
+            return {"project": self._get_store().create_project(body.get("name"), body.get("description", ""))}
+        except StoreError as e:
+            raise self._store_api_error(e)
+
+    def store_project_detail(self, body: Dict[str, Any]) -> Dict[str, Any]:
+        from osiris_cli.workspace_store import StoreError
+        try:
+            return {"project": self._get_store().project(body.get("project_id"))}
+        except StoreError as e:
+            raise self._store_api_error(e)
+
+    def store_tasks(self, body: Dict[str, Any]) -> Dict[str, Any]:
+        from osiris_cli.workspace_store import StoreError
+        store = self._get_store()
+        try:
+            if body.get("task_id") is not None:
+                return {"task": store.update_task(body.get("task_id"), status=body.get("status"), title=body.get("title"))}
+            return {"task": store.create_task(body.get("project_id"), body.get("title"), status=body.get("status", "todo"))}
+        except StoreError as e:
+            raise self._store_api_error(e)
 
     def experiments(self) -> Dict[str, Any]:
         rows = self.receipts()["slice"]
@@ -265,6 +343,11 @@ ROUTES = {
     ("GET", "/api/v1/research/experiments"): "experiments",
     ("POST", "/api/v1/agents/task"): "agent_task",
     ("GET", "/api/v1/agents/tasks"): "agent_tasks",
+    ("GET", "/api/v1/store/status"): "store_status",
+    ("GET", "/api/v1/store/projects"): "store_projects",
+    ("POST", "/api/v1/store/projects"): "store_create_project",
+    ("POST", "/api/v1/store/project"): "store_project_detail",
+    ("POST", "/api/v1/store/tasks"): "store_tasks",
 }
 
 

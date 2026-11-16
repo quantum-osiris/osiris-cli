@@ -96,7 +96,7 @@ def _call_ollama(model: str, system: str, prompt: str, max_tokens: int, temperat
                                          timeout=OLLAMA_TIMEOUT, think=False, num_ctx=OLLAMA_CONTEXT))
     if resp.error:
         raise RuntimeError(resp.error)
-    return {"text": resp.content, "model": resp.model}
+    return {"text": resp.content, "model": resp.model, "is_mock": bool(getattr(resp, "is_mock", False))}
 
 
 def _call_gemini(model: Optional[str], system: str, prompt: str, max_tokens: int, temperature: float,
@@ -164,9 +164,15 @@ def route(role: str, system: str, prompt: str, *, cloud_allowed: bool = False,
                                reason=f"the runtime answered as {out.get('model')!r}, not the requested {model!r}")
                 continue
             digest = local[model] or None
+        if out.get("is_mock") is True:
+            attempt.update(status="FAILED", reason="mock output cannot masquerade as live model output")
+            continue
         text = (out.get("text") or "").strip()
         if not text:
             attempt.update(status="FAILED", reason="the model returned no text")
+            continue
+        if "[gemma:mock" in text.lower() or "deterministic mock response" in text.lower():
+            attempt.update(status="FAILED", reason="mock output cannot masquerade as live model output")
             continue
         attempt.update(status="ANSWERED")
         return text, {

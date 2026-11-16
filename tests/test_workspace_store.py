@@ -74,7 +74,34 @@ def test_inputs_are_checked_before_any_request():
     calls = []
     s = store(calls=calls)
     for bad in (lambda: s.create_project(""), lambda: s.create_task("not-a-uuid", "t"), lambda: s.create_task(ID, ""),
+                lambda: s.create_task(ID, "t", status="bogus"), lambda: s.update_task(ID),
+                lambda: s.update_task(ID, status="bogus"), lambda: s.dispositions("bad"),
                 lambda: s.project("1 or 1=1")):
         with pytest.raises(StoreError):
             bad()
     assert calls == []
+
+
+def test_task_lifecycle_and_disposition_retrieval_queries(monkeypatch):
+    from osiris_cli.workspace_store import store_status
+
+    monkeypatch.delenv("OSIRIS_SUPABASE_URL", raising=False)
+    monkeypatch.delenv("OSIRIS_SUPABASE_SERVICE_KEY", raising=False)
+    assert store_status() == {"configured": False, "project_ref": PROJECT_REF, "reason": "NOT_CONFIGURED"}
+    monkeypatch.setenv("OSIRIS_SUPABASE_URL", URL)
+    monkeypatch.setenv("OSIRIS_SUPABASE_SERVICE_KEY", "secret-service-key")
+    st = store_status()
+    assert st == {"configured": True, "project_ref": PROJECT_REF, "reason": None}
+    assert "secret-service-key" not in json.dumps(st)
+
+    calls = []
+    s = store(reply=[{"id": ID2, "status": "doing", "title": "Run Bell sim"}], calls=calls)
+    updated = s.update_task(ID2, status="doing")
+    assert updated["status"] == "doing"
+    assert calls[-1][0] == "PATCH" and f"/osiris_tasks?id=eq.{ID2}" in calls[-1][1]
+
+    s2 = store(reply=[{"id": ID, "council_task_id": "task-abc", "receipt_hash": "b" * 64}], calls=calls)
+    rows = s2.dispositions(ID, task_id=ID2)
+    assert len(rows) == 1 and rows[0]["council_task_id"] == "task-abc"
+    assert f"project_id=eq.{ID}&task_id=eq.{ID2}" in calls[-1][1]
+

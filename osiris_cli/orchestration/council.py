@@ -51,6 +51,7 @@ _RULES = (
     "Only the simulator is connected; no quantum hardware is available.\n"
     "Do not present a claim as true when the claims register below records it as refuted, an artifact, "
     "not measured or without evidence.\n"
+    "Reference the claims register only when the objective or proposal touches a listed claim; do not recite unrelated claim IDs.\n"
     "Plain text only. Be concrete and brief."
 )
 
@@ -112,20 +113,52 @@ def claim_lines() -> List[str]:
     return [f"{c.id}: {c.verdict}" for c in claims.REGISTER]
 
 
+_MOCK_PROVIDER_RE = re.compile(r"(?:^|[:+/_\-\s])mock(?:$|[:+/_\-\s])", re.I)
+
+
+def _is_mock_output(provider: Any, route: Optional[Dict[str, Any]], text: str) -> bool:
+    if isinstance(route, dict) and (route.get("is_mock") is True or str(route.get("runtime", "")).lower() == "mock"):
+        return True
+    if _MOCK_PROVIDER_RE.search(str(provider or "")):
+        return True
+    low = (text or "").lower()
+    return "[gemma:mock" in low or "deterministic mock response" in low
+
+
+def parse_aiden_verdict(text: str) -> Tuple[Optional[str], bool, List[str]]:
+    """Return (effective_verdict, conflicted, all_verdicts). Conflicting verdicts never resolve to PROCEED."""
+    found = [v.upper() for v in _VERDICT.findall(text or "")]
+    if not found:
+        return None, False, []
+    distinct = set(found)
+    if len(distinct) == 1:
+        return found[-1], False, found
+    conservative = "STOP" if "STOP" in distinct else "REVISE"
+    return conservative, True, found
+
+
 def aiden_verdict(text: str) -> Optional[str]:
-    """The last VERDICT line in AIDEN's review, or None when there is none."""
-    found = _VERDICT.findall(text or "")
-    return found[-1].upper() if found else None
+    """Conservative verdict from AIDEN's review: None if missing, never PROCEED when lines conflict."""
+    verdict, _, _ = parse_aiden_verdict(text)
+    return verdict
 
 
-def decide(firewall: Dict[str, str], verdict: Optional[str]) -> Tuple[str, str]:
+def decide(firewall: Dict[str, str], verdict: Optional[str], *, verdict_conflicted: bool = False) -> Tuple[str, str]:
     """The decision and its reason, from the firewall results and AIDEN's verdict line only."""
     for role in ROLES:
         if firewall.get(role) == "REJECT":
             return "REJECTED", f"the evidence firewall rejected {role}'s text"
     for role in ROLES:
         if firewall.get(role) == "QUARANTINE":
-            return "QUARANTINED", f"{role}'s text asserts something no evidence supports"
+            return "QUARANTINED", f"{role}'s text is ambiguous, quoted without rejection, or unsupported by evidence"
+    for role in ROLES:
+        state = firewall.get(role)
+        if state != "ACCEPT":
+            return "QUARANTINED", f"{role} has unknown or missing firewall state {state!r}"
+    if verdict_conflicted:
+        if verdict == "STOP":
+            return "HELD_BY_REVIEW", "AIDEN gave conflicting verdict lines including STOP"
+        return "REVISION_REQUESTED", "AIDEN gave conflicting verdict lines"
     if verdict == "STOP":
         return "HELD_BY_REVIEW", "AIDEN's verdict is STOP"
     if verdict == "REVISE":
@@ -175,22 +208,35 @@ def run_task(objective: Any, context: Any = None, *, receipts_path: str, model_f
     stage = {"AURA": "PROPOSAL", "AIDEN": "REVIEW", "IRIS": "BRIEF"}
 
     for role in ROLES:
+        route: Optional[Dict[str, Any]] = None
         try:
             reply = model_fn(role, _system(role, claims), prompts[role]())
+            if not isinstance(reply, (tuple, list)) or len(reply) < 2:
+                failure = f"{role}: malformed model reply ({type(reply).__name__})"
+                failed_routes[role] = {"status": "MALFORMED_REPLY", "type": type(reply).__name__}
+                emit("OSIRIS", "MODEL_UNAVAILABLE", failure)
+                break
             text, provider = reply[0], reply[1]
             route = reply[2] if len(reply) > 2 and isinstance(reply[2], dict) else None
         except Exception as e:  # noqa: BLE001 - any model failure ends the task; no key material is in e
             failure = f"{role}: {type(e).__name__}: {str(e)[:400]}"
-            failed_routes[role] = getattr(e, "route", None)
+            failed_routes[role] = getattr(e, "route", None) or {"status": "EXCEPTION", "error": type(e).__name__}
             emit("OSIRIS", "MODEL_UNAVAILABLE", failure)
             break
         if not isinstance(text, str):
             failure = f"{role}: the model call returned {type(text).__name__}, not text"
+            failed_routes[role] = route or {"status": "MALFORMED_OUTPUT", "type": type(text).__name__}
             emit("OSIRIS", "MODEL_UNAVAILABLE", failure)
             break
         text = (text or "").strip()[:MAX_OUTPUT]
         if not text:
             failure = f"{role}: the model returned no text"
+            failed_routes[role] = route or {"status": "EMPTY_OUTPUT"}
+            emit("OSIRIS", "MODEL_UNAVAILABLE", failure)
+            break
+        if _is_mock_output(provider, route, text):
+            failure = f"{role}: mock model output refused; cannot masquerade as live model output"
+            failed_routes[role] = route or {"status": "MOCK_OUTPUT_REFUSED", "provider": str(provider)[:80]}
             emit("OSIRIS", "MODEL_UNAVAILABLE", failure)
             break
         result = check_report(text)
@@ -203,12 +249,13 @@ def run_task(objective: Any, context: Any = None, *, receipts_path: str, model_f
         emit(role, stage[role], f"{len(text)} characters via {str(provider)[:80]}{where}")
         emit("OSIRIS", "FIREWALL_" + result.decision, f"{role}: {len(findings)} finding(s)")
 
-    verdict = aiden_verdict(outputs["AIDEN"]["text"]) if "AIDEN" in outputs else None
+    verdict, verdict_conflicted, all_verdicts = parse_aiden_verdict(outputs["AIDEN"]["text"]) if "AIDEN" in outputs else (None, False, [])
     if failure:
         decision, reason = "FAILED", failure
     else:
-        emit("AIDEN", "VERDICT", verdict or "none given")
-        decision, reason = decide(firewall, verdict)
+        detail = f"conflicting ({', '.join(all_verdicts)}) -> {verdict}" if verdict_conflicted else (verdict or "none given")
+        emit("AIDEN", "VERDICT", detail)
+        decision, reason = decide(firewall, verdict, verdict_conflicted=verdict_conflicted)
     emit("OSIRIS", "DECISION_" + decision, reason)
 
     try:

@@ -28,9 +28,60 @@ def fake_agent_model(role, system, prompt):
     return text, "fake:test-model"
 
 
+class FakeSupabaseHttp:
+    """In-memory PostgREST stand-in so IDE API store routes validate against the contract offline."""
+    def __init__(self):
+        self.projects = {}
+        self.tasks = {}
+        self.dispositions = {}
+        self._seq = 0
+
+    def _uuid(self):
+        self._seq += 1
+        return f"00000000-0000-4000-8000-{self._seq:012d}"
+
+    def __call__(self, method, url, headers, body):
+        payload = json.loads(body) if body else None
+        if method == "POST" and url.endswith("/osiris_projects"):
+            pid = self._uuid()
+            row = {"id": pid, "name": payload["name"], "description": payload.get("description", ""),
+                   "archived": False, "created_at": "2026-11-16T12:00:00Z"}
+            self.projects[pid] = row
+            return [row]
+        if method == "GET" and "/osiris_projects?select=" in url:
+            return list(self.projects.values())
+        if method == "GET" and "/osiris_projects?id=eq." in url:
+            pid = url.split("id=eq.", 1)[1].split("&", 1)[0]
+            if pid not in self.projects:
+                return []
+            p = dict(self.projects[pid])
+            p["osiris_tasks"] = [t for t in self.tasks.values() if t["project_id"] == pid]
+            p["osiris_dispositions"] = [d for d in self.dispositions.values() if d["project_id"] == pid]
+            return [p]
+        if method == "POST" and url.endswith("/osiris_tasks"):
+            tid = self._uuid()
+            row = {"id": tid, "project_id": payload["project_id"], "title": payload["title"],
+                   "status": payload.get("status", "todo"), "created_at": "2026-11-16T12:00:00Z"}
+            self.tasks[tid] = row
+            return [row]
+        if method == "PATCH" and "/osiris_tasks?id=eq." in url:
+            tid = url.split("id=eq.", 1)[1]
+            if tid not in self.tasks:
+                return []
+            self.tasks[tid].update(payload)
+            return [dict(self.tasks[tid])]
+        if method == "POST" and url.endswith("/osiris_dispositions"):
+            did = self._uuid()
+            row = {"id": did, **payload, "created_at": "2026-11-16T12:00:00Z"}
+            self.dispositions[did] = row
+            return [row]
+        return []
+
+
 @pytest.fixture(scope="module")
 def server(tmp_path_factory):
     import threading
+    from osiris_cli.workspace_store import PROJECT_REF, WorkspaceStore
     tmp = tmp_path_factory.mktemp("ide")
     console = tmp / "console"
     console.mkdir()
@@ -41,14 +92,17 @@ def server(tmp_path_factory):
     examples.mkdir()
     (examples / "bell.dna").write_text(BELL)
     policy = write_policy(tmp)
+    fake_sb = FakeSupabaseHttp()
+    store = WorkspaceStore(f"https://{PROJECT_REF}.supabase.co", "test-service-key", http=fake_sb)
+    seeded = store.create_project("Seeded Project", "Contract fixture")
     backend = ide_api.Backend(
         gateway_factory=lambda: GitHubGateway(policy_path=policy, receipts_path=str(tmp / "gh.jsonl"), bridge=FakeBridge()),
         slice_receipts=str(tmp / "slice.jsonl"), examples_dir=str(examples), workspace_dirs=(str(tmp / "nope"),),
-        agent_model_fn=fake_agent_model)
+        agent_model_fn=fake_agent_model, store_factory=lambda: store)
     httpd, token = ide_api.serve(backend, port=0, console_dir=str(console), token_file=str(tmp / "tok"))
     t = threading.Thread(target=httpd.serve_forever, daemon=True)
     t.start()
-    yield {"port": httpd.server_address[1], "token": token, "tmp": tmp}
+    yield {"port": httpd.server_address[1], "token": token, "tmp": tmp, "project_id": seeded["id"], "fake_sb": fake_sb}
     httpd.shutdown()
     httpd.server_close()
 
@@ -111,6 +165,11 @@ def test_console_endpoints_are_in_the_contract():
     ("GET /api/v1/research/experiments", None),
     ("POST /api/v1/agents/task", {"objective": "Establish a Bell baseline on the simulator"}),
     ("GET /api/v1/agents/tasks", None),
+    ("GET /api/v1/store/status", None),
+    ("GET /api/v1/store/projects", None),
+    ("POST /api/v1/store/projects", {"name": "Bell Workspace", "description": "Supabase slice"}),
+    ("POST /api/v1/store/project", {"project_id": "00000000-0000-4000-8000-000000000001"}),
+    ("POST /api/v1/store/tasks", {"project_id": "00000000-0000-4000-8000-000000000001", "title": "Simulate Bell"}),
 ])
 def test_every_response_matches_the_contract(server, route, body):
     method, path = route.split(" ")
@@ -207,3 +266,43 @@ def test_token_file_is_private(server):
 def test_non_loopback_bind_refused(host):
     with pytest.raises(ValueError):
         ide_api.serve(ide_api.Backend(gateway_factory=lambda: None, slice_receipts="x", examples_dir="x"), host=host, port=0)
+
+
+def test_end_to_end_project_task_council_proposal_persisted_and_retrieved(server):
+    # 1. Create project
+    st, proj_resp, _ = call(server, "POST", "/api/v1/store/projects",
+                            {"name": "Hayden-Preskill Audit", "description": "Track offline estimator verification"})
+    assert st == 200
+    pid = proj_resp["project"]["id"]
+
+    # 2. Create task & move status
+    st, task_resp, _ = call(server, "POST", "/api/v1/store/tasks",
+                            {"project_id": pid, "title": "Verify marginal vs joint Bell estimator"})
+    assert st == 200
+    tid = task_resp["task"]["id"]
+    st, moved_resp, _ = call(server, "POST", "/api/v1/store/tasks", {"task_id": tid, "status": "doing"})
+    assert st == 200 and moved_resp["task"]["status"] == "doing"
+
+    # 3. Run OSIRIS council proposal bound to (project_id, task_id) -> persists disposition + receipt hash
+    st, agent_resp, _ = call(server, "POST", "/api/v1/agents/task", {
+        "objective": "Design synthetic 4-qubit test comparing marginal product vs joint Bell overlap",
+        "context": "Project: Hayden-Preskill Audit",
+        "project_id": pid,
+        "task_id": tid,
+    })
+    assert st == 200
+    assert agent_resp["authority"]["executed"] is False
+    saved = agent_resp["saved_disposition"]
+    assert saved["project_id"] == pid and saved["task_id"] == tid
+    assert saved["receipt_hash"] == agent_resp["receipt"]["hash"]
+    assert saved["executed"] is False
+
+    # 4. Retrieve project -> includes task and saved disposition with receipt reference, never raw prose
+    st, detail_resp, _ = call(server, "POST", "/api/v1/store/project", {"project_id": pid})
+    assert st == 200
+    proj = detail_resp["project"]
+    assert any(t["id"] == tid and t["status"] == "doing" for t in proj["osiris_tasks"])
+    assert any(d["council_task_id"] == agent_resp["task_id"] and d["receipt_hash"] == agent_resp["receipt"]["hash"]
+               for d in proj["osiris_dispositions"])
+    assert "test-service-key" not in json.dumps(detail_resp)
+

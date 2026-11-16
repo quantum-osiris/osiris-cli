@@ -32,10 +32,16 @@ class ProviderMentorAdapter:
         provider: Optional[BaseModelProvider] = None,
         model: Optional[str] = None,
         timeout: float = 120.0,
+        allow_mock_fallback: bool = False,
     ):
         self._provider = provider
         self._model = model
         self.timeout = timeout
+        self.allow_mock_fallback = allow_mock_fallback
+
+    @property
+    def is_mock(self) -> bool:
+        return getattr(self.provider, "mode", None) == "mock"
 
     @property
     def provider(self) -> BaseModelProvider:
@@ -78,7 +84,7 @@ class ProviderMentorAdapter:
         return models[0] if models else "gemma-3-1b"
 
     def set_model(self, name: Optional[str]) -> None:
-        """Set explicitly pinned mentor model or switch provider."""
+        """Set explicitly pinned mentor model or switch provider without silent substitution."""
         if not name:
             self._model = None
             return
@@ -89,18 +95,17 @@ class ProviderMentorAdapter:
             self._provider = create_provider("gemini")
             self._model = target if lower.startswith("gemini-") else self._provider.capabilities().supported_models[0]
             return
-        if lower in ("gemma",) or lower.startswith("gemma-") or lower.startswith("gemma2:"):
-            if lower.startswith("gemma2:") or lower.startswith("gemma:"):
-                self._provider = create_provider("ollama", model=target)
-                self._model = target
-            else:
-                self._provider = create_provider("gemma", model=target)
-                self._model = target
+        if ":" in target:
+            self._provider = create_provider("ollama", model=target)
+            self._model = target
             return
-        if lower in ("ollama", "qwen", "qwen2.5:1.5b", "qwen2.5:3b", "qwen2.5:7b", "llama3.2:1b", "llama3.2:3b", "smollm2:360m"):
+        if lower in ("gemma",) or lower.startswith("gemma-"):
+            self._provider = create_provider("gemma", model=target)
+            self._model = target
+            return
+        if lower in ("ollama", "qwen", "deepseek-coder"):
             self._provider = create_provider("ollama")
-            if ":" in target:
-                self._model = target
+            self._model = None if lower == "ollama" else target
             return
         self._model = target
 
@@ -150,12 +155,13 @@ class ProviderMentorAdapter:
                     raise ConnectionError(f"Provider {self.provider.capabilities().provider_name} error: {resp.error}")
             self.last_done = {"done_reason": "stop"}
         except Exception as e:
-            logger.warning(f"Primary mentor streaming error ({type(e).__name__}: {e}), attempting fallback...")
-            # If current provider fails, try fallback mock provider for fail-safe REPL continuity
+            if not self.allow_mock_fallback:
+                raise ConnectionError(f"Primary mentor provider failed ({type(e).__name__}: {e}); mock fallback disabled") from e
+            logger.warning(f"Primary mentor streaming error ({type(e).__name__}: {e}), attempting explicit mock fallback...")
             try:
                 fallback_provider = create_provider("gemma", mode="mock", model="gemma-3-1b")
                 resp = fallback_provider.generate(req)
-                self.last_done = {"done_reason": "stop"}
+                self.last_done = {"done_reason": "stop", "is_mock": True}
                 yield f"[gemma:mock fallback] {resp.content}"
             except Exception as e_fallback:
                 raise ConnectionError(f"Mentor substrate exhausted: {e} -> fallback error: {e_fallback}") from e
