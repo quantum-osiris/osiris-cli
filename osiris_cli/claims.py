@@ -161,27 +161,26 @@ REGISTER: Tuple[Claim, ...] = (
           (SELFTEST,), (r"chi[\s_-]*pc|χ[\s_]*pc", r"phase[- ]conjugat\w* (constant|coupling)")),
     Claim("F_MAX", "F_max = 1 - φ⁻⁸ ≈ 0.9787 is a fundamental upper bound on Bell-state fidelity ('validated': 0/189 "
           "violations on IBM hardware)", "REFUTED",
-          "Published like-for-like Bell-state preparation experiments exceed 0.9787 without SPAM subtraction: "
-          "Benhelm et al. (2008) 0.993(1) raw, Gaebler et al. (2016) 0.9955(5) raw (0.9991(4) SPAM-adjusted), "
-          "Ballance et al. (2016) ~0.9973(10) raw (0.999(1) SPAM-adjusted), Clark et al. (2021) 0.9994(3) raw, "
-          "and Ding et al. (2023) 0.985(2) raw on superconducting fluxonium -- the document's own rule, 'ANY "
-          "experiment achieving F > 0.98 falsifies the prediction', was met before it was written. (RB two-qubit "
-          "gate fidelities such as IBM's 0.9977 CNOT isolate single-gate error from SPAM and are kept separate from "
-          "Bell-state fidelity.) '0/189 violations' is a one-sided test on hardware whose best Bell fidelity was "
+          "Published Bell-state experiments exceed it: Benhelm et al. (2008) prepared a two-ion Bell state at "
+          "0.993(1), and Clark et al. (2021) measured a Bell-state infidelity of 6(3)×10⁻⁴ (F ≈ 0.9994) without "
+          "subtracting experimental errors; Ballance et al. and Gaebler et al. (2016) inferred two-qubit gate "
+          "fidelities of 0.999(1) and 0.9992(4) from prepared Bell states -- the document's own rule, 'ANY "
+          "experiment achieving F > 0.98 falsifies the prediction', was met before it was written. (IBM's own CNOT "
+          "reached 0.9977 by interleaved randomized benchmarking, a gate fidelity rather than a Bell-state "
+          "fidelity.) '0/189 violations' is a one-sided test on hardware whose best Bell fidelity was "
           "0.9773: data that never reach a ceiling cannot test it, and F ≤ 1 passes the same test. The document "
           "also predicts 0.985 and 0.982 for ibm_fez and ibm_torino, above its own bound, and reports r = 0.90, "
           "p = 0.006 over three backends -- three points need r = 0.99996 for that p (its tabulated values give "
           "r = 0.95, p = 0.20).",
-          (("doi", "10.1038/nphys961", "Benhelm et al., Nat. Phys. 4, 463 (2008): raw Bell-state fidelity 99.3(1) %"),
-           ("doi", "10.1103/PhysRevLett.117.060504", "Ballance et al., PRL 117, 060504 (2016): ~99.73 % raw, 99.9(1) % SPAM-adjusted Bell state"),
-           ("doi", "10.1103/PhysRevLett.117.060505", "Gaebler et al., PRL 117, 060505 (2016): 99.55(5) % raw Bell state"),
-           ("doi", "10.1103/PhysRevLett.127.130505", "Clark et al., PRL 127, 130505 (2021): 99.94(3) % raw Bell state"),
-           ("doi", "10.1103/PhysRevX.13.031035", "Ding et al., PRX 13, 031035 (2023): 98.5(2) % raw superconducting fluxonium Bell state"),
-           ("doi", "10.1103/PhysRevLett.127.130501", "Kandala et al. (IBM), PRL 127, 130501 (2021): CNOT RB gate fidelity 99.77(2) % (distinct from state fidelity)"),
+          (("doi", "10.1038/nphys961", "Benhelm et al., Nat. Phys. 4, 463 (2008): Bell-state fidelity 99.3(1) %"),
+           ("doi", "10.1103/PhysRevLett.117.060504", "Ballance et al., PRL 117, 060504 (2016): two-qubit gate fidelity 99.9(1) %, inferred from a prepared Bell state"),
+           ("doi", "10.1103/PhysRevLett.117.060505", "Gaebler et al., PRL 117, 060505 (2016): two-qubit gate error 8(4)×10⁻⁴, deduced from a prepared Bell state"),
+           ("doi", "10.1103/PhysRevLett.127.130505", "Clark et al., PRL 127, 130505 (2021): Bell-state infidelity 6(3)×10⁻⁴, measured without subtracting experimental errors"),
+           ("doi", "10.1103/PhysRevLett.127.130501", "Kandala et al. (IBM), PRL 127, 130501 (2021): CNOT fidelity 99.77(2) % by interleaved RB (a gate fidelity, not a Bell-state fidelity)"),
            ("file", "osiris-cli/falsifiable_predictions.md", "Prediction 2, its falsification rule, the 0/189 table")),
           (r"bell[\s-]*(state[\s-]*)?fidelity[\s-]*(upper[\s-]*)?(bound|ceiling|limit)",
            r"\bf[\s_]*\{?max\}?\s*[=≈~]\s*0\.97", r"(?<![\d.])0\.9787", r"1\s*-\s*(φ|phi)\s*(\^\s*\{?\s*[-−]\s*8|⁻⁸)"),
-          checks=(("one_minus_phi_power", (8, (0.993, 0.9955, 0.9994))),)),
+          checks=(("one_minus_phi_power", (8, (0.993, 0.999, 0.9992, 0.9994))),)),
     Claim("COHERENCE_QUANTIZATION", "Coherence times quantize: T2 clusters at integer multiples of τ_base ≈ 46 µs "
           "('validated', 8 % error on three IBM backends)", "OVERCLAIM",
           "The record is three round backend T2 values, 150, 200 and 250 µs, set against 3, 4 and 5 × 46 µs: each "
