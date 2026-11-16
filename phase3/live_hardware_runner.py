@@ -27,14 +27,13 @@ Strict SYS-021 Governance:
 from __future__ import annotations
 
 import argparse
-from collections import deque
-from datetime import datetime, timezone
 import hashlib
 import io
 import json
 import math
+from datetime import datetime, timezone
 from pathlib import Path
-from typing import Any, Dict, List, Mapping, Sequence, Tuple
+from typing import Any, Dict, List, Sequence, Tuple
 
 import numpy as np
 from qiskit import QuantumCircuit, qpy, transpile
@@ -43,21 +42,15 @@ from qiskit_ibm_runtime import QiskitRuntimeService, SamplerV2
 from phase2.correlated_noise_01.correlated_noise_models import (
     HERON_DT_S,
     MARRAKESH_PULSE_WIDTH_S,
-    ProbeCondition,
 )
 from phase2.correlated_noise_01.simulate_correlated_noise import (
     STAGGER_OFFSETS_NS,
-    T_REF_8US,
-    T_REF_16US,
-    fit_competing_models,
     select_disjoint_couplers_on_backend,
 )
 from phase2.tesseract_map_02.tesseract_map_02 import (
     THETA_DEFAULT_DEG,
-    analyze_paired_blocks,
     build_tesseract_map_02_arms,
     build_union_spam_calibration_circuits,
-    score_tesseract_counts,
 )
 
 REPO_ROOT = Path("/home/osiris/osiris-assessment/work/osiris-cli-phase2")

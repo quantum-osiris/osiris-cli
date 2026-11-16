@@ -9,7 +9,6 @@ import pytest
 from osiris_cli import claims
 from osiris_cli import physics_checks as pc
 from osiris_cli.living import Osiris
-
 from tests.test_living import FakeCore, ScriptedMentor
 
 REPO = Path(__file__).resolve().parents[1]

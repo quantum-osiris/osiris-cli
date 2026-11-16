@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import random
 import time
-from typing import Any, Dict, Set
+from typing import Any, Set
 
 from qbyte_system.sovereign_executor import Circuit as SovereignCircuit
 from qbyte_system.sovereign_executor import SovereignExecutor

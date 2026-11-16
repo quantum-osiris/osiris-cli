@@ -19,12 +19,10 @@ and calibration properties, and runs the complete pre-registered statistical ana
 
 from __future__ import annotations
 
-from datetime import datetime, timezone
 import hashlib
 import json
 import math
-from pathlib import Path
-import time
+from datetime import datetime, timezone
 from typing import Any, Dict, List, Mapping, Sequence, Tuple
 
 import numpy as np
@@ -33,11 +31,9 @@ from qiskit_ibm_runtime import SamplerV2
 from scipy import stats
 
 from phase2.correlated_noise_01.correlated_noise_models import (
-    H0IndependentLocalModel,
-    H1StaticSpectatorZZModel,
-    H2CorrelatedMarkovianModel,
-    H3NonMarkovianMemoryModel,
     MARRAKESH_PULSE_WIDTH_S,
+    H0IndependentLocalModel,
+    H3NonMarkovianMemoryModel,
     ProbeCondition,
 )
 from phase2.correlated_noise_01.simulate_correlated_noise import (
@@ -58,7 +54,6 @@ from phase3.live_hardware_runner import (
     extract_counts_from_pub_result,
     snapshot_backend_calibration,
 )
-
 
 # ---------------------------------------------------------------------------
 # 1. TESSERACT-MAP-02 Raw Hardware Analysis
@@ -312,7 +307,6 @@ def analyze_correlated_noise_01_live_counts(
 
     # Empirical block-averaged training curve (slots 0..3) and empirical block covariance
     train_slots = [c["slot_idx"] for c in cohort if c["role"] == "train"]
-    heldout_slots = [c["slot_idx"] for c in cohort if c["role"] == "held_out"]
 
     # Block-level training averages: shape (n_blocks, n_conds)
     train_block_curves = np.mean(f_raw_arr[train_slots, :, :], axis=0)
@@ -420,7 +414,6 @@ def analyze_correlated_noise_01_live_counts(
 
         if c_info["role"] == "held_out":
             obs_curve = coupler_means_raw[s_idx, offset_indices]
-            h0_tr: H0IndependentLocalModel = inferred_objs["H0"]
             h3_tr: H3NonMarkovianMemoryModel = inferred_objs["H3"]
 
             pred_h0 = H0IndependentLocalModel(
