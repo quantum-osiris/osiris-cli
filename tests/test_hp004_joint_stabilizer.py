@@ -1,4 +1,4 @@
-"""Offline verification tests for OSIRIS-HP-004 9-basis 4-qubit joint Bell stabilizer harness."""
+"""Offline verification tests for tree-native, light-cone-isolated OSIRIS-HP-004 harness."""
 
 from __future__ import annotations
 
@@ -18,7 +18,9 @@ _MOD = importlib.util.module_from_spec(_SPEC)
 _SPEC.loader.exec_module(_MOD)
 
 ARMS = _MOD.ARMS
+DEFAULT_MARRAKESH_TREE_LAYOUT = _MOD.DEFAULT_MARRAKESH_TREE_LAYOUT
 JOINT_BASES = _MOD.JOINT_BASES
+TREE_EDGES_8Q = _MOD.TREE_EDGES_8Q
 assemble_hp004_schedule = _MOD.assemble_hp004_schedule
 build_hp004_circuit = _MOD.build_hp004_circuit
 compile_layout_locked = _MOD.compile_layout_locked
@@ -28,55 +30,71 @@ summarize_blocks = _MOD.summarize_blocks
 
 def _exact_counts_from_circuit(qc: QuantumCircuit, shots: int = 100_000) -> Dict[str, int]:
     """Deterministic statevector probability table scaled to integer counts for exact analytical checks."""
-    # Strip measurements & final barriers to compute exact pre-measurement statevector
     bare = QuantumCircuit(qc.num_qubits)
+    meas_wire_for_clbit: Dict[int, int] = {}
     for inst in qc.data:
-        if inst.operation.name not in ("measure", "barrier"):
-            bare.append(inst.operation, [ bare.qubits[qc.find_bit(q).index] for q in inst.qubits ])
+        op = inst.operation.name
+        if op == "measure":
+            meas_wire_for_clbit[qc.find_bit(inst.clbits[0]).index] = qc.find_bit(inst.qubits[0]).index
+        elif op != "barrier":
+            bare.append(inst.operation, [bare.qubits[qc.find_bit(q).index] for q in inst.qubits])
     sv = Statevector.from_instruction(bare)
-    # Readout maps q0->c0, q2->c1, q1->c2, q3->c3 (bitstring 'c3 c2 c1 c0')
     probs_4b: Dict[str, float] = {}
     probs = sv.probabilities()
+    w0, w1, w2, w3 = (meas_wire_for_clbit[i] for i in range(4))
     for idx, p in enumerate(probs):
         if p < 1e-15:
             continue
-        q0 = (idx >> 0) & 1
-        q1 = (idx >> 1) & 1
-        q2 = (idx >> 2) & 1
-        q3 = (idx >> 3) & 1
-        bitstr = f"{q3}{q1}{q2}{q0}"
+        c0 = (idx >> w0) & 1
+        c1 = (idx >> w1) & 1
+        c2 = (idx >> w2) & 1
+        c3 = (idx >> w3) & 1
+        bitstr = f"{c3}{c2}{c1}{c0}"
         probs_4b[bitstr] = probs_4b.get(bitstr, 0.0) + float(p)
     return {k: int(round(v * shots)) for k, v in probs_4b.items() if int(round(v * shots)) > 0}
 
 
 @pytest.mark.parametrize(
-    ("arm", "expected_f1", "expected_f2", "expected_joint"),
+    ("arm", "expected_f1", "expected_f2", "expected_joint", "max_cz"),
     [
-        ("Arm A", 1.0, 1.0, 1.0),
-        ("Arm B", 1.0, 1.0, 1.0),
-        ("Arm B-Def", 0.5, 0.25, 0.125),
-        # Unentangled B,E still transmits classical stabilizer correlations through (D1, D2),
-        # hitting the exact 0-ebit separable ceiling 4/16 = 0.25 (missed by HP-003's F1*F2 = 0.0625!).
-        ("Arm B-Ctrl", 0.25, 0.25, 0.25),
-        ("Arm B-Held", 0.25, 0.25, 0.0625),
+        ("Arm A", 1.0, 1.0, 1.0, 38),
+        ("Arm B", 1.0, 1.0, 1.0, 32),
+        ("Arm B-Def", 0.5, 0.25, 0.125, 25),
+        ("Arm B-Ctrl", 0.5, 0.25, 0.25, 30),
+        ("Arm B-Held", 0.25, 0.25, 0.0625, 35),
     ],
 )
-def test_noiseless_9basis_joint_fidelity_matches_exact_analytical_channel_values(
-    arm: str, expected_f1: float, expected_f2: float, expected_joint: float
+def test_noiseless_9basis_joint_fidelity_and_physical_light_cone_isolation(
+    arm: str, expected_f1: float, expected_f2: float, expected_joint: float, max_cz: int
 ) -> None:
     basis_counts = {}
     for p, q in JOINT_BASES:
         qc = build_hp004_circuit(arm, p, q)
+        assert qc.count_ops().get("cz", 0) <= max_cz
+        # Audit physical wire light-cones across Barrier 1 (post-prep) and Barrier 2 (decoding)
+        barriers = [i for i, inst in enumerate(qc.data) if inst.operation.name == "barrier"]
+        assert len(barriers) == 3
+        scram_wires = {qc.find_bit(qb).index for inst in qc.data[barriers[0] + 1 : barriers[1]] for qb in inst.qubits}
+        dec_wires = {qc.find_bit(qb).index for inst in qc.data[barriers[1] + 1 : barriers[2]] for qb in inst.qubits}
+        # Reference qubits w0(R2) and w1(R1) receive ZERO gates during scrambling and decoding!
+        assert scram_wires.isdisjoint({0, 1})
+        assert dec_wires.isdisjoint({0, 1})
+        # Remnants w2(C1) and w7(C2) receive ZERO gates during restricted decoding!
+        if arm in ("Arm B", "Arm B-Ctrl", "Arm B-Held"):
+            assert dec_wires.issubset({3, 4, 5, 6})
+        elif arm == "Arm B-Def":
+            # Quarantined late photon D2=w6 ALSO receives ZERO gates!
+            assert dec_wires.issubset({3, 4, 5})
         basis_counts[f"{p}{q}"] = _exact_counts_from_circuit(qc)
 
-    # Also cross-check against exact Qiskit partial_trace state_fidelity on Z-basis pre-measurement state
+    # Cross-check against exact partial_trace state_fidelity on [w0(R2), w1(R1), w4(M1'), w5(M2')]
     qc_zz = build_hp004_circuit(arm, "Z", "Z")
     bare = QuantumCircuit(8)
     for inst in qc_zz.data:
         if inst.operation.name not in ("measure", "barrier"):
             bare.append(inst.operation, [bare.qubits[qc_zz.find_bit(q).index] for q in inst.qubits])
-    rho_4q = partial_trace(Statevector.from_instruction(bare), [4, 5, 6, 7])
-    # Target |Phi+> on (0, 2) and |Phi+> on (1, 3)
+    rho_4q = partial_trace(Statevector.from_instruction(bare), [2, 3, 6, 7])
+    # Remaining 4 qubits in ascending wire order are [0(R2), 1(R1), 4(M1'), 5(M2')] -> Bell(0,2) & Bell(1,3)
     target_qc = QuantumCircuit(4)
     target_qc.h(0); target_qc.cx(0, 2)
     target_qc.h(1); target_qc.cx(1, 3)
@@ -90,18 +108,11 @@ def test_noiseless_9basis_joint_fidelity_matches_exact_analytical_channel_values
 
 
 def test_1ebit_schmidt_rank_2_mixture_fools_marginal_product_but_is_caught_by_f_joint() -> None:
-    """Prove why HP-004's 9-basis F_joint is required over HP-003's 3-basis marginal product.
-
-    The 1-ebit Schmidt-rank-2 state:
-      rho_SR2 = 1/4 ( |Phi+>_1|00>_2 + |Phi+>_1|11>_2 + |00>_1|Phi+>_2 + |11>_1|Phi+>_2 )
-    achieves F1 = F2 = 0.75 and F1*F2 = 0.5625 (> 0.5), yet has true joint Bell overlap 0.5000.
-    """
     phi_plus = Statevector.from_label("00") + Statevector.from_label("11")
     phi_dm = DensityMatrix(phi_plus.data / np.linalg.norm(phi_plus.data))
     z00 = DensityMatrix.from_label("00")
     z11 = DensityMatrix.from_label("11")
 
-    # Tensor order: Pair2 (c3,c2) (x) Pair1 (c1,c0) so bitstring index matches 'c3c2c1c0'
     rho_sr2 = 0.25 * (
         z00.tensor(phi_dm)
         + z11.tensor(phi_dm)
@@ -113,7 +124,6 @@ def test_1ebit_schmidt_rank_2_mixture_fools_marginal_product_but_is_caught_by_f_
     basis_counts: Dict[str, Dict[str, int]] = {}
     for p, q in JOINT_BASES:
         rot = QuantumCircuit(4)
-        # Pair 1 is qubits (0, 1); Pair 2 is qubits (2, 3)
         if p == "X":
             rot.h(0); rot.h(1)
         elif p == "Y":
@@ -134,32 +144,25 @@ def test_1ebit_schmidt_rank_2_mixture_fools_marginal_product_but_is_caught_by_f_
     assert res["f1_marginal"] == pytest.approx(0.75, abs=1e-4)
     assert res["f2_marginal"] == pytest.approx(0.75, abs=1e-4)
     assert res["f_marginal_product"] == pytest.approx(0.5625, abs=1e-4)
-    # Exact 9-basis F_joint pins rho_SR2 right at the 0.5000 1-ebit ceiling!
     assert res["f_joint"] == pytest.approx(0.5000, abs=1e-4)
 
 
-def test_schedule_randomization_layout_lock_and_conservative_se() -> None:
-    circuits, meta = assemble_hp004_schedule(n_blocks=2, seed=99, arms=("Arm A", "Arm B"))
-    # 16 SPAM cal + 2 blocks * 2 arms * 9 bases = 52 circuits
-    assert len(circuits) == 16 + 36
-    assert len(meta) == 52
+def test_marrakesh_tree_layout_lock_zero_routing_and_conservative_se() -> None:
+    circuits, meta = assemble_hp004_schedule(n_blocks=2, seed=99, arms=("Arm A", "Arm B", "Arm B-Def"))
+    assert len(circuits) == 16 + 2 * 3 * 9
+    assert len(meta) == 70
 
-    # Verify blocks are shuffled (not sorted by arm/basis) and differ across blocks
     b0_names = [m["basis"] for m in meta if m.get("block_index") == 0]
     b1_names = [m["basis"] for m in meta if m.get("block_index") == 1]
     assert b0_names != b1_names
 
-    # Compile onto a pinned 8-qubit ring/heavy-hex subgraph within a 16-qubit chip
-    edges = [[i, i + 1] for i in range(15)] + [[i + 1, i] for i in range(15)]
-    pinned_layout = [4, 5, 6, 7, 8, 9, 10, 11]
-    compiled = compile_layout_locked(circuits[:20], initial_layout=pinned_layout, coupling_map=edges)
+    cmap = [[DEFAULT_MARRAKESH_TREE_LAYOUT[a], DEFAULT_MARRAKESH_TREE_LAYOUT[b]] for a, b in TREE_EDGES_8Q]
+    compiled = compile_layout_locked(circuits[:25], initial_layout=DEFAULT_MARRAKESH_TREE_LAYOUT, coupling_map=cmap)
     for qc in compiled:
-        assert tuple(qc.layout.initial_index_layout()[:8]) == tuple(pinned_layout)
-        # Arm A barrier prevents U * U^dagger algebraic collapse
+        assert tuple(qc.layout.initial_index_layout()[:8]) == DEFAULT_MARRAKESH_TREE_LAYOUT
         if qc.name.startswith("hp004_b0_arm_a"):
-            assert qc.count_ops().get("cz", 0) >= 16
+            assert qc.count_ops().get("cz", 0) == 38
 
-    # Conservative SE_eff never drops below shot-noise SE even if 2 blocks agree identically
     b_counts = {f"{p}{q}": {"0000": 400, "1111": 400, "0001": 112, "1110": 112} for p, q in JOINT_BASES}
     summary = summarize_blocks([b_counts, b_counts])
     assert summary["f_joint_block_sem_ddof1"] == 0.0
