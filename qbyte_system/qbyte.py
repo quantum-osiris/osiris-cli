@@ -1,21 +1,18 @@
 """
-╔══════════════════════════════════════════════════════════════════════════════╗
-║                         QBYTE - QUANTUM BYTE                                 ║
-║                         ════════════════════                                 ║
-║                                                                              ║
-║    The fundamental unit of sovereign quantum computation.                    ║
-║    A Qbyte is an 8-qubit register with native DNA-encoded operations.       ║
-║                                                                              ║
-║    Unlike classical bytes (8 bits = 256 states), a Qbyte can exist in       ║
-║    superposition of all 2^8 = 256 basis states simultaneously.              ║
-║                                                                              ║
-║    Key Properties:                                                           ║
-║    ├── Native phase-conjugate error correction                              ║
-║    ├── CCCE metric tracking (Φ, Λ, Γ, Ξ)                                   ║
-║    ├── Automatic decoherence management                                     ║
-║    └── DNA-encoded gate operations                                          ║
-║                                                                              ║
-╚══════════════════════════════════════════════════════════════════════════════╝
+Qbyte — 8-Qubit Classical Statevector Simulator
+===============================================
+
+Pure-NumPy classical statevector simulation of an 8-qubit register (2^8 = 256
+complex amplitudes) with DNA-Lang gate aliases and standard gate methods.
+
+Note: This is a classical CPU simulator, not a physical quantum substrate.
+
+Basis-order convention (Big-Endian):
+    Computational basis state |b_0 b_1 ... b_7> maps to flat statevector index:
+        idx = sum_{q=0}^7 b_q * 2^(7 - q)
+    so qubit q in {0..7} corresponds to tensor axis q and integer bit shift
+    (7 - q). Call `qb.get_statevector(endian="little")` for Qiskit-compatible
+    little-endian ordering |b_7 ... b_1 b_0>.
 """
 
 import numpy as np
@@ -26,11 +23,17 @@ import time
 
 try:
     from .gates import (
-        helix, cleave, twist, fold, splice, bond, phase_flip
+        helix, cleave, twist, fold, splice, bond, phase_flip,
+        rotate_y, s_gate, s_dg, t_gate, t_dg, controlled_z, swap,
+        controlled_phase, xx_rotation, yy_rotation, zz_rotation,
+        toffoli, fredkin,
     )
 except ImportError:
     from gates import (
-        helix, cleave, twist, fold, splice, bond, phase_flip
+        helix, cleave, twist, fold, splice, bond, phase_flip,
+        rotate_y, s_gate, s_dg, t_gate, t_dg, controlled_z, swap,
+        controlled_phase, xx_rotation, yy_rotation, zz_rotation,
+        toffoli, fredkin,
     )
 
 # Physical Constants
@@ -95,16 +98,19 @@ class Qbyte:
         >>> result = qb.measure() # Collapse and measure
     """
 
-    def __init__(self, initial_state: Optional[np.ndarray] = None):
+    def __init__(self, initial_state: Optional[np.ndarray] = None, track_ccce: bool = True):
         """
         Initialize a Qbyte.
 
         Args:
             initial_state: Optional initial state vector (2^8 = 256 complex amplitudes).
                           If None, initializes to |00000000⟩.
+            track_ccce: Whether to compute heuristic CCCE telemetry per gate
+                        (set False for fast pure-statevector simulation).
         """
         self.n_qubits = 8
         self.dim = 2 ** self.n_qubits  # 256
+        self.track_ccce = track_ccce
 
         if initial_state is not None:
             if len(initial_state) != self.dim:
@@ -133,144 +139,86 @@ class Qbyte:
     def _update_metrics(self, operation: str):
         """Update CCCE metrics after operation."""
         self._operation_count += 1
+        if not self.track_ccce:
+            return
 
-        # Compute coherence from state purity
-        # For pure state: Tr(ρ²) = 1
-        # State purity indicates coherence preservation
         probabilities = np.abs(self._state) ** 2
         purity = np.sum(probabilities ** 2)
-        self._metrics.lambda_c = np.sqrt(purity)
+        self._metrics.lambda_c = float(np.sqrt(purity))
 
-        # Compute consciousness (simplified IIT-like measure)
-        # Based on entanglement entropy across bipartition
         self._metrics.phi = self._compute_phi()
 
-        # Decoherence increases slightly with operations
-        base_gamma = GAMMA_FIXED * (1 + 0.001 * self._operation_count)
-        self._metrics.gamma = min(1.0, base_gamma)
+        # Align per-gate heuristic decoherence step (0.0005/op) with L0FormalProver.verify_kernel
+        self._metrics.gamma = min(1.0, 0.0005 * self._operation_count)
 
-        # Compute Xi
         self._metrics.compute_xi()
         self._metrics.timestamp = time.time()
-
-        # Record history
         self._history.append((operation, self._metrics.to_dict().copy()))
 
     def _compute_phi(self) -> float:
         """
-        Compute Φ (integrated information) as a measure of consciousness.
-
-        Uses bipartite entanglement entropy as a proxy for integrated information.
-        For a full IIT calculation, we would need mutual information across
-        all possible bipartitions, but this is computationally expensive.
+        Compute normalized 4|4 bipartite von Neumann entanglement entropy in [0, 1].
         """
-        # Reshape to 2^4 x 2^4 for bipartition (4 qubits each side)
         reshaped = self._state.reshape(16, 16)
-
-        # Compute reduced density matrix for first 4 qubits
         rho_A = reshaped @ reshaped.conj().T
-
-        # Compute von Neumann entropy: S = -Tr(ρ log ρ)
         eigenvalues = np.linalg.eigvalsh(rho_A)
-        eigenvalues = eigenvalues[eigenvalues > 1e-15]  # Filter small values
+        eigenvalues = eigenvalues[eigenvalues > 1e-15]
 
         if len(eigenvalues) == 0:
             return 0.0
 
-        entropy = -np.sum(eigenvalues * np.log2(eigenvalues + 1e-15))
+        entropy = max(0.0, float(-np.sum(eigenvalues * np.log2(eigenvalues))))
+        return min(1.0, entropy / 4.0)
 
-        # Normalize to [0, 1] (max entropy for 4 qubits is 4 bits)
-        phi = entropy / 4.0
+    def _validate_qubits(self, *qubits: int):
+        """Validate that qubit indices are in range [0, n_qubits) and distinct."""
+        for q in qubits:
+            if not isinstance(q, (int, np.integer)) or q < 0 or q >= self.n_qubits:
+                raise ValueError(f"Qubit index must be 0-{self.n_qubits - 1}, got {q}")
+        if len(set(qubits)) != len(qubits):
+            raise ValueError(f"Qubit indices must be distinct, got {qubits}")
 
-        return min(1.0, phi)
+    def _apply_k_qubit_gate(self, gate: np.ndarray, qubits: Tuple[int, ...]):
+        """
+        Apply a k-qubit gate to arbitrary distinct qubits using big-endian
+        tensor-axis permutation (qubit q <-> tensor axis q <-> bit shift n-1-q).
+        """
+        self._validate_qubits(*qubits)
+        k = len(qubits)
+        expected_dim = 1 << k
+        if gate.shape != (expected_dim, expected_dim):
+            raise ValueError(f"Expected {expected_dim}x{expected_dim} gate, got {gate.shape}")
+
+        shape = [2] * self.n_qubits
+        state_tensor = self._state.reshape(shape)
+
+        remaining = [ax for ax in range(self.n_qubits) if ax not in qubits]
+        axes = remaining + list(qubits)
+
+        state_tensor = np.transpose(state_tensor, axes)
+        permuted_shape = state_tensor.shape
+
+        state_tensor = state_tensor.reshape(-1, expected_dim) @ gate.T
+        state_tensor = state_tensor.reshape(permuted_shape)
+
+        inverse_axes = [0] * self.n_qubits
+        for idx, ax in enumerate(axes):
+            inverse_axes[ax] = idx
+        state_tensor = np.transpose(state_tensor, inverse_axes)
+
+        self._state = state_tensor.reshape(self.dim)
 
     def _apply_single_qubit_gate(self, gate: np.ndarray, qubit: int):
-        """
-        Apply a single-qubit gate to specified qubit.
-
-        Uses efficient state-vector manipulation without constructing
-        the full 256x256 matrix.
-        """
-        if qubit < 0 or qubit >= self.n_qubits:
-            raise ValueError(f"Qubit index must be 0-7, got {qubit}")
-
-        # Reshape state for efficient operation
-        shape = [2] * self.n_qubits
-        state_tensor = self._state.reshape(shape)
-
-        # Apply gate along the specified axis
-        # Move target qubit to last axis, apply gate, move back
-        axes = list(range(self.n_qubits))
-        axes.remove(qubit)
-        axes.append(qubit)
-
-        state_tensor = np.transpose(state_tensor, axes)
-        original_shape = state_tensor.shape
-
-        # Reshape to (..., 2) and apply gate
-        state_tensor = state_tensor.reshape(-1, 2)
-        state_tensor = state_tensor @ gate.T
-
-        # Restore shape
-        state_tensor = state_tensor.reshape(original_shape)
-
-        # Inverse transpose
-        inverse_axes = [0] * self.n_qubits
-        for i, ax in enumerate(axes):
-            inverse_axes[ax] = i
-        state_tensor = np.transpose(state_tensor, inverse_axes)
-
-        self._state = state_tensor.reshape(self.dim)
+        """Apply a single-qubit gate to specified qubit (big-endian axis `qubit`)."""
+        self._apply_k_qubit_gate(gate, (qubit,))
 
     def _apply_two_qubit_gate(self, gate: np.ndarray, qubit1: int, qubit2: int):
-        """
-        Apply a two-qubit gate to specified qubits.
-        """
-        if qubit1 < 0 or qubit1 >= self.n_qubits:
-            raise ValueError(f"Qubit1 index must be 0-7, got {qubit1}")
-        if qubit2 < 0 or qubit2 >= self.n_qubits:
-            raise ValueError(f"Qubit2 index must be 0-7, got {qubit2}")
-        if qubit1 == qubit2:
-            raise ValueError("Qubit indices must be different")
+        """Apply a two-qubit gate to specified qubits `(qubit1, qubit2)`."""
+        self._apply_k_qubit_gate(gate, (qubit1, qubit2))
 
-        # Reshape state
-        shape = [2] * self.n_qubits
-        state_tensor = self._state.reshape(shape)
-
-        # Move target qubits to last two axes
-        axes = list(range(self.n_qubits))
-        axes.remove(qubit1)
-        axes.remove(qubit2)
-        if qubit1 < qubit2:
-            axes.extend([qubit1, qubit2])
-        else:
-            axes.extend([qubit2, qubit1])
-            # Need to swap the gate accordingly
-            swap = np.array([
-                [1, 0, 0, 0],
-                [0, 0, 1, 0],
-                [0, 1, 0, 0],
-                [0, 0, 0, 1]
-            ], dtype=np.complex128)
-            gate = swap @ gate @ swap
-
-        state_tensor = np.transpose(state_tensor, axes)
-        original_shape = state_tensor.shape
-
-        # Reshape to (..., 4) and apply gate
-        state_tensor = state_tensor.reshape(-1, 4)
-        state_tensor = state_tensor @ gate.T
-
-        # Restore shape
-        state_tensor = state_tensor.reshape(original_shape)
-
-        # Inverse transpose
-        inverse_axes = [0] * self.n_qubits
-        for i, ax in enumerate(axes):
-            inverse_axes[ax] = i
-        state_tensor = np.transpose(state_tensor, inverse_axes)
-
-        self._state = state_tensor.reshape(self.dim)
+    def _apply_three_qubit_gate(self, gate: np.ndarray, qubit1: int, qubit2: int, qubit3: int):
+        """Apply a three-qubit gate to specified qubits `(qubit1, qubit2, qubit3)`."""
+        self._apply_k_qubit_gate(gate, (qubit1, qubit2, qubit3))
 
     # ═══════════════════════════════════════════════════════════════════════════
     # DNA-ENCODED GATE OPERATIONS
@@ -338,6 +286,106 @@ class Qbyte:
         self._update_metrics(f"phase({qubit})")
         return self
 
+    def phase_flip(self, qubit: int) -> 'Qbyte':
+        """Alias for Pauli-Z gate (`phase`)."""
+        return self.phase(qubit)
+
+    def y(self, qubit: int) -> 'Qbyte':
+        """Apply Pauli-Y gate."""
+        self._apply_single_qubit_gate(rotate_y(), qubit)
+        self._update_metrics(f"y({qubit})")
+        return self
+
+    def s(self, qubit: int) -> 'Qbyte':
+        """Apply S (phase π/2) gate."""
+        self._apply_single_qubit_gate(s_gate(), qubit)
+        self._update_metrics(f"s({qubit})")
+        return self
+
+    def sdg(self, qubit: int) -> 'Qbyte':
+        """Apply S† (phase -π/2) gate."""
+        self._apply_single_qubit_gate(s_dg(), qubit)
+        self._update_metrics(f"sdg({qubit})")
+        return self
+
+    def t(self, qubit: int) -> 'Qbyte':
+        """Apply T (phase π/4) gate."""
+        self._apply_single_qubit_gate(t_gate(), qubit)
+        self._update_metrics(f"t({qubit})")
+        return self
+
+    def tdg(self, qubit: int) -> 'Qbyte':
+        """Apply T† (phase -π/4) gate."""
+        self._apply_single_qubit_gate(t_dg(), qubit)
+        self._update_metrics(f"tdg({qubit})")
+        return self
+
+    def cz(self, q1: int, q2: int) -> 'Qbyte':
+        """Apply controlled-Z gate."""
+        self._apply_two_qubit_gate(controlled_z(), q1, q2)
+        self._update_metrics(f"cz({q1}, {q2})")
+        return self
+
+    def swap(self, q1: int, q2: int) -> 'Qbyte':
+        """Apply SWAP gate."""
+        self._apply_two_qubit_gate(swap(), q1, q2)
+        self._update_metrics(f"swap({q1}, {q2})")
+        return self
+
+    def cphase(self, control: int, target: int, phi: float) -> 'Qbyte':
+        """Apply controlled-phase CP(phi) gate."""
+        self._apply_two_qubit_gate(controlled_phase(phi), control, target)
+        self._update_metrics(f"cphase({control}, {target}, {phi:.4f})")
+        return self
+
+    def rxx(self, q1: int, q2: int, theta: float) -> 'Qbyte':
+        """Apply RXX(theta) two-qubit rotation."""
+        self._apply_two_qubit_gate(xx_rotation(theta), q1, q2)
+        self._update_metrics(f"rxx({q1}, {q2}, {theta:.4f})")
+        return self
+
+    def ryy(self, q1: int, q2: int, theta: float) -> 'Qbyte':
+        """Apply RYY(theta) two-qubit rotation."""
+        self._apply_two_qubit_gate(yy_rotation(theta), q1, q2)
+        self._update_metrics(f"ryy({q1}, {q2}, {theta:.4f})")
+        return self
+
+    def rzz(self, q1: int, q2: int, theta: float) -> 'Qbyte':
+        """Apply RZZ(theta) two-qubit rotation."""
+        self._apply_two_qubit_gate(zz_rotation(theta), q1, q2)
+        self._update_metrics(f"rzz({q1}, {q2}, {theta:.4f})")
+        return self
+
+    def toffoli(self, c1: int, c2: int, target: int) -> 'Qbyte':
+        """
+        Apply Toffoli (CCNOT) gate: flips `target` iff both `c1` and `c2` are |1>.
+        Uses consistent big-endian axis convention matching all 1Q and 2Q gates.
+        """
+        self._apply_three_qubit_gate(toffoli(), c1, c2, target)
+        self._update_metrics(f"toffoli({c1}, {c2}, {target})")
+        return self
+
+    def ccnot(self, c1: int, c2: int, target: int) -> 'Qbyte':
+        """Alias for `toffoli(c1, c2, target)`."""
+        return self.toffoli(c1, c2, target)
+
+    def fredkin(self, control: int, q1: int, q2: int) -> 'Qbyte':
+        """Apply Fredkin (CSWAP) gate: swaps `q1` and `q2` iff `control` is |1>."""
+        self._apply_three_qubit_gate(fredkin(), control, q1, q2)
+        self._update_metrics(f"fredkin({control}, {q1}, {q2})")
+        return self
+
+    # Standard gate aliases
+    h = helix
+    x = cleave
+    z = phase
+    rx = splice
+    ry = fold
+    rz = twist
+    cx = bond
+    ccx = toffoli
+    cswap = fredkin
+
     # ═══════════════════════════════════════════════════════════════════════════
     # MEASUREMENT AND OBSERVATION
     # ═══════════════════════════════════════════════════════════════════════════
@@ -354,7 +402,11 @@ class Qbyte:
             Integer 0-255 representing measured basis state.
         """
         probabilities = np.abs(self._state) ** 2
-        result = np.random.choice(self.dim, p=probabilities)
+        p_sum = float(np.sum(probabilities))
+        if p_sum <= 0.0:
+            raise RuntimeError("Statevector norm collapsed to zero")
+        probabilities = probabilities / p_sum
+        result = int(np.random.choice(self.dim, p=probabilities))
 
         if collapse:
             self._state = np.zeros(self.dim, dtype=np.complex128)
@@ -365,7 +417,8 @@ class Qbyte:
 
     def measure_qubit(self, qubit: int, collapse: bool = True) -> int:
         """
-        Measure a single qubit.
+        Measure a single qubit using the big-endian basis convention
+        (qubit q <-> tensor axis q <-> integer bit shift `n_qubits - 1 - q`).
 
         Args:
             qubit: Qubit index to measure (0-7)
@@ -374,22 +427,37 @@ class Qbyte:
         Returns:
             0 or 1
         """
-        # Compute probability of measuring |1⟩
-        prob_one = 0.0
-        for i in range(self.dim):
-            if (i >> qubit) & 1:
-                prob_one += np.abs(self._state[i]) ** 2
+        self._validate_qubits(qubit)
+        bit_shift = self.n_qubits - 1 - qubit
+        indices = np.arange(self.dim)
+        is_one = ((indices >> bit_shift) & 1) == 1
+        prob_one = float(np.sum(np.abs(self._state[is_one]) ** 2))
 
         result = 1 if np.random.random() < prob_one else 0
 
         if collapse:
-            # Project onto measured subspace
-            mask = np.array([(i >> qubit) & 1 == result for i in range(self.dim)])
+            mask = is_one if result == 1 else ~is_one
             self._state = self._state * mask
             self._normalize()
             self._update_metrics(f"measure_qubit({qubit}) -> {result}")
 
         return result
+
+    def get_statevector(self, endian: str = "big") -> np.ndarray:
+        """
+        Return copy of statevector in declared basis order.
+
+        Args:
+            endian: "big" for |q_0 q_1 ... q_{n-1}> (native qByte convention),
+                    or "little" for |q_{n-1} ... q_1 q_0> (Qiskit convention).
+        """
+        if endian == "big":
+            return self._state.copy()
+        if endian == "little":
+            tensor_state = self._state.reshape([2] * self.n_qubits)
+            reversed_axes = list(range(self.n_qubits - 1, -1, -1))
+            return np.transpose(tensor_state, reversed_axes).reshape(self.dim).copy()
+        raise ValueError(f"endian must be 'big' or 'little', got {endian!r}")
 
     def probabilities(self) -> np.ndarray:
         """Return probability distribution over all basis states."""
@@ -690,8 +758,16 @@ class QbyteRuntime:
                     self.qbyte.fold(qubit, angle)
                 elif name == 'cleave':
                     self.qbyte.cleave(qubit)
-                elif name == 'phase_flip':
-                    self.qbyte.phase_flip(qubit)
+                elif name in ('phase_flip', 'phase'):
+                    self.qbyte.phase(qubit)
+                elif name in ('toffoli', 'ccnot', 'ccx'):
+                    c2 = op.get('control2', 1)
+                    tgt = op.get('target', 2)
+                    self.qbyte.toffoli(qubit, c2, tgt)
+                elif name == 'cz':
+                    self.qbyte.cz(qubit, target)
+                elif name == 'swap':
+                    self.qbyte.swap(qubit, target)
                 elif name == 'heal':
                     self.qbyte.heal()
                 elif name == 'measure':

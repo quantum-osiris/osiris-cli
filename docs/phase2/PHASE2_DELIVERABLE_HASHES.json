@@ -1,0 +1,500 @@
+{
+  "phase": "OSIRIS Frontier Research \u2014 Phase 2",
+  "branch": "feat/phase2-scientific-repair",
+  "base_commit": "97f5db21",
+  "qpu_jobs_submitted": 0,
+  "ibm_ru_spent": 0,
+  "canonical_status_summary": {
+    "Implemented and tested": 54,
+    "Implemented but untested": 0,
+    "Simulated": 7,
+    "Hardware-observed": "Historical archives reconciled (dansntf8gn2s739n32e0, E0-E4, Bridge E1-E5, HP-004); 0 new QPU runs",
+    "Independently replicated": "0 internal OSIRIS claims; 5 external Bell-state literature benchmarks cited for NB-07",
+    "Proposed only": 8
+  },
+  "deliverables": [
+    {
+      "path": "/home/osiris/claims_ledger.jsonl",
+      "bytes": 29134,
+      "sha256": "567a1ffd6c425eab3b031d5191ecd3fbd1198b89233bbbe87f5c1ee0fa25fb1f",
+      "status": "Proposed only",
+      "category": "protected_phase1_baseline_untouched"
+    },
+    {
+      "path": "/home/osiris/osiris-assessment/work/osiris-cli-phase2/osiris_cli/claims.py",
+      "bytes": 56014,
+      "sha256": "8563ac0fa78d69b259ea6ad35d498182737f5ac2ddfcd525c5a4a7ad47f47fb1",
+      "status": "Implemented and tested",
+      "category": "protected_authoritative_register_untouched"
+    },
+    {
+      "path": "/home/osiris/quantum-ide-11227528.zip",
+      "bytes": 5990141,
+      "sha256": "f1166cb2ea060dddb054ca65def67e1897e6b7c6dfa9b945efb1b5a57ed2e474",
+      "status": "Implemented and tested",
+      "category": "sprint22_ide_release_archive"
+    },
+    {
+      "path": "/home/osiris/osiris-assessment/work/osiris-cli-phase2/qbyte_system/__init__.py",
+      "bytes": 2092,
+      "sha256": "f560bada2d1f1192cf9e2c0d9fb974cf2967aef6bf40fbb34993c760e63f3c31",
+      "status": "Implemented and tested",
+      "category": "qbyte_simulator_repair"
+    },
+    {
+      "path": "/home/osiris/osiris-assessment/work/osiris-cli-phase2/qbyte_system/gates.py",
+      "bytes": 14874,
+      "sha256": "e4593fe878065fb3961b4d21e435f0bc8953a11290d34565ef213337102d28af",
+      "status": "Implemented and tested",
+      "category": "qbyte_simulator_repair"
+    },
+    {
+      "path": "/home/osiris/osiris-assessment/work/osiris-cli-phase2/qbyte_system/qbyte.py",
+      "bytes": 30605,
+      "sha256": "c15e57fd17d27bbbe6b349dd2135c3e16322ab9725d4ab9412669a7cca53516c",
+      "status": "Implemented and tested",
+      "category": "qbyte_simulator_repair"
+    },
+    {
+      "path": "/home/osiris/osiris-assessment/work/osiris-cli-phase2/qbyte_system/sovereign_executor.py",
+      "bytes": 27092,
+      "sha256": "1d9771939d2c964bea59ce855b8a0e1e6f9cc5f8651e24a510adae751fcd61a6",
+      "status": "Implemented and tested",
+      "category": "qbyte_simulator_repair"
+    },
+    {
+      "path": "/home/osiris/osiris-assessment/work/osiris-cli-phase2/osiris_cli/metrics/__init__.py",
+      "bytes": 705,
+      "sha256": "b812fcf3b83435fcecd0d328878b48ae2ff070192254df18b0ac90dbdd238244",
+      "status": "Implemented and tested",
+      "category": "osiris_core_capabilities"
+    },
+    {
+      "path": "/home/osiris/osiris-assessment/work/osiris-cli-phase2/osiris_cli/metrics/wasserstein_verified.py",
+      "bytes": 19968,
+      "sha256": "e2c42c90247356921d5604bfe8d1354fc129ade8d1234888d889b0d73b910cd5",
+      "status": "Implemented and tested",
+      "category": "osiris_core_capabilities"
+    },
+    {
+      "path": "/home/osiris/osiris-assessment/work/osiris-cli-phase2/osiris_cli/workflows/__init__.py",
+      "bytes": 1135,
+      "sha256": "1a745885abfb6c2f90a7abfdaa1a2e5504f1a00e916f09c118b9b39bd767849f",
+      "status": "Implemented and tested",
+      "category": "osiris_core_capabilities"
+    },
+    {
+      "path": "/home/osiris/osiris-assessment/work/osiris-cli-phase2/osiris_cli/workflows/color_code_eval.py",
+      "bytes": 13426,
+      "sha256": "08dbe6ef06309951a037e4d222953c90eb2d1750f59c43bfd57cc0bc5d65480d",
+      "status": "Implemented and tested",
+      "category": "osiris_core_capabilities"
+    },
+    {
+      "path": "/home/osiris/osiris-assessment/work/osiris-cli-phase2/osiris_cli/workflows/nmr_budget.py",
+      "bytes": 9857,
+      "sha256": "c7258cfcb7814836ab07e1f29421c8237109ad40c8429bf31a9ab580cc51081b",
+      "status": "Implemented and tested",
+      "category": "osiris_core_capabilities"
+    },
+    {
+      "path": "/home/osiris/osiris-assessment/work/osiris-cli-phase2/osiris_cli/workflows/review_coverage.py",
+      "bytes": 7111,
+      "sha256": "d243d99106de160a811f8f39e39e99f9b69ba4c6e89895f9270781eb9cbdadd2",
+      "status": "Implemented and tested",
+      "category": "osiris_core_capabilities"
+    },
+    {
+      "path": "/home/osiris/osiris-assessment/work/osiris-cli-phase2/osiris_cli/compiler_passes/__init__.py",
+      "bytes": 185,
+      "sha256": "498b44a71ccf7aa5505e7303975b10d5dd9fd6a36cde55b8191fb1a59be3be4f",
+      "status": "Implemented and tested",
+      "category": "osiris_core_capabilities"
+    },
+    {
+      "path": "/home/osiris/osiris-assessment/work/osiris-cli-phase2/osiris_cli/compiler_passes/fanout_degree_reducer.py",
+      "bytes": 7811,
+      "sha256": "d520b3303e309e3e83f46d0e6bd5d8450f05c2a0c2a5e371455b97f62153d8cf",
+      "status": "Implemented and tested",
+      "category": "osiris_core_capabilities"
+    },
+    {
+      "path": "/home/osiris/osiris-assessment/work/osiris-cli-phase2/phase2/__init__.py",
+      "bytes": 64,
+      "sha256": "3abb3dd521d89996edf9eaea2e70fdf726f9982abea49cf0b690d44b9c06b331",
+      "status": "Implemented and tested",
+      "category": "phase2_experiment_code"
+    },
+    {
+      "path": "/home/osiris/osiris-assessment/work/osiris-cli-phase2/phase2/aeterna_w2/__init__.py",
+      "bytes": 92,
+      "sha256": "b9629fad89e3bb89fd6fe905a4426f8cb9056fb5803dc2a98d7ffdbf98122a66",
+      "status": "Implemented and tested",
+      "category": "phase2_experiment_code"
+    },
+    {
+      "path": "/home/osiris/osiris-assessment/work/osiris-cli-phase2/phase2/aeterna_w2/aeterna_controls_repaired.py",
+      "bytes": 15345,
+      "sha256": "a0e3ab63cf21186ffb27dd0903d737a3ab05e3b168a30f1f52eddd2fabcb889c",
+      "status": "Implemented and tested",
+      "category": "phase2_experiment_code"
+    },
+    {
+      "path": "/home/osiris/osiris-assessment/work/osiris-cli-phase2/phase2/aeterna_w2/w2_circuit_reanalysis.py",
+      "bytes": 10704,
+      "sha256": "24c89d6de826818f2f1205b208c8ea718d78bf91dc977d9cf5be259e11fef615",
+      "status": "Implemented and tested",
+      "category": "phase2_experiment_code"
+    },
+    {
+      "path": "/home/osiris/osiris-assessment/work/osiris-cli-phase2/phase2/claims_reconciliation_v2.py",
+      "bytes": 21031,
+      "sha256": "739c8c0c6245be8467f6822a6230f699aef7c49607c8efc352f8c134cf41b6c5",
+      "status": "Implemented and tested",
+      "category": "phase2_experiment_code"
+    },
+    {
+      "path": "/home/osiris/osiris-assessment/work/osiris-cli-phase2/phase2/coaxial_t1/__init__.py",
+      "bytes": 71,
+      "sha256": "def688f6064cba5d1f1115247c89a71d05702b501b2914cc827e81b54ca5e01d",
+      "status": "Implemented and tested",
+      "category": "phase2_experiment_code"
+    },
+    {
+      "path": "/home/osiris/osiris-assessment/work/osiris-cli-phase2/phase2/coaxial_t1/coaxial_t1_reassessment.py",
+      "bytes": 16522,
+      "sha256": "cb16abe6749be22e6218d4860bbd9a6558487b8b1d235bcc1c2f489bca1c2bb2",
+      "status": "Implemented and tested",
+      "category": "phase2_experiment_code"
+    },
+    {
+      "path": "/home/osiris/osiris-assessment/work/osiris-cli-phase2/phase2/correlated_noise_01/__init__.py",
+      "bytes": 96,
+      "sha256": "03e3ddc95950673010fbd611824741d1f9308aa6cd05f0d611154f7573348866",
+      "status": "Implemented and tested",
+      "category": "phase2_experiment_code"
+    },
+    {
+      "path": "/home/osiris/osiris-assessment/work/osiris-cli-phase2/phase2/correlated_noise_01/correlated_noise_models.py",
+      "bytes": 26506,
+      "sha256": "fbb0ef7101c5f36f19e6dd888e2d0be9cc0a787943742fd924ddb7eee265dc00",
+      "status": "Implemented and tested",
+      "category": "phase2_experiment_code"
+    },
+    {
+      "path": "/home/osiris/osiris-assessment/work/osiris-cli-phase2/phase2/correlated_noise_01/simulate_correlated_noise.py",
+      "bytes": 21198,
+      "sha256": "81a8d79930c9d1da1254f99ad8e9b92af026e21b77d3d772a3a3e355ef9eb823",
+      "status": "Implemented and tested",
+      "category": "phase2_experiment_code"
+    },
+    {
+      "path": "/home/osiris/osiris-assessment/work/osiris-cli-phase2/phase2/correlated_noise_01/test_correlated_noise_models.py",
+      "bytes": 6624,
+      "sha256": "325130680dea818202cdcc6c76dc56c1ab8e60967d693a964923e3e40e64b5b4",
+      "status": "Implemented and tested",
+      "category": "phase2_experiment_code"
+    },
+    {
+      "path": "/home/osiris/osiris-assessment/work/osiris-cli-phase2/phase2/tau_revival_01/__init__.py",
+      "bytes": 96,
+      "sha256": "791a5e84ed6247a034701542197f181b3c91ceff5e09c1a7b7aaddae7a5725b9",
+      "status": "Implemented and tested",
+      "category": "phase2_experiment_code"
+    },
+    {
+      "path": "/home/osiris/osiris-assessment/work/osiris-cli-phase2/phase2/tau_revival_01/tau_revival_models.py",
+      "bytes": 12857,
+      "sha256": "3600d509c7434312d5efa9cceaeceb55dcc75d9dca67b42184ccdba79fbebcc9",
+      "status": "Implemented and tested",
+      "category": "phase2_experiment_code"
+    },
+    {
+      "path": "/home/osiris/osiris-assessment/work/osiris-cli-phase2/phase2/tesseract_map_02/__init__.py",
+      "bytes": 76,
+      "sha256": "70543a508cb7141579dd265b721f6938751e8d817a0acba1253af06db091bd6f",
+      "status": "Implemented and tested",
+      "category": "phase2_experiment_code"
+    },
+    {
+      "path": "/home/osiris/osiris-assessment/work/osiris-cli-phase2/phase2/tesseract_map_02/tesseract_map_02.py",
+      "bytes": 37291,
+      "sha256": "4d4270adca0beab86a379a7fc6a0ec868072db053078509f8a2078b1f287e964",
+      "status": "Implemented and tested",
+      "category": "phase2_experiment_code"
+    },
+    {
+      "path": "/home/osiris/osiris-assessment/work/osiris-cli-phase2/phase2/tesseract_map_02/test_tesseract_map_02.py",
+      "bytes": 4261,
+      "sha256": "1e0a71cb5ff6d65d2ce5b80b0a8f0a1d90d6f9fce9a1589eddde13c4fbd987fd",
+      "status": "Implemented and tested",
+      "category": "phase2_experiment_code"
+    },
+    {
+      "path": "/home/osiris/osiris-assessment/work/osiris-cli-phase2/phase2/correlated_noise_01/CORRELATED_NOISE_01_HARDWARE_PLAN.md",
+      "bytes": 3896,
+      "sha256": "b6b8bbf2351dcb3246da4ab88ddfe8f3b1aa571bdcd8406d481805cc2ec55fb0",
+      "status": "Proposed only",
+      "category": "phase2_experiment_docs"
+    },
+    {
+      "path": "/home/osiris/osiris-assessment/work/osiris-cli-phase2/phase2/correlated_noise_01/CORRELATED_NOISE_01_IDENTIFIABILITY.md",
+      "bytes": 4889,
+      "sha256": "03d8d1a8dfc1ede47d4f3fd1be320e9d3f8a2bdb7418ca1b62fdb4e2b6465ff0",
+      "status": "Simulated",
+      "category": "phase2_experiment_docs"
+    },
+    {
+      "path": "/home/osiris/osiris-assessment/work/osiris-cli-phase2/phase2/correlated_noise_01/CORRELATED_NOISE_01_PREREGISTRATION.md",
+      "bytes": 8199,
+      "sha256": "ead0ecc54b2f20e1dd58a1a272895b14d9058d8545e431ba24215f361ca2a703",
+      "status": "Proposed only",
+      "category": "phase2_experiment_docs"
+    },
+    {
+      "path": "/home/osiris/osiris-assessment/work/osiris-cli-phase2/phase2/correlated_noise_01/CORRELATED_NOISE_01_THEORY.md",
+      "bytes": 8828,
+      "sha256": "7b1a840522be47bad34437e43097ee44a90fc87bb1ac27e985528afb2f8ff12b",
+      "status": "Implemented and tested",
+      "category": "phase2_experiment_docs"
+    },
+    {
+      "path": "/home/osiris/osiris-assessment/work/osiris-cli-phase2/phase2/tau_revival_01/TAU_REVIVAL_01_ARCHIVE_AUDIT.md",
+      "bytes": 4893,
+      "sha256": "8b542fdf57f3b64aedc79963b372796c5463bf498296a4387b04120109f3c1b5",
+      "status": "Implemented and tested",
+      "category": "phase2_experiment_docs"
+    },
+    {
+      "path": "/home/osiris/osiris-assessment/work/osiris-cli-phase2/phase2/tau_revival_01/TAU_REVIVAL_01_MODEL_COMPARISON.md",
+      "bytes": 5772,
+      "sha256": "880aa85f07c317b0484b716ea1bfa3d2131cac6c015d44eb540a2eec4879cb1a",
+      "status": "Implemented and tested",
+      "category": "phase2_experiment_docs"
+    },
+    {
+      "path": "/home/osiris/osiris-assessment/work/osiris-cli-phase2/phase2/tau_revival_01/TAU_REVIVAL_01_PREREGISTRATION.md",
+      "bytes": 3839,
+      "sha256": "672be0e9b39993e14a7a51591ad729457175be8c269c570d83c8a5baf0bc1879",
+      "status": "Proposed only",
+      "category": "phase2_experiment_docs"
+    },
+    {
+      "path": "/home/osiris/osiris-assessment/work/osiris-cli-phase2/phase2/tesseract_map_02/TESSERACT_MAP_02_EXPECTED_OUTCOMES.md",
+      "bytes": 4800,
+      "sha256": "ff026459e8eea2d2a71ff7307219f3dcf23eb3cab7511bd485a887f6b369da3f",
+      "status": "Simulated",
+      "category": "phase2_experiment_docs"
+    },
+    {
+      "path": "/home/osiris/osiris-assessment/work/osiris-cli-phase2/phase2/tesseract_map_02/TESSERACT_MAP_02_PREREGISTRATION.md",
+      "bytes": 8882,
+      "sha256": "d35d2da16d157a5ad9f73ba77c656f339a258552a9d56e490098e7d4ea6da7e7",
+      "status": "Proposed only",
+      "category": "phase2_experiment_docs"
+    },
+    {
+      "path": "/home/osiris/osiris-assessment/work/osiris-cli-phase2/phase2/tesseract_map_02/TESSERACT_MAP_02_RESOURCE_ESTIMATE.md",
+      "bytes": 1863,
+      "sha256": "c3b10350846f5b40e9b49137fb926673f29b041aeccaeefa8de7277f7fc5a568",
+      "status": "Proposed only",
+      "category": "phase2_experiment_docs"
+    },
+    {
+      "path": "/home/osiris/osiris-assessment/work/osiris-cli-phase2/tests/test_wasserstein_verified.py",
+      "bytes": 7082,
+      "sha256": "b0542c31f4841ba4e013ce8ae832d80310022406d0f0b52fd9aa723fd4b99baa",
+      "status": "Implemented and tested",
+      "category": "phase2_test_suites"
+    },
+    {
+      "path": "/home/osiris/osiris-assessment/work/osiris-cli-phase2/tests/test_phase2_workflows.py",
+      "bytes": 8143,
+      "sha256": "078100d78bfe5ea25e6e30030c2506451c9875aa5afebbeb16621fcc3c39158e",
+      "status": "Implemented and tested",
+      "category": "phase2_test_suites"
+    },
+    {
+      "path": "/home/osiris/osiris-assessment/work/osiris-cli-phase2/tests/test_qbyte_correctness.py",
+      "bytes": 19988,
+      "sha256": "ec476b057b03b083c358c3d3f1b9d7ef0e9b2e17f0dadc99774993fc910fc64d",
+      "status": "Implemented and tested",
+      "category": "phase2_test_suites"
+    },
+    {
+      "path": "/home/osiris/osiris-assessment/work/osiris-cli-phase2/tests/test_phase2_aeterna_w2.py",
+      "bytes": 4412,
+      "sha256": "e1eb972891950e7f78cb2bdef9297d34d46c0bd9d5d7fe489cd9a93270db1093",
+      "status": "Implemented and tested",
+      "category": "phase2_test_suites"
+    },
+    {
+      "path": "/home/osiris/osiris-assessment/work/osiris-cli-phase2/tests/test_phase2_claims_ledger.py",
+      "bytes": 2750,
+      "sha256": "9a69dafbc8c3b55107a58ccdc566d316aff09ce1b2ae25b7594e39ee15a3168c",
+      "status": "Implemented and tested",
+      "category": "phase2_test_suites"
+    },
+    {
+      "path": "/home/osiris/osiris-assessment/work/osiris-cli-phase2/tests/test_tesseract_map_02_suite.py",
+      "bytes": 164,
+      "sha256": "8b582c42f6d6ff2517e0bb2f6187ce512c1fbae36295a9c11d51f494ddde0e1a",
+      "status": "Implemented and tested",
+      "category": "phase2_test_suites"
+    },
+    {
+      "path": "/home/osiris/osiris-assessment/work/osiris-cli-phase2/tests/test_correlated_noise_01_suite.py",
+      "bytes": 184,
+      "sha256": "c38adb99b4e56569a02162694b413cfacffe68e87057bf5f44746519833b9b32",
+      "status": "Implemented and tested",
+      "category": "phase2_test_suites"
+    },
+    {
+      "path": "/home/osiris/osiris-assessment/work/osiris-cli-phase2/tests/test_tau_revival_01.py",
+      "bytes": 2232,
+      "sha256": "994064054878433018340cae18430c470f51c8c9783c4d42dd589bf8478fead3",
+      "status": "Implemented and tested",
+      "category": "phase2_test_suites"
+    },
+    {
+      "path": "/home/osiris/osiris-assessment/work/osiris-cli-phase2/tests/test_coaxial_t1_reassessment.py",
+      "bytes": 1393,
+      "sha256": "b11bf1092fa78eec6f94f673319729d5707b650c248abc703784459074dced08",
+      "status": "Implemented and tested",
+      "category": "phase2_test_suites"
+    },
+    {
+      "path": "/home/osiris/osiris-assessment/work/osiris-cli-phase2/tests/test_fanout_degree_reducer.py",
+      "bytes": 2484,
+      "sha256": "15abe49cfd6d6512cc64cc3b63e0e814bce8b63f47c287e2443aaa74ca079f2d",
+      "status": "Implemented and tested",
+      "category": "phase2_test_suites"
+    },
+    {
+      "path": "/home/osiris/osiris-assessment/work/osiris-cli-phase2/docs/phase2/AETERNA_METHODS_AUDIT_AND_REPAIR.md",
+      "bytes": 5275,
+      "sha256": "c431b2cc87241a65a092e804ac0d9d24da36ceb494c6f63d33255933ddfe2e36",
+      "status": "Implemented and tested",
+      "category": "phase2_deliverable_docs_and_data"
+    },
+    {
+      "path": "/home/osiris/osiris-assessment/work/osiris-cli-phase2/docs/phase2/CLAIM_CHANGESET_FOR_OWNER_APPROVAL.md",
+      "bytes": 5587,
+      "sha256": "e2da709ec2b6d660bf73a19f20bb34ee382ecfe0940bdc57671482d6b66fb606",
+      "status": "Proposed only",
+      "category": "phase2_deliverable_docs_and_data"
+    },
+    {
+      "path": "/home/osiris/osiris-assessment/work/osiris-cli-phase2/docs/phase2/COAXIAL_T1_REASSESSMENT.md",
+      "bytes": 5934,
+      "sha256": "55c7f4b00d442548fb08620afb7ab3f418569b7ebb2cb73a105169e937729c0b",
+      "status": "Implemented and tested",
+      "category": "phase2_deliverable_docs_and_data"
+    },
+    {
+      "path": "/home/osiris/osiris-assessment/work/osiris-cli-phase2/docs/phase2/MULTIAGENT_ADVERSARIAL_REVIEW.md",
+      "bytes": 12526,
+      "sha256": "be1a8b1abc4b8e517da3d2e5f0e078149b461a08c205095c102979d5ce3bdeda",
+      "status": "Implemented and tested",
+      "category": "phase2_deliverable_docs_and_data"
+    },
+    {
+      "path": "/home/osiris/osiris-assessment/work/osiris-cli-phase2/docs/phase2/PHASE2_CLAIM_CORRECTIONS.md",
+      "bytes": 11501,
+      "sha256": "e4d3f7320fadfd7e09a1ed081abc8848d4ebfa1016d85c7c6ad8626f55eac7de",
+      "status": "Implemented and tested",
+      "category": "phase2_deliverable_docs_and_data"
+    },
+    {
+      "path": "/home/osiris/osiris-assessment/work/osiris-cli-phase2/docs/phase2/PHASE2_EXECUTIVE_REPORT.md",
+      "bytes": 17557,
+      "sha256": "960e2d0a2cadf8a3df0109f8b7e85837f9d2e85ac60102b07a4dc87edbe9fd1e",
+      "status": "Implemented and tested",
+      "category": "phase2_deliverable_docs_and_data"
+    },
+    {
+      "path": "/home/osiris/osiris-assessment/work/osiris-cli-phase2/docs/phase2/PHASE2_STATE_INVENTORY.json",
+      "bytes": 8188,
+      "sha256": "fa111dd5b3fd29c594d679867a47e064a0f23dce362a3816e73e0ce58152f8c3",
+      "status": "Implemented and tested",
+      "category": "phase2_deliverable_docs_and_data"
+    },
+    {
+      "path": "/home/osiris/osiris-assessment/work/osiris-cli-phase2/docs/phase2/PRE_PHASE2_BASELINE_HASHES.json",
+      "bytes": 17562,
+      "sha256": "5d44777464e623bfbe44a75a5ebbb236d3e785057ae124d77d6d6457fc913fb3",
+      "status": "Implemented and tested",
+      "category": "phase2_deliverable_docs_and_data"
+    },
+    {
+      "path": "/home/osiris/osiris-assessment/work/osiris-cli-phase2/docs/phase2/QBYTE_CORRECTNESS_REPORT.md",
+      "bytes": 7207,
+      "sha256": "c5eeaebe6a7e7048791354dd183e9f4f3412062df23ff09959662b015a075dd7",
+      "status": "Implemented and tested",
+      "category": "phase2_deliverable_docs_and_data"
+    },
+    {
+      "path": "/home/osiris/osiris-assessment/work/osiris-cli-phase2/docs/phase2/W2_MATHEMATICAL_ERRATUM.md",
+      "bytes": 6846,
+      "sha256": "ed7eb019027f5dcb08c2418919594ac973b87f8587ccc2b76d3d051b842b40eb",
+      "status": "Implemented and tested",
+      "category": "phase2_deliverable_docs_and_data"
+    },
+    {
+      "path": "/home/osiris/osiris-assessment/work/osiris-cli-phase2/docs/phase2/claims_ledger_phase2_proposed.jsonl",
+      "bytes": 60492,
+      "sha256": "87638fcf7a065d2bcb0bdfa03898b9fdffda5764a2a74020b0a7f5c0805ee241",
+      "status": "Proposed only",
+      "category": "phase2_deliverable_docs_and_data"
+    },
+    {
+      "path": "/home/osiris/osiris-assessment/work/osiris-cli-phase2/docs/phase2/coaxial_t1_reassessment_results.json",
+      "bytes": 39358,
+      "sha256": "e458ac675bb299461350bf6b7cbf89fc260e475a83b0e2315285bb8a8c99fcdd",
+      "status": "Implemented and tested",
+      "category": "phase2_deliverable_docs_and_data"
+    },
+    {
+      "path": "/home/osiris/osiris-assessment/work/osiris-cli-phase2/docs/phase2/correlated_noise_01_identifiability_results.json",
+      "bytes": 2122,
+      "sha256": "3d73ada426c4b750d33794d9a09a440a5282a580ed29ab12236e7bebf44af9bd",
+      "status": "Simulated",
+      "category": "phase2_deliverable_docs_and_data"
+    },
+    {
+      "path": "/home/osiris/osiris-assessment/work/osiris-cli-phase2/docs/phase2/qbyte_benchmarks.json",
+      "bytes": 1073,
+      "sha256": "7c592e70b57656c1f1f4769afdb801c44cdc4929e01d71cb04114ccff3b2c9a3",
+      "status": "Simulated",
+      "category": "phase2_deliverable_docs_and_data"
+    },
+    {
+      "path": "/home/osiris/osiris-assessment/work/osiris-cli-phase2/docs/phase2/qbyte_test_receipt.txt",
+      "bytes": 4887,
+      "sha256": "5337181c5833f87ba76c931b6472c6a5c490f24f0931207297c5b81717670767",
+      "status": "Implemented and tested",
+      "category": "phase2_deliverable_docs_and_data"
+    },
+    {
+      "path": "/home/osiris/osiris-assessment/work/osiris-cli-phase2/docs/phase2/tau_revival_01_audit_and_sim.json",
+      "bytes": 3175,
+      "sha256": "ae32292e9bda1d3b7d707b05a3d6411d052121b071dcacac50b71e76d643a482",
+      "status": "Simulated",
+      "category": "phase2_deliverable_docs_and_data"
+    },
+    {
+      "path": "/home/osiris/osiris-assessment/work/osiris-cli-phase2/docs/phase2/tesseract_map_02_simulation_results.json",
+      "bytes": 22285,
+      "sha256": "457b6dcea55938d37639d7f4c754e5d8552b4365bea2b509250b91f2488d20e1",
+      "status": "Simulated",
+      "category": "phase2_deliverable_docs_and_data"
+    },
+    {
+      "path": "/home/osiris/osiris-assessment/work/osiris-cli-phase2/docs/phase2/w2_27q_erratum_reanalysis.json",
+      "bytes": 2328,
+      "sha256": "217e4ac429feea27016e99cfb243657bc5d61e3e4cd32bcaa5a2fa8f45a29f66",
+      "status": "Simulated",
+      "category": "phase2_deliverable_docs_and_data"
+    }
+  ]
+}

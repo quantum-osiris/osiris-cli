@@ -494,13 +494,27 @@ def test_check_claim_number_provenance_and_e94_e95_register_entries():
     assert "1.146530 ebits" in rendered
     assert "1.124434 ebits" in rendered
 
-    # Verify E-95 step 3: HP004_JOINT_STABILIZER statement passes check_claim against archived RESULT.md files
+    # Verify E-95 step 3: HP004_JOINT_STABILIZER statement passes check_claim against archived RESULT.md,
+    # and verify_register returns empty lists against combined E-94 + RESULT.md evidence.
+    res_fez_text = (REPO / "experiments" / "hp004b_fez" / "RESULT.md").read_text(encoding="utf-8")
+    assert claims.verify_register("HP004_JOINT_STABILIZER", res_fez_text)["statement"] == []
+    e94_text = (REPO / "docs" / "phase2" / "PHASE2_ADDENDUM_E94_HP004B.md").read_text(encoding="utf-8")
+    e95_text = (REPO / "docs" / "phase2" / "PHASE2_ADDENDUM_E95_HP004B_APPLICATION.md").read_text(encoding="utf-8")
+    assert claims.verify_register("HP004_JOINT_STABILIZER", e94_text + "\n" + res_fez_text) == {
+        "statement": [],
+        "scoped_wording": [],
+    }
     ev_text = (
         (REPO / "experiments" / "hp004" / "RESULT.md").read_text(encoding="utf-8")
         + "\n"
-        + (REPO / "experiments" / "hp004b_fez" / "RESULT.md").read_text(encoding="utf-8")
+        + res_fez_text
+        + "\n"
+        + e94_text
+        + "\n"
+        + e95_text
     )
     assert claims.check_claim(hp.statement, ev_text) == []
+    assert claims.check_claim(hp.scoped_wording, ev_text) == []
 
     qec = claims.by_id("QEC001_SYNDROME_SCALING")
     assert qec is not None and qec.verdict == "SUPPORTED"
