@@ -113,9 +113,12 @@ REGISTER: Tuple[Claim, ...] = (
           "The 0.99999 fidelity and the 10⁶ gain were typed into the result file, not measured; the '0.3843 "
           "noise floor' is cos²(51.7°); the circuit contains no error correction. Re-running the deposited "
           "circuit on ibm_kingston gave classical fidelity 0.050 (a GHZ-40 control: 0.045), and θ = 51.7° "
-          "did no better than θ = 0. The 10⁶× Zeno suppression also failed the Feb 2026 self-test.",
+          "did no better than θ = 0. The 10⁶× Zeno suppression also failed the Feb 2026 self-test. (Note: "
+          "distinct from the external Quantinuum A* color-code Tesseract decoder in arXiv:2610.24077v1 and "
+          "from compilation benchmark TESSERACT-MAP-02.)",
           (("doi", "10.5281/zenodo.22870279", "re-execution and errata; obsoletes 18209071"), SELFTEST),
-          (r"10\s*\^?\s*6\s*[x×]|10⁶|1,?000,?000\s*[x×]|million[- ]?(fold|times)", r"tesseract",
+          (r"10\s*\^?\s*6\s*[x×]|10⁶|1,?000,?000\s*[x×]|million[- ]?(fold|times)",
+           r"tesseract(?![\s_-]*(?:decoder|color|map[\s_-]*02))",
            r"\bzeno\b", r"five nines|0\.99999\b")),
     Claim("NEGENTROPY_136", "136-bit 'negentropy gap' on a 156-qubit Heron processor", "ARTIFACT",
           "All 10⁶ shots were unique, so the plug-in entropy is log₂(10⁶) = 19.93 bits -- exactly the "
@@ -158,22 +161,26 @@ REGISTER: Tuple[Claim, ...] = (
           (SELFTEST,), (r"chi[\s_-]*pc|χ[\s_]*pc", r"phase[- ]conjugat\w* (constant|coupling)")),
     Claim("F_MAX", "F_max = 1 - φ⁻⁸ ≈ 0.9787 is a fundamental upper bound on Bell-state fidelity ('validated': 0/189 "
           "violations on IBM hardware)", "REFUTED",
-          "Published experiments exceed it: a two-ion Bell state at 0.993 (2008), and two-qubit gates at 0.999 and "
-          "0.9992 inferred from prepared Bell states (2016) -- the document's own rule, 'ANY experiment achieving "
-          "F > 0.98 falsifies the prediction', was met before it was written. IBM's own CNOT reached 0.9977 (a gate "
-          "fidelity by interleaved benchmarking, not a Bell-state fidelity). '0/189 violations' is a one-sided test "
-          "on hardware whose best Bell fidelity was 0.9773: data that never reach a ceiling cannot test it, and "
-          "F ≤ 1 passes the same test. The document also predicts 0.985 and 0.982 for ibm_fez and ibm_torino, above "
-          "its own bound, and reports r = 0.90, p = 0.006 over three backends -- three points need r = 0.99996 for "
-          "that p (its tabulated values give r = 0.95, p = 0.20).",
-          (("doi", "10.1038/nphys961", "Benhelm et al., Nat. Phys. 4, 463 (2008): entangling gate, Bell state 99.3(1) %"),
-           ("doi", "10.1103/PhysRevLett.117.060504", "Ballance et al., PRL 117, 060504 (2016): gate 99.9(1) %"),
-           ("doi", "10.1103/PhysRevLett.117.060505", "Gaebler et al., PRL 117, 060505 (2016): gate error 8(4)e-4"),
-           ("doi", "10.1103/PhysRevLett.127.130501", "Kandala et al. (IBM), PRL 127, 130501 (2021): CNOT 99.77(2) %"),
+          "Published Bell-state experiments exceed it: Benhelm et al. (2008) prepared a two-ion Bell state at "
+          "0.993(1), and Clark et al. (2021) measured a Bell-state infidelity of 6(3)×10⁻⁴ (F ≈ 0.9994) without "
+          "subtracting experimental errors; Ballance et al. and Gaebler et al. (2016) inferred two-qubit gate "
+          "fidelities of 0.999(1) and 0.9992(4) from prepared Bell states -- the document's own rule, 'ANY "
+          "experiment achieving F > 0.98 falsifies the prediction', was met before it was written. (IBM's own CNOT "
+          "reached 0.9977 by interleaved randomized benchmarking, a gate fidelity rather than a Bell-state "
+          "fidelity.) '0/189 violations' is a one-sided test on hardware whose best Bell fidelity was "
+          "0.9773: data that never reach a ceiling cannot test it, and F ≤ 1 passes the same test. The document "
+          "also predicts 0.985 and 0.982 for ibm_fez and ibm_torino, above its own bound, and reports r = 0.90, "
+          "p = 0.006 over three backends -- three points need r = 0.99996 for that p (its tabulated values give "
+          "r = 0.95, p = 0.20).",
+          (("doi", "10.1038/nphys961", "Benhelm et al., Nat. Phys. 4, 463 (2008): Bell-state fidelity 99.3(1) %"),
+           ("doi", "10.1103/PhysRevLett.117.060504", "Ballance et al., PRL 117, 060504 (2016): two-qubit gate fidelity 99.9(1) %, inferred from a prepared Bell state"),
+           ("doi", "10.1103/PhysRevLett.117.060505", "Gaebler et al., PRL 117, 060505 (2016): two-qubit gate error 8(4)×10⁻⁴, deduced from a prepared Bell state"),
+           ("doi", "10.1103/PhysRevLett.127.130505", "Clark et al., PRL 127, 130505 (2021): Bell-state infidelity 6(3)×10⁻⁴, measured without subtracting experimental errors"),
+           ("doi", "10.1103/PhysRevLett.127.130501", "Kandala et al. (IBM), PRL 127, 130501 (2021): CNOT fidelity 99.77(2) % by interleaved RB (a gate fidelity, not a Bell-state fidelity)"),
            ("file", "osiris-cli/falsifiable_predictions.md", "Prediction 2, its falsification rule, the 0/189 table")),
           (r"bell[\s-]*(state[\s-]*)?fidelity[\s-]*(upper[\s-]*)?(bound|ceiling|limit)",
            r"\bf[\s_]*\{?max\}?\s*[=≈~]\s*0\.97", r"(?<![\d.])0\.9787", r"1\s*-\s*(φ|phi)\s*(\^\s*\{?\s*[-−]\s*8|⁻⁸)"),
-          checks=(("one_minus_phi_power", (8, (0.993, 0.999, 0.9992))),)),
+          checks=(("one_minus_phi_power", (8, (0.993, 0.999, 0.9992, 0.9994))),)),
     Claim("COHERENCE_QUANTIZATION", "Coherence times quantize: T2 clusters at integer multiples of τ_base ≈ 46 µs "
           "('validated', 8 % error on three IBM backends)", "OVERCLAIM",
           "The record is three round backend T2 values, 150, 200 and 250 µs, set against 3, 4 and 5 × 46 µs: each "
@@ -202,12 +209,14 @@ REGISTER: Tuple[Claim, ...] = (
           "No dataset or analysis establishing traversable-wormhole dynamics is on record; 'world record' is "
           "among the labels the 2026-09-20 assessment found written before the thing existed.",
           (HONEST,), (r"wormhole", r"world record", r"\bER\s*=\s*EPR\b", r"traversab\w+")),
-    Claim("LOCAL_QVM", "The local QVM / qByte / 'sovereign quantum engine' simulates quantum circuits "
-          "(about 95 % Bell fidelity)", "REFUTED",
-          "Each qubit is one Bloch vector (a quaternion) and CX is 'if P(control = 1) > 0.5 apply X', so a "
-          "Bell state cannot be represented; the module's own docstring says it does not achieve "
-          "superposition or entanglement.",
-          (HONEST,), (r"\bqvm\b|qbyte|sovereign quantum (engine|simulator)", r"quaternion\w* (qubit|simulat\w*)")),
+    Claim("LOCAL_QVM", "The local QVM / 'sovereign quantum substrate' is an independent quantum processor or "
+          "entangling quaternion simulator (about 95 % Bell fidelity)", "REFUTED",
+          "osiris_local_qvm represents each qubit as one Bloch quaternion and implements CX as 'if P(control = 1) "
+          "> 0.5 apply X', so a Bell state cannot be represented there. Separately, qbyte_system (Qbyte and "
+          "SovereignExecutor, repaired in Phase 2) is an accurate pure-NumPy classical statevector simulator on "
+          "CPU for small widths (<= 16 qubits), not a physical quantum hardware substrate.",
+          (HONEST, ("file", "osiris-cli/docs/phase2/QBYTE_CORRECTNESS_REPORT.md", "Phase 2 qByte classical simulator repair & verification")),
+          (r"\bqvm\b|sovereign quantum (engine|simulator|substrate)", r"quaternion\w* (qubit|simulat\w*)")),
     Claim("CHSH_TEST", "A Bell (CHSH) violation on IBM hardware (Feb 2026 test)", "REFUTED",
           "The test reached max |S| = 0.106, far below even the local bound of 2 (computed below); a working "
           "CHSH experiment lands between 2 and 2√2.",
@@ -318,13 +327,14 @@ REGISTER: Tuple[Claim, ...] = (
           (r"amoc|sverdrup", r"hash lock|payload fingerprint|parametric|settlement")),
     Claim("STAGGERED_DD", "Staggered XY4 decoupling (odd sublattice offset half a slot) preserves |+⟩ on ibm_fez "
           "chains far better than simultaneous XY4 or CPMG", "SUPPORTED",
-          "8-qubit chain: 0.946 / 0.888 / 0.795 at 8 / 16 / 32 µs, against about 0.59 (simultaneous) and "
-          "0.55 (none) at 32 µs, within one point across three jobs; replicated in the pre-registered E1 "
-          "(+0.10 on ibm_fez, +0.05 on ibm_marrakesh over simultaneous at 32 µs). Scope: those chains and "
-          "backends. (Pathways I, not yet deposited: staggered XY8×2 reached 0.851 at 32 µs -- pulse "
-          "density, not per-qubit heterogeneity, mattered.)",
+          "8-qubit chain (owner-deposited Zenodo records): 0.946 at 8 µs, 0.888 at 16 µs, and 0.795 at 32 µs "
+          "(note: 0.946 and 0.888 are distinct durations, not 8 µs treatment vs control), against ~0.59 "
+          "(simultaneous) and ~0.55 (no-DD) at 32 µs, within one point across three jobs; replicated in E1 "
+          "(+0.10 on ibm_fez, +0.05 on ibm_marrakesh over simultaneous at 32 µs; cf. Tripathi et al. 2022). "
+          "Scope: those superconducting chains and backends (does not validate trapped-ion scheduling).",
           (("doi", "10.5281/zenodo.22855102", "ibm_fez controlled tests"),
-           ("doi", "10.5281/zenodo.22870287", "pre-registered E1/E2, two chips")),
+           ("doi", "10.5281/zenodo.22870287", "pre-registered E1/E2, two chips"),
+           ("doi", "10.1103/PhysRevApplied.18.024068", "Tripathi et al., PRApplied 18, 024068 (2022)")),
           (r"stagger\w*", r"\bxy[48]\b|\bcpmg\b", r"dynamical decoupling")),
     Claim("GA_DD", "A genetic algorithm evolves decoupling that beats staggered XY4 on hardware", "NULL",
           "Pre-registered E1 on two chips: the GA's children converged to the staggered pattern and matched "
@@ -349,13 +359,27 @@ REGISTER: Tuple[Claim, ...] = (
           "REPORTED",
           "Average fidelity 0.773 on ibm_torino, above the classical 2/3; not pre-registered.",
           (SELFTEST, HONEST), (r"teleport\w*",)),
-    Claim("W2_ROBUSTNESS", "A Wasserstein-2 (W₂) robustness metric for parameterized circuits", "REPORTED",
-          "A reference-free, hardware-native distributional metric whose paper falsifies its own motivating "
-          "hypothesis -- a method, not a physical claim, and the one idea the 2026-09-20 assessment found no "
-          "artifact behind.",
-          (("doi", "10.5281/zenodo.19864030", "W2 robustness study"), HONEST),
+    Claim("W2_ROBUSTNESS", "The 27-qubit Wasserstein-2 (W₂) robustness manuscript metric and 112× constructive-interference interpretation",
+          "ARTIFACT",
+          "Phase 2 audit of w2_robustness_paper.tex (sha256: b1386f27...) identified four mathematical artifacts: "
+          "(1) Appendix A Eq. 7 computes independent-product cost C(p,q) = sum c(x,y)p(x)q(y), giving "
+          "sqrt(C(p_unif,p_unif)) = 0.5092 (R_hat = 0.4908) instead of W2(p,p) = 0; (2) including Layer-0 "
+          "Hadamards gives ideal mode probability ((1+sin θ)/2)^27 = 12.91% (> observed 3.98%) at θ_1 = 2.118; "
+          "(3) CP(φ²) and RZ commute with Z-basis readout across the invertible CX cascade (zero phase interference); "
+          "(4) '112×' divided 0.0398 by 1/2818.5 instead of 2^-27. Use osiris_cli.metrics.wasserstein_verified "
+          "(exact HiGHS LP + split-sample debiasing) for valid OT calculations; raw counts from the six Dec 23, "
+          "2025 ibm_fez jobs remain quarantined pending recomputation (see W2_THETA_SWEEP_COUNTS).",
+          (("doi", "10.5281/zenodo.19864030", "original W2 manuscript (erratum filed in Phase 2)"),
+           ("file", "osiris-cli/docs/phase2/W2_MATHEMATICAL_ERRATUM.md", "Phase 2 mathematical erratum & OT verification"), HONEST),
           (r"\bw\s*_?2\b|w₂|wasserstein",),
-          testable="Compare W₂ with Hellinger distance, TVD and XEB on more circuits and a second vendor."),
+          testable="Recompute split-sample debiased exact W₂ on raw bitstring histograms if the six d554h... ibm_fez count files are retrieved."),
+    Claim("W2_THETA_SWEEP_COUNTS", "Six 27-qubit θ-sweep hardware executions on ibm_fez (Dec 23, 2025; jobs d554h07p3tbc73am9l6g..d554h2kjt3vs73ds72bg)",
+          "REPORTED",
+          "Owner-reported hardware execution of 6 jobs x 4,096 shots across θ in {2.118, 2.618, 3.118} rad on "
+          "ibm_fez (tabulated summary statistics in w2_robustness_paper.tex; raw shot histograms not on local disk). "
+          "Kept separate from the defective Eq. 7 W₂ robustness interpretation (W2_ROBUSTNESS).",
+          (("doi", "10.5281/zenodo.19864030", "6-job ibm_fez summary table"),),
+          (r"d554h07p3tbc73am9l6g|d554h2kjt3vs73ds72bg", r"27[- ]qubit θ[- ]sweep")),
 
     # ── organism_sim (pre-registered; data under organism_sim/results) ───────
     Claim("PARAMS16", "Population size N = 4000 with tournament selection cuts 16-bit drift recovery",
@@ -525,6 +549,48 @@ REGISTER: Tuple[Claim, ...] = (
           (("file", "osiris-cli/RESEARCH_ARCHIVE_MANIFEST.txt", "the draft manifest and its placeholder URLs"),),
           (r"zenodo\.org/record/\[id\]", r"zenodo\.9729504", r"zenodo\.9340128", r"research_archive_manifest"),
           testable="A published article and Zenodo records that resolve."),
+    Claim("HP004_JOINT_STABILIZER",
+          "Layout-locked 8-qubit Hayden-Preskill 9-basis joint stabilizer recovery witnesses Schmidt number >= 3 "
+          "on ibm_marrakesh and ibm_fez, and witnesses entanglement of formation > 1 ebit on ibm_fez",
+          "SUPPORTED",
+          "Pre-registered 9-basis (16-stabilizer) hardware benchmarks across two independent 156-qubit Heron r2 "
+          "processors (585,728 raw shots, resilience_level=0, zero postselection): ibm_marrakesh (job "
+          "dbti1fbsbsbs73cb2vu0, F_joint = 0.633423, 95% t-LCL 0.626700, E_F >= 0.8451 ebits) certifies Schmidt "
+          "number >= 3 (+50.64 sigma above 0.5000) only; ibm_fez (job dbtj61bnlcms73ajc380, F_joint = 0.730713, "
+          "95% t-LCL 0.723700, E_F >= 1.1465 ebits point, >= 1.1244 ebits at 95% LCL) certifies both Schmidt "
+          "number >= 3 (+84.45 sigma) and E_F > 1 ebit (+17.13 sigma above F* = 0.683900) via the Terhal-Vollbrecht "
+          "isotropic-state witness (conditional on target-state mapping, Pauli basis settings, and block/shot "
+          "uncertainty model; not a direct von Neumann entropy measurement or new physical law; archived JSON key "
+          "z_above_1ebit_eff denotes z above the 0.5000 SN <= 2 bound).",
+          (("doi", "10.5281/zenodo.24287505", "OSIRIS-HP-004 & HP-004B v2 dual-processor archive (supersedes 24285577)"),
+           ("doi", "10.1103/PhysRevA.61.040301", "Terhal & Horodecki (2000): Schmidt number witness F <= k/d"),
+           ("doi", "10.1103/PhysRevLett.85.2625", "Terhal & Vollbrecht (2000): entanglement of formation for isotropic states"),
+           ("doi", "10.1103/PhysRevA.64.062307", "Vollbrecht & Werner (2001): convex-roof symmetry bounds"),
+           ("file", "osiris-assessment/work/osiris-cli/experiments/hp004b_fez/RESULT.md", "ibm_fez cross-processor result")),
+          (r"\bhp[-_]?004b?\b", r"dbti1fbsbsbs73cb2vu0|dbtj61bnlcms73ajc380",
+           r"zenodo\.24287505|zenodo\.24285577",
+           r"hayden[\s–-]*preskill[^.\n]{0,40}?(?:9[\s-]*basis|joint[\s-]*stabilizer|schmidt)"),
+          testable="Reproduce from raw 4-bit histograms: pytest tests/test_hp004_hardware_artifact.py tests/test_hp004b_fez_hardware_artifact.py.",
+          checks=(("terhal_vollbrecht_d4", (0.633423, 0.730713, 0.723700)),)),
+    Claim("QEC001_SYNDROME_SCALING",
+          "Multi-round 1D repetition-code syndrome-cycle logical error scaling across d in {3, 5, 7} and R in {1, 3, 5, 7} "
+          "on ibm_fez achieves sub-threshold suppression in both Z and X bases (QEC-H1 & QEC-H2 pass; QEC-H3 partial)",
+          "SUPPORTED",
+          "Pre-registered 192-circuit, 393,216-shot mid-circuit measure+reset benchmark on ibm_fez concentric 13Q "
+          "chain [111..121] (job dbtl2vb2kf8s73c9a0d0, QPY sha256 357a29ad2746e2be...): Blossom MWPM achieved "
+          "strict monotonic suppression eps_L(3) > eps_L(5) > eps_L(7) across all 8 (basis, R) curves -- at R=7, "
+          "bit_flip_z dropped 0.00731 -> 0.00211 -> 0.00195 (Lambda_3->7 = 3.75x, 7.22x fewer errors than final "
+          "majority vote) and phase_flip_x dropped 0.02301 -> 0.00592 -> 0.00265 (Lambda_3->7 = 8.69x, 4.86x vs "
+          "majority, actively suppressing a live q107 T2 = 18.17 us hotspot). Preserved un-doctored: QEC-H3 "
+          "flagged false on its < 0.1200 defect ceiling because phase_flip_x R=7 mean detector probability reached "
+          "0.1265-0.1284 over 7 mid-circuit readout/reset cycles (~23.4 us). Protects one Pauli sector at a time, "
+          "not a full 2D quantum memory.",
+          (("doi", "10.5281/zenodo.24293756", "OSIRIS-QEC-001 standalone manuscript & 393,216-shot archive"),
+           ("file", "osiris-assessment/work/osiris-cli/experiments/qec001/RESULT.md", "OSIRIS-QEC-001 hardware result"),
+           ("file", "osiris-assessment/work/osiris-cli/experiments/qec001/PRE_REGISTRATION.md", "pre-registered QEC-H1..H3")),
+          (r"\bqec[-_]?001\b", r"dbtl2vb2kf8s73c9a0d0", r"zenodo\.2429375[56]",
+           r"syndrome[\s-]*cycle[\s-]*scaling[^.\n]{0,40}?ibm_fez"),
+          testable="Reproduce Blossom MWPM decoding from raw bitstrings: pytest tests/test_qec001_hardware_artifact.py."),
 )
 
 _COMPILED = [(c, [re.compile(p, re.I) for p in c.patterns]) for c in REGISTER]
@@ -649,7 +715,41 @@ def _check_lines(name: str, args: Sequence) -> List[str]:
                 "rad/position",
                 f"longest period {2 * math.pi * span / c:.1f} positions; frequency span {span:.2f}x "
                 f"(base 10000: {10000 ** ((dim - 2) / dim):,.0f}x)"]
+    if name == "terhal_vollbrecht_d4":
+        f_mar, f_fez, f_fez_lcl = args
+        def _g4(f: float) -> float:
+            p0 = 0.25 * (math.sqrt(f) + math.sqrt(3.0 * (1.0 - f))) ** 2
+            q = (1.0 - p0) / 3.0
+            return -(p0 * math.log2(p0) + 3.0 * q * math.log2(q))
+        lo, hi = 0.5, 0.75
+        for _ in range(80):
+            mid = 0.5 * (lo + hi)
+            if _g4(mid) < 1.0:
+                lo = mid
+            else:
+                hi = mid
+        return [
+            f"d=4 Terhal-Vollbrecht E_F lower bound gamma_4(F): 1-ebit root F* = {hi:.6f} (SN<=2 ceiling = 0.5000)",
+            f"ibm_marrakesh F={f_mar:.6f} -> E_F >= {_g4(f_mar):.6f} ebits (< 1 ebit; SN >= 3 only)",
+            f"ibm_fez F={f_fez:.6f} -> E_F >= {_g4(f_fez):.6f} ebits; 95% t-LCL {f_fez_lcl:.6f} -> E_F >= {_g4(f_fez_lcl):.6f} ebits",
+        ]
     return getattr(pc, name)(*args).lines()
+
+
+_NUMBER_RE = re.compile(r"\d+(?:\.\d+)?")
+
+
+def check_claim(text: str, evidence: str) -> List[str]:
+    """Number-provenance check on a proposed claim against the text of its cited evidence."""
+    problems: List[str] = []
+    if not evidence or not evidence.strip():
+        problems.append("no evidence cited")
+        return problems
+    present = set(_NUMBER_RE.findall(evidence))
+    for n in _NUMBER_RE.findall(text):
+        if n not in present:
+            problems.append(f"number {n} not found in the cited evidence")
+    return problems
 
 
 def render(claim: Claim, base: str = HOME, detail: bool = True) -> List[str]:

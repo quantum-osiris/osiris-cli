@@ -1,0 +1,148 @@
+{
+  "benchmark_ids": [
+    "OSIRIS-HP-004",
+    "OSIRIS-HP-004B"
+  ],
+  "supersedes_record_id": 24285577,
+  "version": "2.0.0",
+  "record_id": 24287505,
+  "doi": "10.5281/zenodo.24287505",
+  "conceptdoi": "10.5281/zenodo.24285576",
+  "doi_url": "https://doi.org/10.5281/zenodo.24287505",
+  "record_html": "https://zenodo.org/record/24287505",
+  "state": "done",
+  "submitted": true,
+  "created": "2026-11-16T17:44:26.225632+00:00",
+  "uploaded_files": [
+    {
+      "name": "hp004_joint_stabilizer_heron_r2.pdf",
+      "bytes": 40665,
+      "checksum": "md5:c98049eab1dff50d34373901af19505d"
+    },
+    {
+      "name": "hp004_joint_stabilizer_heron_r2.tex",
+      "bytes": 16641,
+      "checksum": "md5:ad7bdec94657dd01e8d66748e5aabeb8"
+    },
+    {
+      "name": "fig1_dyadic_capacity_ladder.pdf",
+      "bytes": 6251,
+      "checksum": "md5:b9054b40ac2f9266f8e883f9f4aa6bae"
+    },
+    {
+      "name": "fig2_block_stability_and_marginals.pdf",
+      "bytes": 13033,
+      "checksum": "md5:a1f99af64e35eb5688f45e7fc27e66b8"
+    },
+    {
+      "name": "fig3_marrakesh_tree_light_cone.pdf",
+      "bytes": 5787,
+      "checksum": "md5:e718009416ae8cbc33a12e78c0339853"
+    },
+    {
+      "name": "fig4_fez_tree_light_cone.pdf",
+      "bytes": 5773,
+      "checksum": "md5:8338b62dd7b7c442bc8190a7ad5e2b32"
+    },
+    {
+      "name": "SHA256SUMS.txt",
+      "bytes": 2430,
+      "checksum": "md5:f68f81dbaeb41bfb49f47e3e0079651c"
+    },
+    {
+      "name": "hp004_marrakesh_PRE_REGISTRATION.md",
+      "bytes": 3361,
+      "checksum": "md5:de1d17cc25520fc8589243d92d88fb5a"
+    },
+    {
+      "name": "hp004_marrakesh_RESULT.md",
+      "bytes": 4758,
+      "checksum": "md5:b1959b00eccad5f71c077e258fcf3b5b"
+    },
+    {
+      "name": "hp004_joint_stabilizer.py",
+      "bytes": 20072,
+      "checksum": "md5:9972680157b6d4915a4e7d1bbef9cdad"
+    },
+    {
+      "name": "execute_and_harvest_hp004.py",
+      "bytes": 22310,
+      "checksum": "md5:7efc1e49083b04b2939ce92335a5ec92"
+    },
+    {
+      "name": "hp004_staged_circuits.qpy",
+      "bytes": 3410432,
+      "checksum": "md5:107b96570d6a07ca6d2863216f06ecf4"
+    },
+    {
+      "name": "hp004_staging_manifest.json",
+      "bytes": 59097,
+      "checksum": "md5:a04a0b0a3fdc81c223297b94f0b7b6d7"
+    },
+    {
+      "name": "hp004_calibration_snapshot.json",
+      "bytes": 3420,
+      "checksum": "md5:8c04a93858de4d57fe5f042d44bf4f07"
+    },
+    {
+      "name": "hp004_submitted_job.json",
+      "bytes": 413,
+      "checksum": "md5:c543686d2ecc48b3be836fd5dffade2e"
+    },
+    {
+      "name": "physical_hp004_results.json",
+      "bytes": 177530,
+      "checksum": "md5:58cdef6f06da2ded6c99120857e4a1ef"
+    },
+    {
+      "name": "hp004b_fez_PRE_REGISTRATION.md",
+      "bytes": 2017,
+      "checksum": "md5:f85d57e91b26adf35ab33fe36d87fbc8"
+    },
+    {
+      "name": "hp004b_fez_RESULT.md",
+      "bytes": 5557,
+      "checksum": "md5:ccdf841a44ccbe02c3869842fe53097a"
+    },
+    {
+      "name": "stage_and_harvest_hp004b_fez.py",
+      "bytes": 26896,
+      "checksum": "md5:7df24fb46bbec342195795844cb3b1a1"
+    },
+    {
+      "name": "hp004b_fez_staged_circuits.qpy",
+      "bytes": 3410432,
+      "checksum": "md5:ffb286cf572288e1790dabc3b981b7a0"
+    },
+    {
+      "name": "hp004b_fez_staging_manifest.json",
+      "bytes": 60466,
+      "checksum": "md5:82df654f6b9902618aff934358b0fee1"
+    },
+    {
+      "name": "hp004b_fez_calibration_snapshot.json",
+      "bytes": 3401,
+      "checksum": "md5:d1d3ef06e5b856f8aad1518573c70977"
+    },
+    {
+      "name": "hp004b_fez_submitted_job.json",
+      "bytes": 485,
+      "checksum": "md5:6a1eeadaa93fcbc8d5bebe7a5eb88a5f"
+    },
+    {
+      "name": "physical_hp004b_fez_results.json",
+      "bytes": 178616,
+      "checksum": "md5:6fcba3038dda851c600a93e4c3fb1437"
+    },
+    {
+      "name": "test_hp004_hardware_artifact.py",
+      "bytes": 3873,
+      "checksum": "md5:9cc0ab62d2b0222ea45bfff388d926f9"
+    },
+    {
+      "name": "test_hp004b_fez_hardware_artifact.py",
+      "bytes": 4793,
+      "checksum": "md5:4c81258c5b34e8b6d7e9e3d288e1aff8"
+    }
+  ]
+}

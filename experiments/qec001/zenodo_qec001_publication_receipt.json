@@ -1,0 +1,99 @@
+{
+  "benchmark_id": "OSIRIS-QEC-001",
+  "job_id": "dbtl2vb2kf8s73c9a0d0",
+  "record_id": 24293756,
+  "doi": "10.5281/zenodo.24293756",
+  "conceptdoi": "10.5281/zenodo.24293755",
+  "doi_url": "https://doi.org/10.5281/zenodo.24293756",
+  "record_html": "https://zenodo.org/record/24293756",
+  "state": "done",
+  "submitted": true,
+  "created": "2026-11-16T22:08:15.165347+00:00",
+  "uploaded_files": [
+    {
+      "name": "qec001_syndrome_scaling_heron_r2.pdf",
+      "bytes": 52609,
+      "checksum": "md5:f2761c02e0d74da727d1ba6f5f1acd44"
+    },
+    {
+      "name": "qec001_syndrome_scaling_heron_r2.tex",
+      "bytes": 15124,
+      "checksum": "md5:1aa86111d35d750e683fcdf802894553"
+    },
+    {
+      "name": "fig1_logical_error_scaling.pdf",
+      "bytes": 17626,
+      "checksum": "md5:46fc3482bea454e139083eeec58440fe"
+    },
+    {
+      "name": "fig2_mwpm_vs_majority_and_defects.pdf",
+      "bytes": 10274,
+      "checksum": "md5:f8c4ad7fff9c0d00680a8e20d1ff0322"
+    },
+    {
+      "name": "fig3_fez_chain_q107_t2_hotspot.pdf",
+      "bytes": 11325,
+      "checksum": "md5:f5a1b6af685a935f4c0d17537e7f1563"
+    },
+    {
+      "name": "SHA256SUMS.txt",
+      "bytes": 1557,
+      "checksum": "md5:f70457618b48229c57dd4adfd910d711"
+    },
+    {
+      "name": "PRE_REGISTRATION.md",
+      "bytes": 3371,
+      "checksum": "md5:a56968834e4b415c574e62a48d647059"
+    },
+    {
+      "name": "RESULT.md",
+      "bytes": 7541,
+      "checksum": "md5:0aed317e71d36963d6d0d5b53ff0cff9"
+    },
+    {
+      "name": "qec001_repetition_scaling.py",
+      "bytes": 28292,
+      "checksum": "md5:02173579efabbe3d092163428c503c95"
+    },
+    {
+      "name": "stage_and_harvest_qec001.py",
+      "bytes": 30449,
+      "checksum": "md5:50d383d5adf634f42c8752546db58a0c"
+    },
+    {
+      "name": "qec001_fez_staged_circuits.qpy",
+      "bytes": 4244708,
+      "checksum": "md5:4993167daf0021ebac3144cf83f2ce21"
+    },
+    {
+      "name": "qec001_fez_staging_manifest.json",
+      "bytes": 87949,
+      "checksum": "md5:0c0fb070fa848cd9a4076479f6ac3164"
+    },
+    {
+      "name": "qec001_fez_calibration_snapshot.json",
+      "bytes": 6923,
+      "checksum": "md5:2a2c87009ee5d3c3eac712076f159f44"
+    },
+    {
+      "name": "qec001_fez_submitted_job.json",
+      "bytes": 485,
+      "checksum": "md5:df2b3ae6e1a9c443b833ced432d8b803"
+    },
+    {
+      "name": "physical_qec001_fez_results.json",
+      "bytes": 158875,
+      "checksum": "md5:222280d939635cff63bfa4a52689935b"
+    },
+    {
+      "name": "physical_qec001_fez_raw_counts.json.gz",
+      "bytes": 444821,
+      "checksum": "md5:3e218fa30756cff3249f80f26b93d701"
+    },
+    {
+      "name": "test_qec001_hardware_artifact.py",
+      "bytes": 5405,
+      "checksum": "md5:6a863b70c0e75779ddf2be53d308cc58"
+    }
+  ]
+}

@@ -1,0 +1,1171 @@
+{
+  "n_testable_snapshots": 28,
+  "n_missing_frequency_snapshots": 4,
+  "missing_frequency_backends": [
+    {
+      "class_name": "FakeFez",
+      "backend_name": "fake_fez",
+      "num_qubits": 156,
+      "snapshot_last_update": "2025-02-26 15:16:25-05:00",
+      "reason": "Per-qubit frequencies absent or unpopulated in bundled Target"
+    },
+    {
+      "class_name": "FakeKingston",
+      "backend_name": "fake_kingston",
+      "num_qubits": 156,
+      "snapshot_last_update": "2026-04-15 09:15:15+02:00",
+      "reason": "Per-qubit frequencies absent or unpopulated in bundled Target"
+    },
+    {
+      "class_name": "FakeMarrakesh",
+      "backend_name": "fake_marrakesh",
+      "num_qubits": 156,
+      "snapshot_last_update": "2025-02-26 14:52:45-05:00",
+      "reason": "Per-qubit frequencies absent or unpopulated in bundled Target"
+    },
+    {
+      "class_name": "FakeTorino",
+      "backend_name": "fake_torino",
+      "num_qubits": 133,
+      "snapshot_last_update": "2025-02-26 15:26:08-05:00",
+      "reason": "Per-qubit frequencies absent or unpopulated in bundled Target"
+    }
+  ],
+  "negative_t1_freq_slope_preserved": {
+    "n_negative_out_of_testable": "27/28",
+    "pooled_slope_us_per_ghz": -56.26,
+    "pooled_se_us_per_ghz": 6.07,
+    "pooled_z": -9.26,
+    "random_effects_dl_slope_us_per_ghz": -114.38,
+    "random_effects_dl_se_us_per_ghz": 18.04,
+    "random_effects_dl_z": -6.34,
+    "between_chip_heterogeneity_i2_pct": 86.3
+  },
+  "electrical_length_identifiability_table": [
+    {
+      "structure": "13-hop heavy-hex subgraph (historical April script)",
+      "length_m": 0.0156,
+      "predicted_period_ghz": 3.5256,
+      "cycles_in_0p58ghz_band": 0.165,
+      "identifiable_after_linear_trend": false
+    },
+    {
+      "structure": "26-hop 127Q Eagle graph diameter (`--hops graph`)",
+      "length_m": 0.0312,
+      "predicted_period_ghz": 1.7628,
+      "cycles_in_0p58ghz_band": 0.329,
+      "identifiable_after_linear_trend": false
+    },
+    {
+      "structure": "On-chip readout/Purcell lambda/2 resonator (~6-10 mm CPW)",
+      "length_m": 0.008,
+      "predicted_period_ghz": 6.875,
+      "cycles_in_0p58ghz_band": 0.084,
+      "identifiable_after_linear_trend": false
+    },
+    {
+      "structure": "Cryogenic package-to-MXC coaxial cable (~0.50 m PTFE, v_p ~ 2.0e8 m/s)",
+      "length_m": 0.5,
+      "predicted_period_ghz": 0.2,
+      "cycles_in_0p58ghz_band": 2.9,
+      "identifiable_after_linear_trend": true
+    }
+  ],
+  "n_devices_where_M3_wins_bic": 1,
+  "n_devices_where_M3a_improves_cv_by_1us": 1,
+  "mechanism_classification": "INCONCLUSIVE",
+  "per_device_results": [
+    {
+      "backend": "fake_almaden",
+      "snapshot_last_update": "2020-08-10 02:28:54-04:00",
+      "n_qubits": 20,
+      "freq_band_ghz": [
+        4.6568,
+        5.0713
+      ],
+      "bandwidth_ghz": 0.4145,
+      "cycles_spanned_at_3p526ghz": 0.1176,
+      "mean_t1_us": 86.78,
+      "linear_slope_us_per_ghz": -87.69,
+      "linear_slope_se": 84.16,
+      "linear_slope_p_two_sided": 0.31127162124032454,
+      "collinearity_r2_cos_vs_linear": 0.98715,
+      "collinearity_vif_after_linear": 77.82,
+      "collinearity_vif_after_quadratic": 15790.85,
+      "mde_80pct_after_linear_us": 1811.99,
+      "mde_80pct_over_mean_t1": 20.88,
+      "bic_by_model": {
+        "M0_linear": 155.33,
+        "M1_quadratic": 158.15,
+        "M3a_fixed_phase_3p526": 158.2,
+        "M3b_fixed_phase_1p763": 157.76,
+        "M3c_harmonic_3p526": 160.37
+      },
+      "best_bic_model": "M0_linear",
+      "held_out_5fold_cv_rmse_us": {
+        "M0_linear": 42.773,
+        "M1_quadratic": 44.396,
+        "M2_huber_local_loss": 42.561,
+        "M3a_fixed_phase_3p526": 44.22,
+        "M3b_fixed_phase_1p763": 46.379,
+        "M3c_harmonic_3p526": 60.664
+      },
+      "best_cv_model": "M2_huber_local_loss",
+      "spatial_qubit_index_t1_corr_r": -0.094,
+      "spatial_qubit_index_t1_p": 0.694326288397075
+    },
+    {
+      "backend": "fake_boeblingen",
+      "snapshot_last_update": "2021-02-03 21:40:50-05:00",
+      "n_qubits": 20,
+      "freq_band_ghz": [
+        4.3661,
+        5.0466
+      ],
+      "bandwidth_ghz": 0.6805,
+      "cycles_spanned_at_3p526ghz": 0.193,
+      "mean_t1_us": 72.77,
+      "linear_slope_us_per_ghz": 17.33,
+      "linear_slope_se": 22.22,
+      "linear_slope_p_two_sided": 0.44553446856858475,
+      "collinearity_r2_cos_vs_linear": 0.98495,
+      "collinearity_vif_after_linear": 66.43,
+      "collinearity_vif_after_quadratic": 1962.05,
+      "mde_80pct_after_linear_us": 385.91,
+      "mde_80pct_over_mean_t1": 5.303,
+      "bic_by_model": {
+        "M0_linear": 120.35,
+        "M1_quadratic": 121.33,
+        "M3a_fixed_phase_3p526": 120.43,
+        "M3b_fixed_phase_1p763": 122.95,
+        "M3c_harmonic_3p526": 121.41
+      },
+      "best_bic_model": "M0_linear",
+      "held_out_5fold_cv_rmse_us": {
+        "M0_linear": 17.692,
+        "M1_quadratic": 18.081,
+        "M2_huber_local_loss": 17.811,
+        "M3a_fixed_phase_3p526": 17.202,
+        "M3b_fixed_phase_1p763": 21.372,
+        "M3c_harmonic_3p526": 16.871
+      },
+      "best_cv_model": "M3c_harmonic_3p526",
+      "spatial_qubit_index_t1_corr_r": 0.373,
+      "spatial_qubit_index_t1_p": 0.1057184619213555
+    },
+    {
+      "backend": "fake_brisbane",
+      "snapshot_last_update": "2025-02-26 14:33:06-05:00",
+      "n_qubits": 127,
+      "freq_band_ghz": [
+        4.6097,
+        5.1177
+      ],
+      "bandwidth_ghz": 0.508,
+      "cycles_spanned_at_3p526ghz": 0.1441,
+      "mean_t1_us": 233.71,
+      "linear_slope_us_per_ghz": -131.38,
+      "linear_slope_se": 64.16,
+      "linear_slope_p_two_sided": 0.04268619105579866,
+      "collinearity_r2_cos_vs_linear": 0.98097,
+      "collinearity_vif_after_linear": 52.55,
+      "collinearity_vif_after_quadratic": 8481.55,
+      "mde_80pct_after_linear_us": 1130.13,
+      "mde_80pct_over_mean_t1": 4.836,
+      "bic_by_model": {
+        "M0_linear": 1121.36,
+        "M1_quadratic": 1125.97,
+        "M3a_fixed_phase_3p526": 1125.94,
+        "M3b_fixed_phase_1p763": 1125.88,
+        "M3c_harmonic_3p526": 1130.68
+      },
+      "best_bic_model": "M0_linear",
+      "held_out_5fold_cv_rmse_us": {
+        "M0_linear": 79.572,
+        "M1_quadratic": 79.646,
+        "M2_huber_local_loss": 79.453,
+        "M3a_fixed_phase_3p526": 79.641,
+        "M3b_fixed_phase_1p763": 79.848,
+        "M3c_harmonic_3p526": 80.056
+      },
+      "best_cv_model": "M2_huber_local_loss",
+      "spatial_qubit_index_t1_corr_r": -0.303,
+      "spatial_qubit_index_t1_p": 0.0005348615031323988
+    },
+    {
+      "backend": "fake_brooklyn",
+      "snapshot_last_update": "2021-07-26 12:05:50-04:00",
+      "n_qubits": 65,
+      "freq_band_ghz": [
+        4.8138,
+        5.4012
+      ],
+      "bandwidth_ghz": 0.5874,
+      "cycles_spanned_at_3p526ghz": 0.1666,
+      "mean_t1_us": 64.19,
+      "linear_slope_us_per_ghz": -45.59,
+      "linear_slope_se": 15.49,
+      "linear_slope_p_two_sided": 0.00455158415941868,
+      "collinearity_r2_cos_vs_linear": 0.83177,
+      "collinearity_vif_after_linear": 5.94,
+      "collinearity_vif_after_quadratic": 5643.75,
+      "mde_80pct_after_linear_us": 192.08,
+      "mde_80pct_over_mean_t1": 2.992,
+      "bic_by_model": {
+        "M0_linear": 371.94,
+        "M1_quadratic": 374.63,
+        "M3a_fixed_phase_3p526": 374.51,
+        "M3b_fixed_phase_1p763": 374.11,
+        "M3c_harmonic_3p526": 376.23
+      },
+      "best_bic_model": "M0_linear",
+      "held_out_5fold_cv_rmse_us": {
+        "M0_linear": 16.386,
+        "M1_quadratic": 16.351,
+        "M2_huber_local_loss": 16.33,
+        "M3a_fixed_phase_3p526": 16.337,
+        "M3b_fixed_phase_1p763": 16.277,
+        "M3c_harmonic_3p526": 16.157
+      },
+      "best_cv_model": "M3c_harmonic_3p526",
+      "spatial_qubit_index_t1_corr_r": -0.072,
+      "spatial_qubit_index_t1_p": 0.5668539178215968
+    },
+    {
+      "backend": "fake_brussels",
+      "snapshot_last_update": "2026-04-17 07:27:08+02:00",
+      "n_qubits": 127,
+      "freq_band_ghz": [
+        4.5318,
+        5.0671
+      ],
+      "bandwidth_ghz": 0.5353,
+      "cycles_spanned_at_3p526ghz": 0.1518,
+      "mean_t1_us": 243.89,
+      "linear_slope_us_per_ghz": -400.44,
+      "linear_slope_se": 70.18,
+      "linear_slope_p_two_sided": 7.944851525510995e-08,
+      "collinearity_r2_cos_vs_linear": 0.9893,
+      "collinearity_vif_after_linear": 93.46,
+      "collinearity_vif_after_quadratic": 9411.48,
+      "mde_80pct_after_linear_us": 1414.17,
+      "mde_80pct_over_mean_t1": 5.798,
+      "bic_by_model": {
+        "M0_linear": 1155.91,
+        "M1_quadratic": 1160.41,
+        "M3a_fixed_phase_3p526": 1160.12,
+        "M3b_fixed_phase_1p763": 1159.88,
+        "M3c_harmonic_3p526": 1160.67
+      },
+      "best_bic_model": "M0_linear",
+      "held_out_5fold_cv_rmse_us": {
+        "M0_linear": 93.322,
+        "M1_quadratic": 93.971,
+        "M2_huber_local_loss": 93.496,
+        "M3a_fixed_phase_3p526": 93.875,
+        "M3b_fixed_phase_1p763": 94.378,
+        "M3c_harmonic_3p526": 93.511
+      },
+      "best_cv_model": "M0_linear",
+      "spatial_qubit_index_t1_corr_r": -0.397,
+      "spatial_qubit_index_t1_p": 3.878274962721224e-06
+    },
+    {
+      "backend": "fake_cairo",
+      "snapshot_last_update": "2024-03-25 12:22:31-03:00",
+      "n_qubits": 27,
+      "freq_band_ghz": [
+        4.9111,
+        5.2844
+      ],
+      "bandwidth_ghz": 0.3734,
+      "cycles_spanned_at_3p526ghz": 0.1059,
+      "mean_t1_us": 88.94,
+      "linear_slope_us_per_ghz": -36.67,
+      "linear_slope_se": 51.32,
+      "linear_slope_p_two_sided": 0.4815414553066644,
+      "collinearity_r2_cos_vs_linear": 0.93015,
+      "collinearity_vif_after_linear": 14.32,
+      "collinearity_vif_after_quadratic": 34331.54,
+      "mde_80pct_after_linear_us": 1020.56,
+      "mde_80pct_over_mean_t1": 11.475,
+      "bic_by_model": {
+        "M0_linear": 190.7,
+        "M1_quadratic": 193.71,
+        "M3a_fixed_phase_3p526": 193.71,
+        "M3b_fixed_phase_1p763": 193.72,
+        "M3c_harmonic_3p526": 196.97
+      },
+      "best_bic_model": "M0_linear",
+      "held_out_5fold_cv_rmse_us": {
+        "M0_linear": 30.289,
+        "M1_quadratic": 30.162,
+        "M2_huber_local_loss": 30.239,
+        "M3a_fixed_phase_3p526": 30.159,
+        "M3b_fixed_phase_1p763": 30.153,
+        "M3c_harmonic_3p526": 31.295
+      },
+      "best_cv_model": "M3b_fixed_phase_1p763",
+      "spatial_qubit_index_t1_corr_r": 0.182,
+      "spatial_qubit_index_t1_p": 0.363103333479276
+    },
+    {
+      "backend": "fake_cambridge",
+      "snapshot_last_update": "2020-07-16 17:01:14+00:00",
+      "n_qubits": 28,
+      "freq_band_ghz": [
+        4.7824,
+        5.1763
+      ],
+      "bandwidth_ghz": 0.3939,
+      "cycles_spanned_at_3p526ghz": 0.1117,
+      "mean_t1_us": 82.93,
+      "linear_slope_us_per_ghz": -29.19,
+      "linear_slope_se": 47.11,
+      "linear_slope_p_two_sided": 0.5409826039785192,
+      "collinearity_r2_cos_vs_linear": 0.96795,
+      "collinearity_vif_after_linear": 31.2,
+      "collinearity_vif_after_quadratic": 20761.62,
+      "mde_80pct_after_linear_us": 874.74,
+      "mde_80pct_over_mean_t1": 10.548,
+      "bic_by_model": {
+        "M0_linear": 183.54,
+        "M1_quadratic": 185.43,
+        "M3a_fixed_phase_3p526": 185.34,
+        "M3b_fixed_phase_1p763": 184.97,
+        "M3c_harmonic_3p526": 188.0
+      },
+      "best_bic_model": "M0_linear",
+      "held_out_5fold_cv_rmse_us": {
+        "M0_linear": 23.996,
+        "M1_quadratic": 25.381,
+        "M2_huber_local_loss": 23.453,
+        "M3a_fixed_phase_3p526": 25.294,
+        "M3b_fixed_phase_1p763": 25.147,
+        "M3c_harmonic_3p526": 26.525
+      },
+      "best_cv_model": "M2_huber_local_loss",
+      "spatial_qubit_index_t1_corr_r": 0.001,
+      "spatial_qubit_index_t1_p": 0.9951689937896193
+    },
+    {
+      "backend": "fake_cusco",
+      "snapshot_last_update": "2025-02-26 15:35:12-05:00",
+      "n_qubits": 127,
+      "freq_band_ghz": [
+        4.8067,
+        5.4626
+      ],
+      "bandwidth_ghz": 0.6559,
+      "cycles_spanned_at_3p526ghz": 0.186,
+      "mean_t1_us": 136.15,
+      "linear_slope_us_per_ghz": -226.1,
+      "linear_slope_se": 38.64,
+      "linear_slope_p_two_sided": 4.016636947502836e-08,
+      "collinearity_r2_cos_vs_linear": 0.72594,
+      "collinearity_vif_after_linear": 3.65,
+      "collinearity_vif_after_quadratic": 4012.48,
+      "mde_80pct_after_linear_us": 431.48,
+      "mde_80pct_over_mean_t1": 3.169,
+      "bic_by_model": {
+        "M0_linear": 1043.4,
+        "M1_quadratic": 1046.73,
+        "M3a_fixed_phase_3p526": 1046.68,
+        "M3b_fixed_phase_1p763": 1046.53,
+        "M3c_harmonic_3p526": 1051.16
+      },
+      "best_bic_model": "M0_linear",
+      "held_out_5fold_cv_rmse_us": {
+        "M0_linear": 58.197,
+        "M1_quadratic": 58.174,
+        "M2_huber_local_loss": 58.265,
+        "M3a_fixed_phase_3p526": 58.155,
+        "M3b_fixed_phase_1p763": 58.101,
+        "M3c_harmonic_3p526": 58.318
+      },
+      "best_cv_model": "M3b_fixed_phase_1p763",
+      "spatial_qubit_index_t1_corr_r": -0.485,
+      "spatial_qubit_index_t1_p": 7.56056455816011e-09
+    },
+    {
+      "backend": "fake_hanoi",
+      "snapshot_last_update": "2025-02-26 15:13:14-05:00",
+      "n_qubits": 27,
+      "freq_band_ghz": [
+        4.7186,
+        5.2563
+      ],
+      "bandwidth_ghz": 0.5378,
+      "cycles_spanned_at_3p526ghz": 0.1525,
+      "mean_t1_us": 136.55,
+      "linear_slope_us_per_ghz": -108.56,
+      "linear_slope_se": 65.67,
+      "linear_slope_p_two_sided": 0.11079388635757388,
+      "collinearity_r2_cos_vs_linear": 0.93976,
+      "collinearity_vif_after_linear": 16.6,
+      "collinearity_vif_after_quadratic": 5843.59,
+      "mde_80pct_after_linear_us": 912.24,
+      "mde_80pct_over_mean_t1": 6.681,
+      "bic_by_model": {
+        "M0_linear": 213.19,
+        "M1_quadratic": 216.37,
+        "M3a_fixed_phase_3p526": 216.28,
+        "M3b_fixed_phase_1p763": 215.47,
+        "M3c_harmonic_3p526": 214.32
+      },
+      "best_bic_model": "M0_linear",
+      "held_out_5fold_cv_rmse_us": {
+        "M0_linear": 44.965,
+        "M1_quadratic": 49.606,
+        "M2_huber_local_loss": 44.883,
+        "M3a_fixed_phase_3p526": 49.431,
+        "M3b_fixed_phase_1p763": 48.112,
+        "M3c_harmonic_3p526": 48.149
+      },
+      "best_cv_model": "M2_huber_local_loss",
+      "spatial_qubit_index_t1_corr_r": 0.034,
+      "spatial_qubit_index_t1_p": 0.8662934325775647
+    },
+    {
+      "backend": "fake_johannesburg",
+      "snapshot_last_update": "2020-08-09 14:09:32-04:00",
+      "n_qubits": 20,
+      "freq_band_ghz": [
+        4.3351,
+        5.0226
+      ],
+      "bandwidth_ghz": 0.6875,
+      "cycles_spanned_at_3p526ghz": 0.195,
+      "mean_t1_us": 55.54,
+      "linear_slope_us_per_ghz": -34.02,
+      "linear_slope_se": 21.92,
+      "linear_slope_p_two_sided": 0.13801583091300385,
+      "collinearity_r2_cos_vs_linear": 0.98821,
+      "collinearity_vif_after_linear": 84.81,
+      "collinearity_vif_after_quadratic": 2093.59,
+      "mde_80pct_after_linear_us": 401.31,
+      "mde_80pct_over_mean_t1": 7.225,
+      "bic_by_model": {
+        "M0_linear": 116.64,
+        "M1_quadratic": 117.37,
+        "M3a_fixed_phase_3p526": 118.31,
+        "M3b_fixed_phase_1p763": 115.53,
+        "M3c_harmonic_3p526": 117.47
+      },
+      "best_bic_model": "M3b_fixed_phase_1p763",
+      "held_out_5fold_cv_rmse_us": {
+        "M0_linear": 16.49,
+        "M1_quadratic": 18.174,
+        "M2_huber_local_loss": 16.335,
+        "M3a_fixed_phase_3p526": 20.29,
+        "M3b_fixed_phase_1p763": 18.051,
+        "M3c_harmonic_3p526": 25.356
+      },
+      "best_cv_model": "M2_huber_local_loss",
+      "spatial_qubit_index_t1_corr_r": 0.172,
+      "spatial_qubit_index_t1_p": 0.4687873836008707
+    },
+    {
+      "backend": "fake_kawasaki",
+      "snapshot_last_update": "2025-02-26 13:56:01-05:00",
+      "n_qubits": 127,
+      "freq_band_ghz": [
+        4.9042,
+        5.5836
+      ],
+      "bandwidth_ghz": 0.6794,
+      "cycles_spanned_at_3p526ghz": 0.1927,
+      "mean_t1_us": 194.45,
+      "linear_slope_us_per_ghz": -140.98,
+      "linear_slope_se": 37.16,
+      "linear_slope_p_two_sided": 0.00022976957027974926,
+      "collinearity_r2_cos_vs_linear": 0.27351,
+      "collinearity_vif_after_linear": 1.38,
+      "collinearity_vif_after_quadratic": 7995.65,
+      "mde_80pct_after_linear_us": 398.74,
+      "mde_80pct_over_mean_t1": 2.051,
+      "bic_by_model": {
+        "M0_linear": 1028.35,
+        "M1_quadratic": 1033.17,
+        "M3a_fixed_phase_3p526": 1033.18,
+        "M3b_fixed_phase_1p763": 1033.19,
+        "M3c_harmonic_3p526": 1037.09
+      },
+      "best_bic_model": "M0_linear",
+      "held_out_5fold_cv_rmse_us": {
+        "M0_linear": 54.588,
+        "M1_quadratic": 54.907,
+        "M2_huber_local_loss": 54.466,
+        "M3a_fixed_phase_3p526": 54.908,
+        "M3b_fixed_phase_1p763": 54.907,
+        "M3c_harmonic_3p526": 55.319
+      },
+      "best_cv_model": "M2_huber_local_loss",
+      "spatial_qubit_index_t1_corr_r": -0.095,
+      "spatial_qubit_index_t1_p": 0.28924221800579697
+    },
+    {
+      "backend": "fake_kolkata",
+      "snapshot_last_update": "2021-12-09 13:31:31-05:00",
+      "n_qubits": 27,
+      "freq_band_ghz": [
+        4.8686,
+        5.268
+      ],
+      "bandwidth_ghz": 0.3993,
+      "cycles_spanned_at_3p526ghz": 0.1133,
+      "mean_t1_us": 109.9,
+      "linear_slope_us_per_ghz": -26.77,
+      "linear_slope_se": 54.48,
+      "linear_slope_p_two_sided": 0.6274913980744846,
+      "collinearity_r2_cos_vs_linear": 0.94489,
+      "collinearity_vif_after_linear": 18.14,
+      "collinearity_vif_after_quadratic": 24340.62,
+      "mde_80pct_after_linear_us": 1012.42,
+      "mde_80pct_over_mean_t1": 9.212,
+      "bic_by_model": {
+        "M0_linear": 193.51,
+        "M1_quadratic": 195.95,
+        "M3a_fixed_phase_3p526": 196.02,
+        "M3b_fixed_phase_1p763": 196.27,
+        "M3c_harmonic_3p526": 197.52
+      },
+      "best_bic_model": "M0_linear",
+      "held_out_5fold_cv_rmse_us": {
+        "M0_linear": 37.01,
+        "M1_quadratic": 39.126,
+        "M2_huber_local_loss": 35.522,
+        "M3a_fixed_phase_3p526": 39.067,
+        "M3b_fixed_phase_1p763": 38.856,
+        "M3c_harmonic_3p526": 40.948
+      },
+      "best_cv_model": "M2_huber_local_loss",
+      "spatial_qubit_index_t1_corr_r": 0.149,
+      "spatial_qubit_index_t1_p": 0.45759637083562305
+    },
+    {
+      "backend": "fake_kyiv",
+      "snapshot_last_update": "2025-02-26 11:02:56-05:00",
+      "n_qubits": 127,
+      "freq_band_ghz": [
+        4.3413,
+        4.9589
+      ],
+      "bandwidth_ghz": 0.6176,
+      "cycles_spanned_at_3p526ghz": 0.1752,
+      "mean_t1_us": 292.04,
+      "linear_slope_us_per_ghz": -407.21,
+      "linear_slope_se": 62.49,
+      "linear_slope_p_two_sided": 1.5971323709319741e-09,
+      "collinearity_r2_cos_vs_linear": 0.9961,
+      "collinearity_vif_after_linear": 256.49,
+      "collinearity_vif_after_quadratic": 4829.86,
+      "mde_80pct_after_linear_us": 1757.82,
+      "mde_80pct_over_mean_t1": 6.019,
+      "bic_by_model": {
+        "M0_linear": 1120.86,
+        "M1_quadratic": 1125.41,
+        "M3a_fixed_phase_3p526": 1125.67,
+        "M3b_fixed_phase_1p763": 1124.8,
+        "M3c_harmonic_3p526": 1127.64
+      },
+      "best_bic_model": "M0_linear",
+      "held_out_5fold_cv_rmse_us": {
+        "M0_linear": 79.158,
+        "M1_quadratic": 79.63,
+        "M2_huber_local_loss": 78.956,
+        "M3a_fixed_phase_3p526": 79.743,
+        "M3b_fixed_phase_1p763": 79.72,
+        "M3c_harmonic_3p526": 80.976
+      },
+      "best_cv_model": "M2_huber_local_loss",
+      "spatial_qubit_index_t1_corr_r": -0.522,
+      "spatial_qubit_index_t1_p": 3.1720971518130766e-10
+    },
+    {
+      "backend": "fake_kyoto",
+      "snapshot_last_update": "2024-02-28 06:38:20-05:00",
+      "n_qubits": 127,
+      "freq_band_ghz": [
+        4.7046,
+        5.2507
+      ],
+      "bandwidth_ghz": 0.5461,
+      "cycles_spanned_at_3p526ghz": 0.1549,
+      "mean_t1_us": 216.95,
+      "linear_slope_us_per_ghz": -196.03,
+      "linear_slope_se": 44.9,
+      "linear_slope_p_two_sided": 2.6265895084880103e-05,
+      "collinearity_r2_cos_vs_linear": 0.95754,
+      "collinearity_vif_after_linear": 23.55,
+      "collinearity_vif_after_quadratic": 8176.17,
+      "mde_80pct_after_linear_us": 649.95,
+      "mde_80pct_over_mean_t1": 2.996,
+      "bic_by_model": {
+        "M0_linear": 1074.8,
+        "M1_quadratic": 1079.03,
+        "M3a_fixed_phase_3p526": 1079.07,
+        "M3b_fixed_phase_1p763": 1079.3,
+        "M3c_harmonic_3p526": 1083.64
+      },
+      "best_bic_model": "M0_linear",
+      "held_out_5fold_cv_rmse_us": {
+        "M0_linear": 65.641,
+        "M1_quadratic": 66.438,
+        "M2_huber_local_loss": 65.806,
+        "M3a_fixed_phase_3p526": 66.428,
+        "M3b_fixed_phase_1p763": 66.34,
+        "M3c_harmonic_3p526": 66.77
+      },
+      "best_cv_model": "M0_linear",
+      "spatial_qubit_index_t1_corr_r": -0.262,
+      "spatial_qubit_index_t1_p": 0.002912437136684473
+    },
+    {
+      "backend": "fake_manhattan",
+      "snapshot_last_update": "2021-03-15 14:32:56-04:00",
+      "n_qubits": 65,
+      "freq_band_ghz": [
+        4.5449,
+        5.0299
+      ],
+      "bandwidth_ghz": 0.485,
+      "cycles_spanned_at_3p526ghz": 0.1376,
+      "mean_t1_us": 59.22,
+      "linear_slope_us_per_ghz": -6.83,
+      "linear_slope_se": 18.15,
+      "linear_slope_p_two_sided": 0.70798637711251,
+      "collinearity_r2_cos_vs_linear": 0.9907,
+      "collinearity_vif_after_linear": 107.54,
+      "collinearity_vif_after_quadratic": 11591.47,
+      "mde_80pct_after_linear_us": 397.87,
+      "mde_80pct_over_mean_t1": 6.719,
+      "bic_by_model": {
+        "M0_linear": 373.12,
+        "M1_quadratic": 377.09,
+        "M3a_fixed_phase_3p526": 377.01,
+        "M3b_fixed_phase_1p763": 377.26,
+        "M3c_harmonic_3p526": 380.48
+      },
+      "best_bic_model": "M0_linear",
+      "held_out_5fold_cv_rmse_us": {
+        "M0_linear": 16.473,
+        "M1_quadratic": 17.094,
+        "M2_huber_local_loss": 16.547,
+        "M3a_fixed_phase_3p526": 17.097,
+        "M3b_fixed_phase_1p763": 17.054,
+        "M3c_harmonic_3p526": 17.431
+      },
+      "best_cv_model": "M0_linear",
+      "spatial_qubit_index_t1_corr_r": 0.022,
+      "spatial_qubit_index_t1_p": 0.8648810986456927
+    },
+    {
+      "backend": "fake_montreal",
+      "snapshot_last_update": "2021-03-15 15:02:06-04:00",
+      "n_qubits": 27,
+      "freq_band_ghz": [
+        4.8347,
+        5.1049
+      ],
+      "bandwidth_ghz": 0.2702,
+      "cycles_spanned_at_3p526ghz": 0.0766,
+      "mean_t1_us": 99.76,
+      "linear_slope_us_per_ghz": -47.91,
+      "linear_slope_se": 59.71,
+      "linear_slope_p_two_sided": 0.42992544409751615,
+      "collinearity_r2_cos_vs_linear": 0.98803,
+      "collinearity_vif_after_linear": 83.57,
+      "collinearity_vif_after_quadratic": 114412.29,
+      "mde_80pct_after_linear_us": 1752.76,
+      "mde_80pct_over_mean_t1": 17.57,
+      "bic_by_model": {
+        "M0_linear": 174.41,
+        "M1_quadratic": 176.97,
+        "M3a_fixed_phase_3p526": 176.95,
+        "M3b_fixed_phase_1p763": 176.83,
+        "M3c_harmonic_3p526": 179.95
+      },
+      "best_bic_model": "M0_linear",
+      "held_out_5fold_cv_rmse_us": {
+        "M0_linear": 22.434,
+        "M1_quadratic": 22.515,
+        "M2_huber_local_loss": 22.359,
+        "M3a_fixed_phase_3p526": 22.506,
+        "M3b_fixed_phase_1p763": 22.47,
+        "M3c_harmonic_3p526": 23.646
+      },
+      "best_cv_model": "M2_huber_local_loss",
+      "spatial_qubit_index_t1_corr_r": -0.254,
+      "spatial_qubit_index_t1_p": 0.20100330954153733
+    },
+    {
+      "backend": "fake_mumbai",
+      "snapshot_last_update": "2021-03-13 10:58:26-05:00",
+      "n_qubits": 27,
+      "freq_band_ghz": [
+        4.6643,
+        5.0735
+      ],
+      "bandwidth_ghz": 0.4091,
+      "cycles_spanned_at_3p526ghz": 0.116,
+      "mean_t1_us": 115.0,
+      "linear_slope_us_per_ghz": -29.94,
+      "linear_slope_se": 49.27,
+      "linear_slope_p_two_sided": 0.5488948457643525,
+      "collinearity_r2_cos_vs_linear": 0.98893,
+      "collinearity_vif_after_linear": 90.3,
+      "collinearity_vif_after_quadratic": 19857.2,
+      "mde_80pct_after_linear_us": 1131.69,
+      "mde_80pct_over_mean_t1": 9.841,
+      "bic_by_model": {
+        "M0_linear": 191.01,
+        "M1_quadratic": 194.21,
+        "M3a_fixed_phase_3p526": 194.17,
+        "M3b_fixed_phase_1p763": 193.55,
+        "M3c_harmonic_3p526": 196.82
+      },
+      "best_bic_model": "M0_linear",
+      "held_out_5fold_cv_rmse_us": {
+        "M0_linear": 31.855,
+        "M1_quadratic": 33.161,
+        "M2_huber_local_loss": 31.567,
+        "M3a_fixed_phase_3p526": 33.261,
+        "M3b_fixed_phase_1p763": 37.24,
+        "M3c_harmonic_3p526": 38.459
+      },
+      "best_cv_model": "M2_huber_local_loss",
+      "spatial_qubit_index_t1_corr_r": 0.085,
+      "spatial_qubit_index_t1_p": 0.6717392326801417
+    },
+    {
+      "backend": "fake_osaka",
+      "snapshot_last_update": "2024-02-28 04:34:29-05:00",
+      "n_qubits": 127,
+      "freq_band_ghz": [
+        4.568,
+        5.1283
+      ],
+      "bandwidth_ghz": 0.5603,
+      "cycles_spanned_at_3p526ghz": 0.1589,
+      "mean_t1_us": 281.0,
+      "linear_slope_us_per_ghz": -212.84,
+      "linear_slope_se": 73.21,
+      "linear_slope_p_two_sided": 0.004315553468278198,
+      "collinearity_r2_cos_vs_linear": 0.98233,
+      "collinearity_vif_after_linear": 56.59,
+      "collinearity_vif_after_quadratic": 8116.27,
+      "mde_80pct_after_linear_us": 1259.96,
+      "mde_80pct_over_mean_t1": 4.484,
+      "bic_by_model": {
+        "M0_linear": 1164.52,
+        "M1_quadratic": 1167.93,
+        "M3a_fixed_phase_3p526": 1167.81,
+        "M3b_fixed_phase_1p763": 1168.69,
+        "M3c_harmonic_3p526": 1172.42
+      },
+      "best_bic_model": "M0_linear",
+      "held_out_5fold_cv_rmse_us": {
+        "M0_linear": 96.131,
+        "M1_quadratic": 95.858,
+        "M2_huber_local_loss": 95.793,
+        "M3a_fixed_phase_3p526": 95.853,
+        "M3b_fixed_phase_1p763": 97.288,
+        "M3c_harmonic_3p526": 96.743
+      },
+      "best_cv_model": "M2_huber_local_loss",
+      "spatial_qubit_index_t1_corr_r": -0.134,
+      "spatial_qubit_index_t1_p": 0.13324123013387093
+    },
+    {
+      "backend": "fake_paris",
+      "snapshot_last_update": "2021-03-15 14:03:31-04:00",
+      "n_qubits": 27,
+      "freq_band_ghz": [
+        4.7628,
+        5.2016
+      ],
+      "bandwidth_ghz": 0.4388,
+      "cycles_spanned_at_3p526ghz": 0.1244,
+      "mean_t1_us": 79.81,
+      "linear_slope_us_per_ghz": -15.29,
+      "linear_slope_se": 43.04,
+      "linear_slope_p_two_sided": 0.7253150909358017,
+      "collinearity_r2_cos_vs_linear": 0.96993,
+      "collinearity_vif_after_linear": 33.26,
+      "collinearity_vif_after_quadratic": 17433.11,
+      "mde_80pct_after_linear_us": 795.21,
+      "mde_80pct_over_mean_t1": 9.964,
+      "bic_by_model": {
+        "M0_linear": 184.27,
+        "M1_quadratic": 187.53,
+        "M3a_fixed_phase_3p526": 187.52,
+        "M3b_fixed_phase_1p763": 187.47,
+        "M3c_harmonic_3p526": 190.53
+      },
+      "best_bic_model": "M0_linear",
+      "held_out_5fold_cv_rmse_us": {
+        "M0_linear": 27.209,
+        "M1_quadratic": 28.822,
+        "M2_huber_local_loss": 27.567,
+        "M3a_fixed_phase_3p526": 28.951,
+        "M3b_fixed_phase_1p763": 29.634,
+        "M3c_harmonic_3p526": 31.07
+      },
+      "best_cv_model": "M0_linear",
+      "spatial_qubit_index_t1_corr_r": 0.258,
+      "spatial_qubit_index_t1_p": 0.19422090347960616
+    },
+    {
+      "backend": "fake_poughkeepsie",
+      "snapshot_last_update": "2020-02-29 22:55:32+00:00",
+      "n_qubits": 20,
+      "freq_band_ghz": [
+        4.5148,
+        5.1014
+      ],
+      "bandwidth_ghz": 0.5865,
+      "cycles_spanned_at_3p526ghz": 0.1664,
+      "mean_t1_us": 64.13,
+      "linear_slope_us_per_ghz": -5.67,
+      "linear_slope_se": 19.46,
+      "linear_slope_p_two_sided": 0.7741171697261348,
+      "collinearity_r2_cos_vs_linear": 0.98139,
+      "collinearity_vif_after_linear": 53.72,
+      "collinearity_vif_after_quadratic": 4469.86,
+      "mde_80pct_after_linear_us": 334.78,
+      "mde_80pct_over_mean_t1": 5.22,
+      "bic_by_model": {
+        "M0_linear": 109.76,
+        "M1_quadratic": 107.81,
+        "M3a_fixed_phase_3p526": 108.38,
+        "M3b_fixed_phase_1p763": 108.85,
+        "M3c_harmonic_3p526": 109.74
+      },
+      "best_bic_model": "M1_quadratic",
+      "held_out_5fold_cv_rmse_us": {
+        "M0_linear": 13.157,
+        "M1_quadratic": 12.063,
+        "M2_huber_local_loss": 13.671,
+        "M3a_fixed_phase_3p526": 12.139,
+        "M3b_fixed_phase_1p763": 13.585,
+        "M3c_harmonic_3p526": 12.453
+      },
+      "best_cv_model": "M1_quadratic",
+      "spatial_qubit_index_t1_corr_r": 0.351,
+      "spatial_qubit_index_t1_p": 0.1292948925052428
+    },
+    {
+      "backend": "fake_quebec",
+      "snapshot_last_update": "2025-02-26 15:40:55-05:00",
+      "n_qubits": 127,
+      "freq_band_ghz": [
+        4.6345,
+        5.1986
+      ],
+      "bandwidth_ghz": 0.5641,
+      "cycles_spanned_at_3p526ghz": 0.16,
+      "mean_t1_us": 303.85,
+      "linear_slope_us_per_ghz": -465.36,
+      "linear_slope_se": 78.28,
+      "linear_slope_p_two_sided": 2.573783877903222e-08,
+      "collinearity_r2_cos_vs_linear": 0.97349,
+      "collinearity_vif_after_linear": 37.73,
+      "collinearity_vif_after_quadratic": 7138.56,
+      "mde_80pct_after_linear_us": 1245.76,
+      "mde_80pct_over_mean_t1": 4.1,
+      "bic_by_model": {
+        "M0_linear": 1181.5,
+        "M1_quadratic": 1184.63,
+        "M3a_fixed_phase_3p526": 1184.67,
+        "M3b_fixed_phase_1p763": 1185.46,
+        "M3c_harmonic_3p526": 1189.39
+      },
+      "best_bic_model": "M0_linear",
+      "held_out_5fold_cv_rmse_us": {
+        "M0_linear": 101.349,
+        "M1_quadratic": 102.057,
+        "M2_huber_local_loss": 101.131,
+        "M3a_fixed_phase_3p526": 102.079,
+        "M3b_fixed_phase_1p763": 102.057,
+        "M3c_harmonic_3p526": 102.561
+      },
+      "best_cv_model": "M2_huber_local_loss",
+      "spatial_qubit_index_t1_corr_r": -0.358,
+      "spatial_qubit_index_t1_p": 3.611994244010888e-05
+    },
+    {
+      "backend": "fake_rochester",
+      "snapshot_last_update": "2020-07-16 11:13:03+00:00",
+      "n_qubits": 53,
+      "freq_band_ghz": [
+        4.8748,
+        5.2107
+      ],
+      "bandwidth_ghz": 0.3359,
+      "cycles_spanned_at_3p526ghz": 0.0953,
+      "mean_t1_us": 51.67,
+      "linear_slope_us_per_ghz": -37.58,
+      "linear_slope_se": 20.82,
+      "linear_slope_p_two_sided": 0.07698324446448794,
+      "collinearity_r2_cos_vs_linear": 0.96956,
+      "collinearity_vif_after_linear": 32.85,
+      "collinearity_vif_after_quadratic": 48508.44,
+      "mde_80pct_after_linear_us": 425.16,
+      "mde_80pct_over_mean_t1": 8.229,
+      "bic_by_model": {
+        "M0_linear": 266.55,
+        "M1_quadratic": 269.11,
+        "M3a_fixed_phase_3p526": 269.18,
+        "M3b_fixed_phase_1p763": 269.47,
+        "M3c_harmonic_3p526": 271.86
+      },
+      "best_bic_model": "M0_linear",
+      "held_out_5fold_cv_rmse_us": {
+        "M0_linear": 11.756,
+        "M1_quadratic": 11.624,
+        "M2_huber_local_loss": 11.582,
+        "M3a_fixed_phase_3p526": 11.636,
+        "M3b_fixed_phase_1p763": 11.689,
+        "M3c_harmonic_3p526": 11.716
+      },
+      "best_cv_model": "M2_huber_local_loss",
+      "spatial_qubit_index_t1_corr_r": 0.054,
+      "spatial_qubit_index_t1_p": 0.7018422446860227
+    },
+    {
+      "backend": "fake_sherbrooke",
+      "snapshot_last_update": "2025-02-26 14:43:10-05:00",
+      "n_qubits": 127,
+      "freq_band_ghz": [
+        4.4553,
+        5.0575
+      ],
+      "bandwidth_ghz": 0.6023,
+      "cycles_spanned_at_3p526ghz": 0.1708,
+      "mean_t1_us": 289.55,
+      "linear_slope_us_per_ghz": -373.81,
+      "linear_slope_se": 64.95,
+      "linear_slope_p_two_sided": 6.299805390724321e-08,
+      "collinearity_r2_cos_vs_linear": 0.98786,
+      "collinearity_vif_after_linear": 82.37,
+      "collinearity_vif_after_quadratic": 4226.17,
+      "mde_80pct_after_linear_us": 1194.19,
+      "mde_80pct_over_mean_t1": 4.124,
+      "bic_by_model": {
+        "M0_linear": 1123.93,
+        "M1_quadratic": 1128.42,
+        "M3a_fixed_phase_3p526": 1128.51,
+        "M3b_fixed_phase_1p763": 1128.16,
+        "M3c_harmonic_3p526": 1133.0
+      },
+      "best_bic_model": "M0_linear",
+      "held_out_5fold_cv_rmse_us": {
+        "M0_linear": 79.354,
+        "M1_quadratic": 79.576,
+        "M2_huber_local_loss": 79.264,
+        "M3a_fixed_phase_3p526": 79.576,
+        "M3b_fixed_phase_1p763": 79.958,
+        "M3c_harmonic_3p526": 80.382
+      },
+      "best_cv_model": "M2_huber_local_loss",
+      "spatial_qubit_index_t1_corr_r": -0.285,
+      "spatial_qubit_index_t1_p": 0.0011431453191759501
+    },
+    {
+      "backend": "fake_singapore",
+      "snapshot_last_update": "2020-08-07 15:58:39-04:00",
+      "n_qubits": 20,
+      "freq_band_ghz": [
+        4.3088,
+        4.8832
+      ],
+      "bandwidth_ghz": 0.5743,
+      "cycles_spanned_at_3p526ghz": 0.1629,
+      "mean_t1_us": 88.63,
+      "linear_slope_us_per_ghz": -45.05,
+      "linear_slope_se": 24.52,
+      "linear_slope_p_two_sided": 0.082710912077436,
+      "collinearity_r2_cos_vs_linear": 0.99635,
+      "collinearity_vif_after_linear": 274.3,
+      "collinearity_vif_after_quadratic": 3830.36,
+      "mde_80pct_after_linear_us": 762.55,
+      "mde_80pct_over_mean_t1": 8.603,
+      "bic_by_model": {
+        "M0_linear": 114.93,
+        "M1_quadratic": 115.72,
+        "M3a_fixed_phase_3p526": 116.79,
+        "M3b_fixed_phase_1p763": 115.14,
+        "M3c_harmonic_3p526": 116.89
+      },
+      "best_bic_model": "M0_linear",
+      "held_out_5fold_cv_rmse_us": {
+        "M0_linear": 16.778,
+        "M1_quadratic": 16.898,
+        "M2_huber_local_loss": 16.94,
+        "M3a_fixed_phase_3p526": 17.035,
+        "M3b_fixed_phase_1p763": 16.78,
+        "M3c_harmonic_3p526": 16.795
+      },
+      "best_cv_model": "M0_linear",
+      "spatial_qubit_index_t1_corr_r": -0.058,
+      "spatial_qubit_index_t1_p": 0.8092622807188282
+    },
+    {
+      "backend": "fake_strasbourg",
+      "snapshot_last_update": "2026-04-17 12:37:46+02:00",
+      "n_qubits": 127,
+      "freq_band_ghz": [
+        4.5348,
+        5.1078
+      ],
+      "bandwidth_ghz": 0.573,
+      "cycles_spanned_at_3p526ghz": 0.1625,
+      "mean_t1_us": 263.05,
+      "linear_slope_us_per_ghz": -343.97,
+      "linear_slope_se": 71.1,
+      "linear_slope_p_two_sided": 3.785082959655567e-06,
+      "collinearity_r2_cos_vs_linear": 0.98612,
+      "collinearity_vif_after_linear": 72.04,
+      "collinearity_vif_after_quadratic": 6726.78,
+      "mde_80pct_after_linear_us": 1302.95,
+      "mde_80pct_over_mean_t1": 4.953,
+      "bic_by_model": {
+        "M0_linear": 1173.6,
+        "M1_quadratic": 1178.38,
+        "M3a_fixed_phase_3p526": 1178.43,
+        "M3b_fixed_phase_1p763": 1176.42,
+        "M3c_harmonic_3p526": 1181.02
+      },
+      "best_bic_model": "M0_linear",
+      "held_out_5fold_cv_rmse_us": {
+        "M0_linear": 97.473,
+        "M1_quadratic": 98.112,
+        "M2_huber_local_loss": 97.461,
+        "M3a_fixed_phase_3p526": 98.137,
+        "M3b_fixed_phase_1p763": 96.78,
+        "M3c_harmonic_3p526": 97.567
+      },
+      "best_cv_model": "M3b_fixed_phase_1p763",
+      "spatial_qubit_index_t1_corr_r": -0.41,
+      "spatial_qubit_index_t1_p": 1.737748740376306e-06
+    },
+    {
+      "backend": "fake_sydney",
+      "snapshot_last_update": "2021-03-15 15:11:34-04:00",
+      "n_qubits": 27,
+      "freq_band_ghz": [
+        4.7612,
+        5.1044
+      ],
+      "bandwidth_ghz": 0.3432,
+      "cycles_spanned_at_3p526ghz": 0.0973,
+      "mean_t1_us": 109.92,
+      "linear_slope_us_per_ghz": -120.17,
+      "linear_slope_se": 64.29,
+      "linear_slope_p_two_sided": 0.07334882406089734,
+      "collinearity_r2_cos_vs_linear": 0.98409,
+      "collinearity_vif_after_linear": 62.87,
+      "collinearity_vif_after_quadratic": 34999.43,
+      "mde_80pct_after_linear_us": 1480.34,
+      "mde_80pct_over_mean_t1": 13.467,
+      "bic_by_model": {
+        "M0_linear": 195.1,
+        "M1_quadratic": 197.5,
+        "M3a_fixed_phase_3p526": 197.51,
+        "M3b_fixed_phase_1p763": 197.7,
+        "M3c_harmonic_3p526": 200.76
+      },
+      "best_bic_model": "M0_linear",
+      "held_out_5fold_cv_rmse_us": {
+        "M0_linear": 32.84,
+        "M1_quadratic": 35.057,
+        "M2_huber_local_loss": 32.79,
+        "M3a_fixed_phase_3p526": 35.124,
+        "M3b_fixed_phase_1p763": 35.544,
+        "M3c_harmonic_3p526": 36.071
+      },
+      "best_cv_model": "M2_huber_local_loss",
+      "spatial_qubit_index_t1_corr_r": -0.16,
+      "spatial_qubit_index_t1_p": 0.42528487194155346
+    },
+    {
+      "backend": "fake_toronto",
+      "snapshot_last_update": "2021-03-15 14:16:30-04:00",
+      "n_qubits": 27,
+      "freq_band_ghz": [
+        4.9154,
+        5.225
+      ],
+      "bandwidth_ghz": 0.3095,
+      "cycles_spanned_at_3p526ghz": 0.0878,
+      "mean_t1_us": 105.43,
+      "linear_slope_us_per_ghz": -100.64,
+      "linear_slope_se": 45.2,
+      "linear_slope_p_two_sided": 0.03523466084410072,
+      "collinearity_r2_cos_vs_linear": 0.96141,
+      "collinearity_vif_after_linear": 25.91,
+      "collinearity_vif_after_quadratic": 78838.48,
+      "mde_80pct_after_linear_us": 972.71,
+      "mde_80pct_over_mean_t1": 9.226,
+      "bic_by_model": {
+        "M0_linear": 171.7,
+        "M1_quadratic": 174.71,
+        "M3a_fixed_phase_3p526": 174.67,
+        "M3b_fixed_phase_1p763": 174.53,
+        "M3c_harmonic_3p526": 175.32
+      },
+      "best_bic_model": "M0_linear",
+      "held_out_5fold_cv_rmse_us": {
+        "M0_linear": 21.926,
+        "M1_quadratic": 22.187,
+        "M2_huber_local_loss": 22.822,
+        "M3a_fixed_phase_3p526": 22.183,
+        "M3b_fixed_phase_1p763": 22.166,
+        "M3c_harmonic_3p526": 22.372
+      },
+      "best_cv_model": "M0_linear",
+      "spatial_qubit_index_t1_corr_r": -0.057,
+      "spatial_qubit_index_t1_p": 0.7788224321557383
+    },
+    {
+      "backend": "fake_washington",
+      "snapshot_last_update": "2022-04-12 23:42:47+09:00",
+      "n_qubits": 127,
+      "freq_band_ghz": [
+        4.7671,
+        5.2916
+      ],
+      "bandwidth_ghz": 0.5244,
+      "cycles_spanned_at_3p526ghz": 0.1488,
+      "mean_t1_us": 97.88,
+      "linear_slope_us_per_ghz": -32.72,
+      "linear_slope_se": 20.82,
+      "linear_slope_p_two_sided": 0.118586640943892,
+      "collinearity_r2_cos_vs_linear": 0.93029,
+      "collinearity_vif_after_linear": 14.34,
+      "collinearity_vif_after_quadratic": 8545.08,
+      "mde_80pct_after_linear_us": 311.54,
+      "mde_80pct_over_mean_t1": 3.183,
+      "bic_by_model": {
+        "M0_linear": 845.06,
+        "M1_quadratic": 847.78,
+        "M3a_fixed_phase_3p526": 847.72,
+        "M3b_fixed_phase_1p763": 847.54,
+        "M3c_harmonic_3p526": 852.26
+      },
+      "best_bic_model": "M0_linear",
+      "held_out_5fold_cv_rmse_us": {
+        "M0_linear": 27.041,
+        "M1_quadratic": 26.829,
+        "M2_huber_local_loss": 27.098,
+        "M3a_fixed_phase_3p526": 26.829,
+        "M3b_fixed_phase_1p763": 26.837,
+        "M3c_harmonic_3p526": 27.37
+      },
+      "best_cv_model": "M1_quadratic",
+      "spatial_qubit_index_t1_corr_r": -0.123,
+      "spatial_qubit_index_t1_p": 0.16791843704649712
+    }
+  ]
+}
