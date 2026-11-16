@@ -361,7 +361,12 @@ def test_owner_and_server_columns_cannot_be_forged(stack):
         raw("POST", "/osiris_projects", b["access_token"], {"name": "x", "owner_id": a["user"]["id"]})
     assert e.value.code == "FORBIDDEN"
     p = s.create_project(a["access_token"], "Forge")
-    assert raw("PATCH", f"/osiris_projects?id=eq.{p['id']}", b["access_token"], {"owner_id": b["user"]["id"]}) == []
+    for tok in (a["access_token"], b["access_token"]):        # owner_id is not a writable column for anyone
+        with pytest.raises(StoreError) as e:
+            raw("PATCH", f"/osiris_projects?id=eq.{p['id']}", tok, {"owner_id": b["user"]["id"]})
+        assert e.value.code == "FORBIDDEN"
+    assert raw("PATCH", f"/osiris_projects?id=eq.{p['id']}", b["access_token"], {"name": "taken"}) == []   # rename: owner only
+    assert s.projects(a["access_token"])[0]["owner_id"] == a["user"]["id"]
     f = raw("POST", "/osiris_files", a["access_token"], {"project_id": p["id"], "path": "f.dna", "content": "abc",
                                                           "revision": 99, "content_sha256": "f" * 64})[0]
     assert f["revision"] == 1 and f["content_sha256"] == hashlib.sha256(b"abc").hexdigest()

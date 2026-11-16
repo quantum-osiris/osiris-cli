@@ -1,7 +1,7 @@
 -- OSIRIS workspace v4: project files for the DNA-Lang editor. NOT APPLIED until the owner approves it.
 --
 -- Target: Supabase project "osiris" (ref eirdsaeutzkzepibnfxf).
--- Depends on: 20261116160000_osiris_multi_user_and_admin.sql (owner writes on projects, osiris_is_admin()).
+-- Depends on: 20261116140000_osiris_hosted_workspace.sql (owner_id default) and 20261116160000_osiris_multi_user_and_admin.sql (osiris_is_admin()).
 --
 -- What this adds:
 --   A project-scoped virtual file tree. A file belongs to a project; who may touch it follows from who

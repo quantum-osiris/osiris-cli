@@ -1,38 +1,36 @@
--- OSIRIS workspace v3: multi-user writes and an admin subspace. NOT APPLIED until the owner approves it.
+-- OSIRIS workspace v3 (delta): admin read-only subspace and owner project rename. NOT APPLIED until the owner approves it.
 --
--- Target: Supabase project "osiris" (ref eirdsaeutzkzepibnfxf). Depends on the two earlier migrations.
+-- Target: Supabase project "osiris" (ref eirdsaeutzkzepibnfxf).
+-- Depends on 20261116140000_osiris_hosted_workspace.sql (recorded on the hosted project as 20261116154042), which
+-- already provides: owner_id default auth.uid(), owner insert policies on projects and tasks, owner task-status
+-- update, column-level insert grants, the append-only disposition triggers with a fixed search_path, the proposal
+-- queue and osiris_platform_developers. This migration adds only what that one does not.
 --
 -- What changes:
---   1. A signed-in user can create, change and delete their OWN projects and the tasks inside them.
---      owner_id defaults to the caller and can never be set or changed to someone else.
---   2. Dispositions stay backend-only for writes (OSIRIS records them); owners can read theirs.
---   3. Admins (rows in osiris_admins) can READ every project, task and disposition. Only the backend or the
---      database owner can add or remove an admin; no user can make themselves one.
---   4. The append-only trigger function gets a fixed search_path (Supabase security advisor warning).
+--   1. A signed-in owner can rename their own project (name, description). owner_id, id and archived stay
+--      unwritable for application roles (column grants), so ownership cannot be changed or forged.
+--   2. Admins (rows in osiris_admins) can READ every project, task, disposition and proposal request.
+--      Admins get no write path. Only the database owner can add or remove an admin; no user can make
+--      themselves one (no grants and no policies on osiris_admins).
+--   No deletes are granted: dispositions are append-only and reference tasks, so projects are archived, not deleted.
 --
 -- Rollback:
---   drop policy osiris_projects_admin_select on public.osiris_projects;
---   drop policy osiris_tasks_admin_select on public.osiris_tasks;
+--   drop policy osiris_proposal_requests_admin_select on public.osiris_proposal_requests;
 --   drop policy osiris_dispositions_admin_select on public.osiris_dispositions;
---   drop policy osiris_projects_owner_insert on public.osiris_projects;
+--   drop policy osiris_tasks_admin_select on public.osiris_tasks;
+--   drop policy osiris_projects_admin_select on public.osiris_projects;
 --   drop policy osiris_projects_owner_update on public.osiris_projects;
---   drop policy osiris_projects_owner_delete on public.osiris_projects;
---   drop policy osiris_tasks_owner_insert on public.osiris_tasks;
---   drop policy osiris_tasks_owner_update on public.osiris_tasks;
---   drop policy osiris_tasks_owner_delete on public.osiris_tasks;
---   revoke insert, update, delete on public.osiris_projects, public.osiris_tasks from authenticated;
---   alter table public.osiris_projects alter column owner_id drop default;
+--   revoke update (name, description) on public.osiris_projects from authenticated;
 --   drop function public.osiris_is_admin();
 --   drop table public.osiris_admins;
-
-alter function public.osiris_dispositions_append_only() set search_path = '';
+--   (20261116170000 depends on osiris_is_admin(); roll that back first if it was applied.)
 
 create table public.osiris_admins (
   user_id    uuid primary key references auth.users(id) on delete cascade,
   created_at timestamptz not null default now()
 );
-alter table public.osiris_admins enable row level security;          -- no policies: backend only
-revoke all on public.osiris_admins from anon, authenticated;
+alter table public.osiris_admins enable row level security;          -- no policies: database owner only
+revoke all on public.osiris_admins from public, anon, authenticated, service_role;
 
 -- True when the caller is an admin. SECURITY DEFINER so it can read osiris_admins, which callers cannot.
 create function public.osiris_is_admin() returns boolean
@@ -41,24 +39,15 @@ create function public.osiris_is_admin() returns boolean
 revoke all on function public.osiris_is_admin() from public, anon;
 grant execute on function public.osiris_is_admin() to authenticated;
 
-alter table public.osiris_projects alter column owner_id set default auth.uid();
-grant insert, update, delete on public.osiris_projects, public.osiris_tasks to authenticated;
-
-create policy osiris_projects_owner_insert on public.osiris_projects for insert to authenticated
-  with check (owner_id is not null and owner_id = (select auth.uid()));
+grant update (name, description) on public.osiris_projects to authenticated;
 create policy osiris_projects_owner_update on public.osiris_projects for update to authenticated
   using (owner_id = (select auth.uid())) with check (owner_id = (select auth.uid()));
-create policy osiris_projects_owner_delete on public.osiris_projects for delete to authenticated
-  using (owner_id = (select auth.uid()));
 
-create policy osiris_tasks_owner_insert on public.osiris_tasks for insert to authenticated
-  with check (exists (select 1 from public.osiris_projects p where p.id = project_id and p.owner_id = (select auth.uid())));
-create policy osiris_tasks_owner_update on public.osiris_tasks for update to authenticated
-  using (exists (select 1 from public.osiris_projects p where p.id = project_id and p.owner_id = (select auth.uid())))
-  with check (exists (select 1 from public.osiris_projects p where p.id = project_id and p.owner_id = (select auth.uid())));
-create policy osiris_tasks_owner_delete on public.osiris_tasks for delete to authenticated
-  using (exists (select 1 from public.osiris_projects p where p.id = project_id and p.owner_id = (select auth.uid())));
-
-create policy osiris_projects_admin_select on public.osiris_projects for select to authenticated using (public.osiris_is_admin());
-create policy osiris_tasks_admin_select on public.osiris_tasks for select to authenticated using (public.osiris_is_admin());
-create policy osiris_dispositions_admin_select on public.osiris_dispositions for select to authenticated using (public.osiris_is_admin());
+create policy osiris_projects_admin_select on public.osiris_projects
+  for select to authenticated using ((select public.osiris_is_admin()));
+create policy osiris_tasks_admin_select on public.osiris_tasks
+  for select to authenticated using ((select public.osiris_is_admin()));
+create policy osiris_dispositions_admin_select on public.osiris_dispositions
+  for select to authenticated using ((select public.osiris_is_admin()));
+create policy osiris_proposal_requests_admin_select on public.osiris_proposal_requests
+  for select to authenticated using ((select public.osiris_is_admin()));

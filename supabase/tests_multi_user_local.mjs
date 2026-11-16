@@ -22,6 +22,7 @@ await as("authenticated", A, async () => {
   out.positive.A_renames_project = R(await q("update osiris_projects set name='A renamed' where id=$1", [pa]))
 })
 await as("service_role", "", async () => { out.positive.osiris_appends_disposition = (await q(DISP, [pa, "task-1", h])).ok })
+await as("authenticated", A, async () => { out.positive.A_queues_proposal = R(await q("insert into osiris_proposal_requests(project_id,task_id,objective) values ($1,$2,'Plan a Bell baseline') returning id", [pa, ta])) })
 out.positive.A_reads_disposition = await as("authenticated", A, async () => (await q("select decision from osiris_dispositions")).rows)
 await as("authenticated", B, async () => { pb = (await q("insert into osiris_projects(name) values ('B project') returning id")).rows[0].id })
 const N = out.negative
@@ -40,13 +41,17 @@ await as("authenticated", B, async () => {
   N.B_makes_self_admin = R(await q("insert into osiris_admins(user_id) values ($1)", [B]))
   N.B_reads_admin_list = R(await q("select * from osiris_admins"))
   N.B_is_admin = (await q("select public.osiris_is_admin() v")).rows?.[0]?.v
+  N.B_registers_self_as_developer = R(await q("insert into osiris_platform_developers(user_id) values ($1)", [B]))
+  N.B_reads_As_proposals = R(await q("select 1 from osiris_proposal_requests where project_id=$1", [pa]))
 })
 await as("authenticated", A, async () => { N.A_edits_own_disposition = R(await q("update osiris_dispositions set decision='PENDING_HUMAN_APPROVAL'")); N.A_deletes_own_disposition = R(await q("delete from osiris_dispositions")) })
 await as("anon", "", async () => { N.anon_reads = R(await q("select 1 from osiris_projects")); N.anon_writes = R(await q("insert into osiris_projects(name) values ('x')")); N.anon_calls_is_admin = R(await q("select public.osiris_is_admin()")) })
-await as("service_role", "", () => q("insert into osiris_admins(user_id) values ($1)", [D]))
+out.admin.service_role_enrolls_admin = await as("service_role", "", async () => R(await q("insert into osiris_admins(user_id) values ($1)", [D])))
+await q("insert into osiris_admins(user_id) values ($1)", [D])   // database owner enrols the admin
 await as("authenticated", D, async () => {
   out.admin.D_is_admin = (await q("select public.osiris_is_admin() v")).rows?.[0]?.v
-  out.admin.D_sees_all = [(await q("select 1 from osiris_projects")).n, (await q("select 1 from osiris_tasks")).n, (await q("select 1 from osiris_dispositions")).n]
+  out.admin.D_sees_all = [(await q("select 1 from osiris_projects")).n, (await q("select 1 from osiris_tasks")).n, (await q("select 1 from osiris_dispositions")).n, (await q("select 1 from osiris_proposal_requests")).n]
+  out.admin.D_claims_proposal = R(await q("select * from public.osiris_claim_proposal_request(null)"))
   out.admin.D_edits_As_project = R(await q("update osiris_projects set name='x' where id=$1", [pa]))
   out.admin.D_deletes_As_project = R(await q("delete from osiris_projects where id=$1", [pa]))
   out.admin.D_edits_disposition = R(await q("update osiris_dispositions set decision='PENDING_HUMAN_APPROVAL'"))
