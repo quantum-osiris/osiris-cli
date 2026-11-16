@@ -11,7 +11,7 @@ await db.exec(readFileSync(process.argv[2], "utf8")); await db.exec(readFileSync
 const A = "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa", B = "bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb", h = "a".repeat(64)
 await db.exec(`insert into auth.users values ('${A}'),('${B}')`)
 const as = async (role, uid, fn) => { await db.exec(`set role ${role}; select set_config('request.jwt.claim.sub', '${uid}', false)`); try { return await fn() } finally { await db.exec("reset role") } }
-const q = async (sql, args = []) => { try { const r = await db.query(sql, args); return { ok: true, rows: r.rows, n: r.affectedRows ?? r.rows.length } } catch (e) { return { ok: false, err: e.message.slice(0, 70) } } }
+const q = async (sql, args = []) => { try { const r = await db.query(sql, args); return { ok: true, rows: r.rows, n: r.rows.length || r.affectedRows || 0 } } catch (e) { return { ok: false, err: e.message.slice(0, 70) } } }
 const DISP = "insert into osiris_dispositions(project_id,task_id,council_task_id,objective_sha256,objective_excerpt,decision,reason,allow_cloud,receipt_kind,receipt_hash) values ($1,$2,$3,$4,'Plan a Bell baseline',$5,'r',false,'agents.task',$4) returning id"
 // ---- positive: the backend (service role) acts for user A, then A reads through RLS ----
 let pa, ta
