@@ -1,0 +1,42 @@
+{
+  "python": "3.14.4 (main, Aug 20 2026, 10:41:58) [GCC 15.2.0]",
+  "benchmarks": [
+    {
+      "n_qubits": 4,
+      "statevector_dim": 16,
+      "gate_count": 9,
+      "wall_time_ms": 0.3409,
+      "us_per_gate": 37.873,
+      "peak_tracemalloc_kib": 18.26,
+      "max_abs_diff_vs_qiskit": 0.0
+    },
+    {
+      "n_qubits": 8,
+      "statevector_dim": 256,
+      "gate_count": 21,
+      "wall_time_ms": 0.4609,
+      "us_per_gate": 21.949,
+      "peak_tracemalloc_kib": 29.7,
+      "max_abs_diff_vs_qiskit": 0.0
+    },
+    {
+      "n_qubits": 12,
+      "statevector_dim": 4096,
+      "gate_count": 33,
+      "wall_time_ms": 1.0255,
+      "us_per_gate": 31.077,
+      "peak_tracemalloc_kib": 210.92,
+      "max_abs_diff_vs_qiskit": 0.0
+    },
+    {
+      "n_qubits": 16,
+      "statevector_dim": 65536,
+      "gate_count": 45,
+      "wall_time_ms": 100.8433,
+      "us_per_gate": 2240.962,
+      "peak_tracemalloc_kib": 3095.19,
+      "max_abs_diff_vs_qiskit": null
+    }
+  ],
+  "test_receipt_sha256": "1a3f6d41f2b63ddf9a176fab06b9b1832224f815a1f8fc62af59c60debf120d7"
+}
