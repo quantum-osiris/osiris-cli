@@ -1,0 +1,99 @@
+{
+  "corpus": {
+    "train_bytes": 494031,
+    "eval_bytes": 87182,
+    "unigram_heldout_bpb": 5.1631
+  },
+  "ram_hard_cap_mb": 4096.0,
+  "process_vmhwm_mb": 294.17,
+  "arms": {
+    "standard": {
+      "arch": "standard",
+      "n_params": 857344,
+      "steps": 400,
+      "elapsed_seconds": 100.7,
+      "steps_per_second": 3.97,
+      "init_heldout_bpb": 9.5131,
+      "best_heldout_bpb": 4.676,
+      "final_heldout_bpb": 4.676,
+      "peak_rss_mb_in_arm": 201.84,
+      "checkpoint_path": "experiments/nclm_bounded_eval/nclm_standard_best.npz",
+      "fast_generate_exact_parity": true,
+      "eval_curve": [
+        {
+          "step": 0,
+          "heldout_bpb": 9.5131,
+          "rss_mb": 53.34
+        },
+        {
+          "step": 100,
+          "train_loss_nats": 3.6856,
+          "heldout_bpb": 5.345,
+          "rss_mb": 199.11
+        },
+        {
+          "step": 200,
+          "train_loss_nats": 3.9407,
+          "heldout_bpb": 5.3346,
+          "rss_mb": 200.06
+        },
+        {
+          "step": 300,
+          "train_loss_nats": 3.5956,
+          "heldout_bpb": 4.9235,
+          "rss_mb": 201.06
+        },
+        {
+          "step": 400,
+          "train_loss_nats": 3.2306,
+          "heldout_bpb": 4.676,
+          "rss_mb": 201.84
+        }
+      ]
+    },
+    "crsm": {
+      "arch": "crsm",
+      "n_params": 1039905,
+      "steps": 400,
+      "elapsed_seconds": 120.38,
+      "steps_per_second": 3.32,
+      "init_heldout_bpb": 9.2274,
+      "best_heldout_bpb": 4.8401,
+      "final_heldout_bpb": 4.8401,
+      "peak_rss_mb_in_arm": 271.23,
+      "checkpoint_path": "experiments/nclm_bounded_eval/nclm_crsm_best.npz",
+      "fast_generate_exact_parity": true,
+      "eval_curve": [
+        {
+          "step": 0,
+          "heldout_bpb": 9.2274,
+          "rss_mb": 201.95
+        },
+        {
+          "step": 100,
+          "train_loss_nats": 3.6891,
+          "heldout_bpb": 5.3553,
+          "rss_mb": 268.22
+        },
+        {
+          "step": 200,
+          "train_loss_nats": 3.9455,
+          "heldout_bpb": 5.3587,
+          "rss_mb": 271.23
+        },
+        {
+          "step": 300,
+          "train_loss_nats": 3.7824,
+          "heldout_bpb": 5.1899,
+          "rss_mb": 269.23
+        },
+        {
+          "step": 400,
+          "train_loss_nats": 3.3025,
+          "heldout_bpb": 4.8401,
+          "rss_mb": 268.75
+        }
+      ]
+    }
+  }
+}

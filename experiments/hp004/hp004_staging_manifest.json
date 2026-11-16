@@ -1,0 +1,2583 @@
+{
+  "benchmark_id": "OSIRIS-HP-004",
+  "staged_at_utc": "2026-11-16T15:25:05.608329+00:00",
+  "backend": "ibm_marrakesh",
+  "pinned_tree_layout": [
+    34,
+    52,
+    32,
+    33,
+    39,
+    53,
+    54,
+    55
+  ],
+  "readout_transmons_c0_c1_c2_c3": [
+    34,
+    39,
+    52,
+    53
+  ],
+  "n_blocks": 6,
+  "shots_per_circuit": 1024,
+  "total_circuits": 286,
+  "total_shots": 292864,
+  "schedule_seed": 20261116,
+  "qpy_sha256": "c3daaa48d89a74cec39932c310365b3eb23660ac4922219586543f8fe473d02c",
+  "gate_audit": {
+    "spam_cal": {
+      "count": 16,
+      "cz_min": 0,
+      "cz_max": 0,
+      "depth_min": 1,
+      "depth_max": 2
+    },
+    "Arm A": {
+      "count": 54,
+      "cz_min": 38,
+      "cz_max": 38,
+      "depth_min": 64,
+      "depth_max": 67
+    },
+    "Arm B-Def": {
+      "count": 54,
+      "cz_min": 25,
+      "cz_max": 25,
+      "depth_min": 52,
+      "depth_max": 54
+    },
+    "Arm B": {
+      "count": 54,
+      "cz_min": 32,
+      "cz_max": 32,
+      "depth_min": 69,
+      "depth_max": 72
+    },
+    "Arm B-Held": {
+      "count": 54,
+      "cz_min": 35,
+      "cz_max": 35,
+      "depth_min": 76,
+      "depth_max": 79
+    },
+    "Arm B-Ctrl": {
+      "count": 54,
+      "cz_min": 30,
+      "cz_max": 30,
+      "depth_min": 64,
+      "depth_max": 67
+    }
+  },
+  "circuit_metadata": [
+    {
+      "kind": "spam_cal",
+      "prepared_bits": "0000",
+      "circuit_name": "spam_cal_0000"
+    },
+    {
+      "kind": "spam_cal",
+      "prepared_bits": "0001",
+      "circuit_name": "spam_cal_0001"
+    },
+    {
+      "kind": "spam_cal",
+      "prepared_bits": "0010",
+      "circuit_name": "spam_cal_0010"
+    },
+    {
+      "kind": "spam_cal",
+      "prepared_bits": "0011",
+      "circuit_name": "spam_cal_0011"
+    },
+    {
+      "kind": "spam_cal",
+      "prepared_bits": "0100",
+      "circuit_name": "spam_cal_0100"
+    },
+    {
+      "kind": "spam_cal",
+      "prepared_bits": "0101",
+      "circuit_name": "spam_cal_0101"
+    },
+    {
+      "kind": "spam_cal",
+      "prepared_bits": "0110",
+      "circuit_name": "spam_cal_0110"
+    },
+    {
+      "kind": "spam_cal",
+      "prepared_bits": "0111",
+      "circuit_name": "spam_cal_0111"
+    },
+    {
+      "kind": "spam_cal",
+      "prepared_bits": "1000",
+      "circuit_name": "spam_cal_1000"
+    },
+    {
+      "kind": "spam_cal",
+      "prepared_bits": "1001",
+      "circuit_name": "spam_cal_1001"
+    },
+    {
+      "kind": "spam_cal",
+      "prepared_bits": "1010",
+      "circuit_name": "spam_cal_1010"
+    },
+    {
+      "kind": "spam_cal",
+      "prepared_bits": "1011",
+      "circuit_name": "spam_cal_1011"
+    },
+    {
+      "kind": "spam_cal",
+      "prepared_bits": "1100",
+      "circuit_name": "spam_cal_1100"
+    },
+    {
+      "kind": "spam_cal",
+      "prepared_bits": "1101",
+      "circuit_name": "spam_cal_1101"
+    },
+    {
+      "kind": "spam_cal",
+      "prepared_bits": "1110",
+      "circuit_name": "spam_cal_1110"
+    },
+    {
+      "kind": "spam_cal",
+      "prepared_bits": "1111",
+      "circuit_name": "spam_cal_1111"
+    },
+    {
+      "kind": "tomography",
+      "block_index": 0,
+      "arm": "Arm A",
+      "basis_pair1": "Y",
+      "basis_pair2": "Y",
+      "basis": "YY",
+      "circuit_name": "hp004_b0_arm_a_yy"
+    },
+    {
+      "kind": "tomography",
+      "block_index": 0,
+      "arm": "Arm B-Def",
+      "basis_pair1": "Z",
+      "basis_pair2": "X",
+      "basis": "ZX",
+      "circuit_name": "hp004_b0_arm_b_def_zx"
+    },
+    {
+      "kind": "tomography",
+      "block_index": 0,
+      "arm": "Arm B-Def",
+      "basis_pair1": "X",
+      "basis_pair2": "Y",
+      "basis": "XY",
+      "circuit_name": "hp004_b0_arm_b_def_xy"
+    },
+    {
+      "kind": "tomography",
+      "block_index": 0,
+      "arm": "Arm A",
+      "basis_pair1": "Z",
+      "basis_pair2": "X",
+      "basis": "ZX",
+      "circuit_name": "hp004_b0_arm_a_zx"
+    },
+    {
+      "kind": "tomography",
+      "block_index": 0,
+      "arm": "Arm A",
+      "basis_pair1": "Y",
+      "basis_pair2": "Z",
+      "basis": "YZ",
+      "circuit_name": "hp004_b0_arm_a_yz"
+    },
+    {
+      "kind": "tomography",
+      "block_index": 0,
+      "arm": "Arm B",
+      "basis_pair1": "X",
+      "basis_pair2": "Y",
+      "basis": "XY",
+      "circuit_name": "hp004_b0_arm_b_xy"
+    },
+    {
+      "kind": "tomography",
+      "block_index": 0,
+      "arm": "Arm B-Held",
+      "basis_pair1": "Z",
+      "basis_pair2": "X",
+      "basis": "ZX",
+      "circuit_name": "hp004_b0_arm_b_held_zx"
+    },
+    {
+      "kind": "tomography",
+      "block_index": 0,
+      "arm": "Arm B-Def",
+      "basis_pair1": "Y",
+      "basis_pair2": "Y",
+      "basis": "YY",
+      "circuit_name": "hp004_b0_arm_b_def_yy"
+    },
+    {
+      "kind": "tomography",
+      "block_index": 0,
+      "arm": "Arm B-Ctrl",
+      "basis_pair1": "Z",
+      "basis_pair2": "X",
+      "basis": "ZX",
+      "circuit_name": "hp004_b0_arm_b_ctrl_zx"
+    },
+    {
+      "kind": "tomography",
+      "block_index": 0,
+      "arm": "Arm B",
+      "basis_pair1": "X",
+      "basis_pair2": "X",
+      "basis": "XX",
+      "circuit_name": "hp004_b0_arm_b_xx"
+    },
+    {
+      "kind": "tomography",
+      "block_index": 0,
+      "arm": "Arm B-Ctrl",
+      "basis_pair1": "X",
+      "basis_pair2": "X",
+      "basis": "XX",
+      "circuit_name": "hp004_b0_arm_b_ctrl_xx"
+    },
+    {
+      "kind": "tomography",
+      "block_index": 0,
+      "arm": "Arm A",
+      "basis_pair1": "X",
+      "basis_pair2": "Z",
+      "basis": "XZ",
+      "circuit_name": "hp004_b0_arm_a_xz"
+    },
+    {
+      "kind": "tomography",
+      "block_index": 0,
+      "arm": "Arm B",
+      "basis_pair1": "Z",
+      "basis_pair2": "X",
+      "basis": "ZX",
+      "circuit_name": "hp004_b0_arm_b_zx"
+    },
+    {
+      "kind": "tomography",
+      "block_index": 0,
+      "arm": "Arm B-Held",
+      "basis_pair1": "X",
+      "basis_pair2": "Z",
+      "basis": "XZ",
+      "circuit_name": "hp004_b0_arm_b_held_xz"
+    },
+    {
+      "kind": "tomography",
+      "block_index": 0,
+      "arm": "Arm B-Ctrl",
+      "basis_pair1": "Y",
+      "basis_pair2": "Y",
+      "basis": "YY",
+      "circuit_name": "hp004_b0_arm_b_ctrl_yy"
+    },
+    {
+      "kind": "tomography",
+      "block_index": 0,
+      "arm": "Arm A",
+      "basis_pair1": "Y",
+      "basis_pair2": "X",
+      "basis": "YX",
+      "circuit_name": "hp004_b0_arm_a_yx"
+    },
+    {
+      "kind": "tomography",
+      "block_index": 0,
+      "arm": "Arm B",
+      "basis_pair1": "Y",
+      "basis_pair2": "Z",
+      "basis": "YZ",
+      "circuit_name": "hp004_b0_arm_b_yz"
+    },
+    {
+      "kind": "tomography",
+      "block_index": 0,
+      "arm": "Arm B-Ctrl",
+      "basis_pair1": "Z",
+      "basis_pair2": "Y",
+      "basis": "ZY",
+      "circuit_name": "hp004_b0_arm_b_ctrl_zy"
+    },
+    {
+      "kind": "tomography",
+      "block_index": 0,
+      "arm": "Arm B-Def",
+      "basis_pair1": "Z",
+      "basis_pair2": "Z",
+      "basis": "ZZ",
+      "circuit_name": "hp004_b0_arm_b_def_zz"
+    },
+    {
+      "kind": "tomography",
+      "block_index": 0,
+      "arm": "Arm B-Ctrl",
+      "basis_pair1": "X",
+      "basis_pair2": "Y",
+      "basis": "XY",
+      "circuit_name": "hp004_b0_arm_b_ctrl_xy"
+    },
+    {
+      "kind": "tomography",
+      "block_index": 0,
+      "arm": "Arm B-Ctrl",
+      "basis_pair1": "X",
+      "basis_pair2": "Z",
+      "basis": "XZ",
+      "circuit_name": "hp004_b0_arm_b_ctrl_xz"
+    },
+    {
+      "kind": "tomography",
+      "block_index": 0,
+      "arm": "Arm A",
+      "basis_pair1": "X",
+      "basis_pair2": "Y",
+      "basis": "XY",
+      "circuit_name": "hp004_b0_arm_a_xy"
+    },
+    {
+      "kind": "tomography",
+      "block_index": 0,
+      "arm": "Arm A",
+      "basis_pair1": "Z",
+      "basis_pair2": "Z",
+      "basis": "ZZ",
+      "circuit_name": "hp004_b0_arm_a_zz"
+    },
+    {
+      "kind": "tomography",
+      "block_index": 0,
+      "arm": "Arm B-Held",
+      "basis_pair1": "Y",
+      "basis_pair2": "Z",
+      "basis": "YZ",
+      "circuit_name": "hp004_b0_arm_b_held_yz"
+    },
+    {
+      "kind": "tomography",
+      "block_index": 0,
+      "arm": "Arm B",
+      "basis_pair1": "X",
+      "basis_pair2": "Z",
+      "basis": "XZ",
+      "circuit_name": "hp004_b0_arm_b_xz"
+    },
+    {
+      "kind": "tomography",
+      "block_index": 0,
+      "arm": "Arm B",
+      "basis_pair1": "Z",
+      "basis_pair2": "Z",
+      "basis": "ZZ",
+      "circuit_name": "hp004_b0_arm_b_zz"
+    },
+    {
+      "kind": "tomography",
+      "block_index": 0,
+      "arm": "Arm B-Held",
+      "basis_pair1": "Z",
+      "basis_pair2": "Y",
+      "basis": "ZY",
+      "circuit_name": "hp004_b0_arm_b_held_zy"
+    },
+    {
+      "kind": "tomography",
+      "block_index": 0,
+      "arm": "Arm B-Ctrl",
+      "basis_pair1": "Y",
+      "basis_pair2": "X",
+      "basis": "YX",
+      "circuit_name": "hp004_b0_arm_b_ctrl_yx"
+    },
+    {
+      "kind": "tomography",
+      "block_index": 0,
+      "arm": "Arm B-Def",
+      "basis_pair1": "X",
+      "basis_pair2": "X",
+      "basis": "XX",
+      "circuit_name": "hp004_b0_arm_b_def_xx"
+    },
+    {
+      "kind": "tomography",
+      "block_index": 0,
+      "arm": "Arm A",
+      "basis_pair1": "Z",
+      "basis_pair2": "Y",
+      "basis": "ZY",
+      "circuit_name": "hp004_b0_arm_a_zy"
+    },
+    {
+      "kind": "tomography",
+      "block_index": 0,
+      "arm": "Arm B",
+      "basis_pair1": "Z",
+      "basis_pair2": "Y",
+      "basis": "ZY",
+      "circuit_name": "hp004_b0_arm_b_zy"
+    },
+    {
+      "kind": "tomography",
+      "block_index": 0,
+      "arm": "Arm B-Def",
+      "basis_pair1": "Y",
+      "basis_pair2": "Z",
+      "basis": "YZ",
+      "circuit_name": "hp004_b0_arm_b_def_yz"
+    },
+    {
+      "kind": "tomography",
+      "block_index": 0,
+      "arm": "Arm B-Ctrl",
+      "basis_pair1": "Z",
+      "basis_pair2": "Z",
+      "basis": "ZZ",
+      "circuit_name": "hp004_b0_arm_b_ctrl_zz"
+    },
+    {
+      "kind": "tomography",
+      "block_index": 0,
+      "arm": "Arm B-Held",
+      "basis_pair1": "X",
+      "basis_pair2": "Y",
+      "basis": "XY",
+      "circuit_name": "hp004_b0_arm_b_held_xy"
+    },
+    {
+      "kind": "tomography",
+      "block_index": 0,
+      "arm": "Arm B",
+      "basis_pair1": "Y",
+      "basis_pair2": "X",
+      "basis": "YX",
+      "circuit_name": "hp004_b0_arm_b_yx"
+    },
+    {
+      "kind": "tomography",
+      "block_index": 0,
+      "arm": "Arm B-Held",
+      "basis_pair1": "Y",
+      "basis_pair2": "X",
+      "basis": "YX",
+      "circuit_name": "hp004_b0_arm_b_held_yx"
+    },
+    {
+      "kind": "tomography",
+      "block_index": 0,
+      "arm": "Arm A",
+      "basis_pair1": "X",
+      "basis_pair2": "X",
+      "basis": "XX",
+      "circuit_name": "hp004_b0_arm_a_xx"
+    },
+    {
+      "kind": "tomography",
+      "block_index": 0,
+      "arm": "Arm B-Held",
+      "basis_pair1": "X",
+      "basis_pair2": "X",
+      "basis": "XX",
+      "circuit_name": "hp004_b0_arm_b_held_xx"
+    },
+    {
+      "kind": "tomography",
+      "block_index": 0,
+      "arm": "Arm B-Def",
+      "basis_pair1": "X",
+      "basis_pair2": "Z",
+      "basis": "XZ",
+      "circuit_name": "hp004_b0_arm_b_def_xz"
+    },
+    {
+      "kind": "tomography",
+      "block_index": 0,
+      "arm": "Arm B-Ctrl",
+      "basis_pair1": "Y",
+      "basis_pair2": "Z",
+      "basis": "YZ",
+      "circuit_name": "hp004_b0_arm_b_ctrl_yz"
+    },
+    {
+      "kind": "tomography",
+      "block_index": 0,
+      "arm": "Arm B-Def",
+      "basis_pair1": "Y",
+      "basis_pair2": "X",
+      "basis": "YX",
+      "circuit_name": "hp004_b0_arm_b_def_yx"
+    },
+    {
+      "kind": "tomography",
+      "block_index": 0,
+      "arm": "Arm B-Def",
+      "basis_pair1": "Z",
+      "basis_pair2": "Y",
+      "basis": "ZY",
+      "circuit_name": "hp004_b0_arm_b_def_zy"
+    },
+    {
+      "kind": "tomography",
+      "block_index": 0,
+      "arm": "Arm B-Held",
+      "basis_pair1": "Y",
+      "basis_pair2": "Y",
+      "basis": "YY",
+      "circuit_name": "hp004_b0_arm_b_held_yy"
+    },
+    {
+      "kind": "tomography",
+      "block_index": 0,
+      "arm": "Arm B-Held",
+      "basis_pair1": "Z",
+      "basis_pair2": "Z",
+      "basis": "ZZ",
+      "circuit_name": "hp004_b0_arm_b_held_zz"
+    },
+    {
+      "kind": "tomography",
+      "block_index": 0,
+      "arm": "Arm B",
+      "basis_pair1": "Y",
+      "basis_pair2": "Y",
+      "basis": "YY",
+      "circuit_name": "hp004_b0_arm_b_yy"
+    },
+    {
+      "kind": "tomography",
+      "block_index": 1,
+      "arm": "Arm B",
+      "basis_pair1": "Y",
+      "basis_pair2": "Y",
+      "basis": "YY",
+      "circuit_name": "hp004_b1_arm_b_yy"
+    },
+    {
+      "kind": "tomography",
+      "block_index": 1,
+      "arm": "Arm A",
+      "basis_pair1": "X",
+      "basis_pair2": "Y",
+      "basis": "XY",
+      "circuit_name": "hp004_b1_arm_a_xy"
+    },
+    {
+      "kind": "tomography",
+      "block_index": 1,
+      "arm": "Arm B-Held",
+      "basis_pair1": "X",
+      "basis_pair2": "Y",
+      "basis": "XY",
+      "circuit_name": "hp004_b1_arm_b_held_xy"
+    },
+    {
+      "kind": "tomography",
+      "block_index": 1,
+      "arm": "Arm A",
+      "basis_pair1": "Z",
+      "basis_pair2": "Y",
+      "basis": "ZY",
+      "circuit_name": "hp004_b1_arm_a_zy"
+    },
+    {
+      "kind": "tomography",
+      "block_index": 1,
+      "arm": "Arm B-Def",
+      "basis_pair1": "Y",
+      "basis_pair2": "X",
+      "basis": "YX",
+      "circuit_name": "hp004_b1_arm_b_def_yx"
+    },
+    {
+      "kind": "tomography",
+      "block_index": 1,
+      "arm": "Arm B",
+      "basis_pair1": "Z",
+      "basis_pair2": "Z",
+      "basis": "ZZ",
+      "circuit_name": "hp004_b1_arm_b_zz"
+    },
+    {
+      "kind": "tomography",
+      "block_index": 1,
+      "arm": "Arm B",
+      "basis_pair1": "Y",
+      "basis_pair2": "Z",
+      "basis": "YZ",
+      "circuit_name": "hp004_b1_arm_b_yz"
+    },
+    {
+      "kind": "tomography",
+      "block_index": 1,
+      "arm": "Arm B-Ctrl",
+      "basis_pair1": "Z",
+      "basis_pair2": "X",
+      "basis": "ZX",
+      "circuit_name": "hp004_b1_arm_b_ctrl_zx"
+    },
+    {
+      "kind": "tomography",
+      "block_index": 1,
+      "arm": "Arm B-Def",
+      "basis_pair1": "Y",
+      "basis_pair2": "Y",
+      "basis": "YY",
+      "circuit_name": "hp004_b1_arm_b_def_yy"
+    },
+    {
+      "kind": "tomography",
+      "block_index": 1,
+      "arm": "Arm B",
+      "basis_pair1": "Z",
+      "basis_pair2": "Y",
+      "basis": "ZY",
+      "circuit_name": "hp004_b1_arm_b_zy"
+    },
+    {
+      "kind": "tomography",
+      "block_index": 1,
+      "arm": "Arm B",
+      "basis_pair1": "Z",
+      "basis_pair2": "X",
+      "basis": "ZX",
+      "circuit_name": "hp004_b1_arm_b_zx"
+    },
+    {
+      "kind": "tomography",
+      "block_index": 1,
+      "arm": "Arm B",
+      "basis_pair1": "X",
+      "basis_pair2": "X",
+      "basis": "XX",
+      "circuit_name": "hp004_b1_arm_b_xx"
+    },
+    {
+      "kind": "tomography",
+      "block_index": 1,
+      "arm": "Arm A",
+      "basis_pair1": "Y",
+      "basis_pair2": "X",
+      "basis": "YX",
+      "circuit_name": "hp004_b1_arm_a_yx"
+    },
+    {
+      "kind": "tomography",
+      "block_index": 1,
+      "arm": "Arm B-Held",
+      "basis_pair1": "Y",
+      "basis_pair2": "Y",
+      "basis": "YY",
+      "circuit_name": "hp004_b1_arm_b_held_yy"
+    },
+    {
+      "kind": "tomography",
+      "block_index": 1,
+      "arm": "Arm B-Held",
+      "basis_pair1": "Z",
+      "basis_pair2": "X",
+      "basis": "ZX",
+      "circuit_name": "hp004_b1_arm_b_held_zx"
+    },
+    {
+      "kind": "tomography",
+      "block_index": 1,
+      "arm": "Arm B",
+      "basis_pair1": "Y",
+      "basis_pair2": "X",
+      "basis": "YX",
+      "circuit_name": "hp004_b1_arm_b_yx"
+    },
+    {
+      "kind": "tomography",
+      "block_index": 1,
+      "arm": "Arm B-Ctrl",
+      "basis_pair1": "Y",
+      "basis_pair2": "X",
+      "basis": "YX",
+      "circuit_name": "hp004_b1_arm_b_ctrl_yx"
+    },
+    {
+      "kind": "tomography",
+      "block_index": 1,
+      "arm": "Arm B-Held",
+      "basis_pair1": "Y",
+      "basis_pair2": "X",
+      "basis": "YX",
+      "circuit_name": "hp004_b1_arm_b_held_yx"
+    },
+    {
+      "kind": "tomography",
+      "block_index": 1,
+      "arm": "Arm B-Ctrl",
+      "basis_pair1": "Y",
+      "basis_pair2": "Y",
+      "basis": "YY",
+      "circuit_name": "hp004_b1_arm_b_ctrl_yy"
+    },
+    {
+      "kind": "tomography",
+      "block_index": 1,
+      "arm": "Arm B-Ctrl",
+      "basis_pair1": "Y",
+      "basis_pair2": "Z",
+      "basis": "YZ",
+      "circuit_name": "hp004_b1_arm_b_ctrl_yz"
+    },
+    {
+      "kind": "tomography",
+      "block_index": 1,
+      "arm": "Arm B-Held",
+      "basis_pair1": "Y",
+      "basis_pair2": "Z",
+      "basis": "YZ",
+      "circuit_name": "hp004_b1_arm_b_held_yz"
+    },
+    {
+      "kind": "tomography",
+      "block_index": 1,
+      "arm": "Arm B-Def",
+      "basis_pair1": "X",
+      "basis_pair2": "X",
+      "basis": "XX",
+      "circuit_name": "hp004_b1_arm_b_def_xx"
+    },
+    {
+      "kind": "tomography",
+      "block_index": 1,
+      "arm": "Arm B-Held",
+      "basis_pair1": "Z",
+      "basis_pair2": "Z",
+      "basis": "ZZ",
+      "circuit_name": "hp004_b1_arm_b_held_zz"
+    },
+    {
+      "kind": "tomography",
+      "block_index": 1,
+      "arm": "Arm A",
+      "basis_pair1": "Z",
+      "basis_pair2": "Z",
+      "basis": "ZZ",
+      "circuit_name": "hp004_b1_arm_a_zz"
+    },
+    {
+      "kind": "tomography",
+      "block_index": 1,
+      "arm": "Arm A",
+      "basis_pair1": "Z",
+      "basis_pair2": "X",
+      "basis": "ZX",
+      "circuit_name": "hp004_b1_arm_a_zx"
+    },
+    {
+      "kind": "tomography",
+      "block_index": 1,
+      "arm": "Arm B",
+      "basis_pair1": "X",
+      "basis_pair2": "Z",
+      "basis": "XZ",
+      "circuit_name": "hp004_b1_arm_b_xz"
+    },
+    {
+      "kind": "tomography",
+      "block_index": 1,
+      "arm": "Arm B-Ctrl",
+      "basis_pair1": "X",
+      "basis_pair2": "Z",
+      "basis": "XZ",
+      "circuit_name": "hp004_b1_arm_b_ctrl_xz"
+    },
+    {
+      "kind": "tomography",
+      "block_index": 1,
+      "arm": "Arm B-Def",
+      "basis_pair1": "Z",
+      "basis_pair2": "Z",
+      "basis": "ZZ",
+      "circuit_name": "hp004_b1_arm_b_def_zz"
+    },
+    {
+      "kind": "tomography",
+      "block_index": 1,
+      "arm": "Arm B-Held",
+      "basis_pair1": "X",
+      "basis_pair2": "X",
+      "basis": "XX",
+      "circuit_name": "hp004_b1_arm_b_held_xx"
+    },
+    {
+      "kind": "tomography",
+      "block_index": 1,
+      "arm": "Arm B-Held",
+      "basis_pair1": "X",
+      "basis_pair2": "Z",
+      "basis": "XZ",
+      "circuit_name": "hp004_b1_arm_b_held_xz"
+    },
+    {
+      "kind": "tomography",
+      "block_index": 1,
+      "arm": "Arm B-Ctrl",
+      "basis_pair1": "X",
+      "basis_pair2": "X",
+      "basis": "XX",
+      "circuit_name": "hp004_b1_arm_b_ctrl_xx"
+    },
+    {
+      "kind": "tomography",
+      "block_index": 1,
+      "arm": "Arm A",
+      "basis_pair1": "X",
+      "basis_pair2": "Z",
+      "basis": "XZ",
+      "circuit_name": "hp004_b1_arm_a_xz"
+    },
+    {
+      "kind": "tomography",
+      "block_index": 1,
+      "arm": "Arm B-Def",
+      "basis_pair1": "Z",
+      "basis_pair2": "Y",
+      "basis": "ZY",
+      "circuit_name": "hp004_b1_arm_b_def_zy"
+    },
+    {
+      "kind": "tomography",
+      "block_index": 1,
+      "arm": "Arm B-Ctrl",
+      "basis_pair1": "X",
+      "basis_pair2": "Y",
+      "basis": "XY",
+      "circuit_name": "hp004_b1_arm_b_ctrl_xy"
+    },
+    {
+      "kind": "tomography",
+      "block_index": 1,
+      "arm": "Arm A",
+      "basis_pair1": "X",
+      "basis_pair2": "X",
+      "basis": "XX",
+      "circuit_name": "hp004_b1_arm_a_xx"
+    },
+    {
+      "kind": "tomography",
+      "block_index": 1,
+      "arm": "Arm B-Def",
+      "basis_pair1": "Y",
+      "basis_pair2": "Z",
+      "basis": "YZ",
+      "circuit_name": "hp004_b1_arm_b_def_yz"
+    },
+    {
+      "kind": "tomography",
+      "block_index": 1,
+      "arm": "Arm B-Def",
+      "basis_pair1": "Z",
+      "basis_pair2": "X",
+      "basis": "ZX",
+      "circuit_name": "hp004_b1_arm_b_def_zx"
+    },
+    {
+      "kind": "tomography",
+      "block_index": 1,
+      "arm": "Arm B-Def",
+      "basis_pair1": "X",
+      "basis_pair2": "Z",
+      "basis": "XZ",
+      "circuit_name": "hp004_b1_arm_b_def_xz"
+    },
+    {
+      "kind": "tomography",
+      "block_index": 1,
+      "arm": "Arm A",
+      "basis_pair1": "Y",
+      "basis_pair2": "Y",
+      "basis": "YY",
+      "circuit_name": "hp004_b1_arm_a_yy"
+    },
+    {
+      "kind": "tomography",
+      "block_index": 1,
+      "arm": "Arm B-Ctrl",
+      "basis_pair1": "Z",
+      "basis_pair2": "Y",
+      "basis": "ZY",
+      "circuit_name": "hp004_b1_arm_b_ctrl_zy"
+    },
+    {
+      "kind": "tomography",
+      "block_index": 1,
+      "arm": "Arm B-Ctrl",
+      "basis_pair1": "Z",
+      "basis_pair2": "Z",
+      "basis": "ZZ",
+      "circuit_name": "hp004_b1_arm_b_ctrl_zz"
+    },
+    {
+      "kind": "tomography",
+      "block_index": 1,
+      "arm": "Arm B",
+      "basis_pair1": "X",
+      "basis_pair2": "Y",
+      "basis": "XY",
+      "circuit_name": "hp004_b1_arm_b_xy"
+    },
+    {
+      "kind": "tomography",
+      "block_index": 1,
+      "arm": "Arm A",
+      "basis_pair1": "Y",
+      "basis_pair2": "Z",
+      "basis": "YZ",
+      "circuit_name": "hp004_b1_arm_a_yz"
+    },
+    {
+      "kind": "tomography",
+      "block_index": 1,
+      "arm": "Arm B-Def",
+      "basis_pair1": "X",
+      "basis_pair2": "Y",
+      "basis": "XY",
+      "circuit_name": "hp004_b1_arm_b_def_xy"
+    },
+    {
+      "kind": "tomography",
+      "block_index": 1,
+      "arm": "Arm B-Held",
+      "basis_pair1": "Z",
+      "basis_pair2": "Y",
+      "basis": "ZY",
+      "circuit_name": "hp004_b1_arm_b_held_zy"
+    },
+    {
+      "kind": "tomography",
+      "block_index": 2,
+      "arm": "Arm A",
+      "basis_pair1": "Y",
+      "basis_pair2": "Z",
+      "basis": "YZ",
+      "circuit_name": "hp004_b2_arm_a_yz"
+    },
+    {
+      "kind": "tomography",
+      "block_index": 2,
+      "arm": "Arm B-Def",
+      "basis_pair1": "Z",
+      "basis_pair2": "Z",
+      "basis": "ZZ",
+      "circuit_name": "hp004_b2_arm_b_def_zz"
+    },
+    {
+      "kind": "tomography",
+      "block_index": 2,
+      "arm": "Arm B",
+      "basis_pair1": "Z",
+      "basis_pair2": "X",
+      "basis": "ZX",
+      "circuit_name": "hp004_b2_arm_b_zx"
+    },
+    {
+      "kind": "tomography",
+      "block_index": 2,
+      "arm": "Arm B",
+      "basis_pair1": "Y",
+      "basis_pair2": "Z",
+      "basis": "YZ",
+      "circuit_name": "hp004_b2_arm_b_yz"
+    },
+    {
+      "kind": "tomography",
+      "block_index": 2,
+      "arm": "Arm B-Held",
+      "basis_pair1": "X",
+      "basis_pair2": "Z",
+      "basis": "XZ",
+      "circuit_name": "hp004_b2_arm_b_held_xz"
+    },
+    {
+      "kind": "tomography",
+      "block_index": 2,
+      "arm": "Arm B-Ctrl",
+      "basis_pair1": "Z",
+      "basis_pair2": "Y",
+      "basis": "ZY",
+      "circuit_name": "hp004_b2_arm_b_ctrl_zy"
+    },
+    {
+      "kind": "tomography",
+      "block_index": 2,
+      "arm": "Arm B-Def",
+      "basis_pair1": "Y",
+      "basis_pair2": "Z",
+      "basis": "YZ",
+      "circuit_name": "hp004_b2_arm_b_def_yz"
+    },
+    {
+      "kind": "tomography",
+      "block_index": 2,
+      "arm": "Arm B-Def",
+      "basis_pair1": "Y",
+      "basis_pair2": "Y",
+      "basis": "YY",
+      "circuit_name": "hp004_b2_arm_b_def_yy"
+    },
+    {
+      "kind": "tomography",
+      "block_index": 2,
+      "arm": "Arm A",
+      "basis_pair1": "Z",
+      "basis_pair2": "X",
+      "basis": "ZX",
+      "circuit_name": "hp004_b2_arm_a_zx"
+    },
+    {
+      "kind": "tomography",
+      "block_index": 2,
+      "arm": "Arm B-Held",
+      "basis_pair1": "Z",
+      "basis_pair2": "Y",
+      "basis": "ZY",
+      "circuit_name": "hp004_b2_arm_b_held_zy"
+    },
+    {
+      "kind": "tomography",
+      "block_index": 2,
+      "arm": "Arm B-Ctrl",
+      "basis_pair1": "X",
+      "basis_pair2": "Z",
+      "basis": "XZ",
+      "circuit_name": "hp004_b2_arm_b_ctrl_xz"
+    },
+    {
+      "kind": "tomography",
+      "block_index": 2,
+      "arm": "Arm B-Def",
+      "basis_pair1": "Z",
+      "basis_pair2": "Y",
+      "basis": "ZY",
+      "circuit_name": "hp004_b2_arm_b_def_zy"
+    },
+    {
+      "kind": "tomography",
+      "block_index": 2,
+      "arm": "Arm B",
+      "basis_pair1": "Z",
+      "basis_pair2": "Y",
+      "basis": "ZY",
+      "circuit_name": "hp004_b2_arm_b_zy"
+    },
+    {
+      "kind": "tomography",
+      "block_index": 2,
+      "arm": "Arm B-Def",
+      "basis_pair1": "X",
+      "basis_pair2": "X",
+      "basis": "XX",
+      "circuit_name": "hp004_b2_arm_b_def_xx"
+    },
+    {
+      "kind": "tomography",
+      "block_index": 2,
+      "arm": "Arm B",
+      "basis_pair1": "Y",
+      "basis_pair2": "Y",
+      "basis": "YY",
+      "circuit_name": "hp004_b2_arm_b_yy"
+    },
+    {
+      "kind": "tomography",
+      "block_index": 2,
+      "arm": "Arm B",
+      "basis_pair1": "Z",
+      "basis_pair2": "Z",
+      "basis": "ZZ",
+      "circuit_name": "hp004_b2_arm_b_zz"
+    },
+    {
+      "kind": "tomography",
+      "block_index": 2,
+      "arm": "Arm A",
+      "basis_pair1": "Z",
+      "basis_pair2": "Y",
+      "basis": "ZY",
+      "circuit_name": "hp004_b2_arm_a_zy"
+    },
+    {
+      "kind": "tomography",
+      "block_index": 2,
+      "arm": "Arm B-Ctrl",
+      "basis_pair1": "Y",
+      "basis_pair2": "Y",
+      "basis": "YY",
+      "circuit_name": "hp004_b2_arm_b_ctrl_yy"
+    },
+    {
+      "kind": "tomography",
+      "block_index": 2,
+      "arm": "Arm A",
+      "basis_pair1": "X",
+      "basis_pair2": "X",
+      "basis": "XX",
+      "circuit_name": "hp004_b2_arm_a_xx"
+    },
+    {
+      "kind": "tomography",
+      "block_index": 2,
+      "arm": "Arm B-Ctrl",
+      "basis_pair1": "Y",
+      "basis_pair2": "X",
+      "basis": "YX",
+      "circuit_name": "hp004_b2_arm_b_ctrl_yx"
+    },
+    {
+      "kind": "tomography",
+      "block_index": 2,
+      "arm": "Arm B-Def",
+      "basis_pair1": "Z",
+      "basis_pair2": "X",
+      "basis": "ZX",
+      "circuit_name": "hp004_b2_arm_b_def_zx"
+    },
+    {
+      "kind": "tomography",
+      "block_index": 2,
+      "arm": "Arm B",
+      "basis_pair1": "X",
+      "basis_pair2": "X",
+      "basis": "XX",
+      "circuit_name": "hp004_b2_arm_b_xx"
+    },
+    {
+      "kind": "tomography",
+      "block_index": 2,
+      "arm": "Arm B-Held",
+      "basis_pair1": "Z",
+      "basis_pair2": "Z",
+      "basis": "ZZ",
+      "circuit_name": "hp004_b2_arm_b_held_zz"
+    },
+    {
+      "kind": "tomography",
+      "block_index": 2,
+      "arm": "Arm B-Held",
+      "basis_pair1": "X",
+      "basis_pair2": "X",
+      "basis": "XX",
+      "circuit_name": "hp004_b2_arm_b_held_xx"
+    },
+    {
+      "kind": "tomography",
+      "block_index": 2,
+      "arm": "Arm A",
+      "basis_pair1": "Y",
+      "basis_pair2": "Y",
+      "basis": "YY",
+      "circuit_name": "hp004_b2_arm_a_yy"
+    },
+    {
+      "kind": "tomography",
+      "block_index": 2,
+      "arm": "Arm B-Ctrl",
+      "basis_pair1": "Z",
+      "basis_pair2": "Z",
+      "basis": "ZZ",
+      "circuit_name": "hp004_b2_arm_b_ctrl_zz"
+    },
+    {
+      "kind": "tomography",
+      "block_index": 2,
+      "arm": "Arm B",
+      "basis_pair1": "Y",
+      "basis_pair2": "X",
+      "basis": "YX",
+      "circuit_name": "hp004_b2_arm_b_yx"
+    },
+    {
+      "kind": "tomography",
+      "block_index": 2,
+      "arm": "Arm A",
+      "basis_pair1": "Z",
+      "basis_pair2": "Z",
+      "basis": "ZZ",
+      "circuit_name": "hp004_b2_arm_a_zz"
+    },
+    {
+      "kind": "tomography",
+      "block_index": 2,
+      "arm": "Arm B-Ctrl",
+      "basis_pair1": "X",
+      "basis_pair2": "Y",
+      "basis": "XY",
+      "circuit_name": "hp004_b2_arm_b_ctrl_xy"
+    },
+    {
+      "kind": "tomography",
+      "block_index": 2,
+      "arm": "Arm B-Held",
+      "basis_pair1": "Y",
+      "basis_pair2": "Y",
+      "basis": "YY",
+      "circuit_name": "hp004_b2_arm_b_held_yy"
+    },
+    {
+      "kind": "tomography",
+      "block_index": 2,
+      "arm": "Arm B",
+      "basis_pair1": "X",
+      "basis_pair2": "Z",
+      "basis": "XZ",
+      "circuit_name": "hp004_b2_arm_b_xz"
+    },
+    {
+      "kind": "tomography",
+      "block_index": 2,
+      "arm": "Arm A",
+      "basis_pair1": "X",
+      "basis_pair2": "Z",
+      "basis": "XZ",
+      "circuit_name": "hp004_b2_arm_a_xz"
+    },
+    {
+      "kind": "tomography",
+      "block_index": 2,
+      "arm": "Arm B-Held",
+      "basis_pair1": "Y",
+      "basis_pair2": "Z",
+      "basis": "YZ",
+      "circuit_name": "hp004_b2_arm_b_held_yz"
+    },
+    {
+      "kind": "tomography",
+      "block_index": 2,
+      "arm": "Arm A",
+      "basis_pair1": "Y",
+      "basis_pair2": "X",
+      "basis": "YX",
+      "circuit_name": "hp004_b2_arm_a_yx"
+    },
+    {
+      "kind": "tomography",
+      "block_index": 2,
+      "arm": "Arm A",
+      "basis_pair1": "X",
+      "basis_pair2": "Y",
+      "basis": "XY",
+      "circuit_name": "hp004_b2_arm_a_xy"
+    },
+    {
+      "kind": "tomography",
+      "block_index": 2,
+      "arm": "Arm B-Held",
+      "basis_pair1": "Z",
+      "basis_pair2": "X",
+      "basis": "ZX",
+      "circuit_name": "hp004_b2_arm_b_held_zx"
+    },
+    {
+      "kind": "tomography",
+      "block_index": 2,
+      "arm": "Arm B-Held",
+      "basis_pair1": "Y",
+      "basis_pair2": "X",
+      "basis": "YX",
+      "circuit_name": "hp004_b2_arm_b_held_yx"
+    },
+    {
+      "kind": "tomography",
+      "block_index": 2,
+      "arm": "Arm B",
+      "basis_pair1": "X",
+      "basis_pair2": "Y",
+      "basis": "XY",
+      "circuit_name": "hp004_b2_arm_b_xy"
+    },
+    {
+      "kind": "tomography",
+      "block_index": 2,
+      "arm": "Arm B-Ctrl",
+      "basis_pair1": "Z",
+      "basis_pair2": "X",
+      "basis": "ZX",
+      "circuit_name": "hp004_b2_arm_b_ctrl_zx"
+    },
+    {
+      "kind": "tomography",
+      "block_index": 2,
+      "arm": "Arm B-Held",
+      "basis_pair1": "X",
+      "basis_pair2": "Y",
+      "basis": "XY",
+      "circuit_name": "hp004_b2_arm_b_held_xy"
+    },
+    {
+      "kind": "tomography",
+      "block_index": 2,
+      "arm": "Arm B-Def",
+      "basis_pair1": "X",
+      "basis_pair2": "Y",
+      "basis": "XY",
+      "circuit_name": "hp004_b2_arm_b_def_xy"
+    },
+    {
+      "kind": "tomography",
+      "block_index": 2,
+      "arm": "Arm B-Def",
+      "basis_pair1": "Y",
+      "basis_pair2": "X",
+      "basis": "YX",
+      "circuit_name": "hp004_b2_arm_b_def_yx"
+    },
+    {
+      "kind": "tomography",
+      "block_index": 2,
+      "arm": "Arm B-Def",
+      "basis_pair1": "X",
+      "basis_pair2": "Z",
+      "basis": "XZ",
+      "circuit_name": "hp004_b2_arm_b_def_xz"
+    },
+    {
+      "kind": "tomography",
+      "block_index": 2,
+      "arm": "Arm B-Ctrl",
+      "basis_pair1": "X",
+      "basis_pair2": "X",
+      "basis": "XX",
+      "circuit_name": "hp004_b2_arm_b_ctrl_xx"
+    },
+    {
+      "kind": "tomography",
+      "block_index": 2,
+      "arm": "Arm B-Ctrl",
+      "basis_pair1": "Y",
+      "basis_pair2": "Z",
+      "basis": "YZ",
+      "circuit_name": "hp004_b2_arm_b_ctrl_yz"
+    },
+    {
+      "kind": "tomography",
+      "block_index": 3,
+      "arm": "Arm B-Ctrl",
+      "basis_pair1": "Y",
+      "basis_pair2": "X",
+      "basis": "YX",
+      "circuit_name": "hp004_b3_arm_b_ctrl_yx"
+    },
+    {
+      "kind": "tomography",
+      "block_index": 3,
+      "arm": "Arm B-Def",
+      "basis_pair1": "Z",
+      "basis_pair2": "X",
+      "basis": "ZX",
+      "circuit_name": "hp004_b3_arm_b_def_zx"
+    },
+    {
+      "kind": "tomography",
+      "block_index": 3,
+      "arm": "Arm B-Held",
+      "basis_pair1": "Z",
+      "basis_pair2": "Y",
+      "basis": "ZY",
+      "circuit_name": "hp004_b3_arm_b_held_zy"
+    },
+    {
+      "kind": "tomography",
+      "block_index": 3,
+      "arm": "Arm A",
+      "basis_pair1": "Z",
+      "basis_pair2": "X",
+      "basis": "ZX",
+      "circuit_name": "hp004_b3_arm_a_zx"
+    },
+    {
+      "kind": "tomography",
+      "block_index": 3,
+      "arm": "Arm A",
+      "basis_pair1": "Y",
+      "basis_pair2": "Y",
+      "basis": "YY",
+      "circuit_name": "hp004_b3_arm_a_yy"
+    },
+    {
+      "kind": "tomography",
+      "block_index": 3,
+      "arm": "Arm B-Ctrl",
+      "basis_pair1": "Z",
+      "basis_pair2": "X",
+      "basis": "ZX",
+      "circuit_name": "hp004_b3_arm_b_ctrl_zx"
+    },
+    {
+      "kind": "tomography",
+      "block_index": 3,
+      "arm": "Arm B-Held",
+      "basis_pair1": "Y",
+      "basis_pair2": "Y",
+      "basis": "YY",
+      "circuit_name": "hp004_b3_arm_b_held_yy"
+    },
+    {
+      "kind": "tomography",
+      "block_index": 3,
+      "arm": "Arm A",
+      "basis_pair1": "X",
+      "basis_pair2": "Y",
+      "basis": "XY",
+      "circuit_name": "hp004_b3_arm_a_xy"
+    },
+    {
+      "kind": "tomography",
+      "block_index": 3,
+      "arm": "Arm B",
+      "basis_pair1": "Z",
+      "basis_pair2": "Z",
+      "basis": "ZZ",
+      "circuit_name": "hp004_b3_arm_b_zz"
+    },
+    {
+      "kind": "tomography",
+      "block_index": 3,
+      "arm": "Arm B",
+      "basis_pair1": "Z",
+      "basis_pair2": "Y",
+      "basis": "ZY",
+      "circuit_name": "hp004_b3_arm_b_zy"
+    },
+    {
+      "kind": "tomography",
+      "block_index": 3,
+      "arm": "Arm B-Ctrl",
+      "basis_pair1": "Y",
+      "basis_pair2": "Y",
+      "basis": "YY",
+      "circuit_name": "hp004_b3_arm_b_ctrl_yy"
+    },
+    {
+      "kind": "tomography",
+      "block_index": 3,
+      "arm": "Arm B",
+      "basis_pair1": "Z",
+      "basis_pair2": "X",
+      "basis": "ZX",
+      "circuit_name": "hp004_b3_arm_b_zx"
+    },
+    {
+      "kind": "tomography",
+      "block_index": 3,
+      "arm": "Arm B-Held",
+      "basis_pair1": "Y",
+      "basis_pair2": "Z",
+      "basis": "YZ",
+      "circuit_name": "hp004_b3_arm_b_held_yz"
+    },
+    {
+      "kind": "tomography",
+      "block_index": 3,
+      "arm": "Arm B",
+      "basis_pair1": "X",
+      "basis_pair2": "Y",
+      "basis": "XY",
+      "circuit_name": "hp004_b3_arm_b_xy"
+    },
+    {
+      "kind": "tomography",
+      "block_index": 3,
+      "arm": "Arm B",
+      "basis_pair1": "Y",
+      "basis_pair2": "Z",
+      "basis": "YZ",
+      "circuit_name": "hp004_b3_arm_b_yz"
+    },
+    {
+      "kind": "tomography",
+      "block_index": 3,
+      "arm": "Arm B-Held",
+      "basis_pair1": "Y",
+      "basis_pair2": "X",
+      "basis": "YX",
+      "circuit_name": "hp004_b3_arm_b_held_yx"
+    },
+    {
+      "kind": "tomography",
+      "block_index": 3,
+      "arm": "Arm B-Held",
+      "basis_pair1": "X",
+      "basis_pair2": "X",
+      "basis": "XX",
+      "circuit_name": "hp004_b3_arm_b_held_xx"
+    },
+    {
+      "kind": "tomography",
+      "block_index": 3,
+      "arm": "Arm B-Def",
+      "basis_pair1": "Y",
+      "basis_pair2": "Y",
+      "basis": "YY",
+      "circuit_name": "hp004_b3_arm_b_def_yy"
+    },
+    {
+      "kind": "tomography",
+      "block_index": 3,
+      "arm": "Arm A",
+      "basis_pair1": "Y",
+      "basis_pair2": "Z",
+      "basis": "YZ",
+      "circuit_name": "hp004_b3_arm_a_yz"
+    },
+    {
+      "kind": "tomography",
+      "block_index": 3,
+      "arm": "Arm B-Ctrl",
+      "basis_pair1": "Z",
+      "basis_pair2": "Z",
+      "basis": "ZZ",
+      "circuit_name": "hp004_b3_arm_b_ctrl_zz"
+    },
+    {
+      "kind": "tomography",
+      "block_index": 3,
+      "arm": "Arm B",
+      "basis_pair1": "Y",
+      "basis_pair2": "Y",
+      "basis": "YY",
+      "circuit_name": "hp004_b3_arm_b_yy"
+    },
+    {
+      "kind": "tomography",
+      "block_index": 3,
+      "arm": "Arm B-Ctrl",
+      "basis_pair1": "X",
+      "basis_pair2": "Y",
+      "basis": "XY",
+      "circuit_name": "hp004_b3_arm_b_ctrl_xy"
+    },
+    {
+      "kind": "tomography",
+      "block_index": 3,
+      "arm": "Arm B",
+      "basis_pair1": "X",
+      "basis_pair2": "Z",
+      "basis": "XZ",
+      "circuit_name": "hp004_b3_arm_b_xz"
+    },
+    {
+      "kind": "tomography",
+      "block_index": 3,
+      "arm": "Arm B-Def",
+      "basis_pair1": "Y",
+      "basis_pair2": "Z",
+      "basis": "YZ",
+      "circuit_name": "hp004_b3_arm_b_def_yz"
+    },
+    {
+      "kind": "tomography",
+      "block_index": 3,
+      "arm": "Arm B-Def",
+      "basis_pair1": "Z",
+      "basis_pair2": "Y",
+      "basis": "ZY",
+      "circuit_name": "hp004_b3_arm_b_def_zy"
+    },
+    {
+      "kind": "tomography",
+      "block_index": 3,
+      "arm": "Arm B-Ctrl",
+      "basis_pair1": "X",
+      "basis_pair2": "Z",
+      "basis": "XZ",
+      "circuit_name": "hp004_b3_arm_b_ctrl_xz"
+    },
+    {
+      "kind": "tomography",
+      "block_index": 3,
+      "arm": "Arm A",
+      "basis_pair1": "Z",
+      "basis_pair2": "Y",
+      "basis": "ZY",
+      "circuit_name": "hp004_b3_arm_a_zy"
+    },
+    {
+      "kind": "tomography",
+      "block_index": 3,
+      "arm": "Arm B-Ctrl",
+      "basis_pair1": "Z",
+      "basis_pair2": "Y",
+      "basis": "ZY",
+      "circuit_name": "hp004_b3_arm_b_ctrl_zy"
+    },
+    {
+      "kind": "tomography",
+      "block_index": 3,
+      "arm": "Arm B-Held",
+      "basis_pair1": "Z",
+      "basis_pair2": "Z",
+      "basis": "ZZ",
+      "circuit_name": "hp004_b3_arm_b_held_zz"
+    },
+    {
+      "kind": "tomography",
+      "block_index": 3,
+      "arm": "Arm B-Ctrl",
+      "basis_pair1": "Y",
+      "basis_pair2": "Z",
+      "basis": "YZ",
+      "circuit_name": "hp004_b3_arm_b_ctrl_yz"
+    },
+    {
+      "kind": "tomography",
+      "block_index": 3,
+      "arm": "Arm A",
+      "basis_pair1": "X",
+      "basis_pair2": "Z",
+      "basis": "XZ",
+      "circuit_name": "hp004_b3_arm_a_xz"
+    },
+    {
+      "kind": "tomography",
+      "block_index": 3,
+      "arm": "Arm A",
+      "basis_pair1": "Y",
+      "basis_pair2": "X",
+      "basis": "YX",
+      "circuit_name": "hp004_b3_arm_a_yx"
+    },
+    {
+      "kind": "tomography",
+      "block_index": 3,
+      "arm": "Arm B-Held",
+      "basis_pair1": "Z",
+      "basis_pair2": "X",
+      "basis": "ZX",
+      "circuit_name": "hp004_b3_arm_b_held_zx"
+    },
+    {
+      "kind": "tomography",
+      "block_index": 3,
+      "arm": "Arm B-Def",
+      "basis_pair1": "X",
+      "basis_pair2": "Z",
+      "basis": "XZ",
+      "circuit_name": "hp004_b3_arm_b_def_xz"
+    },
+    {
+      "kind": "tomography",
+      "block_index": 3,
+      "arm": "Arm B-Held",
+      "basis_pair1": "X",
+      "basis_pair2": "Y",
+      "basis": "XY",
+      "circuit_name": "hp004_b3_arm_b_held_xy"
+    },
+    {
+      "kind": "tomography",
+      "block_index": 3,
+      "arm": "Arm B-Ctrl",
+      "basis_pair1": "X",
+      "basis_pair2": "X",
+      "basis": "XX",
+      "circuit_name": "hp004_b3_arm_b_ctrl_xx"
+    },
+    {
+      "kind": "tomography",
+      "block_index": 3,
+      "arm": "Arm B-Def",
+      "basis_pair1": "Z",
+      "basis_pair2": "Z",
+      "basis": "ZZ",
+      "circuit_name": "hp004_b3_arm_b_def_zz"
+    },
+    {
+      "kind": "tomography",
+      "block_index": 3,
+      "arm": "Arm A",
+      "basis_pair1": "Z",
+      "basis_pair2": "Z",
+      "basis": "ZZ",
+      "circuit_name": "hp004_b3_arm_a_zz"
+    },
+    {
+      "kind": "tomography",
+      "block_index": 3,
+      "arm": "Arm B-Def",
+      "basis_pair1": "X",
+      "basis_pair2": "Y",
+      "basis": "XY",
+      "circuit_name": "hp004_b3_arm_b_def_xy"
+    },
+    {
+      "kind": "tomography",
+      "block_index": 3,
+      "arm": "Arm A",
+      "basis_pair1": "X",
+      "basis_pair2": "X",
+      "basis": "XX",
+      "circuit_name": "hp004_b3_arm_a_xx"
+    },
+    {
+      "kind": "tomography",
+      "block_index": 3,
+      "arm": "Arm B",
+      "basis_pair1": "Y",
+      "basis_pair2": "X",
+      "basis": "YX",
+      "circuit_name": "hp004_b3_arm_b_yx"
+    },
+    {
+      "kind": "tomography",
+      "block_index": 3,
+      "arm": "Arm B-Held",
+      "basis_pair1": "X",
+      "basis_pair2": "Z",
+      "basis": "XZ",
+      "circuit_name": "hp004_b3_arm_b_held_xz"
+    },
+    {
+      "kind": "tomography",
+      "block_index": 3,
+      "arm": "Arm B",
+      "basis_pair1": "X",
+      "basis_pair2": "X",
+      "basis": "XX",
+      "circuit_name": "hp004_b3_arm_b_xx"
+    },
+    {
+      "kind": "tomography",
+      "block_index": 3,
+      "arm": "Arm B-Def",
+      "basis_pair1": "X",
+      "basis_pair2": "X",
+      "basis": "XX",
+      "circuit_name": "hp004_b3_arm_b_def_xx"
+    },
+    {
+      "kind": "tomography",
+      "block_index": 3,
+      "arm": "Arm B-Def",
+      "basis_pair1": "Y",
+      "basis_pair2": "X",
+      "basis": "YX",
+      "circuit_name": "hp004_b3_arm_b_def_yx"
+    },
+    {
+      "kind": "tomography",
+      "block_index": 4,
+      "arm": "Arm B-Def",
+      "basis_pair1": "Z",
+      "basis_pair2": "Y",
+      "basis": "ZY",
+      "circuit_name": "hp004_b4_arm_b_def_zy"
+    },
+    {
+      "kind": "tomography",
+      "block_index": 4,
+      "arm": "Arm B-Held",
+      "basis_pair1": "X",
+      "basis_pair2": "X",
+      "basis": "XX",
+      "circuit_name": "hp004_b4_arm_b_held_xx"
+    },
+    {
+      "kind": "tomography",
+      "block_index": 4,
+      "arm": "Arm A",
+      "basis_pair1": "Y",
+      "basis_pair2": "Y",
+      "basis": "YY",
+      "circuit_name": "hp004_b4_arm_a_yy"
+    },
+    {
+      "kind": "tomography",
+      "block_index": 4,
+      "arm": "Arm B-Ctrl",
+      "basis_pair1": "Z",
+      "basis_pair2": "Y",
+      "basis": "ZY",
+      "circuit_name": "hp004_b4_arm_b_ctrl_zy"
+    },
+    {
+      "kind": "tomography",
+      "block_index": 4,
+      "arm": "Arm B",
+      "basis_pair1": "Z",
+      "basis_pair2": "X",
+      "basis": "ZX",
+      "circuit_name": "hp004_b4_arm_b_zx"
+    },
+    {
+      "kind": "tomography",
+      "block_index": 4,
+      "arm": "Arm B-Def",
+      "basis_pair1": "Z",
+      "basis_pair2": "X",
+      "basis": "ZX",
+      "circuit_name": "hp004_b4_arm_b_def_zx"
+    },
+    {
+      "kind": "tomography",
+      "block_index": 4,
+      "arm": "Arm A",
+      "basis_pair1": "Z",
+      "basis_pair2": "Y",
+      "basis": "ZY",
+      "circuit_name": "hp004_b4_arm_a_zy"
+    },
+    {
+      "kind": "tomography",
+      "block_index": 4,
+      "arm": "Arm B-Held",
+      "basis_pair1": "Z",
+      "basis_pair2": "Y",
+      "basis": "ZY",
+      "circuit_name": "hp004_b4_arm_b_held_zy"
+    },
+    {
+      "kind": "tomography",
+      "block_index": 4,
+      "arm": "Arm B-Def",
+      "basis_pair1": "Y",
+      "basis_pair2": "Z",
+      "basis": "YZ",
+      "circuit_name": "hp004_b4_arm_b_def_yz"
+    },
+    {
+      "kind": "tomography",
+      "block_index": 4,
+      "arm": "Arm B-Def",
+      "basis_pair1": "Y",
+      "basis_pair2": "X",
+      "basis": "YX",
+      "circuit_name": "hp004_b4_arm_b_def_yx"
+    },
+    {
+      "kind": "tomography",
+      "block_index": 4,
+      "arm": "Arm B-Held",
+      "basis_pair1": "Z",
+      "basis_pair2": "Z",
+      "basis": "ZZ",
+      "circuit_name": "hp004_b4_arm_b_held_zz"
+    },
+    {
+      "kind": "tomography",
+      "block_index": 4,
+      "arm": "Arm A",
+      "basis_pair1": "X",
+      "basis_pair2": "Z",
+      "basis": "XZ",
+      "circuit_name": "hp004_b4_arm_a_xz"
+    },
+    {
+      "kind": "tomography",
+      "block_index": 4,
+      "arm": "Arm B-Ctrl",
+      "basis_pair1": "Z",
+      "basis_pair2": "Z",
+      "basis": "ZZ",
+      "circuit_name": "hp004_b4_arm_b_ctrl_zz"
+    },
+    {
+      "kind": "tomography",
+      "block_index": 4,
+      "arm": "Arm A",
+      "basis_pair1": "Z",
+      "basis_pair2": "Z",
+      "basis": "ZZ",
+      "circuit_name": "hp004_b4_arm_a_zz"
+    },
+    {
+      "kind": "tomography",
+      "block_index": 4,
+      "arm": "Arm B-Def",
+      "basis_pair1": "Z",
+      "basis_pair2": "Z",
+      "basis": "ZZ",
+      "circuit_name": "hp004_b4_arm_b_def_zz"
+    },
+    {
+      "kind": "tomography",
+      "block_index": 4,
+      "arm": "Arm B-Ctrl",
+      "basis_pair1": "Z",
+      "basis_pair2": "X",
+      "basis": "ZX",
+      "circuit_name": "hp004_b4_arm_b_ctrl_zx"
+    },
+    {
+      "kind": "tomography",
+      "block_index": 4,
+      "arm": "Arm B-Held",
+      "basis_pair1": "Y",
+      "basis_pair2": "Z",
+      "basis": "YZ",
+      "circuit_name": "hp004_b4_arm_b_held_yz"
+    },
+    {
+      "kind": "tomography",
+      "block_index": 4,
+      "arm": "Arm B",
+      "basis_pair1": "Y",
+      "basis_pair2": "X",
+      "basis": "YX",
+      "circuit_name": "hp004_b4_arm_b_yx"
+    },
+    {
+      "kind": "tomography",
+      "block_index": 4,
+      "arm": "Arm B",
+      "basis_pair1": "X",
+      "basis_pair2": "Z",
+      "basis": "XZ",
+      "circuit_name": "hp004_b4_arm_b_xz"
+    },
+    {
+      "kind": "tomography",
+      "block_index": 4,
+      "arm": "Arm B-Held",
+      "basis_pair1": "X",
+      "basis_pair2": "Z",
+      "basis": "XZ",
+      "circuit_name": "hp004_b4_arm_b_held_xz"
+    },
+    {
+      "kind": "tomography",
+      "block_index": 4,
+      "arm": "Arm A",
+      "basis_pair1": "X",
+      "basis_pair2": "X",
+      "basis": "XX",
+      "circuit_name": "hp004_b4_arm_a_xx"
+    },
+    {
+      "kind": "tomography",
+      "block_index": 4,
+      "arm": "Arm B-Def",
+      "basis_pair1": "Y",
+      "basis_pair2": "Y",
+      "basis": "YY",
+      "circuit_name": "hp004_b4_arm_b_def_yy"
+    },
+    {
+      "kind": "tomography",
+      "block_index": 4,
+      "arm": "Arm B-Held",
+      "basis_pair1": "Z",
+      "basis_pair2": "X",
+      "basis": "ZX",
+      "circuit_name": "hp004_b4_arm_b_held_zx"
+    },
+    {
+      "kind": "tomography",
+      "block_index": 4,
+      "arm": "Arm B",
+      "basis_pair1": "Y",
+      "basis_pair2": "Y",
+      "basis": "YY",
+      "circuit_name": "hp004_b4_arm_b_yy"
+    },
+    {
+      "kind": "tomography",
+      "block_index": 4,
+      "arm": "Arm A",
+      "basis_pair1": "Y",
+      "basis_pair2": "X",
+      "basis": "YX",
+      "circuit_name": "hp004_b4_arm_a_yx"
+    },
+    {
+      "kind": "tomography",
+      "block_index": 4,
+      "arm": "Arm B-Ctrl",
+      "basis_pair1": "X",
+      "basis_pair2": "Z",
+      "basis": "XZ",
+      "circuit_name": "hp004_b4_arm_b_ctrl_xz"
+    },
+    {
+      "kind": "tomography",
+      "block_index": 4,
+      "arm": "Arm B-Held",
+      "basis_pair1": "X",
+      "basis_pair2": "Y",
+      "basis": "XY",
+      "circuit_name": "hp004_b4_arm_b_held_xy"
+    },
+    {
+      "kind": "tomography",
+      "block_index": 4,
+      "arm": "Arm B",
+      "basis_pair1": "X",
+      "basis_pair2": "X",
+      "basis": "XX",
+      "circuit_name": "hp004_b4_arm_b_xx"
+    },
+    {
+      "kind": "tomography",
+      "block_index": 4,
+      "arm": "Arm B",
+      "basis_pair1": "Y",
+      "basis_pair2": "Z",
+      "basis": "YZ",
+      "circuit_name": "hp004_b4_arm_b_yz"
+    },
+    {
+      "kind": "tomography",
+      "block_index": 4,
+      "arm": "Arm A",
+      "basis_pair1": "X",
+      "basis_pair2": "Y",
+      "basis": "XY",
+      "circuit_name": "hp004_b4_arm_a_xy"
+    },
+    {
+      "kind": "tomography",
+      "block_index": 4,
+      "arm": "Arm A",
+      "basis_pair1": "Z",
+      "basis_pair2": "X",
+      "basis": "ZX",
+      "circuit_name": "hp004_b4_arm_a_zx"
+    },
+    {
+      "kind": "tomography",
+      "block_index": 4,
+      "arm": "Arm B",
+      "basis_pair1": "Z",
+      "basis_pair2": "Y",
+      "basis": "ZY",
+      "circuit_name": "hp004_b4_arm_b_zy"
+    },
+    {
+      "kind": "tomography",
+      "block_index": 4,
+      "arm": "Arm B-Def",
+      "basis_pair1": "X",
+      "basis_pair2": "Z",
+      "basis": "XZ",
+      "circuit_name": "hp004_b4_arm_b_def_xz"
+    },
+    {
+      "kind": "tomography",
+      "block_index": 4,
+      "arm": "Arm A",
+      "basis_pair1": "Y",
+      "basis_pair2": "Z",
+      "basis": "YZ",
+      "circuit_name": "hp004_b4_arm_a_yz"
+    },
+    {
+      "kind": "tomography",
+      "block_index": 4,
+      "arm": "Arm B-Ctrl",
+      "basis_pair1": "Y",
+      "basis_pair2": "Z",
+      "basis": "YZ",
+      "circuit_name": "hp004_b4_arm_b_ctrl_yz"
+    },
+    {
+      "kind": "tomography",
+      "block_index": 4,
+      "arm": "Arm B-Ctrl",
+      "basis_pair1": "Y",
+      "basis_pair2": "X",
+      "basis": "YX",
+      "circuit_name": "hp004_b4_arm_b_ctrl_yx"
+    },
+    {
+      "kind": "tomography",
+      "block_index": 4,
+      "arm": "Arm B-Held",
+      "basis_pair1": "Y",
+      "basis_pair2": "X",
+      "basis": "YX",
+      "circuit_name": "hp004_b4_arm_b_held_yx"
+    },
+    {
+      "kind": "tomography",
+      "block_index": 4,
+      "arm": "Arm B-Ctrl",
+      "basis_pair1": "Y",
+      "basis_pair2": "Y",
+      "basis": "YY",
+      "circuit_name": "hp004_b4_arm_b_ctrl_yy"
+    },
+    {
+      "kind": "tomography",
+      "block_index": 4,
+      "arm": "Arm B-Held",
+      "basis_pair1": "Y",
+      "basis_pair2": "Y",
+      "basis": "YY",
+      "circuit_name": "hp004_b4_arm_b_held_yy"
+    },
+    {
+      "kind": "tomography",
+      "block_index": 4,
+      "arm": "Arm B",
+      "basis_pair1": "Z",
+      "basis_pair2": "Z",
+      "basis": "ZZ",
+      "circuit_name": "hp004_b4_arm_b_zz"
+    },
+    {
+      "kind": "tomography",
+      "block_index": 4,
+      "arm": "Arm B-Ctrl",
+      "basis_pair1": "X",
+      "basis_pair2": "X",
+      "basis": "XX",
+      "circuit_name": "hp004_b4_arm_b_ctrl_xx"
+    },
+    {
+      "kind": "tomography",
+      "block_index": 4,
+      "arm": "Arm B-Def",
+      "basis_pair1": "X",
+      "basis_pair2": "X",
+      "basis": "XX",
+      "circuit_name": "hp004_b4_arm_b_def_xx"
+    },
+    {
+      "kind": "tomography",
+      "block_index": 4,
+      "arm": "Arm B",
+      "basis_pair1": "X",
+      "basis_pair2": "Y",
+      "basis": "XY",
+      "circuit_name": "hp004_b4_arm_b_xy"
+    },
+    {
+      "kind": "tomography",
+      "block_index": 4,
+      "arm": "Arm B-Def",
+      "basis_pair1": "X",
+      "basis_pair2": "Y",
+      "basis": "XY",
+      "circuit_name": "hp004_b4_arm_b_def_xy"
+    },
+    {
+      "kind": "tomography",
+      "block_index": 4,
+      "arm": "Arm B-Ctrl",
+      "basis_pair1": "X",
+      "basis_pair2": "Y",
+      "basis": "XY",
+      "circuit_name": "hp004_b4_arm_b_ctrl_xy"
+    },
+    {
+      "kind": "tomography",
+      "block_index": 5,
+      "arm": "Arm B",
+      "basis_pair1": "Y",
+      "basis_pair2": "Y",
+      "basis": "YY",
+      "circuit_name": "hp004_b5_arm_b_yy"
+    },
+    {
+      "kind": "tomography",
+      "block_index": 5,
+      "arm": "Arm B-Ctrl",
+      "basis_pair1": "Z",
+      "basis_pair2": "X",
+      "basis": "ZX",
+      "circuit_name": "hp004_b5_arm_b_ctrl_zx"
+    },
+    {
+      "kind": "tomography",
+      "block_index": 5,
+      "arm": "Arm B-Ctrl",
+      "basis_pair1": "Y",
+      "basis_pair2": "Y",
+      "basis": "YY",
+      "circuit_name": "hp004_b5_arm_b_ctrl_yy"
+    },
+    {
+      "kind": "tomography",
+      "block_index": 5,
+      "arm": "Arm B-Def",
+      "basis_pair1": "Y",
+      "basis_pair2": "Z",
+      "basis": "YZ",
+      "circuit_name": "hp004_b5_arm_b_def_yz"
+    },
+    {
+      "kind": "tomography",
+      "block_index": 5,
+      "arm": "Arm B-Held",
+      "basis_pair1": "X",
+      "basis_pair2": "X",
+      "basis": "XX",
+      "circuit_name": "hp004_b5_arm_b_held_xx"
+    },
+    {
+      "kind": "tomography",
+      "block_index": 5,
+      "arm": "Arm B-Ctrl",
+      "basis_pair1": "X",
+      "basis_pair2": "Z",
+      "basis": "XZ",
+      "circuit_name": "hp004_b5_arm_b_ctrl_xz"
+    },
+    {
+      "kind": "tomography",
+      "block_index": 5,
+      "arm": "Arm A",
+      "basis_pair1": "X",
+      "basis_pair2": "Z",
+      "basis": "XZ",
+      "circuit_name": "hp004_b5_arm_a_xz"
+    },
+    {
+      "kind": "tomography",
+      "block_index": 5,
+      "arm": "Arm B-Held",
+      "basis_pair1": "Y",
+      "basis_pair2": "X",
+      "basis": "YX",
+      "circuit_name": "hp004_b5_arm_b_held_yx"
+    },
+    {
+      "kind": "tomography",
+      "block_index": 5,
+      "arm": "Arm B-Held",
+      "basis_pair1": "Y",
+      "basis_pair2": "Z",
+      "basis": "YZ",
+      "circuit_name": "hp004_b5_arm_b_held_yz"
+    },
+    {
+      "kind": "tomography",
+      "block_index": 5,
+      "arm": "Arm B",
+      "basis_pair1": "Y",
+      "basis_pair2": "Z",
+      "basis": "YZ",
+      "circuit_name": "hp004_b5_arm_b_yz"
+    },
+    {
+      "kind": "tomography",
+      "block_index": 5,
+      "arm": "Arm B-Def",
+      "basis_pair1": "Z",
+      "basis_pair2": "X",
+      "basis": "ZX",
+      "circuit_name": "hp004_b5_arm_b_def_zx"
+    },
+    {
+      "kind": "tomography",
+      "block_index": 5,
+      "arm": "Arm A",
+      "basis_pair1": "Z",
+      "basis_pair2": "Z",
+      "basis": "ZZ",
+      "circuit_name": "hp004_b5_arm_a_zz"
+    },
+    {
+      "kind": "tomography",
+      "block_index": 5,
+      "arm": "Arm B-Held",
+      "basis_pair1": "Y",
+      "basis_pair2": "Y",
+      "basis": "YY",
+      "circuit_name": "hp004_b5_arm_b_held_yy"
+    },
+    {
+      "kind": "tomography",
+      "block_index": 5,
+      "arm": "Arm B-Def",
+      "basis_pair1": "Z",
+      "basis_pair2": "Y",
+      "basis": "ZY",
+      "circuit_name": "hp004_b5_arm_b_def_zy"
+    },
+    {
+      "kind": "tomography",
+      "block_index": 5,
+      "arm": "Arm B",
+      "basis_pair1": "Z",
+      "basis_pair2": "Z",
+      "basis": "ZZ",
+      "circuit_name": "hp004_b5_arm_b_zz"
+    },
+    {
+      "kind": "tomography",
+      "block_index": 5,
+      "arm": "Arm B-Ctrl",
+      "basis_pair1": "X",
+      "basis_pair2": "X",
+      "basis": "XX",
+      "circuit_name": "hp004_b5_arm_b_ctrl_xx"
+    },
+    {
+      "kind": "tomography",
+      "block_index": 5,
+      "arm": "Arm A",
+      "basis_pair1": "Z",
+      "basis_pair2": "Y",
+      "basis": "ZY",
+      "circuit_name": "hp004_b5_arm_a_zy"
+    },
+    {
+      "kind": "tomography",
+      "block_index": 5,
+      "arm": "Arm B-Def",
+      "basis_pair1": "Y",
+      "basis_pair2": "X",
+      "basis": "YX",
+      "circuit_name": "hp004_b5_arm_b_def_yx"
+    },
+    {
+      "kind": "tomography",
+      "block_index": 5,
+      "arm": "Arm B-Ctrl",
+      "basis_pair1": "Z",
+      "basis_pair2": "Y",
+      "basis": "ZY",
+      "circuit_name": "hp004_b5_arm_b_ctrl_zy"
+    },
+    {
+      "kind": "tomography",
+      "block_index": 5,
+      "arm": "Arm B-Ctrl",
+      "basis_pair1": "Y",
+      "basis_pair2": "Z",
+      "basis": "YZ",
+      "circuit_name": "hp004_b5_arm_b_ctrl_yz"
+    },
+    {
+      "kind": "tomography",
+      "block_index": 5,
+      "arm": "Arm A",
+      "basis_pair1": "Z",
+      "basis_pair2": "X",
+      "basis": "ZX",
+      "circuit_name": "hp004_b5_arm_a_zx"
+    },
+    {
+      "kind": "tomography",
+      "block_index": 5,
+      "arm": "Arm A",
+      "basis_pair1": "X",
+      "basis_pair2": "X",
+      "basis": "XX",
+      "circuit_name": "hp004_b5_arm_a_xx"
+    },
+    {
+      "kind": "tomography",
+      "block_index": 5,
+      "arm": "Arm A",
+      "basis_pair1": "Y",
+      "basis_pair2": "X",
+      "basis": "YX",
+      "circuit_name": "hp004_b5_arm_a_yx"
+    },
+    {
+      "kind": "tomography",
+      "block_index": 5,
+      "arm": "Arm B",
+      "basis_pair1": "X",
+      "basis_pair2": "X",
+      "basis": "XX",
+      "circuit_name": "hp004_b5_arm_b_xx"
+    },
+    {
+      "kind": "tomography",
+      "block_index": 5,
+      "arm": "Arm B-Def",
+      "basis_pair1": "Z",
+      "basis_pair2": "Z",
+      "basis": "ZZ",
+      "circuit_name": "hp004_b5_arm_b_def_zz"
+    },
+    {
+      "kind": "tomography",
+      "block_index": 5,
+      "arm": "Arm B-Ctrl",
+      "basis_pair1": "X",
+      "basis_pair2": "Y",
+      "basis": "XY",
+      "circuit_name": "hp004_b5_arm_b_ctrl_xy"
+    },
+    {
+      "kind": "tomography",
+      "block_index": 5,
+      "arm": "Arm B-Ctrl",
+      "basis_pair1": "Y",
+      "basis_pair2": "X",
+      "basis": "YX",
+      "circuit_name": "hp004_b5_arm_b_ctrl_yx"
+    },
+    {
+      "kind": "tomography",
+      "block_index": 5,
+      "arm": "Arm B-Def",
+      "basis_pair1": "X",
+      "basis_pair2": "X",
+      "basis": "XX",
+      "circuit_name": "hp004_b5_arm_b_def_xx"
+    },
+    {
+      "kind": "tomography",
+      "block_index": 5,
+      "arm": "Arm B-Def",
+      "basis_pair1": "Y",
+      "basis_pair2": "Y",
+      "basis": "YY",
+      "circuit_name": "hp004_b5_arm_b_def_yy"
+    },
+    {
+      "kind": "tomography",
+      "block_index": 5,
+      "arm": "Arm B-Ctrl",
+      "basis_pair1": "Z",
+      "basis_pair2": "Z",
+      "basis": "ZZ",
+      "circuit_name": "hp004_b5_arm_b_ctrl_zz"
+    },
+    {
+      "kind": "tomography",
+      "block_index": 5,
+      "arm": "Arm A",
+      "basis_pair1": "Y",
+      "basis_pair2": "Z",
+      "basis": "YZ",
+      "circuit_name": "hp004_b5_arm_a_yz"
+    },
+    {
+      "kind": "tomography",
+      "block_index": 5,
+      "arm": "Arm B",
+      "basis_pair1": "Y",
+      "basis_pair2": "X",
+      "basis": "YX",
+      "circuit_name": "hp004_b5_arm_b_yx"
+    },
+    {
+      "kind": "tomography",
+      "block_index": 5,
+      "arm": "Arm B-Held",
+      "basis_pair1": "X",
+      "basis_pair2": "Z",
+      "basis": "XZ",
+      "circuit_name": "hp004_b5_arm_b_held_xz"
+    },
+    {
+      "kind": "tomography",
+      "block_index": 5,
+      "arm": "Arm B-Held",
+      "basis_pair1": "X",
+      "basis_pair2": "Y",
+      "basis": "XY",
+      "circuit_name": "hp004_b5_arm_b_held_xy"
+    },
+    {
+      "kind": "tomography",
+      "block_index": 5,
+      "arm": "Arm B-Held",
+      "basis_pair1": "Z",
+      "basis_pair2": "Z",
+      "basis": "ZZ",
+      "circuit_name": "hp004_b5_arm_b_held_zz"
+    },
+    {
+      "kind": "tomography",
+      "block_index": 5,
+      "arm": "Arm A",
+      "basis_pair1": "Y",
+      "basis_pair2": "Y",
+      "basis": "YY",
+      "circuit_name": "hp004_b5_arm_a_yy"
+    },
+    {
+      "kind": "tomography",
+      "block_index": 5,
+      "arm": "Arm B",
+      "basis_pair1": "Z",
+      "basis_pair2": "X",
+      "basis": "ZX",
+      "circuit_name": "hp004_b5_arm_b_zx"
+    },
+    {
+      "kind": "tomography",
+      "block_index": 5,
+      "arm": "Arm B",
+      "basis_pair1": "X",
+      "basis_pair2": "Y",
+      "basis": "XY",
+      "circuit_name": "hp004_b5_arm_b_xy"
+    },
+    {
+      "kind": "tomography",
+      "block_index": 5,
+      "arm": "Arm B-Held",
+      "basis_pair1": "Z",
+      "basis_pair2": "Y",
+      "basis": "ZY",
+      "circuit_name": "hp004_b5_arm_b_held_zy"
+    },
+    {
+      "kind": "tomography",
+      "block_index": 5,
+      "arm": "Arm B",
+      "basis_pair1": "X",
+      "basis_pair2": "Z",
+      "basis": "XZ",
+      "circuit_name": "hp004_b5_arm_b_xz"
+    },
+    {
+      "kind": "tomography",
+      "block_index": 5,
+      "arm": "Arm B-Def",
+      "basis_pair1": "X",
+      "basis_pair2": "Z",
+      "basis": "XZ",
+      "circuit_name": "hp004_b5_arm_b_def_xz"
+    },
+    {
+      "kind": "tomography",
+      "block_index": 5,
+      "arm": "Arm B-Def",
+      "basis_pair1": "X",
+      "basis_pair2": "Y",
+      "basis": "XY",
+      "circuit_name": "hp004_b5_arm_b_def_xy"
+    },
+    {
+      "kind": "tomography",
+      "block_index": 5,
+      "arm": "Arm B-Held",
+      "basis_pair1": "Z",
+      "basis_pair2": "X",
+      "basis": "ZX",
+      "circuit_name": "hp004_b5_arm_b_held_zx"
+    },
+    {
+      "kind": "tomography",
+      "block_index": 5,
+      "arm": "Arm B",
+      "basis_pair1": "Z",
+      "basis_pair2": "Y",
+      "basis": "ZY",
+      "circuit_name": "hp004_b5_arm_b_zy"
+    },
+    {
+      "kind": "tomography",
+      "block_index": 5,
+      "arm": "Arm A",
+      "basis_pair1": "X",
+      "basis_pair2": "Y",
+      "basis": "XY",
+      "circuit_name": "hp004_b5_arm_a_xy"
+    }
+  ]
+}

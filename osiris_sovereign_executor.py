@@ -97,7 +97,7 @@ class SovereignPhysicalizationExecutor:
       • Compliance gate enforcement on every task
 
     Maps directly to the Sovereign Substrate architecture:
-      sovereign_substrate.sh → consolidates external repos
+      attic/sovereign_substrate.sh → (quarantined; see attic/README.md)
       sovereign_executor.py  → executes quantum circuits locally
       THIS MODULE            → executes physicalization tasks locally
     """

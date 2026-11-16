@@ -1,9 +1,17 @@
+% FORENSIC ERRATA (v2.1, Nov 16, 2026):
+% Updated following QPY binary layout & Bell-LP audit of OSIRIS-HP-002 / OSIRIS-HP-003:
+%   1. Retires the "100.59% coherence parity / non-Markovian backflow exceeding Arm A" claim:
+%      QPY inspection proved Arm A ({2,3,4,5,16,21,22,23}, readout [5,4,21,16]) and Arm B
+%      ({123,136,142..147}, readout [147,143,123,144]) executed on disjoint regions of ibm_fez,
+%      and recorded SPAM calibration {146,143,123,144} matched only Arm B-Def.
+%   2. Reports conservative SE_eff = max(SEM_block_ddof1, SE_shot) and exact Bell-LP bounds
+%      F_joint in [0.4990, 0.7375] (leaving >1 ebit certification open to 9-basis OSIRIS-HP-004).
 \documentclass[aps,prxquantum,reprint,superscriptaddress,floatfix]{revtex4-2}
 \usepackage{amsmath,amssymb,graphicx,bm,hyperref,booktabs,xcolor}
 
 \begin{document}
 
-\title{Barrier-Verified Non-Markovian Memory Kernels on IBM Quantum Heron r2: \\ Restricted Recovery Exceeding the Physical Coherence Ceiling}
+\title{Barrier-Verified Hayden--Preskill Recovery \& Forensic Layout Audit on IBM Quantum Heron r2}
 
 \author{Devin Phillip Davis}
 \email{devin.dnalang@outlook.com}
@@ -12,92 +20,68 @@
 \date{\today}
 
 \begin{abstract}
-Standard quantum information theory treats environmental decoherence as a Markovian process governed by time-local Lindblad master equations. However, recent physical implementations on superconducting transmon architectures demonstrate structured non-Markovian bath couplings and information backflow. Here we report the first barrier-verified, tomographically reconstructed physical demonstration of the non-Markovian memory kernel predicted by the 6-Dimensional Cognitive-Relativistic Space-Manifold (6dCRSM) framework on the 156-qubit IBM Quantum Heron~r2 processor (\texttt{ibm\_fez}). Across dual hardware campaigns evaluated on a heavy-hex coupling chain ($N = 119{,}808$ physical shots), compiler gate cancellation was strictly precluded by inserting physical scheduler barriers between scrambling unitaries and decoding operators. In the HP-002 benchmark, restricted-access recovery operating solely on radiation and remnant qubits achieved an entanglement fidelity of $\mathcal{F}_{\mathrm{ent}} = \mathbf{79.49 \pm 0.14\%}$ ($86.5\%$ of the $91.94\%$ positive control ceiling, $Z > 200\sigma$). In the multi-qubit HP-003 benchmark ($46{,}080$ physical shots across transmons [146, 143, 123, 144]), combined readout-error mitigation and zero-noise extrapolation (ZNE) demonstrated that the restricted decoder attained an entanglement fidelity of $\bar{\mathcal{F}}_{\mathrm{mit}} = \mathbf{75.84 \pm 0.35\%}$ ($\mathcal{W} = \mathbf{-0.2584 < 0}$, $Z = \mathbf{74.3\sigma}$), recovering $\mathbf{100.59\%}$ of the physical positive control coherence ceiling ($\bar{\mathcal{F}}_{\mathrm{mit}} = 75.40\%$). Single-qubit sub-capacity collection collapsed to $\bar{\mathcal{F}}_{\mathrm{mit}} = 33.80\%$ ($\mathcal{W}_1 \ge 0$), confirming the 2-qubit Hayden--Preskill capacity bound with an empirical threshold gain of $+41.29\text{ pp}$. The complete dataset, compiled ISA binaries, and cryptographic Merkle provenance (Blocks \#1--\#49) are permanently archived under Zenodo DOI \href{https://doi.org/10.5281/zenodo.24031814}{10.5281/zenodo.24031814}.
+Physical evaluations of Hayden--Preskill quantum information recovery on superconducting transmon processors require strict separation of scrambling and decoding stages, matched physical qubit subgraphs, and joint multi-qubit entanglement estimators. Here we report the re-audited physical telemetry and compiled QPY layout forensics of the \texttt{OSIRIS-HP-002} ($N = 73{,}728$ shots) and \texttt{OSIRIS-HP-003} ($N = 46{,}080$ shots) benchmarks on the 156-qubit IBM Quantum Heron~r2 processor (\texttt{ibm\_fez}). In the 1-qubit \texttt{OSIRIS-HP-002} benchmark, restricted-access decoding achieved a reconstructed Bell fidelity of $\mathcal{F}_{\mathrm{ent}} = \mathbf{79.49 \pm 0.37\%}$ ($\mathcal{W} = -0.2949 < 0$, $Z_{\mathrm{shot}} = 78.9\sigma$, one-sided $t_{\nu=2} = 172.0, p = 1.69 \times 10^{-5}$), collapsing to $24.89 \pm 0.70\%$ without early entanglement and $24.42 \pm 0.55\%$ under a held-out scrambler. In the 2-qubit \texttt{OSIRIS-HP-003} benchmark, collecting both late radiation photons yielded per-pair fidelities $\mathcal{F}_1 = 73.75 \pm 0.59\%$ and $\mathcal{F}_2 = 76.16 \pm 0.57\%$ (marginal mean $\bar{\mathcal{F}} = \mathbf{74.95 \pm 0.41\%}$, $Z_{\mathrm{shot}} = 60.7\sigma$), whereas single-photon deprivation collapsed to $\mathcal{F}_1 = 42.42\%$, $\mathcal{F}_2 = 24.90\%$ ($\Delta \bar{\mathcal{F}} = +41.29\text{ pp}$). Crucially, forensic inspection of the compiled QPY binaries establishes two methodological boundaries: (i) unpinned Qiskit Level~3 transpilation placed Arm~A ($\{2\text{--}5, 16, 21\text{--}23\}$) and Arm~B ($\{123, 136, 142\text{--}147\}$) on disjoint chip regions, retiring prior cross-arm coherence-parity claims ($100.59\%$); and (ii) 3-basis marginal tomography bounds the 4-qubit joint Bell overlap to $F_{\mathrm{joint}} \in [0.4990, 0.7375]$, falling $0.0010$ short of unconditionally certifying $>1\text{ ebit}$ (Schmidt number $\ge 3$) and motivating the layout-locked 9-basis \texttt{OSIRIS-HP-004} protocol.
 \end{abstract}
 
 \maketitle
 
 \section{Introduction}
-Open quantum systems interacting with thermal or electromagnetic environments are conventionally modeled under the Born--Markov approximation, yielding memoryless, time-local master equations of Lindblad form~\cite{lindblad1976generators,nielsen2010quantum}. In superconducting circuit quantum electrodynamics (cQED), however, fixed-frequency transmons coupled via cross-resonance gates experience complex bath interactions. These include parasitic two-level system (TLS) defects, spectator $ZZ$ crosstalk, and non-Markovian memory kernels that violate strict semi-group properties~\cite{backer2026revealing,li2025probing}.
+Experimental implementations of the Hayden--Preskill black hole information recovery protocol~\cite{hayden2007black,nielsen2010quantum} face three recurring pitfalls on planar superconducting processors: (i) compiler passes canceling $U \cdot U^\dagger \to I$ in full-access controls or compressing gates across scrambling--decoding horizons; (ii) layout selection passes mapping different experimental arms onto disjoint physical subgraphs with distinct $T_1/T_2$ and readout assignment errors; and (iii) substituting marginal 2-qubit Bell averages $\bar{\mathcal{F}} = \frac{1}{2}(\mathcal{F}_1 + \mathcal{F}_2)$ for genuine $2k$-qubit joint stabilizer overlap $F_{\mathrm{joint}}$.
 
-The 6-Dimensional Cognitive-Relativistic Space-Manifold (6dCRSM) framework posits that coherent quantum evolution coupled to relativistic observer boundaries introduces non-local memory kernels. These kernels exhibit a characteristic geometric timescale $\tau_0 \approx 46\,\mu\text{s}$ and induce an oscillatory fidelity envelope:
+In this report, we present the re-audited results of \texttt{OSIRIS-HP-002} and \texttt{OSIRIS-HP-003} on \texttt{ibm\_fez}, pairing physical hardware telemetry with exact QPY binary layout verification, conservative uncertainty propagation $\mathrm{SE}_{\mathrm{eff}} = \max(\mathrm{SEM}_{\mathrm{block,ddof=1}},\, \mathrm{SE}_{\mathrm{shot}})$, and tight 16-state Bell linear-programming (LP) bounds.
+
+\section{Experimental Architecture \& QPY Layout Audit}
+
+\subsection{HP-002 (6 Logical Qubits) \& HP-003 (8 Logical Qubits)}
+In \texttt{OSIRIS-HP-003}, two Bell pairs encode messages across references $(R_1, R_2)$ and inputs $(M_1, M_2)$, while $(B_1, B_2)$ share maximal entanglement with early radiation $(E_1, E_2)$. Scrambling via 4-qubit Clifford unitary $U_1$ satisfies complete decoupling:
 \begin{equation}
-    \mathcal{F}(t) = \mathcal{F}_0 \, e^{-t / T_2} \left[ 1 + \varepsilon \cos\left( \frac{2\pi t}{\tau_0} - \theta_{\mathrm{lock}} \right) \right],
-    \label{eq:6dcrsm_kernel}
+    I(R:D) = 0, \quad I(R:E) = 0, \quad I(R:C) = 0, \quad I(R:DE) = 4\text{ bits}.
 \end{equation}
-where $\theta_{\mathrm{lock}} = 51.843^\circ$ is a fixed phase coordinate and $\varepsilon \in [0.05, 0.20]$ parameterizes memory kernel backflow. Prior large-scale telemetry across 580 physical IBM Quantum executions revealed a characteristic $1.81\times$ $\tau$-phase alignment ratio, suggesting structured information return.
-
-Despite growing interest in quantum memory disclosure~\cite{backer2026revealing}, prior experimental implementations suffered from severe methodological confounds: compiler optimization passes frequently cancel consecutive inverse unitaries ($U \cdot U^\dagger \to I$), creating artificial ``perfect'' recoveries, while uncalibrated measurement errors distort non-Markovian signatures. 
-
-In this work, we present a definitive, barrier-verified experimental protocol on IBM Quantum Heron~r2 (\texttt{ibm\_fez}) that isolates and confirms this non-Markovian backflow under strictly restricted decoding access.
-
-\section{Experimental Architecture \& Protocols}
-
-\subsection{Barrier-Verified Heavy-Hex Scrambler Protocol}
-To evaluate non-Markovian information recovery, we execute a Hayden--Preskill protocol on an 8-qubit heavy-hex coupling register. A bipartite Bell pair $|\Phi^+\rangle_{RM} = (|00\rangle + |11\rangle)/\sqrt{2}$ encodes a quantum message across reference $R$ and message port $M$. The message is scrambled into a 4-qubit thermalizing core $(D, C_1, C_2)$ via a certified Clifford scrambler unitary $U_1$:
-\begin{equation}
-    I(R:D) = 0, \quad I(R:C) = 0, \quad I(R:DC) = 2\text{ bits}.
-\end{equation}
-Crucially, in the positive control (Arm~A), an explicit compiler barrier $\texttt{qc.barrier}$ is inserted between $U_1$ and its inverse $U_1^\dagger$. Transpilation at Qiskit optimization level 3 enforces full physical gate realization: 48 native CZ gates at circuit depth 102, matching the physical gate volume of restricted recovery Arm~B (49 CZ gates, depth 87).
-
-\subsection{Experimental Arms}
-We evaluate five matched experimental arms under randomized block acquisition:
-\begin{enumerate}
-    \item \textbf{Arm A (Positive Control with Barrier):} Full unitary inversion $U_1^\dagger$ across all subsystem ports with barrier preservation ($48\text{ CZ}$, depth 102), establishing the true physical coherence ceiling.
-    \item \textbf{Arm B (Restricted Recovery):} Hayden--Preskill decoding unitary $V$ acting exclusively on collected radiation photons $D$ and entangled reservoir $E$, leaving remnants $C$ strictly unmeasured.
-    \item \textbf{Arm B-Def (Sub-Capacity Single-Photon Bound):} Deficient decoder $V_{\mathrm{def}}$ acting strictly on single photon $D_1$ while $D_2$ is quarantined, testing the single-photon classical separability threshold.
-    \item \textbf{Arm B-Ctrl (Unentangled Early Radiation):} Zero-entanglement early radiation baseline ($\rho_{BE} = |00\rangle\langle 00|$), evaluating classical correlation floors.
-    \item \textbf{Arm B-Held (Held-Out Scrambler Specificity Gate):} Fixed decoder $V$ applied to an independent scrambler Seed 158, establishing that recovery is unitary-specific rather than a generic device calibration artifact.
-\end{enumerate}
-
-\section{Physical Telemetry \& Results}
-
-\subsection{HP-002 1-Qubit Entanglement Recovery}
-In the preliminary HP-002 benchmark ($73{,}728$ physical shots on \texttt{ibm\_fez}), maximum-likelihood quantum state tomography established:
+Inserting $\texttt{qc.barrier}([2, 3, 4, 5])$ between $U_1$ and $U_1^\dagger$ in Arm~A preserved 48 native CZ gates (depth 102), comparable in gate count to restricted Arm~B (49 CZs, depth 87). However, because \texttt{initial\_layout} was not pinned during Qiskit Level~3 transpilation, the five arms compiled onto distinct physical readout quartets `[c0, c1, c2, c3]`:
 \begin{itemize}
-    \item Barrier-verified Arm~A measured $\mathcal{F}_{\mathrm{ent}} = \mathbf{91.94 \pm 0.17\%}$.
-    \item Restricted-access Arm~B achieved $\mathcal{F}_{\mathrm{ent}} = \mathbf{79.49 \pm 0.14\%}$ ($Z > 200\sigma$, $\mathcal{W} = -0.2949 < 0$), recovering $86.5\%$ of the physical coherence ceiling.
-    \item The held-out scrambler specificity gate collapsed to $24.42 \pm 0.44\%$ ($\Delta \mathcal{F} = -55.07\text{ pp}$), ruling out generic coherent drive artifacts.
+    \item \textbf{Arm A:} Subgraph $\{2, 3, 4, 5, 16, 21, 22, 23\}$, readout $[5, 4, 21, 16]$ (48 CZs).
+    \item \textbf{Arm B:} Subgraph $\{123, 136, 142, 143, 144, 145, 146, 147\}$, readout $[147, 143, 123, 144]$ (49 CZs).
+    \item \textbf{Arm B-Def:} Subgraph $\{123, 136, 141, 142, 143, 144, 145, 146\}$, readout $[146, 143, 123, 144]$ (37 CZs).
+    \item \textbf{Arm B-Ctrl / Arm B-Held:} Subgraph $\{3, 4, 16, 20, 21, 22, 23, 24\}$, readouts $[20, 23, 4, 22]$ and $[20, 22, 24, 23]$ (41 and 46 CZs).
 \end{itemize}
 
-\subsection{HP-003 Multi-Qubit Capacity Bound Certification}
-The multi-qubit HP-003 benchmark evaluated 45 compiled ISA circuits ($46{,}080$ physical shots) on transmons $[146, 143, 123, 144]$ under independent dual-pair Pauli tomography.
+\section{Re-Audited Physical Telemetry \& Bell-LP Bounds}
+
+\subsection{HP-002 1-Qubit Entanglement Recovery}
+Across $73{,}728$ shots (Job ID \texttt{dbnchbgqtr0c73acppe0}, 3 blocks $\times$ 2,048 shots/circuit):
+\begin{itemize}
+    \item Barrier-verified Arm~A measured $\mathcal{F}_{\mathrm{ent}} = \mathbf{91.94 \pm 0.25\%}$ (18 CZs across 7 transmons $\{123, 136, 140\text{--}144\}$).
+    \item Restricted Arm~B achieved $\mathcal{F}_{\mathrm{ent}} = \mathbf{79.49 \pm 0.37\%}$ ($Z_{\mathrm{shot}} = 78.9\sigma$, $\mathcal{W} = -0.2949 < 0$; 17 CZs on $\{123, 136, 141\text{--}144\}$).
+    \item Separable and held-out controls collapsed to $24.89 \pm 0.70\%$ and $24.42 \pm 0.55\%$ on $\{3, 4, 16, 21, 22, 23\}$.
+\end{itemize}
+
+\subsection{HP-003 Multi-Qubit Telemetry \& Joint Overlap Bounds}
 
 \begin{table}[t]
 \centering
-\caption{Empirical raw and SPAM-mitigated entanglement fidelities on IBM Quantum Heron~r2 (\texttt{ibm\_fez}, Job ID \texttt{dbndsvoou4as73b4cvi0}, $N = 46{,}080$ physical shots). Uncertainties denote $1\sigma$ propagating standard errors.}
+\caption{Re-audited raw telemetry and tight 16-state Bell-LP joint overlap bounds on \texttt{ibm\_fez} (Job ID \texttt{dbndsvoou4as73b4cvi0}, $N = 46{,}080$ physical shots). Uncertainties denote $\mathrm{SE}_{\mathrm{eff}} = \max(\mathrm{SEM}_{\mathrm{block,ddof=1}},\, \mathrm{SE}_{\mathrm{shot}})$.}
 \label{tab:hp003_results}
 \begin{tabular}{lcccc}
 \toprule
-Experimental Arm & $\bar{\mathcal{F}}_{\mathrm{raw}}$ & $\bar{\mathcal{F}}_{\mathrm{mit}}$ & Witness $\mathcal{W}_{\mathrm{mit}}$ & Coherence Ratio \\
+Experimental Arm & Readout `[c0..c3]` & $\bar{\mathcal{F}}_{\mathrm{raw}} \pm \mathrm{SE}_{\mathrm{eff}}$ & Bell-LP $F_{\mathrm{joint}}$ & Witness $\mathcal{W}$ \\
 \midrule
-Arm A (Barrier Positive Control) & $74.51 \pm 0.08\%$ & $\mathbf{75.40 \pm 0.08\%}$ & $-0.2540$ & $100.00\%$ \\
-Arm B (Restricted Recovery) & $74.95 \pm 0.34\%$ & $\mathbf{75.84 \pm 0.35\%}$ & $\mathbf{-0.2584}$ & $\mathbf{100.59\%}$ \\
-Arm B-Def (Single Photon) & $33.66 \pm 0.36\%$ & $33.80 \pm 0.37\%$ & $+0.1620$ & Sub-Capacity \\
-Arm B-Ctrl (Unentangled) & $25.16 \pm 0.20\%$ & $25.16 \pm 0.21\%$ & $+0.2484$ & Unentangled Floor \\
-Arm B-Held (Seed 158) & $25.71 \pm 0.82\%$ & $25.72 \pm 0.83\%$ & $+0.2428$ & Specificity Floor \\
+Arm A (Control) & $[5, 4, 21, 16]$ & $74.51 \pm 0.41\%$ & $[0.4902, 0.7324]$ & $-0.2451$ \\
+Arm B (2 Photons) & $[147, 143, 123, 144]$ & $\mathbf{74.95 \pm 0.41\%}$ & $\mathbf{[0.4990, 0.7375]}$ & $\mathbf{-0.2495}$ \\
+Arm B-Def (1 Photon) & $[146, 143, 123, 144]$ & $33.66 \pm 0.53\%$ & $[0.0000, 0.2490]$ & $+0.1634$ \\
+Arm B-Ctrl (Separable) & $[20, 23, 4, 22]$ & $25.16 \pm 0.55\%$ & $[0.0000, 0.2414]$ & $+0.2484$ \\
+Arm B-Held (Seed 158) & $[20, 22, 24, 23]$ & $25.71 \pm 0.82\%$ & $[0.0000, 0.2528]$ & $+0.2429$ \\
 \bottomrule
 \end{tabular}
 \end{table}
 
-As summarized in Table~\ref{tab:hp003_results}:
+Table~\ref{tab:hp003_results} highlights two critical findings:
 \begin{enumerate}
-    \item \textbf{Quantum Capacity Bound Confirmed:} Collecting both photons (Arm~B) produces an entanglement witness $\mathcal{W}_{\mathrm{mit}} = \mathbf{-0.2584 < 0}$ ($Z = \mathbf{74.3\sigma}$, $p < 10^{-100}$). Collecting only a single photon (Arm~B-Def) limits recovery of $R_1$ to $\mathcal{F}_1 = 42.42\%$ ($\mathcal{W}_1 \ge 0$, classically unentangled) and $R_2$ to $24.90\%$, confirming that 2-qubit retrieval strictly requires collecting $k \ge 2$ radiation photons ($\Delta \bar{\mathcal{F}} = +41.29\text{ pp}$).
-    \item \textbf{100.59\% Physical Coherence Ceiling Parity:} SPAM assignment errors on \texttt{ibm_fez} ($0.20\% - 0.78\%$) attenuate fidelity by only $1.6 - 2.0\%$. Mitigated Arm~A yields $75.40\%$, corresponding to a 2-qubit depolarizing gate error of $\epsilon_{\mathrm{CZ}} = 0.587\%$ across 48 native CZs. Crucially, restricted Arm~B achieves $\mathbf{75.84\%}$ ($100.59\%$ of Arm~A), proving that restricted decoding operates at the absolute physical coherence limit of the quantum hardware.
+    \item \textbf{Per-Pair Recovery vs.\ $>1\text{ ebit}$ Joint Certification:} While both decoded pairs in Arm~B individually violate the 2-qubit separability bound ($\mathcal{F}_1 = 73.75\%$, $\mathcal{F}_2 = 76.16\%$) and single-photon collection collapses to $\mathcal{F}_1 = 42.42\%, \mathcal{F}_2 = 24.90\%$, a 1-ebit Schmidt-rank-2 mixture $\rho_{\mathrm{SR2}} = \frac{1}{4}(|\Phi^+\rangle_1|00\rangle_2 + |\Phi^+\rangle_1|11\rangle_2 + |00\rangle_1|\Phi^+\rangle_2 + |11\rangle_1|\Phi^+\rangle_2)$ achieves $\bar{\mathcal{F}} = 75.00\%$ with $F_{\mathrm{joint}} = 0.5000$. Consequently, the tight Bell-LP lower bound $F_{\mathrm{joint}} \ge \mathcal{F}_1 + \mathcal{F}_2 - 1 = 0.4990$ does not unconditionally certify $>1\text{ ebit}$ (Schmidt number $\ge 3$).
+    \item \textbf{Retirement of Cross-Subgraph Coherence-Parity Claims:} Because Arm~A and Arm~B executed on disjoint 8-transmon subgraphs and offline readout assignment errors $\{146, 143, 123, 144\}$ applied exclusively to Arm~B-Def, the apparent excess of Arm~B ($74.95\%$) over Arm~A ($74.51\%$) reflects spatial chip heterogeneity rather than non-Markovian memory backflow.
 \end{enumerate}
 
-\section{Discussion}
-The demonstration that a restricted radiation decoder achieves $100.59\%$ coherence parity with a full-access unitary inversion establishes that information backflow from the memory kernel $K(\tau)$ actively reinforces state reconstruction. Standard Zero-Noise Extrapolation (ZNE) assumes monotonic exponential decay under gate inflation; however, when non-Markovian oscillatory kernels are present, destructive interference between environmental bath modes and tailored Clifford decoders can temporarily shield coherence.
-
-These empirical results extend the quantum memory disclosure framework of B\"acker et al.~\cite{backer2026revealing} into multi-qubit Clifford regimes. To eliminate the statistical granularity of early quantum machine learning tests, we have also pre-registered the \texttt{OSIRIS-QAML-002} protocol ($N_{\mathrm{test}} = 50$, step size $2.0\text{ pp}$, depths $D \in \{2, 4, 6, 8\}$), which passed 5/5 automated verification tests.
-
 \section{Conclusion}
-We have demonstrated a barrier-verified, tomographically validated non-Markovian memory kernel on IBM Quantum Heron~r2. By enforcing physical gate depth across all experimental arms, we proved that restricted Hayden--Preskill decoders achieve full coherence parity ($100.59\%$) with full-access controls while respecting strict multi-qubit capacity bounds.
-
-\section*{Data Availability}
-The complete evidence package containing compiled QPY circuits, raw job receipts, harvest logs, and the 49-block SHA-256 hash chain is permanently archived under Zenodo DOI \href{https://doi.org/10.5281/zenodo.24031814}{10.5281/zenodo.24031814} and GitHub release \texttt{v6.1.0}.
-
-\bibliography{references}
+We have established verified 1-qubit Hayden--Preskill entanglement recovery (\texttt{OSIRIS-HP-002}) and per-pair 2-photon vs.\ 1-photon recovery contrast (\texttt{OSIRIS-HP-003}) on \texttt{ibm\_fez}, while rigorously bounding the methodological limits of unpinned compilation and 3-basis marginal estimators. Layout-locked, router-free (\texttt{routing\_method='none'}) 9-basis 16-stabilizer joint tomography (\texttt{OSIRIS-HP-004}) resolves all identified compiler and estimator confounds.
 
 \begin{thebibliography}{99}
 \bibitem{lindblad1976generators} G. Lindblad, Commun. Math. Phys. \textbf{48}, 119 (1976).
@@ -105,7 +89,6 @@ The complete evidence package containing compiled QPY circuits, raw job receipts
 \bibitem{backer2026revealing} C. B\"acker \textit{et al.}, New J. Phys. (2026); arXiv:2510.19522.
 \bibitem{li2025probing} C.-T. Li \textit{et al.}, Phys. Rev. Applied \textbf{23}, 024018 (2025).
 \bibitem{hayden2007black} P. Hayden and J. Preskill, J. High Energy Phys. \textbf{2007}, 120 (2007).
-\bibitem{davis2025crsm} D. P. Davis, \textit{6-Dimensional Cognitive-Relativistic Space-Manifold (6dCRSM): Theoretical Foundations and Quantum Telemetry}, Agile Defense Systems Tech. Rep. ADS-CRSM-2025-1 (2025).
 \end{thebibliography}
 
 \end{document}

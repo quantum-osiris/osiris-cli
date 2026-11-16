@@ -5150,18 +5150,29 @@ def sanitize_input(text: str) -> str:
 
 def query_model(prompt: str, model: str, stream: bool = True, timeout: int = 420,
                 fmt: dict = None) -> str:
-    # First: attempt through OSIRIS BaseModelProvider (Gemma substrate)
+    _last_backend.update(name=None, requested_model=model, model=None, substituted=False, is_mock=False, error=None)
+    # First: attempt through OSIRIS BaseModelProvider when live (or when mock is explicitly opted in)
     try:
         from osiris_cli.providers import ProviderRequest, get_active_provider
         prov = get_active_provider()
+        prov_is_mock = getattr(prov, "mode", None) == "mock"
+        mock_allowed = os.environ.get("OSIRIS_GEMMA_MOCK") == "1"
         ollama_installed = _detect_installed_ollama_models(timeout=0.5)
-        if prov.health().available and (not ollama_installed or getattr(prov, "name", "") == "gemma" or os.environ.get("OSIRIS_MODEL_PROVIDER") == "gemma"):
+        if prov.health().available and (not prov_is_mock or mock_allowed) and (
+            not ollama_installed or getattr(prov, "name", "") == "gemma" or os.environ.get("OSIRIS_MODEL_PROVIDER") == "gemma"
+        ):
             req = ProviderRequest(
                 prompt=prompt,
                 model=model,
                 stream=stream,
                 timeout=timeout,
                 response_schema=fmt,
+            )
+            _last_backend.update(
+                name="gemma:mock" if prov_is_mock else "gemma",
+                model=getattr(prov, "selected_model", model),
+                substituted=(getattr(prov, "selected_model", model) != model),
+                is_mock=prov_is_mock,
             )
             if stream:
                 with _stdout_lock:
@@ -5198,11 +5209,14 @@ def query_model(prompt: str, model: str, stream: bool = True, timeout: int = 420
     full_text = []
     try:
         with urllib.request.urlopen(req, timeout=timeout) as resp:
+            _last_backend.update(name="ollama", model=model, substituted=False, is_mock=False)
             if stream:
                 with _stdout_lock:
                     for line in resp:
                         if line:
                             chunk = json.loads(line.decode("utf-8", errors="ignore"))
+                            if chunk.get("model"):
+                                _last_backend["model"] = chunk["model"]
                             token = chunk.get("response", "")
                             sys.stdout.write(token)
                             sys.stdout.flush()
@@ -5212,16 +5226,20 @@ def query_model(prompt: str, model: str, stream: bool = True, timeout: int = 420
                     print()
             else:
                 body = json.loads(resp.read().decode("utf-8", errors="ignore"))
+                if body.get("model"):
+                    _last_backend["model"] = body["model"]
                 return body.get("response", "")
     except Exception as e:
         _last_backend["error"] = f"Inference error with {model}: {e}"
         with _stdout_lock:
             installed = _detect_installed_ollama_models(timeout=1.0)
-            if installed and model not in installed:
+            if installed and model not in installed and os.environ.get("OSIRIS_ALLOW_MODEL_SUBSTITUTION") == "1":
                 fallback_model = installed[0]
-                print(f"\n[!] Model '{model}' not found in Ollama (HTTP 404). Switching to installed model '{fallback_model}'...")
-                return query_model(prompt, fallback_model, stream=stream, timeout=timeout, fmt=fmt)
-            print(f"\n[!] Inference error with {model}: {e}")
+                print(f"\n[!] Model '{model}' not found in Ollama (HTTP 404). Explicit substitution enabled -> '{fallback_model}'...")
+                res = query_model(prompt, fallback_model, stream=stream, timeout=timeout, fmt=fmt)
+                _last_backend.update(requested_model=model, model=fallback_model, substituted=True)
+                return res
+            print(f"\n[!] Inference error with {model}: {e} (no model substituted)")
             if stream: print()
             
     return "".join(full_text)

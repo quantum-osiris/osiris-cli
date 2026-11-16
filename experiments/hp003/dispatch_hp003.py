@@ -46,12 +46,28 @@ def main():
     print("OSIRIS-HP-003: PHYSICAL QPU DISPATCH ENGINE")
     print("=" * 80)
 
-    # 1. Verify Grant
+    # 1. Verify Grant Status & LF-Canonicalized Payload Digest (with historical CRLF compatibility)
     grant_file = EXPERIMENT_DIR / "sys021_hp003_grant.json"
     if not grant_file.exists():
         raise RuntimeError("CRITICAL [SYS-021]: Missing sys021_hp003_grant.json. Execution rejected.")
     grant = json.loads(grant_file.read_text(encoding="utf-8"))
-    print(f"Verified Grant ID  : {grant.get('grant_id')}")
+    if grant.get("status") != "ACTIVE_AUTHORIZED_GRANT":
+        raise PermissionError(
+            f"SYS-021 Violation: Grant status is {grant.get('status')!r}; requires 'ACTIVE_AUTHORIZED_GRANT'."
+        )
+    harness_bytes = (EXPERIMENT_DIR / "stage_hp003_harness.py").read_bytes()
+    lf_bytes = harness_bytes.replace(b"\r\n", b"\n")
+    digest_lf = hashlib.sha256(lf_bytes).hexdigest()
+    digest_crlf = hashlib.sha256(lf_bytes.replace(b"\n", b"\r\n")).hexdigest()
+    expected_payload_digest = grant.get("payload_sha256")
+    if expected_payload_digest not in (digest_lf, digest_crlf):
+        raise PermissionError(
+            f"SYS-021 Violation: stage_hp003_harness.py digest mismatch!\n"
+            f"  Grant expected : {expected_payload_digest}\n"
+            f"  Actual (LF)    : {digest_lf}\n"
+            f"  Actual (CRLF)  : {digest_crlf}"
+        )
+    print(f"Verified Grant ID  : {grant.get('grant_id')} (32B HMAC-SHA256 permit)")
     print(f"Target Operator    : {grant.get('operator_id')}")
 
     # 2. Verify QPY Integrity

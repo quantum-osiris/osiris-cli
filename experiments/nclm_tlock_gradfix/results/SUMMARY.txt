@@ -1,0 +1,14 @@
+case | rev | tensors fail no_grad zero_grad | max rel_err at eps 1e-1 3e-2 1e-2 3e-3 1e-3 3e-4 | max best abs_err
+crsm/seed0/B2xT48      pre-fix  80  41 4 0 | 0.7346 0.4287 0.3836 0.3927 0.3934 0.3897 | 4.31e-01
+crsm/seed0/B2xT48      fixed    80   0 4 0 | 0.8204 0.5444 0.4073 0.1344 0.0226 0.0565 | 2.59e-02
+crsm/seed1/B1xT128     pre-fix  80  37 4 0 | 0.6753 0.1738 0.1512 0.1798 0.1877 0.1898 | 7.05e-01
+crsm/seed1/B1xT128     fixed    80   0 4 0 | 0.7290 0.3601 0.1635 0.0483 0.0206 0.0774 | 1.25e-02
+crsm/seed2/B3xT17      pre-fix  80  39 4 0 | 0.8506 0.4732 0.4106 0.4257 0.4269 0.4271 | 8.78e-01
+crsm/seed2/B3xT17      fixed    80   0 4 0 | 0.9565 0.6361 0.1443 0.0410 0.0169 0.0753 | 9.75e-03
+standard/seed0/B2xT48  pre-fix  56   0 0 0 | 0.0308 0.0029 0.0007 0.0022 0.0121 0.0332 | 6.26e-05
+standard/seed0/B2xT48  fixed    56   0 0 0 | 0.0308 0.0029 0.0007 0.0022 0.0121 0.0332 | 6.26e-05
+standard/seed1/B1xT128 pre-fix  56   0 0 0 | 0.0211 0.0020 0.0006 0.0018 0.0096 0.0157 | 8.69e-05
+standard/seed1/B1xT128 fixed    56   0 0 0 | 0.0211 0.0020 0.0006 0.0018 0.0096 0.0157 | 8.69e-05
+standard/seed2/B3xT17  pre-fix  56   0 0 0 | 0.0258 0.0024 0.0006 0.0017 0.0071 0.0271 | 7.71e-05
+standard/seed2/B3xT17  fixed    56   0 0 0 | 0.0258 0.0024 0.0006 0.0017 0.0071 0.0271 | 7.71e-05
+forward arrays array_equal: True of 12 arrays; dtypes ['float32', 'float64']

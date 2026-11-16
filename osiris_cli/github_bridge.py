@@ -12,9 +12,45 @@ from __future__ import annotations
 
 import json
 import os
+import re
 import shutil
 import subprocess
-from typing import Any, Dict, List, Optional, Union
+from typing import Any, Dict, List, Optional, Sequence, Union
+
+# Anything that looks like a GitHub credential is removed from every string this module returns.
+_SECRET_PATTERNS = (
+    re.compile(r"\b(?:gh[pousr]_[A-Za-z0-9_*]{8,}|github_pat_[A-Za-z0-9_]{20,})"),
+    re.compile(r"(?im)^(\s*-?\s*token:\s*).*$"),
+    re.compile(r"(?i)(authorization:\s*(?:bearer|token)\s+)\S+"),
+)
+DEFAULT_TIMEOUT_S = 30
+_NETWORK_HINTS = ("dial tcp", "could not resolve", "connection refused", "connection reset", "no such host",
+                  "network is unreachable", "tls handshake", "i/o timeout", "timeout awaiting", "eof")
+
+
+def redact(text: Optional[str]) -> str:
+    """Remove token-like material from gh output before it is logged, returned or displayed."""
+    out = text or ""
+    out = _SECRET_PATTERNS[0].sub("<REDACTED>", out)
+    out = _SECRET_PATTERNS[1].sub(lambda m: m.group(1) + "<REDACTED>", out)
+    out = _SECRET_PATTERNS[2].sub(lambda m: m.group(1) + "<REDACTED>", out)
+    return out
+
+
+def classify_failure(returncode: int, stderr: str) -> str:
+    """Map a failed gh invocation to a stable error kind."""
+    low = (stderr or "").lower()
+    if "http 401" in low or "bad credentials" in low or "not logged" in low or "gh auth login" in low:
+        return "AUTH"
+    if "http 403" in low:
+        return "FORBIDDEN"
+    if "http 404" in low or "not found" in low:
+        return "NOT_FOUND"
+    if any(h in low for h in _NETWORK_HINTS):
+        return "NETWORK"
+    if "http 4" in low or "http 5" in low:
+        return "HTTP_ERROR"
+    return "GH_ERROR"
 
 
 class GitHubBridge:
@@ -25,6 +61,62 @@ class GitHubBridge:
 
     def is_installed(self) -> bool:
         return self.gh_binary is not None
+
+    def run_gh(self, args: Sequence[str], *, stdin: Optional[str] = None,
+               timeout: float = DEFAULT_TIMEOUT_S) -> Dict[str, Any]:
+        """Run gh with a fixed argument vector (never a shell). Output is redacted.
+
+        Returns {"ok": bool, "stdout", "stderr", "kind"} where kind is None on success or one of
+        NOT_INSTALLED, TIMEOUT, NETWORK, AUTH, FORBIDDEN, NOT_FOUND, HTTP_ERROR, GH_ERROR, EXEC_ERROR.
+        """
+        if not self.is_installed():
+            return {"ok": False, "stdout": "", "stderr": "gh CLI not installed", "kind": "NOT_INSTALLED"}
+        if not all(isinstance(a, str) for a in args):
+            raise TypeError("gh arguments must be strings")
+        env = dict(os.environ, GH_PROMPT_DISABLED="1", GH_NO_UPDATE_NOTIFIER="1", NO_COLOR="1")
+        try:
+            res = subprocess.run([self.gh_binary, *args], input=stdin, capture_output=True, text=True,
+                                 check=False, timeout=timeout, env=env)
+        except subprocess.TimeoutExpired:
+            return {"ok": False, "stdout": "", "stderr": f"gh timed out after {timeout}s", "kind": "TIMEOUT"}
+        except OSError as e:
+            return {"ok": False, "stdout": "", "stderr": redact(str(e)), "kind": "EXEC_ERROR"}
+        out, err = redact(res.stdout), redact(res.stderr)
+        if res.returncode != 0:
+            return {"ok": False, "stdout": out, "stderr": err.strip(), "kind": classify_failure(res.returncode, err)}
+        return {"ok": True, "stdout": out, "stderr": err, "kind": None}
+
+    def api(self, endpoint: str, *, method: str = "GET", body: Optional[Dict[str, Any]] = None,
+            timeout: float = DEFAULT_TIMEOUT_S) -> Dict[str, Any]:
+        """Call the GitHub REST API through ``gh api``. A request body travels on stdin as JSON,
+        so no user-supplied value is ever parsed by gh as a flag or an @file reference."""
+        if method not in ("GET", "POST"):
+            raise ValueError(f"method {method!r} not supported")
+        if endpoint.startswith("-") or "\n" in endpoint or "://" in endpoint:
+            raise ValueError("endpoint must be a relative API path")
+        args = ["api", "--method", method, "-H", "Accept: application/vnd.github+json", endpoint]
+        stdin = None
+        if body is not None:
+            args += ["--input", "-"]
+            stdin = json.dumps(body)
+        r = self.run_gh(args, stdin=stdin, timeout=timeout)
+        if not r["ok"]:
+            return {"status": "ERROR", "kind": r["kind"], "reason": r["stderr"] or "gh api failed"}
+        try:
+            data = json.loads(r["stdout"]) if r["stdout"].strip() else None
+        except json.JSONDecodeError:
+            return {"status": "ERROR", "kind": "BAD_RESPONSE", "reason": "gh api returned non-JSON output"}
+        return {"status": "SUCCESS", "data": data}
+
+    def authenticated_login(self) -> Dict[str, Any]:
+        """The login the GitHub API says this token belongs to (not what gh's config claims)."""
+        r = self.api("user")
+        if r["status"] != "SUCCESS":
+            return r
+        login = (r["data"] or {}).get("login")
+        if not login:
+            return {"status": "ERROR", "kind": "BAD_RESPONSE", "reason": "user endpoint returned no login"}
+        return {"status": "SUCCESS", "login": login}
 
     def check_auth(self) -> Dict[str, Any]:
         """Check authentication status with GitHub CLI."""
@@ -64,13 +156,13 @@ class GitHubBridge:
                 "authenticated": is_auth,
                 "account": account,
                 "scopes": scopes,
-                "raw": combined_output.strip()
+                "raw": redact(combined_output).strip()
             }
         except Exception as e:
             return {
                 "installed": True,
                 "authenticated": False,
-                "reason": f"Execution error probing gh auth status: {e}"
+                "reason": redact(f"Execution error probing gh auth status: {e}")
             }
 
     def list_prs(self, limit: int = 10) -> Dict[str, Any]:

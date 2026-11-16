@@ -1,0 +1,9 @@
+{
+  "experiment_id": "TESSERACT-MAP-02",
+  "job_id": "dbto408n26qs739tnrj0",
+  "backend": "ibm_marrakesh",
+  "submitted_utc": "2026-11-16T22:21:53.481763+00:00",
+  "prereg_lock_sha256": "5f4a04c45933e046c0fff0574a426fd3a876ec5f19d808d69514374c2f931f1f",
+  "qpy_sha256": "409dc7365405ed20bde035683ae022a09778a1c58e186edd64fe5077154d7bf9",
+  "quota_remaining_before_s": 331.0
+}

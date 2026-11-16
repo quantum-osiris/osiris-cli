@@ -259,9 +259,11 @@ class Trainer:
                     f"| avg={avg:.4f} | lr={self.optimizer.current_lr:.2e}"
                 )
 
-            # Periodic Φ measurement
+            # Periodic Φ measurement (evaluated under no_grad to avoid dangling autograd graphs)
             if cfg.phi_interval > 0 and self.step % cfg.phi_interval == 0:
-                phi = self.model.consciousness_phi(x[:1])
+                from .autograd import no_grad as _no_grad
+                with _no_grad():
+                    phi = self.model.consciousness_phi(x[:1])
                 self.history.append({
                     "step": self.step,
                     "loss": loss_val,

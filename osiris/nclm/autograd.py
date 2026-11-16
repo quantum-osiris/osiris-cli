@@ -122,18 +122,24 @@ class Tensor:
             assert self.data.size == 1, "backward() requires scalar output or explicit grad"
             grad = np.ones_like(self.data)
 
-        # Topological sort
+        # Iterative topological sort (avoids recursive closure cycle `_build <-> cell(topo)`
+        # that otherwise pinned the entire `topo` activation list until Gen-2 cyclic GC).
         topo: List[Tensor] = []
         visited = set()
-
-        def _build(t: Tensor):
-            if id(t) not in visited:
-                visited.add(id(t))
-                for p in t._prev:
-                    _build(p)
-                topo.append(t)
-
-        _build(self)
+        stack: List[Tuple[Tensor, bool]] = [(self, False)]
+        while stack:
+            node, processed = stack.pop()
+            nid = id(node)
+            if processed:
+                topo.append(node)
+                continue
+            if nid in visited:
+                continue
+            visited.add(nid)
+            stack.append((node, True))
+            for p in node._prev:
+                if id(p) not in visited:
+                    stack.append((p, False))
 
         self._ensure_grad()
         self.grad = self.grad + grad
@@ -142,6 +148,10 @@ class Tensor:
             if t._backward_fn is not None:
                 t._backward_fn()
                 t._backward_fn = None
+            if t._prev:
+                t._prev = []
+                t.grad = None
+        topo.clear()
 
     # -- Constructors -------------------------------------------------------
 
@@ -169,10 +179,11 @@ class Tensor:
 
     def __add__(self, other):
         other = _ensure_tensor(other)
-        out = Tensor(self.data + other.data, requires_grad=(self.requires_grad or other.requires_grad))
-        out._prev = [self, other]
+        track = _is_grad_enabled() and (self.requires_grad or other.requires_grad)
+        out = Tensor(self.data + other.data, requires_grad=track)
 
-        if _is_grad_enabled() and out.requires_grad:
+        if track:
+            out._prev = [self, other]
             def _backward():
                 if self.requires_grad:
                     self._ensure_grad()
@@ -192,10 +203,11 @@ class Tensor:
 
     def __sub__(self, other):
         other = _ensure_tensor(other)
-        out = Tensor(self.data - other.data, requires_grad=(self.requires_grad or other.requires_grad))
-        out._prev = [self, other]
+        track = _is_grad_enabled() and (self.requires_grad or other.requires_grad)
+        out = Tensor(self.data - other.data, requires_grad=track)
 
-        if _is_grad_enabled() and out.requires_grad:
+        if track:
+            out._prev = [self, other]
             def _backward():
                 if self.requires_grad:
                     self._ensure_grad()
@@ -213,10 +225,11 @@ class Tensor:
     # -- negation -----------------------------------------------------------
 
     def __neg__(self):
-        out = Tensor(-self.data, requires_grad=self.requires_grad)
-        out._prev = [self]
+        track = _is_grad_enabled() and self.requires_grad
+        out = Tensor(-self.data, requires_grad=track)
 
-        if _is_grad_enabled() and self.requires_grad:
+        if track:
+            out._prev = [self]
             def _backward():
                 self._ensure_grad()
                 self.grad = self.grad - out.grad
@@ -227,10 +240,11 @@ class Tensor:
 
     def __mul__(self, other):
         other = _ensure_tensor(other)
-        out = Tensor(self.data * other.data, requires_grad=(self.requires_grad or other.requires_grad))
-        out._prev = [self, other]
+        track = _is_grad_enabled() and (self.requires_grad or other.requires_grad)
+        out = Tensor(self.data * other.data, requires_grad=track)
 
-        if _is_grad_enabled() and out.requires_grad:
+        if track:
+            out._prev = [self, other]
             def _backward():
                 if self.requires_grad:
                     self._ensure_grad()
@@ -250,10 +264,11 @@ class Tensor:
 
     def __truediv__(self, other):
         other = _ensure_tensor(other)
-        out = Tensor(self.data / other.data, requires_grad=(self.requires_grad or other.requires_grad))
-        out._prev = [self, other]
+        track = _is_grad_enabled() and (self.requires_grad or other.requires_grad)
+        out = Tensor(self.data / other.data, requires_grad=track)
 
-        if _is_grad_enabled() and out.requires_grad:
+        if track:
+            out._prev = [self, other]
             def _backward():
                 if self.requires_grad:
                     self._ensure_grad()
@@ -273,10 +288,11 @@ class Tensor:
     # -- power --------------------------------------------------------------
 
     def __pow__(self, exp: float):
-        out = Tensor(self.data ** exp, requires_grad=self.requires_grad)
-        out._prev = [self]
+        track = _is_grad_enabled() and self.requires_grad
+        out = Tensor(self.data ** exp, requires_grad=track)
 
-        if _is_grad_enabled() and self.requires_grad:
+        if track:
+            out._prev = [self]
             def _backward():
                 self._ensure_grad()
                 self.grad = self.grad + out.grad * exp * (self.data ** (exp - 1))
@@ -286,10 +302,11 @@ class Tensor:
     # -- matmul -------------------------------------------------------------
 
     def matmul(self, other: "Tensor") -> "Tensor":
-        out = Tensor(self.data @ other.data, requires_grad=(self.requires_grad or other.requires_grad))
-        out._prev = [self, other]
+        track = _is_grad_enabled() and (self.requires_grad or other.requires_grad)
+        out = Tensor(self.data @ other.data, requires_grad=track)
 
-        if _is_grad_enabled() and out.requires_grad:
+        if track:
+            out._prev = [self, other]
             def _backward():
                 if self.requires_grad:
                     self._ensure_grad()
@@ -313,10 +330,11 @@ class Tensor:
     def transpose(self, dim0: int = -2, dim1: int = -1) -> "Tensor":
         axes = list(range(self.ndim))
         axes[dim0], axes[dim1] = axes[dim1], axes[dim0]
-        out = Tensor(np.transpose(self.data, axes), requires_grad=self.requires_grad)
-        out._prev = [self]
+        track = _is_grad_enabled() and self.requires_grad
+        out = Tensor(np.transpose(self.data, axes), requires_grad=track)
 
-        if _is_grad_enabled() and self.requires_grad:
+        if track:
+            out._prev = [self]
             inv_axes = [0] * len(axes)
             for i, a in enumerate(axes):
                 inv_axes[a] = i
@@ -333,10 +351,11 @@ class Tensor:
         if len(shape) == 1 and isinstance(shape[0], (tuple, list)):
             shape = tuple(shape[0])
         orig_shape = self.shape
-        out = Tensor(self.data.reshape(shape), requires_grad=self.requires_grad)
-        out._prev = [self]
+        track = _is_grad_enabled() and self.requires_grad
+        out = Tensor(self.data.reshape(shape), requires_grad=track)
 
-        if _is_grad_enabled() and self.requires_grad:
+        if track:
+            out._prev = [self]
             def _backward():
                 self._ensure_grad()
                 self.grad = self.grad + out.grad.reshape(orig_shape)
@@ -346,13 +365,14 @@ class Tensor:
     # -- sum ----------------------------------------------------------------
 
     def sum(self, axis=None, keepdims=False) -> "Tensor":
+        track = _is_grad_enabled() and self.requires_grad
         out = Tensor(
             np.sum(self.data, axis=axis, keepdims=keepdims),
-            requires_grad=self.requires_grad,
+            requires_grad=track,
         )
-        out._prev = [self]
 
-        if _is_grad_enabled() and self.requires_grad:
+        if track:
+            out._prev = [self]
             def _backward():
                 self._ensure_grad()
                 g = out.grad
@@ -373,13 +393,14 @@ class Tensor:
             self.data.shape[axis] if isinstance(axis, int) else
             int(np.prod([self.data.shape[a] for a in axis]))
         )
+        track = _is_grad_enabled() and self.requires_grad
         out = Tensor(
             np.mean(self.data, axis=axis, keepdims=keepdims),
-            requires_grad=self.requires_grad,
+            requires_grad=track,
         )
-        out._prev = [self]
 
-        if _is_grad_enabled() and self.requires_grad:
+        if track:
+            out._prev = [self]
             def _backward():
                 self._ensure_grad()
                 g = out.grad
@@ -401,13 +422,14 @@ class Tensor:
             self.data.shape[axis] if isinstance(axis, int) else
             int(np.prod([self.data.shape[a] for a in axis]))
         )
+        track = _is_grad_enabled() and self.requires_grad
         out = Tensor(
             np.var(self.data, axis=axis, keepdims=keepdims),
-            requires_grad=self.requires_grad,
+            requires_grad=track,
         )
-        out._prev = [self]
 
-        if _is_grad_enabled() and self.requires_grad:
+        if track:
+            out._prev = [self]
             def _backward():
                 self._ensure_grad()
                 g = out.grad
@@ -425,10 +447,11 @@ class Tensor:
 
     def exp(self) -> "Tensor":
         e = np.exp(np.clip(self.data, -88, 88))  # prevent overflow
-        out = Tensor(e, requires_grad=self.requires_grad)
-        out._prev = [self]
+        track = _is_grad_enabled() and self.requires_grad
+        out = Tensor(e, requires_grad=track)
 
-        if _is_grad_enabled() and self.requires_grad:
+        if track:
+            out._prev = [self]
             def _backward():
                 self._ensure_grad()
                 self.grad = self.grad + out.grad * e
@@ -439,10 +462,11 @@ class Tensor:
 
     def log(self) -> "Tensor":
         safe = np.clip(self.data, 1e-12, None)
-        out = Tensor(np.log(safe), requires_grad=self.requires_grad)
-        out._prev = [self]
+        track = _is_grad_enabled() and self.requires_grad
+        out = Tensor(np.log(safe), requires_grad=track)
 
-        if _is_grad_enabled() and self.requires_grad:
+        if track:
+            out._prev = [self]
             def _backward():
                 self._ensure_grad()
                 self.grad = self.grad + out.grad / safe
@@ -454,10 +478,11 @@ class Tensor:
     def sqrt(self) -> "Tensor":
         safe = np.clip(self.data, 1e-12, None)
         s = np.sqrt(safe)
-        out = Tensor(s, requires_grad=self.requires_grad)
-        out._prev = [self]
+        track = _is_grad_enabled() and self.requires_grad
+        out = Tensor(s, requires_grad=track)
 
-        if _is_grad_enabled() and self.requires_grad:
+        if track:
+            out._prev = [self]
             def _backward():
                 self._ensure_grad()
                 self.grad = self.grad + out.grad / (2.0 * s)
@@ -468,10 +493,11 @@ class Tensor:
 
     def tanh(self) -> "Tensor":
         t = np.tanh(self.data)
-        out = Tensor(t, requires_grad=self.requires_grad)
-        out._prev = [self]
+        track = _is_grad_enabled() and self.requires_grad
+        out = Tensor(t, requires_grad=track)
 
-        if _is_grad_enabled() and self.requires_grad:
+        if track:
+            out._prev = [self]
             def _backward():
                 self._ensure_grad()
                 self.grad = self.grad + out.grad * (1.0 - t ** 2)
@@ -481,10 +507,11 @@ class Tensor:
     # -- max (element-wise clamp from below) --------------------------------
 
     def clamp_min(self, min_val: float) -> "Tensor":
-        out = Tensor(np.maximum(self.data, min_val), requires_grad=self.requires_grad)
-        out._prev = [self]
+        track = _is_grad_enabled() and self.requires_grad
+        out = Tensor(np.maximum(self.data, min_val), requires_grad=track)
 
-        if _is_grad_enabled() and self.requires_grad:
+        if track:
+            out._prev = [self]
             mask = (self.data >= min_val).astype(np.float32)
             def _backward():
                 self._ensure_grad()
@@ -496,10 +523,11 @@ class Tensor:
 
     def embedding_lookup(self, indices: np.ndarray) -> "Tensor":
         """self is (V, D), indices is integer array → output is (*indices.shape, D)."""
-        out = Tensor(self.data[indices], requires_grad=self.requires_grad)
-        out._prev = [self]
+        track = _is_grad_enabled() and self.requires_grad
+        out = Tensor(self.data[indices], requires_grad=track)
 
-        if _is_grad_enabled() and self.requires_grad:
+        if track:
+            out._prev = [self]
             def _backward():
                 self._ensure_grad()
                 np.add.at(self.grad, indices, out.grad)
@@ -510,10 +538,11 @@ class Tensor:
 
     def slice_seq(self, start: int, end: int) -> "Tensor":
         """Slice along axis=1: self[:, start:end, ...]."""
-        out = Tensor(self.data[:, start:end], requires_grad=self.requires_grad)
-        out._prev = [self]
+        track = _is_grad_enabled() and self.requires_grad
+        out = Tensor(self.data[:, start:end], requires_grad=track)
 
-        if _is_grad_enabled() and self.requires_grad:
+        if track:
+            out._prev = [self]
             def _backward():
                 self._ensure_grad()
                 self.grad[:, start:end] += out.grad
@@ -523,13 +552,14 @@ class Tensor:
     # -- concatenation along last axis --------------------------------------
 
     def cat(self, other: "Tensor", axis: int = -1) -> "Tensor":
+        track = _is_grad_enabled() and (self.requires_grad or other.requires_grad)
         out = Tensor(
             np.concatenate([self.data, other.data], axis=axis),
-            requires_grad=(self.requires_grad or other.requires_grad),
+            requires_grad=track,
         )
-        out._prev = [self, other]
 
-        if _is_grad_enabled() and out.requires_grad:
+        if track:
+            out._prev = [self, other]
             split_idx = self.data.shape[axis]
             def _backward():
                 parts = np.split(out.grad, [split_idx], axis=axis)
@@ -602,10 +632,11 @@ def softmax(x: Tensor, axis: int = -1) -> Tensor:
     shifted = x.data - np.max(x.data, axis=axis, keepdims=True)
     e = np.exp(shifted)
     s = e / np.sum(e, axis=axis, keepdims=True)
-    out = Tensor(s, requires_grad=x.requires_grad)
-    out._prev = [x]
+    track = _is_grad_enabled() and x.requires_grad
+    out = Tensor(s, requires_grad=track)
 
-    if _is_grad_enabled() and x.requires_grad:
+    if track:
+        out._prev = [x]
         def _backward():
             x._ensure_grad()
             # Jacobian-vector product for softmax
@@ -621,10 +652,11 @@ def log_softmax(x: Tensor, axis: int = -1) -> Tensor:
     shifted = x.data - np.max(x.data, axis=axis, keepdims=True)
     log_sum_exp = np.log(np.sum(np.exp(shifted), axis=axis, keepdims=True))
     ls = shifted - log_sum_exp
-    out = Tensor(ls, requires_grad=x.requires_grad)
-    out._prev = [x]
+    track = _is_grad_enabled() and x.requires_grad
+    out = Tensor(ls, requires_grad=track)
 
-    if _is_grad_enabled() and x.requires_grad:
+    if track:
+        out._prev = [x]
         s = np.exp(ls)
         def _backward():
             x._ensure_grad()
@@ -639,10 +671,11 @@ def gelu(x: Tensor) -> Tensor:
     inner = c * (x.data + 0.044715 * x.data ** 3)
     t = np.tanh(inner)
     out_data = 0.5 * x.data * (1.0 + t)
-    out = Tensor(out_data, requires_grad=x.requires_grad)
-    out._prev = [x]
+    track = _is_grad_enabled() and x.requires_grad
+    out = Tensor(out_data, requires_grad=track)
 
-    if _is_grad_enabled() and x.requires_grad:
+    if track:
+        out._prev = [x]
         def _backward():
             x._ensure_grad()
             sech2 = 1.0 - t ** 2
@@ -663,14 +696,15 @@ def cross_entropy_loss(logits: Tensor, targets: np.ndarray) -> Tensor:
     orig_shape = logits.shape
     if logits.ndim == 3:
         B, T, V = logits.shape
-        logits_2d = logits.reshape(B * T, V)
+        # Reshape raw ndarray (not Tensor.reshape) so no orphaned cyclic Tensor pins the forward graph!
+        logits_2d_data = logits.data.reshape(B * T, V)
         targets_flat = targets.reshape(-1)
     else:
-        logits_2d = logits
+        logits_2d_data = logits.data
         targets_flat = targets.reshape(-1)
 
     # log-softmax
-    shifted = logits_2d.data - np.max(logits_2d.data, axis=-1, keepdims=True)
+    shifted = logits_2d_data - np.max(logits_2d_data, axis=-1, keepdims=True)
     log_sum_exp = np.log(np.sum(np.exp(shifted), axis=-1, keepdims=True))
     ls = shifted - log_sum_exp
 
@@ -679,10 +713,11 @@ def cross_entropy_loss(logits: Tensor, targets: np.ndarray) -> Tensor:
     nll = -ls[np.arange(n), targets_flat]
     loss_val = np.mean(nll)
 
-    out = Tensor(np.array(loss_val, dtype=np.float32), requires_grad=logits.requires_grad)
-    out._prev = [logits]
+    track = _is_grad_enabled() and logits.requires_grad
+    out = Tensor(np.array(loss_val, dtype=np.float32), requires_grad=track)
 
-    if _is_grad_enabled() and logits.requires_grad:
+    if track:
+        out._prev = [logits]
         probs = np.exp(ls)
         def _backward():
             logits._ensure_grad()

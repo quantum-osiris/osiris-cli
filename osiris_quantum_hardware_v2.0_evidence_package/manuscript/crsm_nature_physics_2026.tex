@@ -456,74 +456,66 @@ While tempting to interpret this contraction as an intrinsic ``diversity--robust
 \subsubsection{Physical Demonstration of Hayden--Preskill Entanglement Recovery (OSIRIS-HP-002)}
 \label{sec:hp_three_arm}
 
-To advance from diagonal subspace confinement to an unambiguous, pre-registered demonstration of quantum information recovery, we executed the certified four-arm \texttt{OSIRIS-HP-002} benchmark on IBM Quantum Heron~r2 (\texttt{ibm\_fez}, 156-qubit heavy-hex architecture, Job ID \texttt{dbn9e10qtr0c73acjf50}, Block~\#41, SHA-256: \texttt{5df1ba53...}). 
+To advance from diagonal subspace confinement to a four-arm test of 1-qubit quantum information recovery, we executed the \texttt{OSIRIS-HP-002} benchmark on IBM Quantum Heron~r2 (\texttt{ibm\_fez}, 156-qubit heavy-hex architecture; barrier-verified rerun Job ID \texttt{dbnchbgqtr0c73acppe0}, Block~\#44, SHA-256: \texttt{e19fc278...}).
 
-The operational 6-qubit register was partitioned into reference $R$ (physical qubit 14), message $M$ (qubit 15), black hole remnants $C_1, C_2$ (qubits 19, 35), and early radiation $E_1, E_2$ (qubits 13, 34). Following local scrambling via nearest-neighbor interactions ($\text{CZ} \le 18 \le 24$, zero SWAP overhead, circuit depth 38), physical qubit 15 operates as the late-radiation emission port $D$. An exact information-theoretic audit of the scrambling unitary $U_{MB}$ establishes complete tripartite decoupling:
+At the logical circuit level, the 6-qubit register comprises reference $R$, message/late-radiation port $M \to D$, quarantined black hole remnants $C_1, C_2$, and early radiation $E_1, E_2$. An exact information-theoretic audit of the 3-qubit scrambling unitary $U_1$ establishes complete tripartite decoupling:
 \begin{equation}
-I(R : D) = 0.000000,\quad I(R : E) = 0.000000,\quad I(R : C) = 0.000000,\quad I(R : DE) = 2.000000\ \text{bits}.
+I(R : D) = 0.000000,\quad I(R : E) = 0.000000,\quad I(R : C) = 0.000000,\quad I(R : DE) = 2.000000\ \text{bits},
 \end{equation}
-Remnants $C_1, C_2$ were quarantined behind an impermeable compile-time firewall: exactly zero entangling gates or operations link the decoder to $C_1$ or $C_2$.
-
-To protect against temporal calibration drift, the protocol was organized into three randomized execution blocks across four arms and three tomographic bases ($XX, YY, ZZ$), totaling 36 circuits and $73{,}728$ physical shots ($2{,}048$ shots per circuit). To ensure rigorous physical comparability and prevent compiler pass deception, a strict execution barrier was inserted between scrambling and inversion operations in Arm~A (\texttt{qc.barrier([1, 2, 3])}), preventing Qiskit's Level~3 transpiler from cancelling $U_1 U_1^\dagger \to \mathbb{I}$. As a result, all four arms underwent equivalent physical circuit depths ($32 \le \text{depth} \le 39$) and two-qubit entangling exposure ($15 \le \text{CZ} \le 18$, zero SWAP routing overhead). Reconstructed Bell state entanglement fidelities $\mathcal{F}_{\mathrm{ent}} = \frac{1}{4}(1 + \langle XX \rangle - \langle YY \rangle + \langle ZZ \rangle)$ were evaluated with propagating $1\sigma$ standard errors (Job ID \texttt{dbnchbgqtr0c73acppe0}, Block~\#44, SHA-256: \texttt{e19fc278...}).
+with zero logical decoder gates acting on $C_1$ or $C_2$. Across three sequential acquisition blocks, four arms, and three Pauli bases ($XX, YY, ZZ$), we executed 36 circuits ($73{,}728$ physical shots, $2{,}048$ shots/circuit). In Arm~A, an explicit barrier (\texttt{qc.barrier([1, 2, 3])}) prevented Qiskit's Level~3 transpiler from canceling $U_1 U_1^\dagger \to \mathbb{I}$ ($18$ native CZs across 7 physical transmons $\{123, 136, 140, 141, 142, 143, 144\}$, readout $(144, 143)$). Post-hoc QPY inspection noted two compiler caveats corrected in subsequent protocols: without a pinned \texttt{initial\_layout}, \texttt{Arm B} mapped to $\{123, 136, 141, 142, 143, 144\}$ (readout $(123, 143)$, compressed from $23$ to $17$ CZs due to omitted scrambler--decoder barrier) while negative controls mapped to $\{3, 4, 16, 21, 22, 23\}$ (readout $(4, 22)$). Table~\ref{tab:hp_three_arm_results} reports reconstructed Bell fidelities $\mathcal{F}_{\mathrm{ent}} = \frac{1}{4}(1 + \langle XX \rangle - \langle YY \rangle + \langle ZZ \rangle)$ with conservative standard errors $\mathrm{SE}_{\mathrm{eff}} = \max(\mathrm{SEM}_{\mathrm{block,ddof=1}},\, \mathrm{SE}_{\mathrm{shot}})$.
 
 \begin{table}[H]
 \centering
-\caption{Empirical tomographic reconstruction and entanglement recovery on IBM Quantum Heron~r2 (\texttt{ibm\_fez}, Job ID \texttt{dbnchbgqtr0c73acppe0}, $N = 73{,}728$ physical shots across 3 randomized blocks, compiled with compiler-barrier verification). Uncertainties denote $1\sigma$ propagating standard errors.}
+\caption{Empirical 1-pair Pauli tomography on IBM Quantum Heron~r2 (\texttt{ibm\_fez}, Job ID \texttt{dbnchbgqtr0c73acppe0}, $N = 73{,}728$ physical shots across 3 blocks). Uncertainties denote conservative $\mathrm{SE}_{\mathrm{eff}} = \max(\mathrm{SEM}_{\mathrm{block,ddof=1}},\, \mathrm{SE}_{\mathrm{shot}})$.}
 \label{tab:hp_three_arm_results}
 \begin{tabular}{lcccccc}
 \toprule
 Experimental Arm & $\langle XX \rangle$ & $\langle YY \rangle$ & $\langle ZZ \rangle$ & Reconstructed $\mathcal{F}_{\mathrm{ent}}$ & Witness $\mathcal{W}$ & Determination \\
 \midrule
-Arm A (Full-Access Inverse Control) & $+0.8675$ & $-0.8812$ & $+0.9290$ & $\mathbf{91.94 \pm 0.17\%}$ & $-0.4194$ & Positive Control Ceiling \\
-Arm B (Restricted Recovery -- Matched $U_1$) & $+0.8916$ & $-0.6299$ & $+0.6582$ & $\mathbf{79.49 \pm 0.14\%}$ & $\mathbf{-0.2949}$ & \textbf{Entangled Recovery ($p < 10^{-100}$)} \\
-Arm B Control (Separable Trapped) & $+0.0052$ & $+0.0133$ & $+0.0039$ & $24.89 \pm 0.57\%$ & $+0.2511$ & Trapped / Maximally Mixed \\
-Arm B Held-Out (Scrambler Specificity Gate $U_2$) & $-0.0124$ & $+0.0348$ & $+0.0241$ & $24.42 \pm 0.44\%$ & $+0.2558$ & Uncorrelated Scrambling Floor \\
+Arm A (Full-Access Inverse Control) & $+0.8675$ & $-0.8812$ & $+0.9290$ & $\mathbf{91.94 \pm 0.25\%}$ & $-0.4194$ & Positive Control Reference \\
+Arm B (Restricted Recovery -- Matched $U_1$) & $+0.8916$ & $-0.6299$ & $+0.6582$ & $\mathbf{79.49 \pm 0.37\%}$ & $\mathbf{-0.2949}$ & \textbf{Entangled ($Z_{\mathrm{shot}} = 78.9\sigma$)} \\
+Arm B Control (Separable Trapped) & $+0.0052$ & $+0.0133$ & $+0.0039$ & $24.89 \pm 0.70\%$ & $+0.2511$ & Trapped / Maximally Mixed \\
+Arm B Held-Out (Scrambler Specificity Gate $U_2$) & $-0.0124$ & $+0.0348$ & $+0.0241$ & $24.42 \pm 0.55\%$ & $+0.2558$ & Uncorrelated Scrambling Floor \\
 \bottomrule
 \end{tabular}
 \end{table}
 
-The primary pre-registered endpoint was decisively passed: the restricted recovery fidelity $\mathcal{F}_{\mathrm{ent}} = \mathbf{79.49 \pm 0.14\%}$ strictly exceeds the classical separability threshold ($0.50$), violating the entanglement witness $\mathcal{W} = 0.50 - \mathcal{F}_{\mathrm{ent}} = \mathbf{-0.2949 < 0}$ by $Z > 200\sigma$ ($p < 10^{-100}$). 
-
-Crucially, both negative controls confirm that recovery is an active quantum decoding process:
+The restricted recovery fidelity $\mathcal{F}_{\mathrm{ent}} = \mathbf{79.49 \pm 0.37\%}$ exceeds the two-qubit classical separability bound ($0.50$), yielding entanglement witness $\mathcal{W} = 0.50 - \mathcal{F}_{\mathrm{ent}} = \mathbf{-0.2949 < 0}$ ($Z_{\mathrm{shot}} = 78.9\sigma$; one-sided block Student-$t_{\nu=2} = 172.0, p = 1.69 \times 10^{-5}$):
 \begin{enumerate}
-\item In Arm~B Control (no prior entanglement between black hole and early radiation), the message remains trapped, yielding $\mathcal{F}_{\mathrm{ent}} = 24.89 \pm 0.57\%$, exactly matching the random mixed state ceiling ($\frac{1}{4} = 25.00\%$). The net empirical recovery gain is $\Delta \mathcal{F}_{\mathrm{ent}} = \mathbf{+54.60\text{ pp}}$ ($Z = 92.5\sigma$).
-\item In Arm~B Held-Out, substituting an unaligned scrambler $U_2$ against the fixed decoder $V(U_1)$ collapses fidelity to $\mathcal{F}_{\mathrm{ent}} = 24.42 \pm 0.44\%$ ($\Delta \mathcal{F}_{\mathrm{ent}} = \mathbf{+55.07\text{ pp}}$ specificity delta). This eliminates trivial pass-through, identity routing, or residual noise artifacts as explanations for the observed entanglement.
-\item With compiler cancellation prevented, Arm~A demonstrates a physical positive control ceiling of $\mathcal{F}_{\mathrm{ent}} = \mathbf{91.94 \pm 0.17\%}$ under 18 native CZ gates, proving that the restricted decoder ($\mathcal{F}_{\mathrm{ent}} = 79.49\%$) recovers $\sim 86.5\%$ of the maximum coherent information attainable across this 156-qubit heavy-hex processor.
+\item In Arm~B Control (no prior entanglement between black hole and early radiation), fidelity collapses to $\mathcal{F}_{\mathrm{ent}} = 24.89 \pm 0.70\%$, matching the maximally mixed baseline ($25.00\%$; net gain $\Delta \mathcal{F}_{\mathrm{ent}} = \mathbf{+54.60\text{ pp}}$).
+\item In Arm~B Held-Out, substituting independent scrambler $U_2$ against fixed decoder $V(U_1)$ yields $\mathcal{F}_{\mathrm{ent}} = 24.42 \pm 0.55\%$ ($\Delta \mathcal{F}_{\mathrm{ent}} = \mathbf{+55.07\text{ pp}}$ specificity delta).
 \end{enumerate}
 
-\subsubsection{Multi-Qubit Scaling \& Quantum Capacity Certification (OSIRIS-HP-003)}
+\subsubsection{Multi-Qubit Scaling \& Per-Pair Capacity Benchmark (OSIRIS-HP-003)}
 \label{sec:hp_multiqubit}
 
-To experimentally test the Hayden--Preskill quantum capacity theorem in a multi-qubit regime, we executed the remediated \texttt{OSIRIS-HP-003} benchmark across an 8-qubit register on IBM Quantum Heron~r2 (\texttt{ibm\_fez}, Job ID \texttt{dbndsvoou4as73b4cvi0}, Block~\#48, SHA-256: \texttt{3eee9491...}, 14~QPU seconds). The benchmark evaluated 45 compiled ISA circuits ($37 \le \text{CZ} \le 49$, depth $\le 102$, zero SWAP gates) across three randomized blocks, acquiring $46{,}080$ physical shots ($1{,}024$ shots/circuit) under independent dual-pair Pauli tomography.
-
-To guarantee rigorous physical controls following internal forensic audit (Records E-44 to E-52):
+To test two-message ($k=2$) Hayden--Preskill scaling across an 8-qubit logical register, we executed \texttt{OSIRIS-HP-003} on IBM Quantum Heron~r2 (\texttt{ibm\_fez}, Job ID \texttt{dbndsvoou4as73b4cvi0}, Block~\#48, SHA-256: \texttt{3eee9491...}, 14~QPU seconds). The run evaluated 45 compiled ISA circuits ($37 \le \text{CZ} \le 49$, depth $\le 102$) across three randomized blocks ($46{,}080$ physical shots, $1{,}024$ shots/circuit) in global diagonal Pauli settings $\{XX, YY, ZZ\}$:
 \begin{enumerate}
-\item \textbf{Compiler Cancellation Shield:} Arm~A incorporated a compiler barrier $\texttt{qc.barrier}([2, 3, 4, 5])$ between scrambler $U_1$ and inverse $U_1^\dagger$, enforcing full physical gate depth (48 native CZs, depth 102) matching Arm~B (49 CZs, depth 87).
-\item \textbf{Active Sub-Capacity Decoder:} Arm~B-Def implemented an optimal 3-qubit Clifford decoder $V_{\mathrm{def}}$ acting strictly on available radiation $(D_1, E_1, E_2) = (2, 6, 7)$ (depth 10, 4~CXs), testing whether single-photon collection can cross the classical separability threshold.
-\item \textbf{Audited Controls:} Arm~B-Held used certified independent scrambler Seed 158 satisfying complete tripartite decoupling ($I(R:D) = 0, I(R:E) = 0, I(R:C) = 0, I(R:DE) = 4\ \text{bits}$). Arm~B-Ctrl provided an unentangled radiation baseline ($\rho_{BE} = |0000\rangle\langle 0000|$).
+\item \textbf{Compiler Cancellation Shield \& Subgraph Audit:} Arm~A included $\texttt{qc.barrier}([2, 3, 4, 5])$ between $U_1$ and $U_1^\dagger$ (48 native CZs, depth 102 vs.\ Arm~B's 49 CZs, depth 87). Because \texttt{initial\_layout} was unpinned, Arm~A compiled onto top-chip transmons $\{2, 3, 4, 5, 16, 21, 22, 23\}$ (readout $[5, 4, 21, 16]$) while Arm~B compiled onto bottom-chip transmons $\{123, 136, 142, 143, 144, 145, 146, 147\}$ (readout $[147, 143, 123, 144]$), precluding direct cross-arm hardware ceiling ratios.
+\item \textbf{Active Sub-Capacity Decoder \& Controls:} Arm~B-Def applied an optimal 3-qubit Clifford decoder $V_{\mathrm{def}}$ strictly on $(D_1, E_1, E_2)$ while quarantining $D_2$. Arm~B-Held used independent scrambler Seed 158 ($I(R:D)=I(R:E)=I(R:C)=0, I(R:DE)=4\ \text{bits}$), and Arm~B-Ctrl initialized separable $|0000\rangle_{BE}$.
 \end{enumerate}
 
 \begin{table}[H]
 \centering
-\caption{Empirical 2-qubit Hayden--Preskill retrieval and quantum capacity benchmark on IBM Quantum Heron~r2 (\texttt{ibm\_fez}, Job ID \texttt{dbndsvoou4as73b4cvi0}, $N = 46{,}080$ physical shots across 3 randomized blocks). Uncertainties denote $1\sigma$ propagating standard errors.}
+\caption{Empirical 2-qubit Hayden--Preskill benchmark on IBM Quantum Heron~r2 (\texttt{ibm\_fez}, Job ID \texttt{dbndsvoou4as73b4cvi0}, $N = 46{,}080$ physical shots across 3 randomized blocks). Uncertainties denote $\mathrm{SE}_{\mathrm{eff}} = \max(\mathrm{SEM}_{\mathrm{block,ddof=1}},\, \mathrm{SE}_{\mathrm{shot}})$, alongside exact tight 16-state Bell-LP bounds on 4-qubit joint overlap $F_{\mathrm{joint}}$.}
 \label{tab:hp_multiqubit_results}
 \begin{tabular}{lcccccc}
 \toprule
-Experimental Arm & $\mathcal{F}_{\mathrm{ent}}(R_1, M_1')$ & $\mathcal{F}_{\mathrm{ent}}(R_2, M_2')$ & Mean $\bar{\mathcal{F}}$ & Product $\mathcal{F}_{\mathrm{prod}}$ & Witness $\mathcal{W}$ & Milestone Determination \\
+Experimental Arm & $\mathcal{F}_{\mathrm{ent}}(R_1, M_1')$ & $\mathcal{F}_{\mathrm{ent}}(R_2, M_2')$ & Mean $\bar{\mathcal{F}} \pm \mathrm{SE}_{\mathrm{eff}}$ & Tight Bell-LP $F_{\mathrm{joint}}$ & Witness $\mathcal{W}$ & Milestone Determination \\
 \midrule
-Arm A (Positive Control with Barrier) & $73.24\%$ & $75.78\%$ & $\mathbf{74.51 \pm 0.08\%}$ & $55.50\%$ & $-0.2451$ & 48-CZ Physical Coherence Ceiling \\
-Arm B (Restricted Recovery -- 2 Photons) & $73.75\%$ & $76.16\%$ & $\mathbf{74.95 \pm 0.34\%}$ & $\mathbf{56.17\%}$ & $\mathbf{-0.2495}$ & \textbf{Multi-Qubit Recovery ($Z = 73.0\sigma$)} \\
-Arm B-Def (Single Photon Sub-Capacity) & $42.42\%$ & $24.90\%$ & $33.66 \pm 0.36\%$ & $10.56\%$ & $+0.1634$ & \textbf{Capacity Bound: 1 Photon Fails ($\mathcal{W}_1 \ge 0$)} \\
-Arm B-Ctrl (Unentangled Early Radiation) & $26.19\%$ & $24.14\%$ & $25.16 \pm 0.20\%$ & $6.32\%$ & $+0.2484$ & Unentangled Baseline ($\sim 25\%$) \\
-Arm B-Held (Held-Out Scrambler $U_2$) & $26.14\%$ & $25.28\%$ & $25.71 \pm 0.82\%$ & $6.61\%$ & $+0.2429$ & Specificity Noise Floor ($\sim 25\%$) \\
+Arm A (Positive Control, Top-Chip) & $73.24\%$ & $75.78\%$ & $\mathbf{74.51 \pm 0.41\%}$ & $[0.4902, 0.7324]$ & $-0.2451$ & Per-Pair Entangled (48 CZs) \\
+Arm B (Restricted Recovery -- 2 Photons) & $73.75\%$ & $76.16\%$ & $\mathbf{74.95 \pm 0.41\%}$ & $\mathbf{[0.4990, 0.7375]}$ & $\mathbf{-0.2495}$ & \textbf{Per-Pair Verified; $>1\text{ ebit}$ Uncertified} \\
+Arm B-Def (Single Photon Sub-Capacity) & $42.42\%$ & $24.90\%$ & $33.66 \pm 0.53\%$ & $[0.0000, 0.2490]$ & $+0.1634$ & \textbf{1-Photon Collapse ($\mathcal{W}_1 \ge 0$)} \\
+Arm B-Ctrl (Unentangled Early Radiation) & $26.19\%$ & $24.14\%$ & $25.16 \pm 0.55\%$ & $[0.0000, 0.2414]$ & $+0.2484$ & Unentangled Baseline ($\sim 25\%$) \\
+Arm B-Held (Held-Out Scrambler $U_2$) & $26.14\%$ & $25.28\%$ & $25.71 \pm 0.82\%$ & $[0.0000, 0.2528]$ & $+0.2429$ & Specificity Noise Floor ($\sim 25\%$) \\
 \bottomrule
 \end{tabular}
 \end{table}
 
-The physical telemetry provides two fundamental experimental conclusions:
+The telemetry establishes both the per-pair recovery contrast and the exact estimator boundary requiring 9-basis joint stabilizer tomography (\texttt{OSIRIS-HP-004}):
 \begin{enumerate}
-\item \textbf{Quantum Capacity Bound Confirmed:} When both Hawking photons $(D_1, D_2)$ are collected, the restricted decoder achieves an average message entanglement fidelity of $\bar{\mathcal{F}} = \mathbf{74.95 \pm 0.34\%}$, decisively violating the classical separability threshold ($\mathcal{W} = \mathbf{-0.2495 < 0}$, $Z = 73.0\sigma$, $p < 10^{-100}$) and attaining $100.6\%$ of the physical coherence ceiling defined by Arm~A ($74.51\%$). In contrast, when the observer collects only a single photon $D_1$ (Arm~B-Def), recovery of $R_1$ is bounded at $\mathcal{F}_1 = 42.42\%$ (classical limit $\mathcal{W}_1 = +0.0758 \ge 0$) while $R_2$ remains completely lost at noise floor ($24.90\%$), producing a mean fidelity of $33.66 \pm 0.36\%$ ($\Delta \bar{\mathcal{F}} = \mathbf{+41.29\text{ pp}}$ capacity gain). This confirms experimentally that retrieving a 2-qubit message strictly requires collecting at least $k = 2$ radiation photons.
-\item \textbf{EPR Bridge Dependency \& Scrambler Specificity:} When early entanglement is absent (Arm~B-Ctrl), recovery collapses to $25.16 \pm 0.20\%$ ($\Delta \bar{\mathcal{F}} = \mathbf{+49.79\text{ pp}}$ gain over unentangled control). Applying the fixed decoder to held-out scrambler Seed 158 (Arm~B-Held) collapses fidelity to $25.71 \pm 0.82\%$ ($\Delta \bar{\mathcal{F}} = \mathbf{+49.24\text{ pp}}$ specificity delta). This confirms that multi-qubit recovery requires an active, scrambler-tailored quantum decoding operation mediated exclusively by the entangled radiation bridge.
+\item \textbf{Per-Pair Recovery vs.\ Exact $>1\text{ ebit}$ Schmidt Threshold:} Collecting both photons $(D_1, D_2)$ in Arm~B yields individual pair fidelities $\mathcal{F}_1 = 73.75 \pm 0.59\%$ and $\mathcal{F}_2 = 76.16 \pm 0.57\%$ ($\bar{\mathcal{F}} = \mathbf{74.95 \pm 0.41\%}$, $Z_{\mathrm{shot}} = 60.7\sigma$ vs.\ $0.50$; one-sided $t_{\nu=2} = 73.0, p = 9.38 \times 10^{-5}$), whereas collecting a single photon $D_1$ (Arm~B-Def) collapses to $\mathcal{F}_1 = 42.42\%$ ($\mathcal{W}_1 = +0.0758 \ge 0$) and $\mathcal{F}_2 = 24.90\%$ ($\Delta \bar{\mathcal{F}} = \mathbf{+41.29\text{ pp}}$). However, because a 1-ebit Schmidt-rank-2 mixture can attain $\bar{\mathcal{F}} = 75.00\%$ while remaining at $F_{\mathrm{joint}} = 0.5000$, the tight Bell-LP lower bound from 3-basis marginals is $F_{\mathrm{joint}} \ge \mathcal{F}_1 + \mathcal{F}_2 - 1 = \mathbf{0.4990 \le 0.5000}$, leaving unconditional $>1\text{ ebit}$ (Schmidt number $\ge 3$) certification open to layout-locked 9-basis joint stabilizer measurement.
+\item \textbf{EPR Bridge Dependency \& Scrambler Specificity:} Absent early entanglement (Arm~B-Ctrl), marginal fidelity drops to $25.16 \pm 0.55\%$ ($\Delta \bar{\mathcal{F}} = \mathbf{+49.79\text{ pp}}$), and held-out scrambler Seed 158 (Arm~B-Held) yields $25.71 \pm 0.82\%$ ($\Delta \bar{\mathcal{F}} = \mathbf{+49.24\text{ pp}}$).
 \end{enumerate}
 
 \subsection{Multi-Edge Staggered Dynamical Decoupling Survey}

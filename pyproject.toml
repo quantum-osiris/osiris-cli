@@ -71,9 +71,9 @@ all = [
 ]
 # The sibling research repos (optional; the console guards every import of them).
 research = [
-    "dnalang @ git+https://github.com/osiris-dnalang/dnalang-core.git",
-    "organism_sim @ git+https://github.com/osiris-dnalang/organism_sim.git",
-    "aegis-bridge @ git+https://github.com/osiris-dnalang/bridge.git",
+    "dnalang @ git+https://github.com/quantum-osiris/dnalang-core.git@5ae0748918bec9c63628fed3b0260cdc9b4b4553",  # v0.4.0
+    "organism_sim @ git+https://github.com/quantum-osiris/organism_sim.git@3935af1cfdb5394b68a502d77f84c6af583f6e8c",  # v0.4.0
+    "aegis-bridge @ git+https://github.com/quantum-osiris/bridge.git@6f43f307cdca04f8ac00f8f1e68a0b7e980863df",  # v0.1.1
 ]
 dev = [
     "pytest>=7.0",
