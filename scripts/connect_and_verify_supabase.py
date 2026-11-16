@@ -33,8 +33,8 @@ if str(REPO_ROOT) not in sys.path:
 
 from osiris_cli.workspace_store import PROJECT_REF, StoreError, WorkspaceStore, store_status  # noqa: E402
 
-MIGRATION_1 = REPO_ROOT / "supabase" / "migrations" / "20261116120000_osiris_workspace.sql"
-MIGRATION_2 = REPO_ROOT / "supabase" / "migrations" / "20261116130000_osiris_workspace_ownership_and_lifecycle.sql"
+MIGRATION_1 = REPO_ROOT / "supabase" / "migrations" / "20261116145612_osiris_workspace.sql"
+MIGRATION_2 = REPO_ROOT / "supabase" / "migrations" / "20261116145623_osiris_workspace_ownership_and_lifecycle.sql"
 DEFAULT_ENV_FILES = (
     Path.home() / ".env",
     Path.home() / "osiris-ide" / ".env",
