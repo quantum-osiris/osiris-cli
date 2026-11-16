@@ -1,0 +1,11 @@
+{
+  "benchmark_id": "OSIRIS-HP-004",
+  "job_id": "dbti1fbsbsbs73cb2vu0",
+  "backend": "ibm_marrakesh",
+  "submitted_at_utc": "2026-11-16T15:26:53.597306+00:00",
+  "qpy_sha256": "c3daaa48d89a74cec39932c310365b3eb23660ac4922219586543f8fe473d02c",
+  "manifest_sha256": "60bc6b8d3943a9222bb526717733cef96481f4b4820543165f4606f77b6aae68",
+  "shots_per_circuit": 1024,
+  "total_circuits": 286,
+  "total_shots": 292864
+}

@@ -1,0 +1,109 @@
+{
+  "contract": "osiris-ide-api",
+  "api_version": "1.2.0",
+  "compatibility": "Clients must check api_version from GET /api/v1/meta and refuse a different MAJOR version. MINOR versions only add optional fields.",
+  "transport": {
+    "bind": "127.0.0.1 or ::1 only",
+    "auth_header": "X-OSIRIS-Token",
+    "host_check": "Host must equal the bound loopback address:port or localhost:port",
+    "post_content_type": "application/json",
+    "max_body_bytes": 262144,
+    "github_writes": "not exposed; the API can only propose and dry-run"
+  },
+  "error": {
+    "type": "object",
+    "required": ["api_version", "error"],
+    "properties": {
+      "api_version": {"type": "string"},
+      "error": {"type": "object", "required": ["kind", "message"],
+                "properties": {"kind": {"type": "string"}, "message": {"type": "string"}}}
+    }
+  },
+  "routes": {
+    "GET /api/v1/meta": {
+      "response": {"type": "object", "required": ["api_version", "service", "github_writes_via_api", "evidence_labels"],
+        "properties": {"api_version": {"const": "1.2.0"}, "service": {"const": "osiris-ide-api"},
+          "contract_sha256": {"type": ["string", "null"]}, "github_writes_via_api": {"const": false},
+          "evidence_labels": {"type": "array", "items": {"type": "string"}}}}
+    },
+    "GET /api/v1/workspace": {
+      "response": {"type": "object", "required": ["github", "repositories", "local"],
+        "properties": {
+          "github": {"type": "object", "required": ["authenticated", "login", "identity_matches"],
+            "properties": {"authenticated": {"type": "boolean"}, "login": {"type": ["string", "null"]},
+              "identity_matches": {"type": "boolean"}, "expected_login": {"type": "string"},
+              "writes_enabled": {"type": "boolean"}, "security_gates": {"type": "object"}}},
+          "repositories": {"type": "array", "items": {"type": "object", "required": ["repository", "ok"]}},
+          "local": {"type": "array", "items": {"type": "object", "required": ["name", "present"]}}}}
+    },
+    "GET /api/v1/examples": {
+      "response": {"type": "object", "required": ["examples"],
+        "properties": {"examples": {"type": "array", "items": {"type": "object", "required": ["name", "source"],
+          "properties": {"name": {"type": "string"}, "source": {"type": "string"}}}}}}
+    },
+    "POST /api/v1/dnalang/compile": {
+      "request": {"type": "object", "required": ["source"], "properties": {"source": {"type": "string"}}},
+      "response": {"type": "object", "required": ["ok", "source_sha256", "diagnostics"],
+        "properties": {"ok": {"type": "boolean"}, "source_sha256": {"type": "string"},
+          "diagnostics": {"type": "object", "required": ["errors", "warnings"],
+            "properties": {"errors": {"type": "array", "items": {"type": "object", "required": ["stage", "message"]}},
+              "warnings": {"type": "array"}}},
+          "organism": {"type": "object"},
+          "circuit": {"type": "object", "required": ["n_qubits", "n_cbits", "ops", "depth", "sha256", "qasm3"]}}}
+    },
+    "POST /api/v1/slice/run": {
+      "request": {"type": "object", "required": ["source"],
+        "properties": {"source": {"type": "string"}, "shots": {"type": "integer"}, "seed": {"type": "integer"}}},
+      "response": {"type": "object", "required": ["schema", "run_id", "status", "evidence_class", "hardware", "stages", "compile"],
+        "properties": {"schema": {"const": "osiris-slice-result/v1"}, "run_id": {"type": "string"},
+          "status": {"enum": ["COMPLETED", "REJECTED", "FAILED"]}, "evidence_class": {"const": "SIMULATED"},
+          "hardware": {"const": false},
+          "stages": {"type": "array", "items": {"type": "object", "required": ["name", "status"],
+            "properties": {"status": {"enum": ["OK", "FAILED"]}}}},
+          "compile": {"type": "object"}, "admission": {"type": "object"},
+          "simulation": {"type": "object", "required": ["counts", "label", "shots", "seed"]},
+          "evaluation": {"type": "object", "required": ["shots", "exact_available", "claimed_metrics"]},
+          "governance": {"type": "object", "required": ["all_matched", "epistemic_status", "evidence_class", "verification"]},
+          "claim": {"type": "object", "required": ["category", "statement", "not_claimed"]},
+          "receipt": {"type": "object", "required": ["hash", "prev", "chain_valid", "kind"]}}}
+    },
+    "POST /api/v1/organism/run": {
+      "request": {"type": "object", "properties": {"ticks": {"type": "integer"}, "seed": {"type": "integer"},
+        "burst_prob": {"type": "number"}}},
+      "response": {"type": "object", "required": ["evidence_class", "engine", "summary", "series"],
+        "properties": {"evidence_class": {"const": "SIMULATED"},
+          "summary": {"type": "object", "required": ["status", "audit_chain_valid", "repairs", "mutations"]},
+          "series": {"type": "array", "items": {"type": "object", "required": ["tick", "coherence"]}}}}
+    },
+    "GET /api/v1/governance/receipts": {
+      "response": {"type": "object", "required": ["slice", "github"],
+        "properties": {"slice": {"type": "object", "required": ["chain_valid", "count", "rows"]},
+          "github": {"type": "object", "required": ["count", "rows"]}}}
+    },
+    "POST /api/v1/governance/github/propose": {
+      "request": {"type": "object", "required": ["op"], "properties": {"op": {"type": "string"},
+        "repo": {"type": ["string", "null"]}, "args": {"type": "object"}}},
+      "response": {"type": "object", "required": ["proposal", "decision", "is_write"],
+        "properties": {"proposal": {"type": "object", "required": ["capability", "fixture_id", "arguments", "nonce"]},
+          "decision": {"type": "object", "required": ["decision", "reasons", "proposal_sha256", "decision_sha256", "requires_grant"],
+            "properties": {"decision": {"enum": ["ALLOW", "DENY"]}}},
+          "is_write": {"type": "boolean"},
+          "dry_run": {"type": "object", "required": ["status"]}}}
+    },
+    "GET /api/v1/research/claims": {
+      "response": {"type": "object", "required": ["source", "count", "claims"],
+        "properties": {"claims": {"type": "array", "items": {"type": "object", "required": ["id", "statement", "standing"]}}}}
+    },
+    "GET /api/v1/research/experiments": {
+      "response": {"type": "object", "required": ["chain_valid", "runs"],
+        "properties": {"runs": {"type": "array", "items": {"type": "object", "required": ["run_id", "kind", "hash"]}}}}
+    },
+    "POST /api/v1/agents/task": {"request": {"type": "object", "required": ["objective"], "properties": {"objective": {"type": "string"}, "context": {"type": "string"}, "allow_cloud": {"type": "boolean"}, "project_id": {"type": ["string", "null"]}, "task_id": {"type": ["string", "null"]}}}, "response": {"type": "object", "required": ["schema", "task_id", "objective", "evidence_class", "decision", "reason", "authority", "agents", "events", "receipt"], "properties": {"schema": {"const": "osiris-agent-task/v1"}, "task_id": {"type": "string"}, "objective": {"type": "string"}, "evidence_class": {"const": "MODEL_OUTPUT"}, "decision": {"enum": ["PENDING_HUMAN_APPROVAL", "REVISION_REQUESTED", "HELD_BY_REVIEW", "QUARANTINED", "REJECTED", "FAILED"]}, "reason": {"type": "string"}, "aiden_verdict": {"enum": ["PROCEED", "REVISE", "STOP", null]}, "authority": {"type": "object", "required": ["execution", "executed"], "properties": {"execution": {"const": "NONE"}, "executed": {"const": false}}}, "agents": {"type": "array", "items": {"type": "object", "required": ["role", "text", "provider", "text_sha256", "firewall", "findings"], "properties": {"role": {"enum": ["AURA", "AIDEN", "IRIS"]}, "text": {"type": "string"}, "provider": {"type": "string"}, "text_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}, "firewall": {"enum": ["ACCEPT", "QUARANTINE", "REJECT"]}, "findings": {"type": "array", "items": {"type": "object", "required": ["kind", "verdict", "reason", "sentence"]}}, "route": {"type": ["object", "null"], "properties": {"policy": {"type": "string"}, "runtime": {"type": ["string", "null"]}, "requested_model": {"type": ["string", "null"]}, "resolved_model": {"type": ["string", "null"]}, "resolved_digest": {"type": ["string", "null"]}, "left_device": {"type": "boolean"}, "fallback_used": {"type": "boolean"}, "attempts": {"type": "array"}}}}}}, "events": {"type": "array", "items": {"type": "object", "required": ["seq", "actor", "event", "detail"], "properties": {"seq": {"type": "integer"}, "actor": {"enum": ["OSIRIS", "AURA", "AIDEN", "IRIS"]}, "event": {"type": "string"}, "detail": {"type": "string"}}}}, "receipt": {"type": "object", "required": ["kind", "hash", "prev", "chain_valid"], "properties": {"kind": {"const": "agents.task"}, "chain_valid": {"type": "boolean"}}}, "saved_disposition": {"type": ["object", "null"]}}}},
+    "GET /api/v1/agents/tasks": {"response": {"type": "object", "required": ["chain_valid", "count", "rows"], "properties": {"chain_valid": {"type": "boolean"}, "count": {"type": "integer"}, "rows": {"type": "array"}}}},
+    "GET /api/v1/store/status": {"response": {"type": "object", "required": ["configured", "project_ref"], "properties": {"configured": {"type": "boolean"}, "project_ref": {"type": "string"}, "reason": {"type": ["string", "null"]}}}},
+    "GET /api/v1/store/projects": {"response": {"type": "object", "required": ["projects"], "properties": {"projects": {"type": "array"}}}},
+    "POST /api/v1/store/projects": {"request": {"type": "object", "required": ["name"], "properties": {"name": {"type": "string"}, "description": {"type": "string"}}}, "response": {"type": "object", "required": ["project"], "properties": {"project": {"type": "object", "required": ["id", "name"]}}}},
+    "POST /api/v1/store/project": {"request": {"type": "object", "required": ["project_id"], "properties": {"project_id": {"type": "string"}}}, "response": {"type": "object", "required": ["project"], "properties": {"project": {"type": "object", "required": ["id", "name", "osiris_tasks", "osiris_dispositions"]}}}},
+    "POST /api/v1/store/tasks": {"request": {"type": "object", "properties": {"project_id": {"type": "string"}, "task_id": {"type": "string"}, "title": {"type": "string"}, "status": {"enum": ["todo", "doing", "done"]}}}, "response": {"type": "object", "required": ["task"], "properties": {"task": {"type": "object", "required": ["id"]}}}}
+  }
+}

@@ -191,11 +191,9 @@ class GemmaProvider(BaseModelProvider):
                         req_tags = urllib.request.Request("http://127.0.0.1:11434/api/tags", method="GET")
                         with urllib.request.urlopen(req_tags, timeout=0.5) as resp:
                             models = [m.get("name", "") for m in json.loads(resp.read().decode()).get("models", [])]
-                            gemma_match = next((m for m in models if "gemma" in m.lower()), None)
-                            if gemma_match:
+                            if self.selected_model in models:
                                 self.endpoint_url = "http://127.0.0.1:11434"
                                 self.mode = "endpoint"
-                                self.selected_model = gemma_match
                             else:
                                 self.mode = "mock"
                     except Exception:
@@ -526,6 +524,7 @@ class GemmaProvider(BaseModelProvider):
             prompt_eval_count=self.token_count(request),
             total_duration_ms=duration,
             structured_output=structured_output,
+            is_mock=True,
         )
 
     def _endpoint_generate(self, request: ProviderRequest, start_time: float) -> ProviderResponse:

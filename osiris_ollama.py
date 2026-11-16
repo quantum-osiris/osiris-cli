@@ -41,6 +41,8 @@ OLLAMA_HOST = os.getenv("OLLAMA_HOST", "http://localhost:11434")
 
 # Model preference order — tries each until one works
 MODEL_PREFERENCE = [
+    "gemma3:4b",
+    "qwen3:8b",
     "qwen2.5:1.5b",
     "qwen2.5:3b",
     "qwen2.5:7b",
@@ -146,6 +148,13 @@ class OllamaStatus:
     models: List[str] = field(default_factory=list)
     selected_model: str = ""
     error: str = ""
+
+    def __bool__(self) -> bool:
+        return bool(self.available)
+
+    @property
+    def model(self) -> str:
+        return self.selected_model
 
 
 # ══════════════════════════════════════════════════════════════════════════════
@@ -253,11 +262,10 @@ class OllamaClient:
         if not available:
             return ""
 
-        # Try preference order
+        # Try exact tag or prefix match without crossing model sizes
         for preferred in MODEL_PREFERENCE:
             for avail in available:
-                # Match by name prefix (e.g. "qwen2.5:1.5b" matches "qwen2.5:1.5b-...")
-                if avail.startswith(preferred) or preferred.startswith(avail.split(":")[0]):
+                if avail == preferred or avail.startswith(preferred + "-"):
                     self._selected_model = avail
                     return avail
 

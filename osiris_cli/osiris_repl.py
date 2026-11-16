@@ -1424,21 +1424,24 @@ def execute_osiris_status() -> None:
 def execute_ollama(state: Optional[OsirisReplState] = None, prompt: Optional[str] = None) -> None:
     """Connects to local Ollama instance or displays available models."""
     try:
-        from osiris_ollama import check_ollama, get_client
-        if not check_ollama():
-            print("\033[1;33m[OLLAMA] Service offline at localhost:11434.\033[0m")
-            print("  To activate: start 'ollama serve' or run 'ollama pull qwen2.5:1.5b'")
-            return
-        
+        from osiris_ollama import get_client
         client = get_client()
         status = client.status()
+        if not status.available:
+            print("\033[1;33m[OLLAMA] Service offline at localhost:11434.\033[0m")
+            print("  To activate: start 'ollama serve' or run 'ollama pull gemma3:4b'")
+            return
+
         if prompt:
-            print(f"\033[1;36m[OLLAMA::{status.model or 'auto'}] Generating...\033[0m")
+            print(f"\033[1;36m[OLLAMA::{status.selected_model or 'auto'}] Generating...\033[0m")
             resp = client.generate(prompt, max_tokens=256)
-            print(f"\n{resp.text}\n")
+            if resp.error:
+                print(f"\n[OSIRIS::ERROR] {resp.error}\n")
+            else:
+                print(f"\n{resp.content}\n")
         else:
             print("\n\033[1;32m[OLLAMA::ONLINE]\033[0m")
-            print(f"  Active Model:    {status.model or 'None'}")
+            print(f"  Active Model:    {status.selected_model or 'None'}")
             print(f"  Detected Models: {', '.join(status.models) if status.models else 'None'}\n")
     except Exception as e:
         print(f"[OSIRIS::ERROR] Ollama connection error: {e}")
@@ -1712,7 +1715,9 @@ def execute_update() -> None:
     if os.path.exists(os.path.join(repo, ".git")):
         updated = update_checkout(repo)
     else:
-        repo_url = "git+https://github.com/osiris-dnalang/osiris-cli.git"
+        # Sprint 0 / F-02: the legacy osiris-dnalang account is no longer under the maintainer's control,
+        # so installing from it would run whatever that account serves. quantum-osiris is the canonical home.
+        repo_url = "git+https://github.com/quantum-osiris/osiris-cli.git"
         cmd = [sys.executable, "-m", "pip", "install", "--upgrade", repo_url]
         try:
             updated = subprocess.run(cmd, check=True).returncode == 0

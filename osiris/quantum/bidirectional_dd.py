@@ -13,8 +13,11 @@ Physics Invariants:
   - Bipartite Sublattice Staggering introduces pulse-timing offsets Delta t between
     sublattices A and B, inverting the effective interaction frame and refocusing
     inter-qubit crosstalk to zero.
-  - Validated empirically on IBM Heron r2 processors (ibm_marrakesh Job dblr6lhkbkrc73co9h30:
-    39.3% reduction in parasitic phase error, 0.9590 target XX state fidelity).
+  - ERRATUM (CLAIMS.md `SDD_FIDELITY_GAIN` = REFUTED): The earlier Heron r2 claim
+    citing `ibm_marrakesh` Job `dblr6lhkbkrc73co9h30` (reported 0.9590 XX correlator /
+    39.3% error reduction) was invalidated because a scheduling bug emitted 0 DD pulses.
+    Controlled follow-ups with verified pulses (E2/E3/E4) measured a null effect on
+    Heron r2 (+0.22 +/- 0.18 pp, p = 0.233; residual zeta_14,15 = 3.17 +/- 3.47 kHz).
 
 Framework: DNA::}{::lang v51.843 / OSIRIS v5.0 Sovereign Horizon
 Governance: SYS-021 (Payload-Bound Execution Receipts)

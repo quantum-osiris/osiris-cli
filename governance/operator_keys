@@ -1,0 +1,6 @@
+# Node Beta HMAC operator keys enrolled to issue AuthorityPermits (osiris_cli.node_beta_governance).
+# One fingerprint per line, from: python -m osiris_cli.node_beta_governance fingerprint
+# Changed only by a reviewed commit. No OSIRIS process creates or enrolls a key (F-16).
+#
+# Empty: no key is enrolled, so every permit issue fails and every verify is DENY until the
+# owner provisions a key outside OSIRIS and enrolls it here.

@@ -55,12 +55,14 @@ class GovernedAgentEngine:
         self.research_agent = ResearchAgent()
         self.memory_agent = MemoryLineageAgent(ledger_file)
         self.allowed_paths = allowed_paths or ["."]
+        self._proposals: Dict[Tuple[str, str], CodeProposal] = {}
 
     def run_sprint_step(
         self,
         goal: str,
         target_file: str,
         grant: Optional[ExecutionGrant] = None,
+        proposal: Optional[CodeProposal] = None,
     ) -> Dict[str, Any]:
         """
         Execute one complete governed cycle.
@@ -74,8 +76,12 @@ class GovernedAgentEngine:
         plan = self.architect_agent.plan(intent, target_file=target_file)
         task = plan.tasks[0]
 
-        # 3. Implementation synthesis
-        proposal = self.implementation_agent.synthesize(task)
+        # 3. Implementation synthesis (reuse operator-reviewed proposal bound to grant when present)
+        if proposal is None and grant is not None:
+            proposal = self._proposals.get((target_file, grant.payload_digest))
+        if proposal is None:
+            proposal = self.implementation_agent.synthesize(task)
+            self._proposals[(target_file, proposal.payload_digest())] = proposal
 
         # 4. Independent verification (AST firewall + compilation)
         verification = self.verification_agent.verify(proposal)
