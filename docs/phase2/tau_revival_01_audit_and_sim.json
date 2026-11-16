@@ -1,0 +1,132 @@
+{
+  "archive_audit": {
+    "available": true,
+    "universal_tau0_prediction_us": 46.9787,
+    "archived_json_records": [
+      {
+        "file": "tau_analysis_d5h5n9agim5s73ahi1h0.json",
+        "job_id": "d5h5n9agim5s73ahi1h0",
+        "backend": "ibm_fez",
+        "tau_0_predicted": 46,
+        "tau_0_observed": 8,
+        "peak_circuits": [
+          0,
+          8,
+          16,
+          24
+        ],
+        "peak_fidelity_mean": 0.99847412109375,
+        "trough_fidelity_mean": 0.4934326171875,
+        "forensic_finding": "Predicted tau_0=46 but observed period=8 circuit indices ([0, 8, 16, 24] with peak 0.9985 and trough 0.4934 \u2014 a deterministic gate-angle cos^2(k*pi/8) sweep, NOT a 46 us free-idle decoherence revival; raw shot counts absent)."
+      },
+      {
+        "file": "tau_sweep_d5ig8acpe0pc73anfb9g.json",
+        "job_id": "d5ig8acpe0pc73anfb9g",
+        "backend": "ibm_fez",
+        "delays_us": [
+          0,
+          10,
+          20,
+          30,
+          40,
+          46,
+          50,
+          60,
+          70,
+          80,
+          90,
+          92,
+          100
+        ],
+        "has_measured_data": false,
+        "forensic_finding": "Pre-submission parameter manifest ONLY (13 coarse delays [0..100] us, zero measured counts or fidelities recorded in JSON)."
+      },
+      {
+        "file": "tau_sweep_d5ikodnea9qs7393cb7g.json",
+        "job_id": "d5ikodnea9qs7393cb7g",
+        "backend": "ibm_fez",
+        "delays_us": [
+          0,
+          10,
+          20,
+          30,
+          40,
+          46,
+          50,
+          60,
+          70,
+          80,
+          90,
+          92,
+          100
+        ],
+        "has_measured_data": false,
+        "forensic_finding": "Pre-submission parameter manifest ONLY (13 coarse delays [0..100] us, zero measured counts or fidelities recorded in JSON)."
+      }
+    ],
+    "feb_2026_zz_universal_selftest_range_us": [
+      6.7,
+      333.0
+    ],
+    "fez_prospective_3basis_tomography_job_dbiobimne4hc73bf2am0": {
+      "tau_us": 46.0,
+      "f_bell": 0.3438,
+      "f_bell_se": 0.0132,
+      "c_perp": 0.0029,
+      "c_perp_se": 0.0221,
+      "separable_below_0_50": true
+    }
+  },
+  "detuning_injection_positive": {
+    "f_inj_grid_khz": [
+      -15.0,
+      -7.5,
+      0.0,
+      7.5,
+      15.0
+    ],
+    "estimated_beat_freqs_khz": [
+      6.696,
+      14.205,
+      21.711,
+      29.216,
+      36.688
+    ],
+    "estimated_periods_us": [
+      149.336,
+      70.399,
+      46.06,
+      34.228,
+      27.257
+    ],
+    "fitted_frequency_slope_df_obs_df_inj": 0.9999,
+    "fitted_intercept_delta_f0_khz": 21.703,
+    "hahn_echo_46us_minus_36us": -0.054
+  },
+  "detuning_injection_negative_no_vfold": {
+    "f_inj_grid_khz": [
+      -15.0,
+      -7.5,
+      0.0,
+      7.5,
+      15.0
+    ],
+    "estimated_beat_freqs_khz": [
+      -21.502,
+      -13.995,
+      -6.503,
+      0.999,
+      8.51
+    ],
+    "estimated_periods_us": [
+      46.508,
+      71.457,
+      153.77,
+      1000.625,
+      117.508
+    ],
+    "fitted_frequency_slope_df_obs_df_inj": 1.0002,
+    "fitted_intercept_delta_f0_khz": -6.498,
+    "hahn_echo_46us_minus_36us": -0.0491
+  }
+}

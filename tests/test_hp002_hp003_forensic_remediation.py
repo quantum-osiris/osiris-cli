@@ -52,6 +52,7 @@ def test_ledger_anchored_artifacts_preserved_verbatim() -> None:
 
 
 def test_hp003_offline_qpy_reaudit_layouts_lp_bounds_and_conservative_se() -> None:
+    pytest.importorskip("qiskit")
     mod = _load_reaudit_module()
     payload = mod.run_offline_reaudit()
     arms = payload["arm_reaudited_summary"]

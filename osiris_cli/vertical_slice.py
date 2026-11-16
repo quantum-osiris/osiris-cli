@@ -32,6 +32,8 @@ DEFAULT_RECEIPTS_PATH = os.path.join(os.path.expanduser("~"), ".osiris", "receip
 MAX_SOURCE_BYTES = 64 * 1024
 MAX_SHOTS = 100_000
 MAX_QUBITS = 16
+MAX_OPS = 5_000       # circuit operations admitted to the simulator
+MAX_DEPTH = 2_000     # circuit depth admitted to the simulator
 TVD_RESAMPLES = 400
 BOOTSTRAP_RESAMPLES = 1000
 _receipt_lock = threading.Lock()
@@ -75,7 +77,8 @@ def compile_source(source: str) -> Dict[str, Any]:
     if len(source.encode("utf-8")) > MAX_SOURCE_BYTES:
         raise SliceInputError(f"source exceeds {MAX_SOURCE_BYTES} bytes")
     out: Dict[str, Any] = {"ok": False, "source_sha256": _sha256(source.encode("utf-8")),
-                           "diagnostics": {"errors": [], "warnings": []}}
+                           "compiler": {"name": "dnalang", "version": dnalang.__version__},
+                           "diagnostics": {"errors": [], "warnings": [], "notes": []}}
     try:
         org = dnalang.parse(source)
     except (LexError, ParseError) as e:
@@ -83,6 +86,17 @@ def compile_source(source: str) -> Dict[str, Any]:
         return out
     out["organism"] = {"name": org.name, "circuit_genes": len(org.genes), "rule_genes": len(org.rules),
                        "regulator_genes": len(org.regulators), "instances": len(org.genome)}
+    # Say which parts of the source cannot change the compiled circuit, so that a field such as
+    # `habitat: "some_backend"` is never mistaken for a setting that was applied.
+    ignored = [f"meta.{k}" for k in (org.meta or {})] + [f"{name}.*" for name in (org.sections or {})]
+    if ignored:
+        out["diagnostics"]["notes"].append({
+            "stage": "lower", "code": "metadata-not-compiled",
+            "message": "kept as metadata only; these fields select no backend and change no gate: "
+                       + ", ".join(sorted(ignored)[:20])})
+    if org.fitness:
+        out["diagnostics"]["notes"].append({"stage": "lower", "code": "fitness-not-run",
+                                            "message": f"fitness '{org.fitness}' is declared; compiling does not run evolution"})
     diag = dnalang.check(org)
     out["diagnostics"]["errors"] += [{"stage": "check", "message": m, **_pos(m)} for m in diag.errors]
     out["diagnostics"]["warnings"] += [{"stage": "check", "message": m, **_pos(m)} for m in diag.warnings]
@@ -208,9 +222,14 @@ def _versions() -> Dict[str, str]:
 
 
 def run_slice(source: str, *, shots: int = 2000, seed: int = 1234, receipts_path: str = DEFAULT_RECEIPTS_PATH,
-              simulator: Optional[Callable[..., List[Dict[str, int]]]] = None) -> Dict[str, Any]:
+              simulator: Optional[Callable[..., List[Dict[str, int]]]] = None,
+              binding: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
     """Run the whole slice. Returns a result whose ``status`` is COMPLETED, REJECTED (bad input or
-    compile errors: nothing executed), or FAILED (a stage after admission failed: receipted)."""
+    compile errors: nothing executed), or FAILED (a stage after admission failed: receipted).
+
+    ``binding`` names the stored file revision this source was read from (project_id, file_id, path,
+    revision). It is copied into the result and the receipt beside the source digest; the caller is
+    responsible for having read exactly that revision."""
     from osiris_governance.evidence_verifier import ExternalVerifier, RawDataPackage
     from osiris_governance.execution_gate import ExecutionContract, ExecutionGate
     from osiris_governance.models.evidence import EvidenceClass
@@ -225,7 +244,9 @@ def run_slice(source: str, *, shots: int = 2000, seed: int = 1234, receipts_path
     run_id = f"slice-{uuid.uuid4().hex[:12]}"
     stages: List[Dict[str, Any]] = []
     result: Dict[str, Any] = {"schema": SCHEMA, "run_id": run_id, "evidence_class": "SIMULATED",
-                              "hardware": False, "stages": stages, "versions": _versions()}
+                              "hardware": False, "stages": stages, "versions": _versions(),
+                              "requested": {"operation": "simulate", "shots": shots, "seed": seed},
+                              "source_binding": dict(binding) if binding else None}
 
     with _stage(stages, "compile") as st:
         comp = compile_source(source)
@@ -236,8 +257,11 @@ def run_slice(source: str, *, shots: int = 2000, seed: int = 1234, receipts_path
         result["status"] = "REJECTED"
         return result
     circ = comp["_circuit"]
-    if circ.n_qubits > MAX_QUBITS:
-        stages.append({"name": "admission", "status": "FAILED", "error": f"{circ.n_qubits} qubits > {MAX_QUBITS}"})
+    over = ([f"{circ.n_qubits} qubits > {MAX_QUBITS}"] if circ.n_qubits > MAX_QUBITS else []) + \
+           ([f"{len(circ.ops)} operations > {MAX_OPS}"] if len(circ.ops) > MAX_OPS else []) + \
+           ([f"depth {circ.depth()} > {MAX_DEPTH}"] if circ.depth() > MAX_DEPTH else [])
+    if over:
+        stages.append({"name": "admission", "status": "FAILED", "error": "simulator limit exceeded: " + "; ".join(over)})
         result["status"] = "REJECTED"
         return result
 
@@ -262,7 +286,7 @@ def run_slice(source: str, *, shots: int = 2000, seed: int = 1234, receipts_path
 
     base_payload = {"run_id": run_id, "source_sha256": comp["source_sha256"], "circuit_sha256": circ.sha256(),
                     "shots": shots, "seed": seed, "evidence_class": "SIMULATED", "versions": result["versions"],
-                    "admission": result["admission"]}
+                    "admission": result["admission"], "source_binding": result["source_binding"]}
     try:
         with _stage(stages, "simulate") as st:
             if simulator is None:

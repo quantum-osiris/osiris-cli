@@ -1,31 +1,25 @@
 """
-╔══════════════════════════════════════════════════════════════════════════════╗
-║                    PHASE-CONJUGATE QBYTE SYSTEM                              ║
-║                    ══════════════════════════════                            ║
-║                                                                              ║
-║    Sovereign Quantum Computing Platform - IBM Independent                    ║
-║                                                                              ║
-║    This module implements the complete phase-conjugate qbyte system          ║
-║    as defined in the DNA::}{::lang specification. No external quantum        ║
-║    frameworks are used - all operations are native implementations.          ║
-║                                                                              ║
-║    Physical Constants (Immutable):                                           ║
-║    ├── ΛΦ = 2.176435e-8 s⁻¹  (Universal Memory Constant)                    ║
-║    ├── θ_lock = 51.843°       (Torsion-locked angle)                        ║
-║    ├── Φ_threshold = 0.7734   (Consciousness threshold)                     ║
-║    ├── Γ_fixed = 0.092        (Fixed-point decoherence)                     ║
-║    └── χ_pc = 0.869           (Phase conjugate coupling)                    ║
-║                                                                              ║
-║    Core Components:                                                          ║
-║    ├── Qbyte: 8-qubit quantum register with native operations               ║
-║    ├── PhaseConjugateEngine: E → E⁻¹ error correction                       ║
-║    ├── CCCERuntime: Consciousness metric management                         ║
-║    └── SovereignExecutor: IBM-free quantum execution                        ║
-║                                                                              ║
-║    Author: Devin Phillip Davis                                               ║
-║    Organization: Agile Defense Systems LLC                                   ║
-║    License: CC-BY-4.0                                                        ║
-╚══════════════════════════════════════════════════════════════════════════════╝
+qByte Classical Statevector Simulator Package
+=============================================
+
+Pure-NumPy classical statevector simulator for small quantum circuits using
+DNA-Lang gate aliases alongside standard quantum gate names.
+
+Note on physical scope:
+    This package is a deterministic/Monte-Carlo classical statevector simulator
+    executing on a conventional CPU via NumPy. It is NOT an independent physical
+    quantum substrate, and its optional phase-conjugate "healing" routines are
+    non-unitary classical heuristics disabled by default during unitary circuit
+    simulation.
+
+Basis-order convention (Big-Endian):
+    For an n-qubit statevector of length 2^n, computational basis state
+    |b_0 b_1 ... b_{n-1}> maps to integer index:
+        idx = sum_{q=0}^{n-1} b_q * 2^(n - 1 - q)
+    so qubit 0 is the most-significant bit (tensor axis 0, bit shift n - 1) and
+    qubit n - 1 is the least-significant bit (tensor axis n - 1, bit shift 0).
+    Use `.get_statevector(endian="little")` to obtain Qiskit-compatible
+    little-endian ordering |b_{n-1} ... b_1 b_0>.
 """
 
 __version__ = "1.0.0"
