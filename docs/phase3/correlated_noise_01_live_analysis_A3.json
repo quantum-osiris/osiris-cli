@@ -1,0 +1,425 @@
+{
+  "experiment_id": "CORRELATED-NOISE-01-STAGE1",
+  "status": "Hardware-observed. Analysis per amendment A-3. A-3 was hashed locally before the job was submitted but was not published before it; whether A-3 or the locked analysis is primary is the owner's decision (see CORRELATED_NOISE_01_RESULTS.md).",
+  "job_id": "dbtp67dav06s73cfbsm0",
+  "backend": "ibm_marrakesh",
+  "prereg_lock_sha256": "38ebfe7f7c007633281039bca551af963e8335db54e6e6915a1e3f5be4a64fd8",
+  "qpy_sha256": "158de03260c429c8170cd3e3b296ade8045881e385370f1774619344e57b9da1",
+  "analysis_amendment_sha256": "7fb094d7a347496527db32d6a2b668a0723e7806cb5cefdb35ce7129e40a6947",
+  "amendment_id": "CN01-A3",
+  "train_slots": [
+    1,
+    2,
+    4,
+    7
+  ],
+  "held_out_slots": [
+    0,
+    3,
+    5,
+    6,
+    8,
+    9
+  ],
+  "fit_conditions": [
+    "echo1_2us",
+    "echo1_4us",
+    "echo1_8us",
+    "echo1_16us",
+    "echo_dd8_8us",
+    "echo_dd16_8us",
+    "echo_dd32_8us",
+    "echo_dd32_16us",
+    "phi_dd16_d0ns",
+    "phi_dd16_d16ns",
+    "phi_dd16_d32ns",
+    "phi_dd16_d48ns",
+    "phi_dd16_d80ns",
+    "phi_dd16_d160ns",
+    "phi_dd16_d256ns",
+    "psi_dd16_d0ns",
+    "psi_dd16_d256ns",
+    "phi_spec_plus_d0ns",
+    "phi_spec_plus_d256ns"
+  ],
+  "model_selection": {
+    "selected_model": "H0",
+    "best_local_model": "H0",
+    "raw_min_bic_model": "H0",
+    "delta_bic_over_best_local": 0.0,
+    "delta_bic_h0_minus_best_local": 0.0,
+    "delta_bic_gate": 8.0,
+    "fits": {
+      "H0": {
+        "params": [
+          4.643354830144523e-05,
+          3.695964710430585e-05,
+          1296.8888651438438,
+          57205.91577211056,
+          0.9876380748370421
+        ],
+        "k_params": 5,
+        "chi2": 100.32891370960954,
+        "bic": 115.05110860544174,
+        "rmse": 0.0031672226263118925
+      },
+      "H0_1f": {
+        "params": [
+          3.223452659712466e-05,
+          3.0000012789253686e-05,
+          0.12496170247539176,
+          39999.97372563194,
+          0.044106449298663364,
+          0.9950401492687841
+        ],
+        "k_params": 6,
+        "chi2": 825.5531283791638,
+        "bic": 843.2197622541624,
+        "rmse": 0.007705880540267344
+      },
+      "H3_local": {
+        "params": [
+          3.2121273522609286e-05,
+          3.0000000000000004e-05,
+          1.4675424565212215e-09,
+          39999.99999999999,
+          8.30605373402691,
+          2.5000000000000544e-07,
+          0.9953949936982195
+        ],
+        "k_params": 7,
+        "chi2": 825.3616095625907,
+        "bic": 845.9726824167558,
+        "rmse": 0.0076912896938954416
+      },
+      "H1": {
+        "params": [
+          5.252537424893878e-05,
+          3.717609462143485e-05,
+          2570.203298074935,
+          58805.64054954997,
+          0.9876776133434418,
+          2557.834313086907
+        ],
+        "k_params": 6,
+        "chi2": 97.60197723190065,
+        "bic": 115.26861110689929,
+        "rmse": 0.0030827847959033657
+      },
+      "H2": {
+        "params": [
+          4.1482613304673804e-05,
+          4.3637668236546835e-05,
+          34.79495176468938,
+          59985.953050743774,
+          0.9876915766596639,
+          0.28317462351152156,
+          1.8
+        ],
+        "k_params": 7,
+        "chi2": 95.21785576229543,
+        "bic": 115.8289286164605,
+        "rmse": 0.003102319900217429
+      },
+      "H3": {
+        "params": [
+          3.212126410135171e-05,
+          3.0000000000000018e-05,
+          4.527286663793021e-08,
+          39999.999999999534,
+          0.030633804840288548,
+          2.5000000000020365e-07,
+          0.7999999924460909,
+          0.9953949897116049
+        ],
+        "k_params": 8,
+        "chi2": 825.3616072682406,
+        "bic": 848.9171191015721,
+        "rmse": 0.007691286744441069
+      },
+      "Apparatus": {
+        "params": [
+          4.959572330551826e-05,
+          3.6171708960777905e-05,
+          1983.544712929245,
+          57432.84898625937,
+          0.9876380765120475,
+          2.91612314474869e-14
+        ],
+        "k_params": 6,
+        "chi2": 100.32891562030797,
+        "bic": 117.9955494953066,
+        "rmse": 0.0031672123792709523
+      }
+    }
+  },
+  "mechanistic_contrasts_holm": {
+    "C_stagger_phi_256_minus_0": {
+      "mean": 0.00203,
+      "se": 0.00186,
+      "t_stat": 1.09,
+      "df": 9,
+      "p_two_sided": 0.30384507343988637,
+      "p_holm_adjusted": 0.60769,
+      "significant_holm_0_05": false
+    },
+    "C_DFS_asymmetry": {
+      "mean": 0.00432,
+      "se": 0.0025,
+      "t_stat": 1.727,
+      "df": 9,
+      "p_two_sided": 0.11824603457341534,
+      "p_holm_adjusted": 0.472984,
+      "significant_holm_0_05": false
+    },
+    "C_spectator_activation": {
+      "mean": -0.00198,
+      "se": 0.00135,
+      "t_stat": -1.466,
+      "df": 9,
+      "p_two_sided": 0.17658116580416913,
+      "p_holm_adjusted": 0.529743,
+      "significant_holm_0_05": false
+    },
+    "C_memory_dd32_minus_echo1_16us": {
+      "mean": -0.00139,
+      "se": 0.00932,
+      "t_stat": -0.149,
+      "df": 9,
+      "p_two_sided": 0.8850061409350628,
+      "p_holm_adjusted": 0.885006,
+      "significant_holm_0_05": false
+    }
+  },
+  "step_fraction_s48": 0.6154,
+  "memory_contrast_note": "C_memory (DD32 minus echo at 16 us) is expected to be positive under ordinary local 1/f noise; it is required for H3 but is not, on its own, evidence of correlated memory.",
+  "held_out_transfer": {
+    "calibration_condition": "echo_dd32_8us",
+    "candidate_model": "H3",
+    "candidate_is_selected_model": false,
+    "best_local_model": "H0",
+    "per_coupler_rmse_stagger_change": {
+      "H0": [
+        0.00934,
+        0.0047,
+        0.00786,
+        0.00307,
+        0.00726,
+        0.00333
+      ],
+      "H0_1f": [
+        0.00934,
+        0.0047,
+        0.00786,
+        0.00307,
+        0.00726,
+        0.00333
+      ],
+      "H3_local": [
+        0.00934,
+        0.0047,
+        0.00786,
+        0.00307,
+        0.00726,
+        0.00333
+      ],
+      "H1": [
+        0.00869,
+        0.00519,
+        0.0071,
+        0.00299,
+        0.00794,
+        0.00347
+      ],
+      "H2": [
+        0.0064,
+        0.0047,
+        0.00786,
+        0.00307,
+        0.01043,
+        0.01469
+      ],
+      "H3": [
+        0.00934,
+        0.0047,
+        0.00786,
+        0.00307,
+        0.00726,
+        0.00333
+      ],
+      "Apparatus": [
+        0.00934,
+        0.0047,
+        0.00786,
+        0.00307,
+        0.00726,
+        0.00333
+      ]
+    },
+    "mean_rmse_stagger_change": {
+      "H0": 0.00593,
+      "H0_1f": 0.00593,
+      "H3_local": 0.00593,
+      "H1": 0.0059,
+      "H2": 0.00786,
+      "H3": 0.00593,
+      "Apparatus": 0.00593
+    },
+    "per_coupler_rmse_absolute": {
+      "H0": [
+        0.07969,
+        0.04287,
+        0.24067,
+        0.1882,
+        0.11275,
+        0.0578
+      ],
+      "H0_1f": [
+        0.07969,
+        0.04287,
+        0.24067,
+        0.1882,
+        0.11275,
+        0.0578
+      ],
+      "H3_local": [
+        0.07969,
+        0.04287,
+        0.24067,
+        0.1882,
+        0.11275,
+        0.0578
+      ],
+      "H1": [
+        0.07898,
+        0.04215,
+        0.2399,
+        0.18744,
+        0.11202,
+        0.05725
+      ],
+      "H2": [
+        0.07273,
+        0.04287,
+        0.24067,
+        0.1882,
+        0.10793,
+        0.04027
+      ],
+      "H3": [
+        0.07969,
+        0.04287,
+        0.24067,
+        0.1882,
+        0.11275,
+        0.0578
+      ],
+      "Apparatus": [
+        0.07969,
+        0.04287,
+        0.24067,
+        0.1882,
+        0.11275,
+        0.0578
+      ]
+    },
+    "mean_rmse_absolute": {
+      "H0": 0.12033,
+      "H0_1f": 0.12033,
+      "H3_local": 0.12033,
+      "H1": 0.11962,
+      "H2": 0.11545,
+      "H3": 0.12033,
+      "Apparatus": 0.12033
+    },
+    "solved_white_floor_hz": {
+      "H0": [
+        5436.61,
+        0.0,
+        0.0,
+        0.0,
+        3645.73,
+        18872.25
+      ],
+      "H0_1f": [
+        5436.61,
+        0.0,
+        0.0,
+        0.0,
+        3645.73,
+        18872.25
+      ],
+      "H3_local": [
+        5436.61,
+        0.0,
+        0.0,
+        0.0,
+        3645.73,
+        18872.25
+      ],
+      "H1": [
+        5436.61,
+        0.0,
+        0.0,
+        0.0,
+        3645.73,
+        18872.25
+      ],
+      "H2": [
+        5436.61,
+        0.0,
+        0.0,
+        0.0,
+        3645.73,
+        18872.25
+      ],
+      "H3": [
+        5436.61,
+        0.0,
+        0.0,
+        0.0,
+        3645.73,
+        18872.25
+      ],
+      "Apparatus": [
+        5436.61,
+        0.0,
+        0.0,
+        0.0,
+        3645.73,
+        18872.25
+      ]
+    },
+    "primary_stagger_change_best_local_minus_candidate": {
+      "mean": 0.0,
+      "se": 0.0,
+      "t_stat": 0.0,
+      "df": 5,
+      "p_two_sided": 0.999981506770128,
+      "candidate_beats_best_local_p_0_05": false
+    },
+    "secondary_absolute_best_local_minus_candidate": {
+      "mean": 0.0,
+      "se": 0.0,
+      "t_stat": 0.001,
+      "df": 5,
+      "p_two_sided": 0.999539041188454,
+      "candidate_beats_best_local_p_0_05": false
+    }
+  },
+  "ramsey_descriptive_mean": {
+    "ramsey_2us": 0.96033,
+    "ramsey_4us": 0.92705,
+    "ramsey_8us": 0.84135,
+    "ramsey_16us": 0.72275
+  },
+  "decisions": {
+    "correlated_dephasing_supported": false,
+    "non_markovian_correlated_memory_supported": false,
+    "spectator_zz_supported": false,
+    "pulse_collision_apparatus_supported": false,
+    "candidate_falsified_by_held_out": false,
+    "local_noise_only": true,
+    "local_non_white_dephasing": false
+  }
+}

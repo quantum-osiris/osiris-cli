@@ -27,30 +27,38 @@ Strict SYS-021 Governance:
 from __future__ import annotations
 
 import argparse
+from collections import deque
+from datetime import datetime, timezone
 import hashlib
 import io
 import json
 import math
-from datetime import datetime, timezone
+import os
 from pathlib import Path
-from typing import Any, Dict, List, Sequence, Tuple
+from typing import Any, Dict, List, Mapping, Sequence, Tuple
 
 import numpy as np
 from qiskit import QuantumCircuit, qpy, transpile
-from qiskit_ibm_runtime import QiskitRuntimeService, SamplerV2
+from qiskit_ibm_runtime import QiskitRuntimeService
 
 from phase2.correlated_noise_01.correlated_noise_models import (
     HERON_DT_S,
     MARRAKESH_PULSE_WIDTH_S,
+    ProbeCondition,
 )
 from phase2.correlated_noise_01.simulate_correlated_noise import (
     STAGGER_OFFSETS_NS,
+    T_REF_8US,
+    T_REF_16US,
+    fit_competing_models,
     select_disjoint_couplers_on_backend,
 )
 from phase2.tesseract_map_02.tesseract_map_02 import (
     THETA_DEFAULT_DEG,
+    analyze_paired_blocks,
     build_tesseract_map_02_arms,
     build_union_spam_calibration_circuits,
+    score_tesseract_counts,
 )
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
@@ -58,15 +66,23 @@ OUT_DIR = REPO_ROOT / "docs" / "phase3"
 
 
 def connect_service() -> QiskitRuntimeService:
-    """Connect to IBM Quantum Platform without printing credentials."""
+    """Connect to IBM Quantum Platform without printing credentials.
+
+    Uses the saved Qiskit account when there is one; otherwise the token in QISKIT_IBM_TOKEN, or the
+    "apikey"/"token" field of the JSON file named by OSIRIS_IBM_KEY_FILE.
+    """
     try:
         return QiskitRuntimeService()
     except Exception:
-        key_path = Path("/home/osiris/apikey.json")
-        data = json.loads(key_path.read_text())
-        token = data.get("apikey") or data.get("token")
+        token = os.environ.get("QISKIT_IBM_TOKEN")
+        key_file = os.environ.get("OSIRIS_IBM_KEY_FILE")
+        if not token and key_file:
+            data = json.loads(Path(key_file).expanduser().read_text())
+            token = data.get("apikey") or data.get("token")
         if not token:
-            raise RuntimeError("No IBM Quantum API token available")
+            raise RuntimeError(
+                "No IBM Quantum credentials: save a Qiskit account, or set QISKIT_IBM_TOKEN or OSIRIS_IBM_KEY_FILE"
+            )
         return QiskitRuntimeService(channel="ibm_quantum_platform", token=token)
 
 
@@ -599,6 +615,18 @@ def main() -> None:
     parser.add_argument("--cn01-blocks", type=int, default=5)
     args = parser.parse_args()
 
+    if args.step in ("submit_tesseract", "submit_cn01"):
+        # One guarded path: QPY/lock hash check, 1.3x quota margin, never resubmits, waits, then analyzes.
+        from phase3.execute_and_analyze_live import run_live_campaigns
+
+        run_live_campaigns(("tmap02",) if args.step == "submit_tesseract" else ("cn01",))
+        return
+
+    existing = [p.name for p in (OUT_DIR / "tesseract_map_02_live_prereg_lock.json",
+                                 OUT_DIR / "correlated_noise_01_live_prereg_lock.json") if p.exists()]
+    if existing:
+        raise RuntimeError(f"Prereg locks already exist ({', '.join(existing)}); refusing to overwrite them")
+
     OUT_DIR.mkdir(parents=True, exist_ok=True)
     svc = connect_service()
     usage = svc.usage()
@@ -609,66 +637,18 @@ def main() -> None:
     cal = snapshot_backend_calibration(backend)
     (OUT_DIR / f"{args.backend}_prelock_calibration.json").write_text(json.dumps(cal, indent=2) + "\n")
 
-    if args.step == "lock":
-        _, t_lock = prepare_tesseract_map_02_live(backend, n_blocks=10, shots_per_pub=2048)
-        _, c_lock = prepare_correlated_noise_01_live(backend, n_blocks=args.cn01_blocks, shots_per_pub=2048)
-        print(
-            f"[Locked TESSERACT-MAP-02] pubs={t_lock['total_pubs']} shots={t_lock['total_shots']} "
-            f"est_s={t_lock['estimated_qpu_seconds']} qpy_sha256={t_lock['qpy_sha256'][:16]}... "
-            f"lock_sha256={t_lock['lock_sha256'][:16]}..."
-        )
-        print(
-            f"[Locked CORRELATED-NOISE-01] pubs={c_lock['total_pubs']} shots={c_lock['total_circuit_shots']} "
-            f"coupler_shots={c_lock['total_multiplexed_coupler_shots']} est_s={c_lock['estimated_qpu_seconds']} "
-            f"qpy_sha256={c_lock['qpy_sha256'][:16]}... lock_sha256={c_lock['lock_sha256'][:16]}..."
-        )
-        return
-
-    if args.step == "submit_tesseract":
-        lock_path = OUT_DIR / "tesseract_map_02_live_prereg_lock.json"
-        qpy_path = OUT_DIR / "tesseract_map_02_live_pubs.qpy"
-        lock = json.loads(lock_path.read_text())
-        with qpy_path.open("rb") as f:
-            pubs = qpy.load(f)
-        if rem_sec < lock["estimated_qpu_seconds"]:
-            raise RuntimeError(f"Insufficient quota ({rem_sec}s) for TESSERACT-MAP-02 ({lock['estimated_qpu_seconds']}s)")
-        sampler = SamplerV2(mode=backend)
-        job = sampler.run(pubs, shots=int(lock["shots_per_pub"]))
-        jid = job.job_id()
-        sub_rec = {
-            "experiment_id": "TESSERACT-MAP-02",
-            "job_id": jid,
-            "backend": backend.name,
-            "submitted_utc": datetime.now(timezone.utc).isoformat(),
-            "prereg_lock_sha256": hashlib.sha256(lock_path.read_bytes()).hexdigest(),
-            "qpy_sha256": lock["qpy_sha256"],
-        }
-        (OUT_DIR / "tesseract_map_02_submission_receipt.json").write_text(json.dumps(sub_rec, indent=2) + "\n")
-        print(f"[Submitted TESSERACT-MAP-02] job_id={jid} on {backend.name}")
-        return
-
-    if args.step == "submit_cn01":
-        lock_path = OUT_DIR / "correlated_noise_01_live_prereg_lock.json"
-        qpy_path = OUT_DIR / "correlated_noise_01_live_pubs.qpy"
-        lock = json.loads(lock_path.read_text())
-        with qpy_path.open("rb") as f:
-            pubs = qpy.load(f)
-        if rem_sec < lock["estimated_qpu_seconds"] * 0.80:
-            raise RuntimeError(f"Insufficient quota ({rem_sec}s) for CORRELATED-NOISE-01 ({lock['estimated_qpu_seconds']}s)")
-        sampler = SamplerV2(mode=backend)
-        job = sampler.run(pubs, shots=int(lock["shots_per_pub"]))
-        jid = job.job_id()
-        sub_rec = {
-            "experiment_id": "CORRELATED-NOISE-01-STAGE1",
-            "job_id": jid,
-            "backend": backend.name,
-            "submitted_utc": datetime.now(timezone.utc).isoformat(),
-            "prereg_lock_sha256": hashlib.sha256(lock_path.read_bytes()).hexdigest(),
-            "qpy_sha256": lock["qpy_sha256"],
-        }
-        (OUT_DIR / "correlated_noise_01_submission_receipt.json").write_text(json.dumps(sub_rec, indent=2) + "\n")
-        print(f"[Submitted CORRELATED-NOISE-01] job_id={jid} on {backend.name}")
-        return
+    _, t_lock = prepare_tesseract_map_02_live(backend, n_blocks=10, shots_per_pub=2048)
+    _, c_lock = prepare_correlated_noise_01_live(backend, n_blocks=args.cn01_blocks, shots_per_pub=2048)
+    print(
+        f"[Locked TESSERACT-MAP-02] pubs={t_lock['total_pubs']} shots={t_lock['total_shots']} "
+        f"est_s={t_lock['estimated_qpu_seconds']} qpy_sha256={t_lock['qpy_sha256'][:16]}... "
+        f"lock_sha256={t_lock['lock_sha256'][:16]}..."
+    )
+    print(
+        f"[Locked CORRELATED-NOISE-01] pubs={c_lock['total_pubs']} shots={c_lock['total_circuit_shots']} "
+        f"coupler_shots={c_lock['total_multiplexed_coupler_shots']} est_s={c_lock['estimated_qpu_seconds']} "
+        f"qpy_sha256={c_lock['qpy_sha256'][:16]}... lock_sha256={c_lock['lock_sha256'][:16]}..."
+    )
 
 
 if __name__ == "__main__":

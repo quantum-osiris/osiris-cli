@@ -148,8 +148,8 @@
     },
     {
       "path": "/home/osiris/osiris-assessment/work/osiris-cli-phase2/phase2/claims_reconciliation_v2.py",
-      "bytes": 21031,
-      "sha256": "739c8c0c6245be8467f6822a6230f699aef7c49607c8efc352f8c134cf41b6c5",
+      "bytes": 20137,
+      "sha256": "9dcf050facf3f81e568da51e3cc20c8d53de945513cb5e7854592e9862f2e23e",
       "status": "Implemented and tested",
       "category": "phase2_experiment_code"
     },
@@ -407,15 +407,15 @@
     },
     {
       "path": "/home/osiris/osiris-assessment/work/osiris-cli-phase2/docs/phase2/PHASE2_EXECUTIVE_REPORT.md",
-      "bytes": 17557,
-      "sha256": "960e2d0a2cadf8a3df0109f8b7e85837f9d2e85ac60102b07a4dc87edbe9fd1e",
+      "bytes": 17559,
+      "sha256": "ffbd4711397dd68b5cba7e63e272442d96020e21558485b364acea425bfe36bb",
       "status": "Implemented and tested",
       "category": "phase2_deliverable_docs_and_data"
     },
     {
       "path": "/home/osiris/osiris-assessment/work/osiris-cli-phase2/docs/phase2/PHASE2_STATE_INVENTORY.json",
-      "bytes": 8188,
-      "sha256": "fa111dd5b3fd29c594d679867a47e064a0f23dce362a3816e73e0ce58152f8c3",
+      "bytes": 7382,
+      "sha256": "f29893fd19f608686e136cc4356db42b4d08f96659c7fec57a5dc2534726147d",
       "status": "Implemented and tested",
       "category": "phase2_deliverable_docs_and_data"
     },

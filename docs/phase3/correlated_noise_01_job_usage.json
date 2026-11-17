@@ -1,0 +1,40 @@
+{
+  "job_id": "dbtp67dav06s73cfbsm0",
+  "requeried_utc": "2026-11-17T02:34:53.125690+00:00",
+  "status": "DONE",
+  "job_usage_seconds": 139.0,
+  "metrics_usage": {
+    "qpu_charge_time_seconds": 139,
+    "value": 2.30764,
+    "unit": "resource_units",
+    "status": "complete"
+  },
+  "metrics_timestamps": {
+    "created": "2026-11-16T23:34:53.4213Z",
+    "running": "2026-11-16T23:34:55.023459Z",
+    "finished": "2026-11-16T23:37:44.304716Z"
+  },
+  "quota_remaining_before_s": 278.0,
+  "quota_remaining_now_s": 139.0,
+  "jobs_created_since_2026-11-16T21:00Z": [
+    {
+      "job_id": "dbto408n26qs739tnrj0",
+      "created": "2026-11-16 17:21:53.398530-05:00",
+      "backend": "ibm_marrakesh",
+      "status": "DONE"
+    },
+    {
+      "job_id": "dbtp67dav06s73cfbsm0",
+      "created": "2026-11-16 18:34:53.421300-05:00",
+      "backend": "ibm_marrakesh",
+      "status": "DONE"
+    }
+  ],
+  "counts_cross_check": {
+    "ibm_result_pubs": 244,
+    "saved_pubs": 244,
+    "mismatched_pubs": 0,
+    "method": "job.result() re-fetched read-only; each PUB's counts extracted with phase3.live_hardware_runner.extract_counts_from_pub_result and compared with pub_counts in correlated_noise_01_live_raw_counts.json"
+  },
+  "note": "Read-only re-query after IBM finalised the job's usage. The raw-counts file stores account usage only; this is the job's own charged figure."
+}

@@ -122,7 +122,8 @@ def hamming_cost_matrix(
         dist = np.empty((len(ix), len(iy)), dtype=np.float64)
         for r_idx, vx in enumerate(ix):
             for c_idx, vy in enumerate(iy):
-                dist[r_idx, c_idx] = float((vx ^ vy).bit_count())
+                # bin(x).count("1") instead of int.bit_count(): Python 3.9 support
+                dist[r_idx, c_idx] = float(bin(vx ^ vy).count("1"))
 
     if normalize_by_n is not None:
         if normalize_by_n <= 0:
