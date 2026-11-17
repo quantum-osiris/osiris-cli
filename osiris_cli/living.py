@@ -147,7 +147,18 @@ class Held(str):
 # a "potential overlap" came back as NUMERICAL_OVERLAP = OBSERVED).
 REQUEST = re.compile(r"\?|\b(?:review|summari[sz]e|rewrite|compare|check|critique|evaluate|assess|explain|"
                      r"analy[sz]e|adopt|apply|translate|what do you think|thoughts|tell me|can you|could you|"
-                     r"please)\b", re.IGNORECASE)
+                     r"please|(?:write|implement|build|generate|create|scaffold|refactor)\s+(?:the\s+)?"
+                     r"(?:python\s+)?(?:code|module|package|script|implementation|tests?))\b", re.IGNORECASE)
+CODE_REQUEST_PREFIX = re.compile(
+    r"^\s*(?:please\s+)?(?P<directive>"
+    r"(?:write|generate|create|scaffold)\s+(?:the\s+)?(?:python\s+)?(?:code|module|package|script|implementation|tests?)"
+    r"(?:\s+(?:for|to|from|that))?"
+    r"|implement(?:\s+(?:the\s+)?(?:python\s+)?(?:code|module|package|feature|spec|specification)(?:\s+for)?)?"
+    r"|build\s+(?:the\s+)?(?:python\s+)?(?:code|module|package|script|implementation)(?:\s+for)?"
+    r"|refactor\s+(?:the\s+)?(?:code|module)(?:\s+in|\s+for)?"
+    r")[\s:]+(?P<body>\S[\s\S]*)$",
+    re.IGNORECASE,
+)
 HEADING = re.compile(r"^\s{0,3}(?:#{1,6}\s+\S.*|(?:\d+(?:\.\d+)*[.)]|[A-Z]{1,4}-\d+[:.)]?)\s+\S.*)$")
 ATX_HEADING = re.compile(r"^\s{0,3}#{1,6}\s+\S.*$")
 BARE_NUM_ITEM = re.compile(r"^\s{0,3}\d+[.)]\s+\S.*$")
@@ -157,8 +168,26 @@ SECTION_QUERY = re.compile(r"\b(?:section|sec\.?|part)\s+(\d+(?:\.\d+)*)\b", re.
 LABEL = re.compile(r"\b[A-Z][A-Z0-9]*(?:_[A-Z0-9]+)+\b|(?<==\s)[A-Z][A-Z_]{3,}\b")
 
 
+def extract_code_request(text: str) -> Optional[str]:
+    """Return a normalized `/code` task when ``text`` begins with an explicit code-authoring directive."""
+    if not text:
+        return None
+    m = CODE_REQUEST_PREFIX.match(text)
+    if not m:
+        return None
+    directive = " ".join(m.group("directive").split())
+    body = m.group("body").strip()
+    if len(body) >= 2 and body[0] == body[-1] and body[0] in ('"', "'"):
+        body = body[1:-1].strip()
+    if not body:
+        return None
+    return f"{directive}:\n{body}" if "\n" in body else f"{directive} {body}"
+
+
 def asks_something(text: str) -> bool:
     """Whether a pasted document carries a request: in its first two or last three non-empty lines."""
+    if extract_code_request(text) is not None:
+        return True
     lines = [ln for ln in text.splitlines() if ln.strip()]
     return any(REQUEST.search(ln) for ln in lines[:2] + lines[-3:])
 

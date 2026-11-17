@@ -55,6 +55,22 @@ class HardwareProfile:
     resonance_angle_deg: float = 51.843
     metadata: Dict[str, Any] = field(default_factory=dict)
 
+    @property
+    def node_role(self) -> str:
+        return self.node_type.value
+
+    @property
+    def arch(self) -> str:
+        return self.machine_arch
+
+    @property
+    def timeout_horizon_s(self) -> float:
+        return self.execution_timeout_s
+
+    @property
+    def max_circuit_depth(self) -> int:
+        return 256 if self.node_type == NodeType.ALPHA_MOBILE else 4096
+
     def to_dict(self) -> Dict[str, Any]:
         return {
             "node_type": self.node_type.value,
@@ -176,6 +192,11 @@ CURRENT_PROFILE: HardwareProfile = HardwareMeshDetector.detect()
 
 def get_current_profile() -> HardwareProfile:
     """Returns the cached singleton hardware profile."""
+    return CURRENT_PROFILE
+
+
+def get_active_profile() -> HardwareProfile:
+    """Cross-package alias (`dnalang.seq_ops`) returning the cached singleton hardware profile."""
     return CURRENT_PROFILE
 
 

@@ -1386,8 +1386,24 @@ def get_living():
 
 
 def handle_livlm_prompt(state: OsirisReplState, prompt: str) -> None:
-    """Plain text is conversation with OSIRIS.
-    Records every exchange; learns only from eligible material you explicitly approve."""
+    """Plain text is conversation with OSIRIS, except explicit code-authoring directives
+    ('write the code for ...', 'implement the code for ...') which route to the governed
+    /code tool loop after pre-model claims verification."""
+    from osiris_cli import living as living_mod
+    code_task = living_mod.extract_code_request(prompt)
+    if code_task is not None:
+        try:
+            from osiris_cli import claims as claims_mod
+            hits = claims_mod.match(prompt)
+            if hits:
+                print("\n" + claims_mod.console_block(hits))
+        except Exception:  # noqa: BLE001 - claims lookup must not block /code routing
+            pass
+        print("\n[OSIRIS::L1] Explicit code-authoring directive detected -> routing to governed /code loop")
+        from osiris_cli import code_agent
+        code_agent.run_code_command(state, code_task)
+        return
+
     tier, _reason = state.firewall.classify(prompt)
     input_transport = "unknown"
     if otc is not None and hasattr(otc, "_last_input") and "pasted" in otc._last_input:
@@ -1913,7 +1929,7 @@ def execute_trio(rest: str) -> None:
 # keeps the set in step with the source.
 REPL_COMMANDS = {
     "/apply", "/architecture", "/benchmark", "/bridges", "/chat", "/check", "/clean", "/closure",
-    "/code", "/core", "/digest", "/discard", "/dna", "/experiment", "/fast", "/firewall", "/forge",
+    "/code", "/core", "/digest", "/discard", "/dna", "/eval-audit", "/experiment", "/fast", "/firewall", "/forge",
     "/forget", "/gemini", "/help", "/ignite", "/ingest", "/intent", "/introspect", "/learn",
     "/ledger", "/legit", "/mentor", "/mesh", "/mutate", "/nclm", "/ollama", "/osiris", "/physics",
     "/power", "/pr", "/publish", "/q", "/remember", "/retrieval", "/run", "/self", "/sim",
@@ -1928,6 +1944,7 @@ READ_ONLY_COMMANDS = {
 }
 # Commands that need words after them to do anything.
 NEEDS_ARGUMENT = {"/code": "/code explain osiris_cli/living.py", "/legit": "/legit list",
+                  "/eval-audit": "/eval-audit qkernel <run_dir>",
                   "/remember": "/remember <fact>", "/forget": "/forget <words>",
                   "/self": "/self <text>", "/chat": "/chat <message>", "/dna": '/dna "<intent>"',
                   "/gemini": "/gemini <question>", "/physics": "/physics chsh"}
@@ -2348,6 +2365,9 @@ def dispatch_command(state: OsirisReplState, line: str) -> None:
     elif cmd == "/legit":
         from osiris_cli import claims
         print("\n" + claims.command(line_clean[len(parts[0]):]) + "\n")
+    elif cmd == "/eval-audit":
+        from osiris_cli import reproducible_eval
+        print("\n" + reproducible_eval.run_command(line_clean[len(parts[0]):].strip()) + "\n")
     elif cmd == "/physics":
         from osiris_cli import physics_checks
         print("\n" + physics_checks.run_command(line_clean[len(parts[0]):].strip()) + "\n")

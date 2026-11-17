@@ -636,6 +636,56 @@ REGISTER: Tuple[Claim, ...] = (
           (r"\bqec[-_]?001\b", r"dbtl2vb2kf8s73c9a0d0", r"zenodo\.2429375[56]",
            r"syndrome[\s-]*cycle[\s-]*scaling[^.\n]{0,40}?ibm_fez"),
           testable="Reproduce Blossom MWPM decoding from raw bitstrings: pytest tests/test_qec001_hardware_artifact.py."),
+    Claim("QKERNEL_GENOMICS_BENCHMARK",
+          "Quantum fidelity-kernel SVMs (product, nearest-neighbor CZ, Havlicek ZZ) beat classical baselines by more "
+          "than 0.02 balanced accuracy on synthetic Balding-Nichols genotype populations",
+          "NULL",
+          "Pre-registered simulator benchmark in dnalang.qkernel (4 populations of 50 individuals, 2,000 SNPs, 6 "
+          "simulated qubits, decision margin 0.02 balanced accuracy) did not reject H0 on either synthetic setting: "
+          "on F_ST = 0.004, best classical logistic scored 0.595 vs best quantum product 0.545 (95% paired-bootstrap "
+          "CI -0.117 to +0.018); on F_ST = 0.02, classical and quantum models tied at 1.000. Supports Outcome 6 "
+          "(reproducible comparative evaluation), not quantum advantage, physical-QPU validation, or real-VCF "
+          "population classification.",
+          (("file", "osiris-assessment/work/osiris-cli-main-baseline/docs/phase3/PWS_OUTCOME6_AND_PHASE3_CONSOLIDATION.md",
+            "Outcome 6 candidate evidence entry & annex scope"),
+           ("file", "osiris-assessment/work/dnalang-core/docs/QKERNEL_GENOMICS.md", "dnalang.qkernel pipeline & H0 rule"),
+           ("file", "osiris-assessment/TEST_AND_EVIDENCE_MATRIX.md", "dnalang.qkernel matrix record")),
+          (r"\bdnalang\.qkernel\b", r"\bqkernel[-_\s]+genomics\b",
+           r"quantum[- ]kernel[^.\n]{0,40}?\b(?:genom\w*|genotype\w*|balding[- ]nichols)\b"),
+          testable="Run offline suite and protocol audit: pytest -o cache_dir=/tmp/osiris_pytest_cache tests/test_outcome6_and_code_routing.py."),
+    Claim("TESSERACT_MAP_02_COMPILATION",
+          "TESSERACT-MAP-02 controlled 40-qubit compilation benchmark on ibm_marrakesh (job dbto408n26qs739tnrj0, "
+          "90 PUBs x 2,048 shots) separates SWAP elimination and physical path quality under Holm-corrected block tests",
+          "REPORTED",
+          "Hardware-observed on ibm_marrakesh (job dbto408n26qs739tnrj0, 10 interleaved blocks, 184,320 shots, 53 s QPU): "
+          "degree-2 chain rewrite + SWAP removal improved F_cl by +14.27 pp at opt 3 (C5 - C2, Holm p = 4.6e-11) and "
+          "+12.47 pp at opt 1 (C4 - C3, Holm p = 8.4e-10); greedy best path beat median path by +10.54 pp (C5 - C6, "
+          "Holm p = 6.2e-11); virtual-Z A/A control was -0.24 pp (Holm p = 0.43). Stock VF2Layout (C7, 0.1580) scored "
+          "5.70 pp below greedy best path (C5, 0.2150; Holm p = 6.6e-09), opposite to FakeMarrakesh simulation (0.4404 "
+          "vs 0.4054). Demonstrates hardware layout/compilation effects only, not genomics classification or quantum advantage.",
+          (("file", "osiris-assessment/work/osiris-cli-main-baseline/docs/phase3/PWS_OUTCOME6_AND_PHASE3_CONSOLIDATION.md",
+            "Phase 3 & Outcome 6 consolidation record"),
+           ("file", "osiris-assessment/work/osiris-cli-main-baseline/docs/phase3/tesseract_map_02_live_prereg_lock.json",
+            "pre-execution lock sha256 5f4a04c45933e046")),
+          (r"\btesseract[-_\s]+map[-_\s]+02\b", r"dbto408n26qs739tnrj0"),
+          testable="Verify lock & Outcome 6 audit: pytest -o cache_dir=/tmp/osiris_pytest_cache tests/test_outcome6_and_code_routing.py."),
+    Claim("CORRELATED_NOISE_01_STAGE1",
+          "CORRELATED-NOISE-01 Stage 1 multiplexed 10-coupler staggered-DD benchmark on ibm_marrakesh (job "
+          "dbtp67dav06s73cfbsm0, 244 PUBs x 2,048 shots) establishes transferable non-local spatial noise memory",
+          "NULL",
+          "Hardware-observed on ibm_marrakesh (job dbtp67dav06s73cfbsm0, 5 blocks, 499,712 circuit shots / 4,997,120 "
+          "coupler-shots, 139 s QPU): neither the locked analysis nor Amendment A-3 supports a non-local noise "
+          "mechanism, closing the Stage-2 gate. Mechanistic DFS asymmetry C_DFS = +0.43 pp (95% CI -0.13 to +1.00 pp, "
+          "Holm p = 0.47). Locked analysis selected H3 in-sample over white H0 (delta BIC 10,262.849) but failed "
+          "held-out 6-coupler transfer (RMSE 0.14329 vs 0.13023, t = -0.238, p = 0.8214), firing the preregistered "
+          "kill criterion; Amendment A-3 selected local H0 (BIC 115.05 vs best non-local H1 115.27). Bounds fast "
+          "correlated dephasing (< 512 ns DD16 slot), not slow (> 1 us) correlated noise.",
+          (("file", "osiris-assessment/work/osiris-cli-main-baseline/docs/phase3/PWS_OUTCOME6_AND_PHASE3_CONSOLIDATION.md",
+            "Phase 3 & Outcome 6 consolidation record"),
+           ("file", "osiris-assessment/work/osiris-cli-main-baseline/docs/phase3/correlated_noise_01_live_prereg_lock.json",
+            "pre-execution lock sha256 38ebfe7f7c007633")),
+          (r"\bcorrelated[-_\s]+noise[-_\s]+01\b", r"dbtp67dav06s73cfbsm0"),
+          testable="Verify lock & Outcome 6 audit: pytest -o cache_dir=/tmp/osiris_pytest_cache tests/test_outcome6_and_code_routing.py."),
 )
 
 _COMPILED = [(c, [re.compile(p, re.I) for p in c.patterns]) for c in REGISTER]

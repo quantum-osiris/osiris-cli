@@ -591,13 +591,39 @@ def _tty_confirm(prompt: str) -> bool:
         return False
 
 
+_LEADING_CODE_ACTION = re.compile(
+    r"^\s*(?:please\s+)?(?:explain|read|list|inspect|grep|find|search|write|edit|fix|add|create|"
+    r"implement|build|generate|scaffold|refactor|update|run|test|check|verify)\b",
+    re.IGNORECASE,
+)
+
+
+def normalize_code_task(task: str) -> str:
+    """Unwrap outer quotes on pasted specs and add an explicit tool-loop directive when absent."""
+    raw = task.strip()
+    if not raw:
+        return ""
+    was_quoted = False
+    if len(raw) >= 2 and raw[0] == raw[-1] and raw[0] in ('"', "'") and ("\n" in raw or len(raw) > 400):
+        raw = raw[1:-1].strip()
+        was_quoted = True
+    if ("\n" in raw and (was_quoted or len(raw) > 400)) and not _LEADING_CODE_ACTION.match(raw):
+        return (
+            "[Task from pasted specification: inspect relevant files in the working directory first "
+            "(list_dir / read_file / grep_code), then propose concrete code changes via write_file "
+            "(/apply to confirm) rather than merely summarizing the pasted text.]\n\n" + raw
+        )
+    return raw
+
+
 def run_code_command(state: Any, rest: str) -> CodeResult:
     """`/code [--model NAME] <task>` from the REPL."""
-    parts = rest.split()
     model = None
-    if len(parts) >= 2 and parts[0] == "--model":
-        model, rest = parts[1], " ".join(parts[2:])
-    task = rest.strip()
+    m = re.match(r"^\s*--model\s+(\S+)(?:\s+(.*))?$", rest, re.DOTALL)
+    if m:
+        model = m.group(1)
+        rest = m.group(2) or ""
+    task = normalize_code_task(rest)
     if not task:
         print("Usage: /code [--model NAME] <task>   -- tools: read/list/grep, proposed writes "
               "(/apply), approved commands")
