@@ -1,0 +1,214 @@
+{
+  "phase": "OSIRIS Frontier Research \u2014 Phase 2",
+  "base_commit": "97f5db21",
+  "phase1_claim_count": 44,
+  "all_dispositions_proposed": true,
+  "credential_exposures_flagged_without_values": [
+    {
+      "path": "/home/osiris/apikey.json",
+      "type": "IBM Quantum JSON API key file on local disk (162 B)",
+      "action": "Never read or committed; excluded from all archives; recommend rotation if previously synced."
+    },
+    {
+      "path": "/home/osiris/apikey - Copy.json",
+      "type": "Duplicate IBM Quantum JSON API key file on local disk (162 B, world-readable 0644)",
+      "action": "Recommend deleting duplicate and restrictingapikey.json to chmod 0600 + key rotation."
+    },
+    {
+      "path": "/home/osiris/osiris-ide/.env",
+      "type": "Local environment credential file (350 B)",
+      "action": "Keep untracked; never copy into evidence bundles."
+    },
+    {
+      "path": "/home/osiris/osiris-assessment/legacy-mirrors/ENKI-420/dnalang-sovereign-sdk-v2.git (HEAD:apikey.json)",
+      "type": "Committed JSON API key in legacy bare git mirror",
+      "action": "CRITICAL: Rotate that historical IBM Quantum API key immediately if not already revoked."
+    }
+  ],
+  "artifacts": [
+    {
+      "name": "CLAIM_RECONCILIATION.md",
+      "path": "/home/osiris/CLAIM_RECONCILIATION.md",
+      "available": true,
+      "size_bytes": 16754,
+      "sha256": "37b6c9c6f9f5dcdc3a7d6ce99db57514dc474840c00e13f3007050132712883a",
+      "duplicate_of": null
+    },
+    {
+      "name": "PHASE2_REPAIRS.md",
+      "path": "/home/osiris/PHASE2_REPAIRS.md",
+      "available": true,
+      "size_bytes": 6815,
+      "sha256": "943d826c55bc78e960a5463267c9a5c19091b36277ce447f839ceae71f3f2fb1",
+      "duplicate_of": null
+    },
+    {
+      "name": "claims_ledger.jsonl",
+      "path": "/home/osiris/claims_ledger.jsonl",
+      "available": true,
+      "size_bytes": 29134,
+      "sha256": "567a1ffd6c425eab3b031d5191ecd3fbd1198b89233bbbe87f5c1ee0fa25fb1f",
+      "duplicate_of": null
+    },
+    {
+      "name": "build_ledger.py",
+      "path": "/home/osiris/build_ledger.py",
+      "available": true,
+      "size_bytes": 20745,
+      "sha256": "a69784aa5839cfa5debd4c3ab07cf18c2d3b9916e18f5153e0a4c51f26854b14",
+      "duplicate_of": null
+    },
+    {
+      "name": "audit_tesseract.py",
+      "path": "/home/osiris/audit_tesseract.py",
+      "available": true,
+      "size_bytes": 6294,
+      "sha256": "f0523045b43494c720bb2c990b183f163cf3fb42895349de1dfc7249cc6f2cfe",
+      "duplicate_of": null
+    },
+    {
+      "name": "OSIRIS_Signal_Noise_Forensic_Audit_2026-11-16.md",
+      "path": "/home/osiris/OSIRIS_Signal_Noise_Forensic_Audit_2026-11-16.md",
+      "available": false,
+      "size_bytes": null,
+      "sha256": null,
+      "missing_dependency_note": "External audit file not attached to workspace; independent Phase 2 work proceeds using primary raw archives and ledger records."
+    },
+    {
+      "name": "tesseract_rerun_2026-09-20.zip",
+      "path": "/home/osiris/tesseract_rerun_2026-09-20.zip",
+      "available": true,
+      "size_bytes": 172391,
+      "sha256": "cdebc558424a7cb970a76bb084242ba52bbd985f50ad96aff1316da666402b13",
+      "duplicate_of": null
+    },
+    {
+      "name": "qbyte_substrate_engine_darpa - Copy.zip",
+      "path": "/home/osiris/qbyte_substrate_engine_darpa - Copy.zip",
+      "available": true,
+      "size_bytes": 122454,
+      "sha256": "da6c5fd7df24739234de86afcb2143c25bb351e0c13436e8104a07d77222f6d4",
+      "duplicate_of": null
+    },
+    {
+      "name": "qbyte_substrate_engine_darpa.zip",
+      "path": "/home/osiris/qbyte_substrate_engine_darpa.zip",
+      "available": true,
+      "size_bytes": 122454,
+      "sha256": "da6c5fd7df24739234de86afcb2143c25bb351e0c13436e8104a07d77222f6d4",
+      "duplicate_of": "/home/osiris/qbyte_substrate_engine_darpa - Copy.zip"
+    },
+    {
+      "name": "w2_robustness_paper.tex",
+      "path": "/home/osiris/w2_robustness_paper.tex",
+      "available": true,
+      "size_bytes": 25424,
+      "sha256": "b1386f271cb11ef821b14927ee499ec2b2c0f277b9be9458d0e427677c81b403",
+      "duplicate_of": null
+    },
+    {
+      "name": "coaxial_t1_experiment.py",
+      "path": "/home/osiris/coaxial_t1_experiment.py",
+      "available": true,
+      "size_bytes": 10089,
+      "sha256": "025d3636c814f4ab6eea6fff3382dfb8d6bd76db08ba420e18409ea0d753218b",
+      "duplicate_of": null
+    },
+    {
+      "name": "coaxial_t1_test_v2.py",
+      "path": "/home/osiris/coaxial_t1_test_v2.py",
+      "available": true,
+      "size_bytes": 31812,
+      "sha256": "aa2a425da5bf8513302f550e1c5cace4e57fa5cb3ed87c5cb3deeb8d4cd9cd1c",
+      "duplicate_of": null
+    },
+    {
+      "name": "coaxial_t1_pilot_results.json",
+      "path": "/home/osiris/coaxial_t1_pilot_results.json",
+      "available": true,
+      "size_bytes": 384661,
+      "sha256": "ca282686cdbc378c1137860bc2be4c9e0dba73128b98605126255cc497b9ab55",
+      "duplicate_of": null
+    },
+    {
+      "name": "coaxial_t1_pilot_results_device_length.json",
+      "path": "/home/osiris/coaxial_t1_pilot_results_device_length.json",
+      "available": true,
+      "size_bytes": 384968,
+      "sha256": "d63994b293d41b727cfb740181b63344406c993d30517a640c8ac3313c3d7289",
+      "duplicate_of": null
+    },
+    {
+      "name": "aeterna-porta-v2-main.zip",
+      "path": "/home/osiris/aeterna-porta-v2-main.zip",
+      "available": true,
+      "size_bytes": 79420,
+      "sha256": "59042ce77faa2412aea366289e86b8b49fa9816f9e09c2ffcc78a0a2fc08adf1",
+      "duplicate_of": null
+    },
+    {
+      "name": "electrogravitic-unified-physics-main.zip",
+      "path": "/home/osiris/electrogravitic-unified-physics-main.zip",
+      "available": true,
+      "size_bytes": 52226,
+      "sha256": "d5073bf3533635dcc5f1ac9796c8cc8132b7b49e4a4bca96bd0fa1eca8bb9922",
+      "duplicate_of": null
+    },
+    {
+      "name": "FERMI-quantum-coherence-modulation-systems-main.zip",
+      "path": "/home/osiris/FERMI-quantum-coherence-modulation-systems-main.zip",
+      "available": true,
+      "size_bytes": 4682344,
+      "sha256": "8ef6e14ed33347d2352bc2a6915d47979c3c634d21237e74e7f427de6f682cbc",
+      "duplicate_of": null
+    },
+    {
+      "name": "EXPERIMENT_E_FRONTIER_REPORT.md",
+      "path": "/home/osiris/osiris-assessment/work/osiris-cli-phase2/experiments/experiment_e/EXPERIMENT_E_FRONTIER_REPORT.md",
+      "available": true,
+      "size_bytes": 39548,
+      "sha256": "87dffba97ad96223a1147633ed1823125f2b6c76f7c567007e34ef4158bb856e",
+      "duplicate_of": null
+    },
+    {
+      "name": "analysis_exp_e2_clustered.json",
+      "path": "/home/osiris/osiris-assessment/work/osiris-cli-phase2/experiments/experiment_e/analysis_exp_e2_clustered.json",
+      "available": true,
+      "size_bytes": 4270,
+      "sha256": "ce26e234c36c9c651b23f05275881c5984244cb0ed1a15a353f83f24b5b803e7",
+      "duplicate_of": null
+    },
+    {
+      "name": "analysis_exp_e3_pilot.json",
+      "path": "/home/osiris/osiris-assessment/work/osiris-cli-phase2/experiments/experiment_e/analysis_exp_e3_pilot.json",
+      "available": true,
+      "size_bytes": 9851,
+      "sha256": "54cebb6782941ef0d37c2be0849186645973212b62080dc0f5a8c94a4ead835e",
+      "duplicate_of": null
+    },
+    {
+      "name": "analysis_exp_e3_fez.json",
+      "path": "/home/osiris/osiris-assessment/work/osiris-cli-phase2/experiments/experiment_e/analysis_exp_e3_fez.json",
+      "available": true,
+      "size_bytes": 2567,
+      "sha256": "b99411958c17191bef094e958140a9273ca8051748d6340b1dfc4012faa23c21",
+      "duplicate_of": null
+    },
+    {
+      "name": "analysis_exp_e4.json",
+      "path": "/home/osiris/osiris-assessment/work/osiris-cli-phase2/experiments/experiment_e/analysis_exp_e4.json",
+      "available": true,
+      "size_bytes": 5959,
+      "sha256": "39c3fdbb799d91eecec9fc636931a21175eb79e9613a45db028a1fae3744d146",
+      "duplicate_of": null
+    },
+    {
+      "name": "osiris_cli/claims.py",
+      "path": "/home/osiris/osiris-assessment/work/osiris-cli-phase2/osiris_cli/claims.py",
+      "available": true,
+      "size_bytes": 56014,
+      "sha256": "8563ac0fa78d69b259ea6ad35d498182737f5ac2ddfcd525c5a4a7ad47f47fb1",
+      "duplicate_of": null
+    }
+  ]
+}

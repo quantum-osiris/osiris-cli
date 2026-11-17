@@ -1,31 +1,28 @@
 """
-╔══════════════════════════════════════════════════════════════════════════════╗
-║                      SOVEREIGN EXECUTOR - IBM INDEPENDENT                    ║
-║                      ════════════════════════════════════                    ║
-║                                                                              ║
-║    The Sovereign Executor provides quantum circuit execution without         ║
-║    ANY external vendor dependencies. No Qiskit. No IBM. No Cirq.            ║
-║                                                                              ║
-║    This is the heart of the Quantum Independence Framework (QIF).           ║
-║                                                                              ║
-║    Execution Modes:                                                          ║
-║    ├── STATEVECTOR : Exact state vector simulation (up to ~20 qubits)       ║
-║    ├── TENSOR      : Tensor network simulation (larger circuits)            ║
-║    ├── SAMPLING    : Monte Carlo sampling (measurement only)                ║
-║    └── NATIVE      : Future: Direct hardware via sovereign drivers          ║
-║                                                                              ║
-║    Key Features:                                                             ║
-║    ├── Zero external quantum dependencies                                    ║
-║    ├── DNA-encoded gate operations (helix, bond, twist, fold, splice)       ║
-║    ├── Automatic phase-conjugate healing                                     ║
-║    ├── CCCE metric tracking throughout execution                            ║
-║    └── Telemetry capsule emission                                           ║
-║                                                                              ║
-╚══════════════════════════════════════════════════════════════════════════════╝
+SovereignExecutor — Pure-NumPy Classical Quantum Circuit Simulator
+==================================================================
+
+Classical statevector simulator for arbitrary small-width quantum circuits
+without external SDK dependencies.
+
+Note on physical scope:
+    SovereignExecutor is a classical NumPy statevector simulator executing on CPU.
+    It is NOT an independent physical quantum processor or hardware substrate.
+    Heuristic non-unitary phase-conjugate "healing" is disabled by default
+    (`enable_healing=False`) so that unitary circuits remain strictly unitary.
+
+Basis-order convention (Big-Endian):
+    For an n-qubit circuit, computational basis state |b_0 b_1 ... b_{n-1}> maps
+    to flat statevector index:
+        idx = sum_{q=0}^{n-1} b_q * 2^(n - 1 - q)
+    so qubit q in {0..n-1} corresponds to tensor axis q and integer bit shift
+    (n - 1 - q). Use `result.get_statevector(endian="little")` or
+    `executor.get_statevector(endian="little")` for Qiskit-compatible
+    little-endian ordering |b_{n-1} ... b_1 b_0>.
 """
 
 import numpy as np
-from typing import List, Dict, Any, Optional, Callable
+from typing import List, Dict, Any, Optional, Callable, Tuple
 from dataclasses import dataclass, field
 from enum import Enum
 import time
@@ -33,14 +30,18 @@ import time
 try:
     from .gates import (
         helix, cleave, twist, fold, splice, bond, phase_flip,
-        controlled_z, swap, t_gate, s_gate
+        rotate_y, controlled_z, swap, iswap, controlled_phase,
+        xx_rotation, yy_rotation, zz_rotation,
+        t_gate, t_dg, s_gate, s_dg, toffoli, fredkin,
     )
     from .phase_conjugate import PhaseConjugateEngine
     from .ccce_runtime import create_runtime
 except ImportError:
     from gates import (
         helix, cleave, twist, fold, splice, bond, phase_flip,
-        controlled_z, swap, t_gate, s_gate
+        rotate_y, controlled_z, swap, iswap, controlled_phase,
+        xx_rotation, yy_rotation, zz_rotation,
+        t_gate, t_dg, s_gate, s_dg, toffoli, fredkin,
     )
     from phase_conjugate import PhaseConjugateEngine
     from ccce_runtime import create_runtime
@@ -128,9 +129,62 @@ class Circuit:
         """Add Toffoli (CCNOT) gate."""
         return self.add('toffoli', [target], controls=[c1, c2])
 
+    def fredkin_gate(self, control: int, q1: int, q2: int):
+        """Add Fredkin (CSWAP) gate."""
+        return self.add('fredkin', [q1, q2], controls=[control])
+
+    def y(self, qubit: int):
+        """Add Pauli-Y gate."""
+        return self.add('y', [qubit])
+
+    def s(self, qubit: int):
+        """Add S gate."""
+        return self.add('s', [qubit])
+
+    def sdg(self, qubit: int):
+        """Add S† gate."""
+        return self.add('sdg', [qubit])
+
+    def t(self, qubit: int):
+        """Add T gate."""
+        return self.add('t', [qubit])
+
+    def tdg(self, qubit: int):
+        """Add T† gate."""
+        return self.add('tdg', [qubit])
+
+    def cphase(self, control: int, target: int, phi: float):
+        """Add controlled-phase CP(phi) gate."""
+        return self.add('cphase', [control, target], [phi])
+
+    def rxx(self, q1: int, q2: int, theta: float):
+        """Add RXX(theta) gate."""
+        return self.add('rxx', [q1, q2], [theta])
+
+    def ryy(self, q1: int, q2: int, theta: float):
+        """Add RYY(theta) gate."""
+        return self.add('ryy', [q1, q2], [theta])
+
+    def rzz(self, q1: int, q2: int, theta: float):
+        """Add RZZ(theta) gate."""
+        return self.add('rzz', [q1, q2], [theta])
+
+    # Standard aliases
+    h = helix
+    x = cleave
+    z = phase
+    rx = splice
+    ry = fold
+    rz = twist
+    cx = bond
+    ccx = toffoli_gate
+    ccnot = toffoli_gate
+    cswap = fredkin_gate
+
     def measure(self, qubit: int, classical_bit: Optional[int] = None):
         """Add measurement operation."""
-        return self.add('measure', [qubit], [float(classical_bit or qubit)])
+        cbit = qubit if classical_bit is None else classical_bit
+        return self.add('measure', [qubit], [float(cbit)])
 
     def barrier(self):
         """Add barrier (for visualization)."""
@@ -180,6 +234,26 @@ class ExecutionResult:
             return ""
         return max(self.counts, key=self.counts.get)
 
+    def get_counts(self, endian: str = "big") -> Dict[str, int]:
+        """Return measurement counts in 'big' (|q_0..q_{n-1}>) or 'little' (|q_{n-1}..q_0>) order."""
+        if endian == "big":
+            return dict(self.counts)
+        if endian == "little":
+            return {k[::-1]: v for k, v in self.counts.items()}
+        raise ValueError(f"endian must be 'big' or 'little', got {endian!r}")
+
+    def get_statevector(self, endian: str = "big") -> Optional[np.ndarray]:
+        """Return final statevector in 'big' (|q_0..q_{n-1}>) or 'little' (|q_{n-1}..q_0>) order."""
+        if self.statevector is None:
+            return None
+        if endian == "big":
+            return self.statevector.copy()
+        if endian == "little":
+            n_q = int(round(np.log2(len(self.statevector))))
+            tensor_state = self.statevector.reshape([2] * n_q)
+            return np.transpose(tensor_state, list(range(n_q - 1, -1, -1))).reshape(len(self.statevector)).copy()
+        raise ValueError(f"endian must be 'big' or 'little', got {endian!r}")
+
     def expectation(self, observable: str = "Z") -> float:
         """Compute expectation value for simple observables."""
         if not self.counts:
@@ -199,42 +273,29 @@ class ExecutionResult:
 
 class SovereignExecutor:
     """
-    Sovereign Quantum Executor - IBM Independent.
+    Pure-NumPy Classical Statevector Circuit Executor.
 
-    This executor provides complete quantum circuit execution without
-    any external vendor dependencies. It implements:
-
-    1. State vector simulation for exact quantum computation
-    2. DNA-encoded gate operations
-    3. Automatic CCCE metric tracking
-    4. Phase-conjugate healing
-    5. Telemetry and diagnostics
-
-    This is the core of the Quantum Independence Framework (QIF),
-    providing a sovereign quantum computing capability.
-
-    Example:
-        >>> executor = SovereignExecutor(n_qubits=4)
-        >>> circuit = Circuit(4, name="Bell")
-        >>> circuit.helix(0).bond(0, 1)
-        >>> result = executor.run(circuit, shots=1000)
-        >>> print(result.counts)  # {'00': ~500, '11': ~500}
+    Executes small-width quantum circuits deterministically (statevector) or via
+    Monte-Carlo shot sampling on CPU without external vendor SDK dependencies.
+    Uses a uniform big-endian computational basis convention |q_0 q_1 ... q_{n-1}>.
     """
 
     def __init__(self, n_qubits: int = 8,
                  mode: ExecutionMode = ExecutionMode.STATEVECTOR,
-                 enable_healing: bool = True,
-                 enable_ccce: bool = True):
+                 enable_healing: bool = False,
+                 enable_ccce: bool = False):
         """
         Initialize Sovereign Executor.
 
         Args:
-            n_qubits: Number of qubits
+            n_qubits: Maximum number of qubits supported by this executor instance
             mode: Execution mode
-            enable_healing: Enable automatic phase-conjugate healing
-            enable_ccce: Enable CCCE metric tracking
+            enable_healing: Enable heuristic non-unitary phase-conjugate healing
+                            (default False so unitary circuits remain strictly unitary)
+            enable_ccce: Enable heuristic CCCE metric tracking (default False)
         """
         self.n_qubits = n_qubits
+        self._active_qubits = n_qubits
         self.dim = 2 ** n_qubits
         self.mode = mode
         self.enable_healing = enable_healing
@@ -268,55 +329,93 @@ class SovereignExecutor:
         """Build dispatch table for gate operations."""
         return {
             'helix': lambda op: self._apply_single(helix(), op.qubits[0]),
+            'h': lambda op: self._apply_single(helix(), op.qubits[0]),
             'cleave': lambda op: self._apply_single(cleave(), op.qubits[0]),
+            'x': lambda op: self._apply_single(cleave(), op.qubits[0]),
+            'y': lambda op: self._apply_single(rotate_y(), op.qubits[0]),
             'phase': lambda op: self._apply_single(phase_flip(), op.qubits[0]),
+            'z': lambda op: self._apply_single(phase_flip(), op.qubits[0]),
             'twist': lambda op: self._apply_single(twist(op.params[0]), op.qubits[0]),
+            'rz': lambda op: self._apply_single(twist(op.params[0]), op.qubits[0]),
             'fold': lambda op: self._apply_single(fold(op.params[0]), op.qubits[0]),
+            'ry': lambda op: self._apply_single(fold(op.params[0]), op.qubits[0]),
             'splice': lambda op: self._apply_single(splice(op.params[0]), op.qubits[0]),
+            'rx': lambda op: self._apply_single(splice(op.params[0]), op.qubits[0]),
             't': lambda op: self._apply_single(t_gate(), op.qubits[0]),
+            'tdg': lambda op: self._apply_single(t_dg(), op.qubits[0]),
             's': lambda op: self._apply_single(s_gate(), op.qubits[0]),
+            'sdg': lambda op: self._apply_single(s_dg(), op.qubits[0]),
             'bond': lambda op: self._apply_cnot(op.controls[0], op.qubits[0]),
+            'cx': lambda op: self._apply_cnot(
+                op.controls[0] if op.controls else op.qubits[0],
+                op.qubits[0] if op.controls else op.qubits[1],
+            ),
             'cz': lambda op: self._apply_two(controlled_z(), op.qubits[0], op.qubits[1]),
             'swap': lambda op: self._apply_two(swap(), op.qubits[0], op.qubits[1]),
+            'iswap': lambda op: self._apply_two(iswap(), op.qubits[0], op.qubits[1]),
+            'cphase': lambda op: self._apply_two(controlled_phase(op.params[0]), op.qubits[0], op.qubits[1]),
+            'cp': lambda op: self._apply_two(controlled_phase(op.params[0]), op.qubits[0], op.qubits[1]),
+            'rxx': lambda op: self._apply_two(xx_rotation(op.params[0]), op.qubits[0], op.qubits[1]),
+            'ryy': lambda op: self._apply_two(yy_rotation(op.params[0]), op.qubits[0], op.qubits[1]),
+            'rzz': lambda op: self._apply_two(zz_rotation(op.params[0]), op.qubits[0], op.qubits[1]),
             'toffoli': lambda op: self._apply_toffoli(op.controls[0], op.controls[1], op.qubits[0]),
+            'ccnot': lambda op: self._apply_toffoli(op.controls[0], op.controls[1], op.qubits[0]),
+            'ccx': lambda op: self._apply_toffoli(op.controls[0], op.controls[1], op.qubits[0]),
+            'fredkin': lambda op: self._apply_three(fredkin(), op.controls[0], op.qubits[0], op.qubits[1]),
+            'cswap': lambda op: self._apply_three(fredkin(), op.controls[0], op.qubits[0], op.qubits[1]),
         }
 
-    def reset(self):
+    def reset(self, active_qubits: Optional[int] = None):
         """Reset executor state to |0...0⟩."""
+        n_q = self.n_qubits if active_qubits is None else active_qubits
+        if n_q < 0 or n_q > self.n_qubits:
+            raise ValueError(f"active_qubits {n_q} out of range [0, {self.n_qubits}]")
+        self._active_qubits = n_q
+        self.dim = 2 ** n_q
         self._state = np.zeros(self.dim, dtype=np.complex128)
         self._state[0] = 1.0
         if self._ccce:
             self._ccce.reset()
 
-    def _apply_single(self, gate: np.ndarray, qubit: int):
-        """Apply single-qubit gate."""
-        if qubit < 0 or qubit >= self.n_qubits:
-            raise ValueError(f"Qubit {qubit} out of range [0, {self.n_qubits})")
+    def _validate_qubits(self, *qubits: int):
+        """Validate that qubit indices are in range [0, _active_qubits) and distinct."""
+        for q in qubits:
+            if not isinstance(q, (int, np.integer)) or q < 0 or q >= self._active_qubits:
+                raise ValueError(f"Qubit {q} out of range [0, {self._active_qubits})")
+        if len(set(qubits)) != len(qubits):
+            raise ValueError(f"Qubits must be distinct, got {qubits}")
 
-        # Reshape state as tensor
-        shape = [2] * self.n_qubits
+    def _apply_k_qubit_gate(self, gate: np.ndarray, qubits: Tuple[int, ...]):
+        """
+        Apply a k-qubit unitary to arbitrary distinct wires using big-endian
+        tensor-axis permutation (wire q <-> tensor axis q <-> bit shift n-1-q).
+        """
+        self._validate_qubits(*qubits)
+        k = len(qubits)
+        expected_dim = 1 << k
+        shape = [2] * self._active_qubits
         state_tensor = self._state.reshape(shape)
 
-        # Move target qubit to last axis
-        axes = list(range(self.n_qubits))
-        axes.remove(qubit)
-        axes.append(qubit)
+        remaining = [ax for ax in range(self._active_qubits) if ax not in qubits]
+        axes = remaining + list(qubits)
 
         state_tensor = np.transpose(state_tensor, axes)
-        original_shape = state_tensor.shape
+        permuted_shape = state_tensor.shape
 
-        # Apply gate
-        state_tensor = state_tensor.reshape(-1, 2) @ gate.T
-        state_tensor = state_tensor.reshape(original_shape)
+        state_tensor = state_tensor.reshape(-1, expected_dim) @ gate.T
+        state_tensor = state_tensor.reshape(permuted_shape)
 
-        # Inverse transpose
-        inverse = [0] * self.n_qubits
-        for i, ax in enumerate(axes):
-            inverse[ax] = i
+        inverse = [0] * self._active_qubits
+        for idx, ax in enumerate(axes):
+            inverse[ax] = idx
         state_tensor = np.transpose(state_tensor, inverse)
 
         self._state = state_tensor.reshape(self.dim)
         self._total_gates += 1
+
+    def _apply_single(self, gate: np.ndarray, qubit: int):
+        """Apply single-qubit gate."""
+        self._apply_k_qubit_gate(gate, (qubit,))
 
     def _apply_cnot(self, control: int, target: int):
         """Apply CNOT gate."""
@@ -324,59 +423,23 @@ class SovereignExecutor:
 
     def _apply_two(self, gate: np.ndarray, q1: int, q2: int):
         """Apply two-qubit gate."""
-        if q1 == q2:
-            raise ValueError("Qubits must be different")
-        if q1 < 0 or q1 >= self.n_qubits or q2 < 0 or q2 >= self.n_qubits:
-            raise ValueError(f"Qubit out of range [0, {self.n_qubits})")
+        self._apply_k_qubit_gate(gate, (q1, q2))
 
-        # Reshape state as tensor
-        shape = [2] * self.n_qubits
-        state_tensor = self._state.reshape(shape)
-
-        # Move target qubits to last two axes
-        axes = list(range(self.n_qubits))
-        axes.remove(q1)
-        axes.remove(q2)
-        if q1 < q2:
-            axes.extend([q1, q2])
-        else:
-            axes.extend([q2, q1])
-            # Swap gate for correct ordering
-            swap_matrix = np.array([
-                [1, 0, 0, 0],
-                [0, 0, 1, 0],
-                [0, 1, 0, 0],
-                [0, 0, 0, 1]
-            ], dtype=np.complex128)
-            gate = swap_matrix @ gate @ swap_matrix
-
-        state_tensor = np.transpose(state_tensor, axes)
-        original_shape = state_tensor.shape
-
-        # Apply gate
-        state_tensor = state_tensor.reshape(-1, 4) @ gate.T
-        state_tensor = state_tensor.reshape(original_shape)
-
-        # Inverse transpose
-        inverse = [0] * self.n_qubits
-        for i, ax in enumerate(axes):
-            inverse[ax] = i
-        state_tensor = np.transpose(state_tensor, inverse)
-
-        self._state = state_tensor.reshape(self.dim)
-        self._total_gates += 1
+    def _apply_three(self, gate: np.ndarray, q1: int, q2: int, q3: int):
+        """Apply three-qubit gate."""
+        self._apply_k_qubit_gate(gate, (q1, q2, q3))
 
     def _apply_toffoli(self, c1: int, c2: int, target: int):
-        """Apply Toffoli (CCNOT) gate."""
-        # For arbitrary qubit positions, we use a direct approach
-        for i in range(self.dim):
-            # Check if both controls are |1⟩
-            if ((i >> c1) & 1) and ((i >> c2) & 1):
-                # Flip target
-                j = i ^ (1 << target)
-                self._state[i], self._state[j] = self._state[j], self._state[i]
+        """
+        Apply Toffoli (CCNOT) gate using the unified big-endian convention.
 
-        self._total_gates += 1
+        Repairs two historical defects:
+          1. Double-swap defect: iterating over all basis indices swapped (i, j)
+             and subsequently swapped (j, i) back, acting as identity.
+          2. Bit-mask vs tensor-axis mismatch: previous bit shifts treated qubit 0
+             as LSB while 1Q/2Q tensor operations treated qubit 0 as MSB (axis 0).
+        """
+        self._apply_three(toffoli(), c1, c2, target)
 
     def execute_gate(self, op: GateOp):
         """Execute a single gate operation."""
@@ -413,8 +476,8 @@ class SovereignExecutor:
                 f"has {self.n_qubits}"
             )
 
-        # Reset state
-        self.reset()
+        # Reset state sized to circuit width
+        self.reset(active_qubits=circuit.n_qubits)
 
         # Execute operations
         measurements = []
@@ -433,16 +496,35 @@ class SovereignExecutor:
         if self._ccce:
             self._ccce.update_from_quantum_state(self._state)
 
-        # Compute probabilities
+        # Compute normalized probabilities (guarding against O(1e-15) FP drift)
         probabilities = np.abs(self._state) ** 2
+        p_sum = float(np.sum(probabilities))
+        if p_sum <= 0.0:
+            raise RuntimeError("Statevector norm collapsed to zero")
+        probabilities = probabilities / p_sum
 
-        # Sample measurements
+        # Sample measurements (respecting explicit measure(qubit, classical_bit) ops if present)
         counts = {}
         if shots > 0:
             samples = np.random.choice(self.dim, size=shots, p=probabilities)
-            for s in samples:
-                bitstring = format(s, f'0{circuit.n_qubits}b')
-                counts[bitstring] = counts.get(bitstring, 0) + 1
+            if measurements:
+                cbit_map: Dict[int, int] = {}
+                for mop in measurements:
+                    q_idx = mop.qubits[0]
+                    c_idx = int(round(mop.params[0])) if mop.params else q_idx
+                    cbit_map[c_idx] = q_idx
+                n_cbits = max(cbit_map.keys()) + 1
+                for s in samples:
+                    full_bits = format(int(s), f'0{circuit.n_qubits}b')
+                    chars = ['0'] * n_cbits
+                    for c_idx, q_idx in cbit_map.items():
+                        chars[c_idx] = full_bits[q_idx]
+                    bitstring = ''.join(chars)
+                    counts[bitstring] = counts.get(bitstring, 0) + 1
+            else:
+                for s in samples:
+                    bitstring = format(int(s), f'0{circuit.n_qubits}b')
+                    counts[bitstring] = counts.get(bitstring, 0) + 1
 
         execution_time = time.time() - start_time
 
@@ -500,6 +582,15 @@ class SovereignExecutor:
     def state(self) -> np.ndarray:
         """Get current state vector (copy)."""
         return self._state.copy()
+
+    def get_statevector(self, endian: str = "big") -> np.ndarray:
+        """Get current statevector in 'big' (|q_0..q_{n-1}>) or 'little' (|q_{n-1}..q_0>) order."""
+        if endian == "big":
+            return self._state.copy()
+        if endian == "little":
+            tensor_state = self._state.reshape([2] * self._active_qubits)
+            return np.transpose(tensor_state, list(range(self._active_qubits - 1, -1, -1))).reshape(self.dim).copy()
+        raise ValueError(f"endian must be 'big' or 'little', got {endian!r}")
 
     @property
     def probabilities(self) -> np.ndarray:

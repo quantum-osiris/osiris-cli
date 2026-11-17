@@ -1,0 +1,55 @@
+============================= test session starts ==============================
+platform linux -- Python 3.14.4, pytest-9.2.0, pluggy-1.7.0 -- /home/osiris/osiris-assessment/venvs/osiris-cli/bin/python
+cachedir: .pytest_cache
+rootdir: /home/osiris/osiris-assessment/work/osiris-cli-phase2
+configfile: pyproject.toml
+plugins: anyio-4.16.0, cov-7.1.0
+collecting ... collected 45 items
+
+tests/test_qbyte_correctness.py::test_ccnot_all_eight_basis_states[0-0-0] PASSED [  2%]
+tests/test_qbyte_correctness.py::test_ccnot_all_eight_basis_states[0-0-1] PASSED [  4%]
+tests/test_qbyte_correctness.py::test_ccnot_all_eight_basis_states[0-1-0] PASSED [  6%]
+tests/test_qbyte_correctness.py::test_ccnot_all_eight_basis_states[0-1-1] PASSED [  8%]
+tests/test_qbyte_correctness.py::test_ccnot_all_eight_basis_states[1-0-0] PASSED [ 11%]
+tests/test_qbyte_correctness.py::test_ccnot_all_eight_basis_states[1-0-1] PASSED [ 13%]
+tests/test_qbyte_correctness.py::test_ccnot_all_eight_basis_states[1-1-0] PASSED [ 15%]
+tests/test_qbyte_correctness.py::test_ccnot_all_eight_basis_states[1-1-1] PASSED [ 17%]
+tests/test_qbyte_correctness.py::test_ccnot_all_3qubit_permutations_basis_and_random[perm0] PASSED [ 20%]
+tests/test_qbyte_correctness.py::test_ccnot_all_3qubit_permutations_basis_and_random[perm1] PASSED [ 22%]
+tests/test_qbyte_correctness.py::test_ccnot_all_3qubit_permutations_basis_and_random[perm2] PASSED [ 24%]
+tests/test_qbyte_correctness.py::test_ccnot_all_3qubit_permutations_basis_and_random[perm3] PASSED [ 26%]
+tests/test_qbyte_correctness.py::test_ccnot_all_3qubit_permutations_basis_and_random[perm4] PASSED [ 28%]
+tests/test_qbyte_correctness.py::test_ccnot_all_3qubit_permutations_basis_and_random[perm5] PASSED [ 31%]
+tests/test_qbyte_correctness.py::test_ccnot_all_336_arrangements_on_8_qubits PASSED [ 33%]
+tests/test_qbyte_correctness.py::test_invalid_qubit_arrangements_rejected PASSED [ 35%]
+tests/test_qbyte_correctness.py::test_single_qubit_cleave_and_measure_qubit_consistent[0] PASSED [ 37%]
+tests/test_qbyte_correctness.py::test_single_qubit_cleave_and_measure_qubit_consistent[1] PASSED [ 40%]
+tests/test_qbyte_correctness.py::test_single_qubit_cleave_and_measure_qubit_consistent[2] PASSED [ 42%]
+tests/test_qbyte_correctness.py::test_single_qubit_cleave_and_measure_qubit_consistent[3] PASSED [ 44%]
+tests/test_qbyte_correctness.py::test_single_qubit_cleave_and_measure_qubit_consistent[4] PASSED [ 46%]
+tests/test_qbyte_correctness.py::test_single_qubit_cleave_and_measure_qubit_consistent[5] PASSED [ 48%]
+tests/test_qbyte_correctness.py::test_single_qubit_cleave_and_measure_qubit_consistent[6] PASSED [ 51%]
+tests/test_qbyte_correctness.py::test_single_qubit_cleave_and_measure_qubit_consistent[7] PASSED [ 53%]
+tests/test_qbyte_correctness.py::test_all_gates_are_unitary PASSED       [ 55%]
+tests/test_qbyte_correctness.py::test_random_statevectors_match_explicit_kronecker_oracle PASSED [ 57%]
+tests/test_qbyte_correctness.py::test_inverse_circuit_restoration_on_random_8qubit_state PASSED [ 60%]
+tests/test_qbyte_correctness.py::test_all_four_bell_states_and_nonadjacent_pairs PASSED [ 62%]
+tests/test_qbyte_correctness.py::test_ghz_state_preparation[2] PASSED    [ 64%]
+tests/test_qbyte_correctness.py::test_ghz_state_preparation[3] PASSED    [ 66%]
+tests/test_qbyte_correctness.py::test_ghz_state_preparation[4] PASSED    [ 68%]
+tests/test_qbyte_correctness.py::test_ghz_state_preparation[5] PASSED    [ 71%]
+tests/test_qbyte_correctness.py::test_ghz_state_preparation[8] PASSED    [ 73%]
+tests/test_qbyte_correctness.py::test_mach_zehnder_phase_interference_and_qft[-3.141592653589793] PASSED [ 75%]
+tests/test_qbyte_correctness.py::test_mach_zehnder_phase_interference_and_qft[-2.356194490192345] PASSED [ 77%]
+tests/test_qbyte_correctness.py::test_mach_zehnder_phase_interference_and_qft[-1.5707963267948966] PASSED [ 80%]
+tests/test_qbyte_correctness.py::test_mach_zehnder_phase_interference_and_qft[-0.7853981633974483] PASSED [ 82%]
+tests/test_qbyte_correctness.py::test_mach_zehnder_phase_interference_and_qft[0.0] PASSED [ 84%]
+tests/test_qbyte_correctness.py::test_mach_zehnder_phase_interference_and_qft[0.7853981633974483] PASSED [ 86%]
+tests/test_qbyte_correctness.py::test_mach_zehnder_phase_interference_and_qft[1.5707963267948966] PASSED [ 88%]
+tests/test_qbyte_correctness.py::test_mach_zehnder_phase_interference_and_qft[2.356194490192345] PASSED [ 91%]
+tests/test_qbyte_correctness.py::test_mach_zehnder_phase_interference_and_qft[3.141592653589793] PASSED [ 93%]
+tests/test_qbyte_correctness.py::test_qbyte_runtime_toffoli_kernel PASSED [ 95%]
+tests/test_qbyte_correctness.py::test_differential_agreement_against_qiskit_statevector PASSED [ 97%]
+tests/test_qbyte_correctness.py::test_strict_l0_runtime_and_subset_measurement_and_endian_counts PASSED [100%]
+
+============================== 45 passed in 0.15s ==============================
