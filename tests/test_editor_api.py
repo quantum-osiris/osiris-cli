@@ -536,3 +536,31 @@ def test_notebook_format_rejects_malformed_content():
         with pytest.raises(nbf.NotebookFormatError):
             nbf.parse(bad)
     assert nbf.parse(_notebook(("a", "dnalang", BELL)))["cells"][0]["id"] == "a"
+
+
+# ───────────────────────── IDE API 1.5.0: rename ─────────────────────────
+def test_rename_keeps_identity_and_receipts_and_refuses_stale_or_taken_paths(stack):
+    s, api = stack["store"], stack["api"]
+    tok = stack["sign_in"]("rita@example.test")["access_token"]
+    p = s.create_project(tok, "Rename")
+    f = s.create_file(tok, p["id"], "notebooks/a.dnanb", _notebook(("bell", "dnalang", BELL)))
+    s.create_file(tok, p["id"], "notebooks/taken.dnanb", _notebook())
+    run = api.notebook_run({"user_token": tok, "file_id": f["id"], "revision": 1, "cell_id": "bell", "shots": 50})
+    r = api.files_rename({"user_token": tok, "file_id": f["id"], "base_revision": 1, "path": "notebooks/b.dnanb"})
+    check("POST /api/v1/files/rename", r)
+    assert r["status"] == "RENAMED" and r["file"]["id"] == f["id"] and r["file"]["revision"] == 2
+    assert r["file"]["content_sha256"] == f["content_sha256"]
+    assert [x["receipt_hash"] for x in api.files_runs({"user_token": tok, "file_id": f["id"]})["runs"]] == [run["receipt"]["hash"]]
+    stale = api.files_rename({"user_token": tok, "file_id": f["id"], "base_revision": 1, "path": "notebooks/c.dnanb"})
+    assert stale["status"] == "CONFLICT" and stale["current"]["path"] == "notebooks/b.dnanb"
+    with pytest.raises(ide_api.ApiError) as e:
+        api.files_rename({"user_token": tok, "file_id": f["id"], "base_revision": 2, "path": "notebooks/taken.dnanb"})
+    assert e.value.kind == "EDITOR_PATH_EXISTS" and e.value.status == 409
+    with pytest.raises(ide_api.ApiError) as e:
+        api.files_rename({"user_token": tok, "file_id": f["id"], "base_revision": 2, "path": "../escape"})
+    assert e.value.status == 400
+    other = stack["sign_in"]("sam@example.test")["access_token"]
+    with pytest.raises(ide_api.ApiError) as e:
+        api.files_rename({"user_token": other, "file_id": f["id"], "base_revision": 2, "path": "notebooks/mine.dnanb"})
+    assert e.value.status == 404
+    assert s.file(tok, f["id"])["path"] == "notebooks/b.dnanb"

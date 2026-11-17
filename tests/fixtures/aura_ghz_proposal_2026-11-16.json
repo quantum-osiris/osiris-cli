@@ -1,0 +1,29 @@
+{
+  "recovered_from": {
+    "path": "notebooks/bell-mwk39l4f.dnanb",
+    "revision": 3,
+    "content_sha256": "92fe80595900d4fdd374594dc38cdcb80c5c0a361980cf7c400822eb5df578e0",
+    "cell_id": "c5v101n5e10"
+  },
+  "instruction": "Add a third qubit so the circuit prepares a 3-qubit GHZ state, measured on all three qubits.",
+  "model": "ollama gemma3:4b (local)",
+  "source": "organism GHZ {\n  meta { author: \"Devin Phillip Davis\", purpose: \"GHZ state generation\" }\n\n  gene ghz_state() on a, b, c {\n    helix a;\n    helix b;\n    helix c;\n    bond a, b;\n    bond b, c;\n    bond c, a;\n    cleave a -> ca;\n    cleave b -> cb;\n    cleave c -> cc;\n  }\n\n  genome {\n    ghz_state() @ [0, 1, 2];\n  }\n}\n",
+  "observed_run": {
+    "run_id": "slice-546d6b4f4e50",
+    "receipt_hash": "1e5978a7259f91a5aa4c6f7da02fb815fe2588597d7d4c84bc2c4a9f39cae4b2",
+    "revision": 3,
+    "cell_source_sha256": "sha256:d5afc50f452c2de293130f13c5fecb8148f57500782e1c3fe2f495f58bb4d1a8",
+    "shots": 2000,
+    "seed": 1234,
+    "counts": {
+      "100": 250,
+      "101": 255,
+      "110": 239,
+      "111": 266,
+      "000": 243,
+      "001": 241,
+      "010": 246,
+      "011": 260
+    }
+  }
+}

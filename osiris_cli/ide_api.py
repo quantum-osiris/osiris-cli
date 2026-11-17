@@ -31,7 +31,7 @@ from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from typing import Any, Callable, Dict, Optional, Tuple
 from urllib.parse import urlparse
 
-API_VERSION = "1.4.0"
+API_VERSION = "1.5.0"
 MAX_BODY = 256 * 1024
 TOKEN_HEADER = "X-OSIRIS-Token"
 TOKEN_PLACEHOLDER = "__OSIRIS_SESSION_TOKEN__"
@@ -411,6 +411,10 @@ class Backend:
         return self._editor_call(lambda s: s.save_file(body.get("user_token"), body.get("file_id"),
                                                        body.get("base_revision"), body.get("content")))
 
+    def files_rename(self, body: Dict[str, Any]) -> Dict[str, Any]:
+        return self._editor_call(lambda s: s.rename_file(body.get("user_token"), body.get("file_id"),
+                                                         body.get("base_revision"), body.get("path")))
+
     def files_delete(self, body: Dict[str, Any]) -> Dict[str, Any]:
         return self._editor_call(lambda s: s.delete_file(body.get("user_token"), body.get("file_id")))
 
@@ -546,6 +550,7 @@ ROUTES = {
     ("POST", "/api/v1/files/create"): "files_create",
     ("POST", "/api/v1/files/save"): "files_save",
     ("POST", "/api/v1/files/delete"): "files_delete",
+    ("POST", "/api/v1/files/rename"): "files_rename",
     ("POST", "/api/v1/files/run"): "files_run",
     ("POST", "/api/v1/files/runs"): "files_runs",
     ("POST", "/api/v1/notebook/run"): "notebook_run",
