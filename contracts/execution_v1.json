@@ -1,0 +1,59 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://osiris.agiledefensesystems.com/contracts/execution_v1.json",
+  "title": "OSIRIS Canonical Execution Dispatch Schema v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "execution_version",
+    "job_id",
+    "source",
+    "execution_mode",
+    "target_profile",
+    "timeout_seconds",
+    "governance_permit_id"
+  ],
+  "properties": {
+    "execution_version": {
+      "type": "string",
+      "const": "1.0"
+    },
+    "job_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "source": {
+      "type": "string",
+      "minLength": 1
+    },
+    "source_format": {
+      "type": "string",
+      "enum": ["dnalang", "openqasm3", "ast_ir", "cli_task"]
+    },
+    "execution_mode": {
+      "type": "string",
+      "enum": ["simulation", "hardware"]
+    },
+    "target_profile": {
+      "type": "string",
+      "minLength": 1
+    },
+    "shots": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 1000000
+    },
+    "timeout_seconds": {
+      "type": "number",
+      "exclusiveMinimum": 0,
+      "maximum": 3600
+    },
+    "governance_permit_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "parameters": {
+      "type": "object"
+    }
+  }
+}

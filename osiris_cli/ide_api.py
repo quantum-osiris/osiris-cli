@@ -209,7 +209,7 @@ class Backend:
         if os.path.isfile(self.slice_receipts):
             valid = Receipts.verify(self.slice_receipts)
             with open(self.slice_receipts, encoding="utf-8") as fh:
-                rows = [json.loads(l) for l in fh if l.strip()]
+                rows = [json.loads(ln) for ln in fh if ln.strip()]
         try:
             gh = self.gateway.receipts()
         except Exception as e:  # receipts must still render if GitHub is unavailable
@@ -218,9 +218,10 @@ class Backend:
                 "github": gh}
 
     def propose(self, body: Dict[str, Any]) -> Dict[str, Any]:
-        from osiris_cli.github_gateway import OPERATIONS, GatewayError
         from osiris_governance.canonical import strict_parse_json
         from osiris_governance.github_policy import WRITE_CAPABILITIES
+
+        from osiris_cli.github_gateway import OPERATIONS, GatewayError
         op, repo, args = body.get("op"), body.get("repo"), body.get("args") or {}
         if not isinstance(args, dict):
             raise ApiError(400, "INVALID_INPUT", "args must be an object")
@@ -329,7 +330,7 @@ class Backend:
     def dnalang_info(self) -> Dict[str, Any]:
         """What this service can actually do for the editor. Versions come from the imported packages."""
         from osiris_cli import vertical_slice as vs
-        from osiris_cli.editor_store import MAX_FILE_BYTES, target_status
+        from osiris_cli.editor_store import MAX_FILE_BYTES
         return {"compiler": {"name": "dnalang", "version": vs._versions()["dnalang"]},
                 "versions": vs._versions(),
                 "operations": {"parse": True, "check": True, "compile": True, "simulate": True,
@@ -603,8 +604,21 @@ def make_handler(backend: Backend, token: str, console_dir: Optional[str], allow
                     if method != "GET":
                         raise ApiError(405, "METHOD_NOT_ALLOWED", "static files are GET only")
                     return self._static(path)
-                if not hmac.compare_digest(self.headers.get(TOKEN_HEADER, ""), token):
-                    raise ApiError(401, "TOKEN_REQUIRED", f"missing or wrong {TOKEN_HEADER}")
+                provided_token = (
+                    self.headers.get(TOKEN_HEADER)
+                    or self.headers.get("X-Session-Token")
+                    or (
+                        self.headers.get("Authorization", "")[7:].strip()
+                        if self.headers.get("Authorization", "").lower().startswith("bearer ")
+                        else ""
+                    )
+                )
+                if not hmac.compare_digest(provided_token, token):
+                    raise ApiError(
+                        401,
+                        "TOKEN_REQUIRED",
+                        f"missing or wrong {TOKEN_HEADER}, X-Session-Token, or Authorization Bearer credential",
+                    )
                 name = ROUTES.get((method, path))
                 if name is None:
                     raise ApiError(404 if not any(p == path for _, p in ROUTES) else 405, "NO_ROUTE",

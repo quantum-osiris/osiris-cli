@@ -21,7 +21,7 @@ import platform
 import shutil
 import socket
 import subprocess
-from typing import Any, Dict, Optional
+from typing import Any, Dict
 
 
 class DualNodeSyncBridge:
@@ -36,7 +36,7 @@ class DualNodeSyncBridge:
         machine = uname.machine.lower()
         system = uname.system.lower()
         is_arm64 = machine in ("aarch64", "arm64")
-        
+
         # Check for Termux or PRoot environment markers
         is_termux = "TERMUX_VERSION" in os.environ or "com.termux" in os.environ.get("PREFIX", "")
         is_proot = os.path.exists("/proc/version") and "proot" in open("/proc/version", "r", errors="ignore").read().lower()
@@ -120,8 +120,8 @@ Transferring git commits preserves cryptographic digests without granting execut
      • Pull to workstation: rsync -avz --delete -e 'ssh -p 8022' localhost:~/src/repos/osiris-cli/ ~/repos/osiris-cli/
 
 \033[1;37m[CHANNEL B: Bluetooth PAN (Direct Mobile Tethering)]\033[0m
-  1. Pair Fold7 and Workstation via Bluetooth.
-  2. Enable "Bluetooth Tethering" on Fold7 (creates local network interface, e.g. bnep0).
+  1. Pair Galaxy S26 Ultra (Node Alpha) and Workstation via Bluetooth.
+  2. Enable "Bluetooth Tethering" on S26 Ultra (creates local network interface, e.g. bnep0).
   3. Workstation connects via Bluetooth Network Connection (obtains local subnet IP, e.g. 192.168.44.X).
   4. Node Beta executes rsync directly over the Bluetooth PAN IP to port 8022:
      • rsync -avz -e 'ssh -p 8022' ./ <Phone_PAN_IP>:~/src/repos/osiris-cli/
@@ -138,10 +138,13 @@ Transferring git commits preserves cryptographic digests without granting execut
         ssh_active = cls.check_ssh_listener()
         adb = cls.check_adb_status()
 
+        from osiris_cli.s26_cartographer import detect_prime_cores
+        prime_cores = detect_prime_cores()
+
         lines = []
         lines.append("\033[1;36m[OSIRIS::DUAL-NODE SYNC & DEVICE BRIDGE]\033[0m")
         lines.append(f"  ├─ Detected Substrate : \033[1;32m{sub['node_id']}\033[0m ({sub['node_role']})")
-        lines.append(f"  ├─ Architecture       : {sub['machine']} (ARM64 SIMD: {sub['is_arm64']})")
+        lines.append(f"  ├─ Architecture       : {sub['machine']} (ARM64 SIMD: {sub['is_arm64']}, Prime Cores: {prime_cores})")
         ssh_str = "\033[1;32mLISTENING (Ready for rsync)\033[0m" if ssh_active else "\033[1;33mOFFLINE (Start with 'sshd -p 8022')\033[0m"
         lines.append(f"  ├─ SSH Daemon (:8022) : {ssh_str}")
 
