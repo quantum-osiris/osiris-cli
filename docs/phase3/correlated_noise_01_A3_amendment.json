@@ -1,0 +1,186 @@
+{
+  "amendment_id": "CN01-A3",
+  "experiment_id": "CORRELATED-NOISE-01-STAGE1",
+  "recorded_utc": "2026-11-16T23:02:15.769566+00:00",
+  "status": "Recorded before any CN01 data exist: no CN01 job had been submitted.",
+  "scope": "Analysis only. The QPY, PUB schedule, coupler cohort, blocks and shots are unchanged; the prereg lock file is byte-identical.",
+  "base_lock": "correlated_noise_01_live_prereg_lock.json",
+  "base_lock_sha256": "38ebfe7f7c007633281039bca551af963e8335db54e6e6915a1e3f5be4a64fd8",
+  "qpy_sha256": "158de03260c429c8170cd3e3b296ade8045881e385370f1774619344e57b9da1",
+  "analysis_files_sha256": {
+    "phase3/cn01_amendment_a3.py": "056256b734890b22056582ffb66636815db9478175a7c9e51ce8def5ee5e38c3",
+    "phase3/execute_and_analyze_live.py": "e5e194bd67fd3e1b5db428c04ea04927ada292f231ddb968f47a6e7ff503091c",
+    "phase2/correlated_noise_01/correlated_noise_models.py": "fbb0ef7101c5f36f19e6dd888e2d0be9cc0a787943742fd924ddb7eee265dc00",
+    "phase2/correlated_noise_01/simulate_correlated_noise.py": "81a8d79930c9d1da1254f99ad8e9b92af026e21b77d3d772a3a3e355ef9eb823"
+  },
+  "primary_analysis": "phase3.cn01_amendment_a3.a3_inference(phase3.execute_and_analyze_live.cn01_fidelity_arrays_from_counts(...))",
+  "secondary_analysis": "phase3.execute_and_analyze_live.analyze_correlated_noise_01_live_counts (the analysis as locked)",
+  "train_slots": [
+    1,
+    2,
+    4,
+    7
+  ],
+  "held_out_slots": [
+    0,
+    3,
+    5,
+    6,
+    8,
+    9
+  ],
+  "train_couplers": [
+    [
+      149,
+      150
+    ],
+    [
+      1,
+      2
+    ],
+    [
+      53,
+      54
+    ],
+    [
+      7,
+      17
+    ]
+  ],
+  "held_out_couplers": [
+    [
+      135,
+      139
+    ],
+    [
+      13,
+      14
+    ],
+    [
+      91,
+      98
+    ],
+    [
+      47,
+      57
+    ],
+    [
+      104,
+      105
+    ],
+    [
+      142,
+      143
+    ]
+  ],
+  "split_rule": "sorted(numpy.random.default_rng(int(sha256(f'CN01-A3:split:{qpy_sha256}')[:16], 16)).permutation(10)[:4]); replaces the lock's roles (the 4 lowest-CZ-error couplers as training)",
+  "fit_conditions": [
+    "echo1_2us",
+    "echo1_4us",
+    "echo1_8us",
+    "echo1_16us",
+    "echo_dd8_8us",
+    "echo_dd16_8us",
+    "echo_dd32_8us",
+    "echo_dd32_16us",
+    "phi_dd16_d0ns",
+    "phi_dd16_d16ns",
+    "phi_dd16_d32ns",
+    "phi_dd16_d48ns",
+    "phi_dd16_d80ns",
+    "phi_dd16_d160ns",
+    "phi_dd16_d256ns",
+    "psi_dd16_d0ns",
+    "psi_dd16_d256ns",
+    "phi_spec_plus_d0ns",
+    "phi_spec_plus_d256ns"
+  ],
+  "excluded_from_fit_and_calibration": [
+    "ramsey_2us",
+    "ramsey_4us",
+    "ramsey_8us",
+    "ramsey_16us"
+  ],
+  "models": {
+    "local_nulls": [
+      "H0",
+      "H0_1f",
+      "H3_local"
+    ],
+    "non_local_candidates": [
+      "H1",
+      "H2",
+      "H3",
+      "Apparatus"
+    ],
+    "h0_1f_tau_grid_s": [
+      1e-07,
+      3.162277660168379e-07,
+      1e-06,
+      3.162277660168379e-06,
+      1e-05,
+      3.1622776601683795e-05,
+      0.0001,
+      0.00031622776601683794,
+      0.001
+    ],
+    "delta_bic_gate": 8.0,
+    "selection_rule": "GLS-BIC (locked covariance construction). The minimum-BIC model is selected if it is local; a non-local model is selected only if its BIC is at least 8 below the best local model's; otherwise the best local model is selected."
+  },
+  "held_out": {
+    "calibration_condition": "echo_dd32_8us",
+    "calibration_rule": "For every model, the held-out coupler's T1 (execution-time calibration), SPAM ceiling (locked formula) and a white floor solved so the model reproduces that coupler's echo_dd32_8us; trained bath parameters are not refitted.",
+    "primary_score": "RMSE of the predicted vs observed change in Phi+ fidelity from 0 ns, at the 6 non-zero stagger offsets",
+    "secondary_score": "RMSE of absolute Phi+ fidelity at all 7 offsets (the locked score)",
+    "test": "Best local model's RMSE minus the candidate's, paired across the 6 held-out couplers: two-sided t, df = 5; passes if the mean is > 0 and p < 0.05. The candidate is the selected model when it is non-local, otherwise H3 (reported only)."
+  },
+  "decision_rules": {
+    "correlated_dephasing_supported": "H2 or H3 selected AND C_DFS > 0 with Holm p < 0.05 AND the held-out test passes",
+    "non_markovian_correlated_memory_supported": "H3 selected AND C_DFS > 0 (Holm) AND C_memory > 0 (Holm) AND the held-out test passes",
+    "spectator_zz_supported": "H1 selected AND C_spec > 0 (Holm) AND the held-out test passes",
+    "pulse_collision_apparatus_supported": "Apparatus selected AND S48 >= 0.75",
+    "candidate_falsified_by_held_out": "H1, H2 or H3 selected AND the held-out test fails (the preregistered kill criterion)",
+    "local_noise_only": "a local model is selected",
+    "local_non_white_dephasing": "descriptive: the best local model is not H0 and beats H0 by delta-BIC >= 8"
+  },
+  "unchanged_from_lock": [
+    "circuits, schedule, cohort, blocks, shots",
+    "counts-to-fidelity extraction and readout handling (shared function, verified identical outputs)",
+    "GLS covariance construction and the delta-BIC gate of 8",
+    "the four mechanistic contrasts and their Holm correction",
+    "cluster-level held-out df = 5"
+  ],
+  "validation": {
+    "file": "correlated_noise_01_A3_validation.json",
+    "sha256": "c390ce57feec10271752c33f9f5c13163d3aeb5bd1c82c36d9af9e2ecfbd7b7b",
+    "acceptance": {
+      "checks": {
+        "white: A-3 non-local claim rate <= 0.05": {
+          "rate": 0.0,
+          "pass": true
+        },
+        "local_1f: A-3 non-local claim rate <= 0.05": {
+          "rate": 0.0,
+          "pass": true
+        },
+        "local_1f_ramsey_detuned: A-3 non-local claim rate <= 0.05": {
+          "rate": 0.0,
+          "pass": true
+        },
+        "local_ou: A-3 non-local claim rate <= 0.05": {
+          "rate": 0.0,
+          "pass": true
+        },
+        "correlated_h2: A-3 correlated-dephasing power >= 0.8": {
+          "rate": 0.56,
+          "pass": false
+        },
+        "correlated_h3_fast: A-3 correlated-dephasing power >= 0.8": {
+          "rate": 0.44,
+          "pass": false
+        }
+      },
+      "all_pass": false
+    }
+  }
+}

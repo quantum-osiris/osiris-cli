@@ -15,6 +15,9 @@ and calibration properties, and runs the complete pre-registered statistical ana
      >=5-hop disjoint couplers (4 training + 6 held-out), intra-block A/A sentinel
      drift RMS, structured block-covariance GLS 5-model fitting (`H0, H1, H2, H3,
      Apparatus`), and cluster-level zero-retraining held-out coupler validation (`df = 5`).
+     The primary CN01 analysis is amendment A-3 (`phase3/cn01_amendment_a3.py`), which shares the
+     counts-to-fidelities step (`cn01_fidelity_arrays_from_counts`); the analysis below, as locked,
+     is reported as secondary.
 """
 
 from __future__ import annotations
@@ -53,8 +56,10 @@ from phase2.tesseract_map_02.tesseract_map_02 import (
     analyze_paired_blocks,
     score_tesseract_counts,
 )
+from phase3.cn01_amendment_a3 import a3_inference
 from phase3.live_hardware_runner import (
     OUT_DIR,
+    REPO_ROOT,
     connect_service,
     extract_counts_from_pub_result,
     snapshot_backend_calibration,
@@ -207,12 +212,17 @@ def _build_cn01_stage1_probe_conditions() -> List[ProbeCondition]:
     return conds
 
 
-def analyze_correlated_noise_01_live_counts(
+def cn01_fidelity_arrays_from_counts(
     lock_manifest: Mapping[str, Any],
     pub_counts: Sequence[Mapping[str, int]],
-    cal_snapshot: Mapping[str, Any],
-    job_id: str,
 ) -> Dict[str, Any]:
+    """Per-coupler readout matrices and per-block fidelities from the CN01 Stage-1 counts.
+
+    Returns `suite` (the 23 probe conditions), `m_mats` (one 4x4 assignment matrix per coupler),
+    `f_raw_arr` / `f_mit_arr` (raw and readout-mitigated fidelities, shape `(n_slots, n_blocks, 23)`)
+    and `aa_diffs_raw` / `aa_diffs_mit` (A/A sentinel minus reference, per coupler and block).
+    Shared by the locked analysis and amendment A-3 (`phase3/cn01_amendment_a3.py`).
+    """
     cohort = lock_manifest["coupler_cohort"]
     n_slots = len(cohort)
     n_blocks = int(lock_manifest["n_blocks"])
@@ -307,6 +317,30 @@ def analyze_correlated_noise_01_live_counts(
 
     f_raw_arr, aa_diffs_raw = _assemble_fidelities(basis_vals_raw)
     f_mit_arr, aa_diffs_mit = _assemble_fidelities(basis_vals_mit)
+    return {
+        "suite": suite,
+        "m_mats": m_mats,
+        "f_raw_arr": f_raw_arr,
+        "f_mit_arr": f_mit_arr,
+        "aa_diffs_raw": aa_diffs_raw,
+        "aa_diffs_mit": aa_diffs_mit,
+    }
+
+
+def analyze_correlated_noise_01_live_counts(
+    lock_manifest: Mapping[str, Any],
+    pub_counts: Sequence[Mapping[str, int]],
+    cal_snapshot: Mapping[str, Any],
+    job_id: str,
+) -> Dict[str, Any]:
+    cohort = lock_manifest["coupler_cohort"]
+    n_blocks = int(lock_manifest["n_blocks"])
+    arrays = cn01_fidelity_arrays_from_counts(lock_manifest, pub_counts)
+    suite: List[ProbeCondition] = arrays["suite"]
+    cond_ids = [c.condition_id for c in suite]
+    m_mats = arrays["m_mats"]
+    f_raw_arr, aa_diffs_raw = arrays["f_raw_arr"], arrays["aa_diffs_raw"]
+    f_mit_arr, aa_diffs_mit = arrays["f_mit_arr"], arrays["aa_diffs_mit"]
 
     aa_rms_raw = float(math.sqrt(np.mean(np.square(aa_diffs_raw))))
     aa_rms_mit = float(math.sqrt(np.mean(np.square(aa_diffs_mit))))
@@ -571,6 +605,7 @@ def _run_or_resume(
     experiment_id: str,
     stem: str,
     remaining_s: float,
+    receipt_extra: Mapping[str, Any] | None = None,
 ) -> Tuple[Dict[str, Any], Dict[str, Any], float]:
     """Submit one locked campaign once, or resume it, and return (lock, raw payload, QPU s used now).
 
@@ -617,6 +652,7 @@ def _run_or_resume(
                     "prereg_lock_sha256": lock["lock_sha256"],
                     "qpy_sha256": lock["qpy_sha256"],
                     "quota_remaining_before_s": remaining_s,
+                    **(receipt_extra or {}),
                 },
                 indent=2,
             )
@@ -645,6 +681,27 @@ def _run_or_resume(
     return lock, raw, float(usage_s or 0.0)
 
 
+CN01_AMENDMENT_PATH = OUT_DIR / "correlated_noise_01_A3_amendment.json"
+
+
+def verify_cn01_amendment() -> Dict[str, Any]:
+    """Load CN01 analysis amendment A-3 and check it against the lock and the analysis code on disk."""
+    if not CN01_AMENDMENT_PATH.exists():
+        raise RuntimeError(f"CN01 needs analysis amendment A-3 ({CN01_AMENDMENT_PATH.name}); not running it")
+    amendment = json.loads(CN01_AMENDMENT_PATH.read_text())
+    lock_path = OUT_DIR / "correlated_noise_01_live_prereg_lock.json"
+    lock = json.loads(lock_path.read_text())
+    if amendment["base_lock_sha256"] != hashlib.sha256(lock_path.read_bytes()).hexdigest():
+        raise RuntimeError("Amendment A-3 was recorded against a different CN01 prereg lock")
+    if amendment["qpy_sha256"] != lock["qpy_sha256"]:
+        raise RuntimeError("Amendment A-3 was recorded against a different CN01 QPY")
+    for rel, sha in amendment["analysis_files_sha256"].items():
+        if hashlib.sha256((REPO_ROOT / rel).read_bytes()).hexdigest() != sha:
+            raise RuntimeError(f"{rel} has changed since amendment A-3 was recorded")
+    amendment["amendment_sha256"] = hashlib.sha256(CN01_AMENDMENT_PATH.read_bytes()).hexdigest()
+    return amendment
+
+
 def run_live_campaigns(campaigns: Sequence[str]) -> None:
     svc = connect_service()
     remaining = _remaining_seconds(svc)
@@ -660,14 +717,35 @@ def run_live_campaigns(campaigns: Sequence[str]) -> None:
         remaining = min(_remaining_seconds(svc), remaining - t_used)
 
     if "cn01" in campaigns:
+        amendment = verify_cn01_amendment()
         c_lock, c_raw, _ = _run_or_resume(
-            svc, backend, "CORRELATED-NOISE-01-STAGE1", "correlated_noise_01", remaining
+            svc, backend, "CORRELATED-NOISE-01-STAGE1", "correlated_noise_01", remaining,
+            receipt_extra={
+                "analysis_amendment": amendment["amendment_id"],
+                "analysis_amendment_sha256": amendment["amendment_sha256"],
+            },
         )
-        c_analysis = analyze_correlated_noise_01_live_counts(
-            c_lock, c_raw["pub_counts"], c_raw["execution_time_calibration"], c_raw["job_id"]
+        cal = c_raw["execution_time_calibration"]
+        # Primary: amendment A-3. Secondary: the analysis as locked, reported for comparison.
+        primary = a3_inference(
+            cn01_fidelity_arrays_from_counts(c_lock, c_raw["pub_counts"]), c_lock["coupler_cohort"],
+            amendment["train_slots"], cal,
         )
-        (OUT_DIR / "correlated_noise_01_live_analysis.json").write_text(json.dumps(c_analysis, indent=2) + "\n")
-        print("[CORRELATED-NOISE-01] Analysis complete.", flush=True)
+        primary = {
+            "experiment_id": "CORRELATED-NOISE-01-STAGE1",
+            "status": "Hardware-observed (primary analysis: amendment A-3)",
+            "job_id": c_raw["job_id"],
+            "backend": c_lock["backend_name"],
+            "prereg_lock_sha256": c_lock["lock_sha256"],
+            "qpy_sha256": c_lock["qpy_sha256"],
+            "analysis_amendment_sha256": amendment["amendment_sha256"],
+            **primary,
+        }
+        (OUT_DIR / "correlated_noise_01_live_analysis_A3.json").write_text(json.dumps(primary, indent=2) + "\n")
+        secondary = analyze_correlated_noise_01_live_counts(c_lock, c_raw["pub_counts"], cal, c_raw["job_id"])
+        secondary["status"] = "Hardware-observed (secondary: the analysis as locked, superseded as primary by A-3)"
+        (OUT_DIR / "correlated_noise_01_live_analysis_locked.json").write_text(json.dumps(secondary, indent=2) + "\n")
+        print(f"[CORRELATED-NOISE-01] A-3 decisions: {primary['decisions']}", flush=True)
 
     print(f"[Done] OpenPlan remaining: {_remaining_seconds(svc):.0f} s", flush=True)
 
