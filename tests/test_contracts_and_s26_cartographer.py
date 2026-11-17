@@ -116,6 +116,8 @@ def test_canonical_contracts_enforce_fail_closed_invariants():
 
 
 def test_ide_api_accepts_x_osiris_token_x_session_token_and_bearer_auth(tmp_path):
+    # default_backend imports github_gateway, which needs the governance package; CI does not install it
+    pytest.importorskip("osiris_governance.github_policy")
     backend = ide_api.default_backend(
         examples_dir=str(tmp_path),
         slice_receipts=str(tmp_path / "slice.jsonl"),
