@@ -153,3 +153,13 @@ The alternative truths were revised once before the full run, and that is disclo
 - Added after TESSERACT-MAP-02 ran:
   - **Usage polling:** the runner waits for IBM to finalise a job's QPU usage before recording it. `job.usage()` reads 0 until then.
   - **Account identifiers:** the runner does not save the IBM Cloud instance CRN or plan ID.
+
+## Note on A-3, added 2026-11-17T02:45Z, after CORRELATED-NOISE-01 ran
+
+Nothing above this note has changed since before the CN01 job. The A-3 text was last edited at 2026-11-16T23:02:56Z, and the job was created at 23:34:53Z. Three statements above did not hold for the run:
+
+- **A-2:** "CORRELATED-NOISE-01 is not submitted until its analysis amendment (A-3, below) is committed and pushed." When the owner submitted the job, A-3 had been hashed (23:02:15Z) but not committed or pushed. The job came from another local checkout, whose runner does not check for A-3. A-3 was first committed after the job.
+- **A-3:** "The runner refuses to run CN01 unless these hashes match the files on disk." That is true of this branch's runner, which did not submit the job.
+- **A-3:** "Primary: the A-3 analysis." A-3 was not public before the data, so the owner now decides which analysis is primary. `CORRELATED_NOISE_01_RESULTS.md` reports both, and they reach the same verdict.
+
+The evidence that A-3 predates the data is local and cannot be checked independently. It consists of file times, the record's own timestamp and the authoring session's log.
