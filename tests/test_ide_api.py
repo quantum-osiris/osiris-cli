@@ -313,7 +313,7 @@ def test_qiskit_operations_share_one_worker_thread():
     import threading
     seen = []
     for _ in range(3):
-        t = threading.Thread(target=lambda: seen.append(ide_api._QISKIT_THREAD.submit(lambda: threading.get_ident()).result()))
+        t = threading.Thread(target=lambda: seen.append(ide_api.qiskit_worker().submit(threading.get_ident)))
         t.start(); t.join()
     assert len(set(seen)) == 1
     assert {"compile", "run_slice", "files_run", "notebook_run"} <= ide_api.QISKIT_OPERATIONS
