@@ -97,6 +97,7 @@ def test_bic_identifiability_confusion_matrix_and_null_calibration():
 
 
 def test_exact_piecewise_h3_no_aliasing_and_isa_dt_alignment_and_disjoint_couplers():
+    pytest.importorskip("qiskit_ibm_runtime")  # CI does not install qiskit_ibm-runtime
     from qiskit_ibm_runtime.fake_provider import FakeMarrakesh
 
     # 1. Sub-slot offsets 16, 32, 48, 80 ns must NOT alias to identical values in H3,
