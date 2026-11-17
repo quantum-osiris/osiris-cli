@@ -474,3 +474,65 @@ def test_run_of_a_stored_file_that_does_not_compile_executes_nothing(stack):
     f = s.create_file(tok, s.create_project(tok, "Bad")["id"], "legacy.dna", LEGACY)
     r = api.files_run({"user_token": tok, "file_id": f["id"], "revision": 1})
     assert r["status"] == "REJECTED" and r["executed"] is False and "simulation" not in r and "receipt" not in r
+
+
+# ───────────────────────── IDE API 1.4.0: notebook cells ─────────────────────────
+def _notebook(*cells):
+    return json.dumps({"format": "osiris-notebook", "version": 1, "title": "t",
+                       "cells": [{"id": i, "type": t, "source": s} for i, t, s in cells]}, sort_keys=True)
+
+
+def test_notebook_cell_run_is_bound_to_notebook_revision_and_cell(stack):
+    s, api = stack["store"], stack["api"]
+    tok = stack["sign_in"]("nora@example.test")["access_token"]
+    p = s.create_project(tok, "Notebook")
+    text = _notebook(("intro", "markdown", "# Bell"), ("bell", "dnalang", BELL))
+    f = s.create_file(tok, p["id"], "notebooks/bell.dnanb", text)
+    r = api.notebook_run({"user_token": tok, "file_id": f["id"], "revision": 1, "cell_id": "bell", "shots": 400,
+                          "seed": 5, "source": "organism Evil { }"})
+    check("POST /api/v1/notebook/run", r)
+    assert r["status"] == "COMPLETED" and r["executed"] is True and sum(r["simulation"]["counts"].values()) == 400
+    b = r["source_binding"]
+    assert b["cell_id"] == "bell" and b["revision"] == 1 and b["notebook_format"] == "osiris-notebook/1"
+    assert b["cell_source_sha256"] == "sha256:" + hashlib.sha256(BELL.encode()).hexdigest() == r["compile"]["source_sha256"]
+    assert b["content_sha256"] == "sha256:" + hashlib.sha256(text.encode()).hexdigest()
+    runs = api.files_runs({"user_token": tok, "file_id": f["id"]})
+    assert runs["chain_valid"] is True and runs["runs"][-1]["source_binding"]["cell_id"] == "bell"
+    assert runs["runs"][-1]["receipt_hash"] == r["receipt"]["hash"]
+
+    # stale revision executes nothing
+    assert s.save_file(tok, f["id"], 1, _notebook(("bell", "dnalang", BELL + "// v2\n")))["status"] == "SAVED"
+    stale = api.notebook_run({"user_token": tok, "file_id": f["id"], "revision": 1, "cell_id": "bell"})
+    assert stale["status"] == "REVISION_MISMATCH" and stale["executed"] is False
+    # markdown, unknown cells, other users, non-notebooks are refused
+    for cell, kind in (("intro", "NOTEBOOK_CELL_NOT_FOUND"), ("nope", "NOTEBOOK_CELL_NOT_FOUND")):
+        with pytest.raises(ide_api.ApiError) as e:
+            api.notebook_run({"user_token": tok, "file_id": f["id"], "revision": 2, "cell_id": cell})
+        assert e.value.kind == kind
+    other = stack["sign_in"]("oscar@example.test")["access_token"]
+    with pytest.raises(ide_api.ApiError) as e:
+        api.notebook_run({"user_token": other, "file_id": f["id"], "revision": 2, "cell_id": "bell"})
+    assert e.value.status == 404
+    plain = s.create_file(tok, p["id"], "bell.dna", BELL)
+    with pytest.raises(ide_api.ApiError) as e:
+        api.notebook_run({"user_token": tok, "file_id": plain["id"], "revision": 1, "cell_id": "bell"})
+    assert e.value.kind == "NOTEBOOK_INVALID"
+
+
+def test_markdown_cell_is_not_executable(stack):
+    s, api = stack["store"], stack["api"]
+    tok = stack["sign_in"]("nora@example.test")["access_token"]
+    f = s.create_file(tok, s.create_project(tok, "NB2")["id"], "n.dnanb", _notebook(("m", "markdown", "text")))
+    with pytest.raises(ide_api.ApiError) as e:
+        api.notebook_run({"user_token": tok, "file_id": f["id"], "revision": 1, "cell_id": "m"})
+    assert e.value.kind == "NOTEBOOK_CELL_NOT_EXECUTABLE" and e.value.status == 400
+
+
+def test_notebook_format_rejects_malformed_content():
+    from osiris_cli import notebook_format as nbf
+    for bad in ("x", "{}", '{"format":"osiris-notebook","version":2,"cells":[]}',
+                _notebook(("a", "python", "print(1)")), _notebook(("a", "markdown", ""), ("a", "markdown", "")),
+                _notebook(("bad id!", "markdown", ""))):
+        with pytest.raises(nbf.NotebookFormatError):
+            nbf.parse(bad)
+    assert nbf.parse(_notebook(("a", "dnalang", BELL)))["cells"][0]["id"] == "a"

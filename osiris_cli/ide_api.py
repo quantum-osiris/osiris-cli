@@ -27,11 +27,12 @@ import subprocess
 import sys
 import threading
 import time
+from concurrent.futures import ThreadPoolExecutor
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from typing import Any, Callable, Dict, Optional, Tuple
 from urllib.parse import urlparse
 
-API_VERSION = "1.3.0"
+API_VERSION = "1.4.0"
 MAX_BODY = 256 * 1024
 TOKEN_HEADER = "X-OSIRIS-Token"
 TOKEN_PLACEHOLDER = "__OSIRIS_SESSION_TOKEN__"
@@ -435,6 +436,45 @@ class Backend:
             raise ApiError(400, "INVALID_INPUT", str(e))
         return {**result, "executed": result.get("status") in ("COMPLETED", "FAILED")}
 
+    def notebook_run(self, body: Dict[str, Any]) -> Dict[str, Any]:
+        """Simulate one DNA-Lang cell of one stored notebook revision (API 1.4.0). As with files_run, the
+        notebook is read from the store with the caller's token; no source text is taken from the request.
+        The receipt's binding names the notebook file, its revision and digest, the cell id and the
+        digest of that cell's source."""
+        from osiris_cli import notebook_format as nbf
+        from osiris_cli.vertical_slice import SliceInputError, run_slice
+        revision, cell_id = body.get("revision"), body.get("cell_id")
+        if isinstance(revision, bool) or not isinstance(revision, int) or revision < 1:
+            raise ApiError(400, "INVALID_INPUT", "revision must be a positive integer")
+        if not isinstance(cell_id, str) or not cell_id:
+            raise ApiError(400, "INVALID_INPUT", "cell_id is required")
+        row = self._editor_call(lambda s: s.file(body.get("user_token"), body.get("file_id")))
+        if row["revision"] != revision:
+            return {"status": "REVISION_MISMATCH", "requested_revision": revision,
+                    "current": {"revision": row["revision"], "content_sha256": row["content_sha256"]},
+                    "executed": False}
+        try:
+            nb = nbf.parse(row["content"])
+        except nbf.NotebookFormatError as e:
+            raise ApiError(400, "NOTEBOOK_INVALID", str(e))
+        try:
+            c = nbf.cell(nb, cell_id)
+        except KeyError:
+            raise ApiError(404, "NOTEBOOK_CELL_NOT_FOUND", f"revision {revision} has no cell {cell_id!r}")
+        if c["type"] not in nbf.EXECUTABLE:
+            raise ApiError(400, "NOTEBOOK_CELL_NOT_EXECUTABLE", f"cell {cell_id!r} is {c['type']}; only DNA-Lang cells run")
+        binding = {"project_id": row["project_id"], "file_id": row["id"], "path": row["path"],
+                   "revision": row["revision"], "content_sha256": "sha256:" + row["content_sha256"],
+                   "notebook_format": f"{nbf.FORMAT}/{nbf.VERSION}", "cell_id": c["id"],
+                   "cell_source_sha256": nbf.source_sha256(c["source"])}
+        runner = self._slice_runner or run_slice
+        try:
+            result = runner(c["source"], shots=body.get("shots", 2000), seed=body.get("seed", 1234),
+                            receipts_path=self.slice_receipts, binding=binding)
+        except SliceInputError as e:
+            raise ApiError(400, "INVALID_INPUT", str(e))
+        return {**result, "executed": result.get("status") in ("COMPLETED", "FAILED")}
+
     def files_runs(self, body: Dict[str, Any]) -> Dict[str, Any]:
         """Receipted runs of one file, read from the local receipt chain. The caller must be able to read the file."""
         from osiris_cli.trio_authz import Receipts
@@ -506,8 +546,18 @@ ROUTES = {
     ("POST", "/api/v1/files/delete"): "files_delete",
     ("POST", "/api/v1/files/run"): "files_run",
     ("POST", "/api/v1/files/runs"): "files_runs",
+    ("POST", "/api/v1/notebook/run"): "notebook_run",
     ("POST", "/api/v1/assist"): "assist",
 }
+
+
+# Every operation that reaches Qiskit/Aer runs on this one long-lived thread. With qiskit 2.6.2 and
+# qiskit-aer 0.18.2 on Python 3.14, a second simulation started from a *different* short-lived thread
+# (ThreadingHTTPServer opens one per request) segfaults the process inside qiskit._accelerate
+# (get_standard_gate_name_mapping). Reproduced outside the server; one shared worker thread avoids it.
+# This also serialises simulations, which the API already documents as synchronous and unqueued.
+QISKIT_OPERATIONS = frozenset({"compile", "run_slice", "organism", "files_run", "notebook_run"})
+_QISKIT_THREAD = ThreadPoolExecutor(max_workers=1, thread_name_prefix="osiris-qiskit")
 
 
 def make_handler(backend: Backend, token: str, console_dir: Optional[str], allowed_hosts: Tuple[str, ...]):
@@ -573,7 +623,8 @@ def make_handler(backend: Backend, token: str, console_dir: Optional[str], allow
                     if not isinstance(body, dict):
                         raise ApiError(400, "BAD_JSON", "body must be a JSON object")
                 fn = getattr(backend, name)
-                result = fn(body) if method == "POST" else fn()
+                call = (lambda: fn(body)) if method == "POST" else fn
+                result = _QISKIT_THREAD.submit(call).result() if name in QISKIT_OPERATIONS else call()
                 self._json(200, {"api_version": API_VERSION, **result})
             except ApiError as e:
                 self._error(e)
