@@ -27,7 +27,6 @@ import subprocess
 import sys
 import threading
 import time
-from concurrent.futures import ThreadPoolExecutor
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from typing import Any, Callable, Dict, Optional, Tuple
 from urllib.parse import urlparse
@@ -500,7 +499,9 @@ class Backend:
     def assist(self, body: Dict[str, Any]) -> Dict[str, Any]:
         from osiris_cli import editor_assist
         try:
-            return editor_assist.assist(body, route_fn=self._assist_route_fn)
+            from osiris_cli.vertical_slice import compile_source
+            return editor_assist.assist(body, route_fn=self._assist_route_fn,
+                                        compile_fn=lambda src: on_qiskit_thread(lambda: compile_source(src)))
         except editor_assist.AssistError as e:
             raise ApiError(400, "INVALID_INPUT", str(e))
 
@@ -551,13 +552,33 @@ ROUTES = {
 }
 
 
-# Every operation that reaches Qiskit/Aer runs on this one long-lived thread. With qiskit 2.6.2 and
-# qiskit-aer 0.18.2 on Python 3.14, a second simulation started from a *different* short-lived thread
-# (ThreadingHTTPServer opens one per request) segfaults the process inside qiskit._accelerate
-# (get_standard_gate_name_mapping). Reproduced outside the server; one shared worker thread avoids it.
-# This also serialises simulations, which the API already documents as synchronous and unqueued.
-QISKIT_OPERATIONS = frozenset({"compile", "run_slice", "organism", "files_run", "notebook_run"})
-_QISKIT_THREAD = ThreadPoolExecutor(max_workers=1, thread_name_prefix="osiris-qiskit")
+# F-34: every route that reaches Qiskit/Aer runs on one long-lived thread with a bounded backlog
+# (osiris_cli/qiskit_worker.py explains the crash and the policy).
+# assist is not listed: only its compile step runs on the worker (Backend.assist), so a slow model
+# cannot hold up simulations. dnalang_info is listed because it imports qiskit/qiskit_aer.
+QISKIT_OPERATIONS = frozenset({"compile", "run_slice", "organism", "files_run", "notebook_run", "dnalang_info"})
+QISKIT_WORKER = None
+
+
+_WORKER_LOCK = threading.Lock()
+
+
+def qiskit_worker():
+    global QISKIT_WORKER
+    with _WORKER_LOCK:
+        if QISKIT_WORKER is None:
+            from osiris_cli.qiskit_worker import QiskitWorker
+            QISKIT_WORKER = QiskitWorker()
+        return QISKIT_WORKER
+
+
+def on_qiskit_thread(call):
+    """Run `call` on the shared Qiskit thread; an overfull backlog is a 503, never an unbounded wait."""
+    from osiris_cli.qiskit_worker import Busy
+    try:
+        return qiskit_worker().submit(call)
+    except Busy as e:
+        raise ApiError(503, "SIMULATOR_BUSY", str(e))
 
 
 def make_handler(backend: Backend, token: str, console_dir: Optional[str], allowed_hosts: Tuple[str, ...]):
@@ -624,7 +645,7 @@ def make_handler(backend: Backend, token: str, console_dir: Optional[str], allow
                         raise ApiError(400, "BAD_JSON", "body must be a JSON object")
                 fn = getattr(backend, name)
                 call = (lambda: fn(body)) if method == "POST" else fn
-                result = _QISKIT_THREAD.submit(call).result() if name in QISKIT_OPERATIONS else call()
+                result = on_qiskit_thread(call) if name in QISKIT_OPERATIONS else call()
                 self._json(200, {"api_version": API_VERSION, **result})
             except ApiError as e:
                 self._error(e)
@@ -720,6 +741,8 @@ def main(argv=None) -> int:
         pass
     finally:
         httpd.server_close()
+        if QISKIT_WORKER is not None:      # admitted runs finish and write their receipts
+            QISKIT_WORKER.shutdown()
     return 0
 
 
