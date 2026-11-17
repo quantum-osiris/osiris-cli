@@ -2,7 +2,7 @@
 OSIRIS Dual-Node Mobile Dev Synchronization Subsystem
 =====================================================
 Runbook and status inspector for synchronizing OSIRIS repositories between:
-  - Node Alpha: Mobile Edge (Samsung Galaxy Z Fold7 / Termux / PRoot debian, aarch64)
+  - Node Alpha: Mobile Edge (Samsung Galaxy S26 Ultra / Fold7 / Termux / PRoot debian, aarch64)
   - Node Beta:  Workstation / WSL (x86_64 / arm64)
 
 Navigates Android UID Sandboxing, Scoped Storage noexec, and FUSE latency via:
@@ -77,7 +77,7 @@ class DualNodeSyncBridge:
     @classmethod
     def check_adb_status(cls) -> Dict[str, Any]:
         """Inspect local ADB availability and forwarded ports."""
-        adb_bin = shutil.which("adb")
+        adb_bin = shutil.which("adb") or ("/mnt/c/Users/there/AppData/Local/Android/Sdk/platform-tools/adb.exe" if os.path.exists("/mnt/c/Users/there/AppData/Local/Android/Sdk/platform-tools/adb.exe") else None)
         if not adb_bin:
             return {"installed": False, "devices": [], "forwards": []}
 
