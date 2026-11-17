@@ -324,7 +324,10 @@ REGISTER: Tuple[Claim, ...] = (
           "Statistically significant gain on benchmark edge (14, 15) over synchronous XY8: Δ⟨XX⟩ = +0.0186 (95% bootstrap CI [+0.0107, +0.0264], "
           "p < 0.001). Historical job dblr6lhkbkrc73co9h30 transpiler pulse-collapse artifact resolved with 4.0 ns dt delays.",
           (("doi", "10.5281/zenodo.23967473", "Heron r2 physical validation"),),
-          (r"heron|marrakesh", r"stag\w*|stagger\w*", r"xy8|dynamical decoupling|dd")),
+          (r"(?:heron|marrakesh)[^.\n]{0,60}(?:stagger\w*|\bxy8\b|decoupling|\bdd\b)",
+           r"(?:stagger\w*|\bxy8\b|decoupling)[^.\n]{0,60}(?:heron|marrakesh)",
+           r"\bstagger\w*\s+xy8\b|\bheron[_\s-]*r2[_\s-]*stag\b",
+           r"zenodo\.23967473|dblrpnt8ft8s738tlgcg|dblsnal8mdtc73d6pkmg|dblt471kbkrc73coc33g|dbltkdd8ft8s738toef0")),
     Claim("AMOC_PROVENANCE", "Prior art and bitwise provenance for AMOC ocean observing telemetry, payload hash-locking, and parametric settlement chains",
           "SUPPORTED",
           "Forensic Bitwise & Structural Audit Supplement (Case #564883754, Zenodo DOI 10.5281/zenodo.23968474) and Formal Notice of IP "
@@ -333,7 +336,8 @@ REGISTER: Tuple[Claim, ...] = (
           (("doi", "10.5281/zenodo.23968474", "AMOC forensic audit supplement"),
            ("doi", "10.5281/zenodo.23968569", "IP encumbrance notice"),
            ("doi", "10.5281/zenodo.19482796", "prior art baseline")),
-          (r"amoc|sverdrup", r"hash lock|payload fingerprint|parametric|settlement")),
+          (r"\bamoc\b|sverdrup|zenodo\.(?:23968474|23968569|19482796)",
+           r"parametric\s+(?:settlement|trigger)|ocean\s+observing\s+telemetry")),
     Claim("STAGGERED_DD", "Staggered XY4 decoupling (odd sublattice offset half a slot) preserves |+⟩ on ibm_fez "
           "chains far better than simultaneous XY4 or CPMG", "SUPPORTED",
           "8-qubit chain (owner-deposited Zenodo records): 0.946 at 8 µs, 0.888 at 16 µs, and 0.795 at 32 µs "
@@ -344,7 +348,8 @@ REGISTER: Tuple[Claim, ...] = (
           (("doi", "10.5281/zenodo.22855102", "ibm_fez controlled tests"),
            ("doi", "10.5281/zenodo.22870287", "pre-registered E1/E2, two chips"),
            ("doi", "10.1103/PhysRevApplied.18.024068", "Tripathi et al., PRApplied 18, 024068 (2022)")),
-          (r"stagger\w*", r"\bxy[48]\b|\bcpmg\b", r"dynamical decoupling")),
+          (r"stagger\w*[^.\n]{0,40}(?:decoupling|\bxy[48]\b|\bcpmg\b|\bdd\b)|(?:decoupling|\bxy[48]\b|\bcpmg\b)[^.\n]{0,40}stagger\w*",
+           r"\bxy[48]\b|\bcpmg\b", r"dynamical decoupling")),
     Claim("GA_DD", "A genetic algorithm evolves decoupling that beats staggered XY4 on hardware", "NULL",
           "Pre-registered E1 on two chips: the GA's children converged to the staggered pattern and matched "
           "staggered XY4×2 within ±0.006 at 32 µs (ibm_fez 0.836 vs 0.832; ibm_marrakesh 0.869 vs 0.863); "

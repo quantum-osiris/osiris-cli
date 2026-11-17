@@ -1082,11 +1082,35 @@ def _gap(text: str = ""):
     /gaps makes it a trusted gap that /ignite can turn into a story (the old
     one-line /gap recorded it at once -- see gaps.py, story #25)."""
     ui = osiris_ui.Canvas()
+    outcome = text.strip()
+    if "\n" in outcome or len(outcome) > 400:
+        n_lines = len(outcome.splitlines())
+        first_line = next((ln.strip() for ln in outcome.splitlines() if ln.strip()), "")[:200]
+        _intent_state.update(text=outcome, cls=intent_router.classify(outcome)[0], pasted=True)
+        _pending_suggestions.clear()
+        _pending_suggestions.update({
+            "1": f"/plan {first_line}",
+            "2": "/import",
+            "3": f"/gap {first_line[:120]}",
+            "0": "/home",
+        })
+        print("\n" + osiris_ui.notice(
+            ui, "review", "CAPABILITY GAP · MULTI-LINE PASTE REFUSED",
+            f"/gap takes a 1-line outcome statement (<= 400 chars), not a {n_lines}-line "
+            f"({len(outcome):,}-character) document.\n"
+            f"First line: {first_line}\n"
+            "Saved to session paste state so you do not need to paste it again."))
+        print(ui.actions("NEXT", [
+            ("1", "Ask the Architect for a structured plan (/plan)"),
+            ("2", "Save pasted document to Research Lab (/import)"),
+            ("3", "Start /gap using just the first line"),
+            ("0", "Home menu"),
+        ]) + "\n")
+        return
     print("\n" + ui.panel("CAPABILITY GAP · DRAFT", [
         "Five short answers. 0 cancels at any step.",
         ui.dim("A saved draft starts nothing: activate it from /gaps when it is ready.")], tone="model"))
     try:
-        outcome = text.strip()
         if outcome:
             print(f" Outcome so far: {outcome}")
             a = _ask(" 1/5 [Enter] keep it, or type a clearer one: ")
@@ -2816,11 +2840,35 @@ def _experiment(text: str = ""):
     (experiments.py). Six short answers; 0 cancels. Saved as a draft plan --
     nothing runs, submits or spends anything; hardware stays disabled."""
     ui = osiris_ui.Canvas()
+    question = text.strip()
+    if "\n" in question or len(question) > 400:
+        n_lines = len(question.splitlines())
+        first_line = next((ln.strip() for ln in question.splitlines() if ln.strip()), "")[:200]
+        _intent_state.update(text=question, cls=intent_router.classify(question)[0], pasted=True)
+        _pending_suggestions.clear()
+        _pending_suggestions.update({
+            "1": f"/plan {first_line}",
+            "2": "/import",
+            "3": f"/experiment {first_line[:120]}",
+            "0": "/home",
+        })
+        print("\n" + osiris_ui.notice(
+            ui, "review", "EXPERIMENT BRIEF · MULTI-LINE PASTE REFUSED",
+            f"/experiment takes a 1-line testable quantum question (<= 400 chars), not a {n_lines}-line "
+            f"({len(question):,}-character) document.\n"
+            f"First line: {first_line}\n"
+            "Saved to session paste state so you do not need to paste it again."))
+        print(ui.actions("NEXT", [
+            ("1", "Ask the Architect for an engineering/research plan (/plan)"),
+            ("2", "Save pasted document to Research Lab (/import)"),
+            ("3", "Start /experiment using just the first line"),
+            ("0", "Home menu"),
+        ]) + "\n")
+        return
     print("\n" + ui.panel("EXPERIMENT BRIEF · DRAFT", [
         f"{ui.marker('research')} Simulator first. Six short answers; 0 cancels.",
         ui.dim("Nothing runs from a brief: it is the plan a later, reviewed run must follow.")], tone="model"))
     try:
-        question = text.strip()
         if question:
             print(f" Question so far: {question}")
             a = _ask(" 1/6 [Enter] keep it, or type a sharper one: ")

@@ -53,7 +53,7 @@ from phase2.tesseract_map_02.tesseract_map_02 import (
     build_union_spam_calibration_circuits,
 )
 
-REPO_ROOT = Path("/home/osiris/osiris-assessment/work/osiris-cli-phase2")
+REPO_ROOT = Path(__file__).resolve().parents[1]
 OUT_DIR = REPO_ROOT / "docs" / "phase3"
 
 

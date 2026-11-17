@@ -55,6 +55,7 @@ repos/
 
 
 # osiris_nclm_cli runtime outputs (written next to REPO_ROOT by design)
+/results/
 .autoadvance/
 .osiris_state/
 auto_enhance_*.json
