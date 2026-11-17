@@ -205,11 +205,21 @@ class Probes:
             "exit_code": int(v["exit_code"]),
         }
 
+    def _resolve_subpath(self, rel: str, want_git: bool = False, want_dir: bool = False) -> Optional[str]:
+        roots = (self.base, os.path.join(self.base, "osiris-assessment", "work"))
+        for root in roots:
+            cand = os.path.join(root, rel)
+            if want_git and os.path.exists(os.path.join(cand, ".git")):
+                return cand
+            if want_dir and os.path.isdir(cand):
+                return cand
+        return None
+
     def git(self, _msg: str = "") -> Dict[str, str]:
         parts = []
         for repo in REPOS:
-            d = os.path.join(self.base, repo)
-            if not os.path.isdir(os.path.join(d, ".git")):
+            d = self._resolve_subpath(repo, want_git=True)
+            if d is None:
                 continue
             branch = _run(["git", "-C", d, "branch", "--show-current"])
             log = _run(["git", "-C", d, "log", "--oneline", "-3", "--format=%h %ad %s", "--date=short"])
@@ -235,7 +245,7 @@ class Probes:
         """The pre-registered results behind the scorecard: each named experiment's
         results file, its sha256, and the verdict block exactly as the run wrote it.
         With no experiment named, one line per evaluation file."""
-        d = os.path.join(self.base, RESULTS_DIR)
+        d = self._resolve_subpath(RESULTS_DIR, want_dir=True) or os.path.join(self.base, RESULTS_DIR)
         try:
             names = sorted(n for n in os.listdir(d) if n.endswith(".json"))
         except OSError:

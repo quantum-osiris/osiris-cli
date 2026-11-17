@@ -131,3 +131,30 @@ def test_experiment_and_gap_refuse_multiline_document_paste_cleanly(monkeypatch,
     out_gap = capsys.readouterr().out
     assert "MULTI-LINE PASTE REFUSED" in out_gap
     assert otc._pending_suggestions["2"] == "/import"
+
+
+def test_probes_and_knowledge_discover_osiris_assessment_work_layout(tmp_path):
+    from osiris_cli.knowledge import Knowledge
+    from osiris_cli.probes import Probes
+
+    work = tmp_path / "osiris-assessment" / "work"
+    res_dir = work / "organism_sim" / "results"
+    res_dir.mkdir(parents=True)
+    (res_dir / "m1_eval_seeds0-4.json").write_text('{"verdict": true}', encoding="utf-8")
+    (work / "organism_sim" / "README.md").write_text(
+        "# organism_sim\n\n<!-- scorecard:start -->\n| experiment | verdict |\n|---|---|\n| m1 | PASS |\n<!-- scorecard:end -->\n",
+        encoding="utf-8",
+    )
+    # Simulate a git worktree where .git is a file rather than a directory
+    (work / "osiris-cli").mkdir(parents=True)
+    (work / "osiris-cli" / ".git").write_text("gitdir: /tmp/fake\n", encoding="utf-8")
+
+    p = Probes(str(tmp_path), base=str(tmp_path))
+    assert p._resolve_subpath("osiris-cli", want_git=True) == str(work / "osiris-cli")
+    ev = p.evidence("scorecard evidence")
+    assert "m1_eval_seeds0-4.json" in ev["out"] and "verdict: PASS" in ev["out"]
+
+    kb = Knowledge(living_home=str(tmp_path / "living"), base=str(tmp_path))
+    assert len(kb.texts) >= 1
+    assert any("m1: PASS" in r for r in kb.on_record("what did m1 find?"))
+
