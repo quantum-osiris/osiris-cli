@@ -1,6 +1,6 @@
 {
   "contract": "osiris-ide-api",
-  "api_version": "1.4.0",
+  "api_version": "1.5.0",
   "compatibility": "Clients must check api_version from GET /api/v1/meta and refuse a different MAJOR version. MINOR versions only add optional fields.",
   "transport": {
     "bind": "127.0.0.1 or ::1 only",
@@ -22,7 +22,7 @@
   "routes": {
     "GET /api/v1/meta": {
       "response": {"type": "object", "required": ["api_version", "service", "github_writes_via_api", "evidence_labels"],
-        "properties": {"api_version": {"const": "1.4.0"}, "service": {"const": "osiris-ide-api"},
+        "properties": {"api_version": {"const": "1.5.0"}, "service": {"const": "osiris-ide-api"},
           "contract_sha256": {"type": ["string", "null"]}, "github_writes_via_api": {"const": false},
           "evidence_labels": {"type": "array", "items": {"type": "string"}}}}
     },
@@ -118,6 +118,7 @@
     "POST /api/v1/files/save": {"request": {"type": "object", "required": ["user_token", "file_id", "base_revision", "content"], "properties": {"base_revision": {"type": "integer"}}}, "response": {"type": "object", "required": ["status"], "properties": {"status": {"enum": ["SAVED", "CONFLICT"]}, "file": {"type": "object", "required": ["id", "project_id", "path", "revision", "content_sha256"], "properties": {"revision": {"type": "integer"}, "content_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}}}, "current": {"type": "object", "required": ["id", "project_id", "path", "revision", "content_sha256"], "properties": {"revision": {"type": "integer"}, "content_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}}}}}},
     "POST /api/v1/files/delete": {"request": {"type": "object", "required": ["user_token", "file_id"]}, "response": {"type": "object", "required": ["deleted"]}},
     "POST /api/v1/files/run": {"request": {"type": "object", "required": ["user_token", "file_id", "revision"], "properties": {"revision": {"type": "integer"}, "shots": {"type": "integer"}, "seed": {"type": "integer"}}}, "response": {"type": "object", "required": ["status", "executed"], "properties": {"status": {"enum": ["COMPLETED", "REJECTED", "FAILED", "REVISION_MISMATCH"]}, "executed": {"type": "boolean"}, "evidence_class": {"const": "SIMULATED"}, "hardware": {"const": false}, "source_binding": {"type": ["object", "null"], "required": ["project_id", "file_id", "path", "revision", "content_sha256"]}}}},
+    "POST /api/v1/files/rename": {"request": {"type": "object", "required": ["user_token", "file_id", "base_revision", "path"], "properties": {"base_revision": {"type": "integer"}, "path": {"type": "string"}}}, "response": {"type": "object", "required": ["status"], "properties": {"status": {"enum": ["RENAMED", "CONFLICT"]}, "file": {"type": "object"}, "current": {"type": "object"}}}},
     "POST /api/v1/notebook/run": {"request": {"type": "object", "required": ["user_token", "file_id", "revision", "cell_id"], "properties": {"revision": {"type": "integer"}, "cell_id": {"type": "string"}, "shots": {"type": "integer"}, "seed": {"type": "integer"}}}, "response": {"type": "object", "required": ["status", "executed"], "properties": {"status": {"enum": ["COMPLETED", "REJECTED", "FAILED", "REVISION_MISMATCH"]}, "executed": {"type": "boolean"}, "evidence_class": {"const": "SIMULATED"}, "hardware": {"const": false}, "source_binding": {"type": ["object", "null"], "required": ["project_id", "file_id", "path", "revision", "content_sha256", "notebook_format", "cell_id", "cell_source_sha256"]}}}},
     "POST /api/v1/files/runs": {"request": {"type": "object", "required": ["user_token", "file_id"]}, "response": {"type": "object", "required": ["file_id", "chain_valid", "runs"], "properties": {"runs": {"type": "array"}}}},
     "POST /api/v1/assist": {"request": {"type": "object", "required": ["action"], "properties": {"action": {"enum": ["explain_selection", "explain_diagnostic", "propose_change", "generate_example"]}, "allow_cloud": {"type": "boolean"}}}, "response": {"type": "object", "required": ["status", "action", "text", "proposed_source", "proposal_compiles", "route", "applied"], "properties": {"status": {"enum": ["ANSWERED", "UNAVAILABLE"]}, "applied": {"const": false}, "route": {"type": "object"}}}}

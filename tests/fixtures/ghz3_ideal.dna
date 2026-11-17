@@ -1,0 +1,13 @@
+// Ideal 3-qubit GHZ: H on q0, then CX q0->q1, CX q1->q2. Measured in the computational basis.
+// Ideal outcome support is {000, 111}, each with probability 1/2. Fixture for tests only.
+organism GHZ3 {
+  gene ghz() on a, b, c {
+    helix a;
+    bond a, b;
+    bond b, c;
+    cleave a -> ca;
+    cleave b -> cb;
+    cleave c -> cc;
+  }
+  genome { ghz() @ [0, 1, 2]; }
+}
