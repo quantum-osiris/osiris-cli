@@ -317,6 +317,37 @@ def check_suite(tasks, run=None):
     return problems
 
 
+OLLAMA_TAGS_URL = "http://localhost:11434/api/tags"
+
+
+def ollama_preflight(model, fetch=None):
+    """None when the Ollama daemon answers and `model` is installed; otherwise
+    a one-line diagnosis naming the cause (daemon unreachable, unreadable
+    model list, or model not installed with the installed names). `fetch`
+    returns the raw /api/tags body (injected by tests)."""
+    if fetch is None:
+        import urllib.request
+
+        def fetch():
+            with urllib.request.urlopen(OLLAMA_TAGS_URL, timeout=1.5) as r:
+                return r.read()
+    try:
+        body = fetch()
+    except Exception as e:
+        return (f"Backend ollama is unreachable at {OLLAMA_TAGS_URL} ({e}). "
+                f"Start ollama or use --backend gemini.")
+    try:
+        installed = sorted(m["name"] for m in json.loads(body)["models"] if m.get("name"))
+    except (ValueError, KeyError, TypeError) as e:
+        return f"Backend ollama answered {OLLAMA_TAGS_URL} with an unreadable model list ({e})."
+    if not model:
+        return "No Ollama model selected (pass --model or set OSIRIS_CODE_MODEL)."
+    if model in installed or f"{model}:latest" in installed:
+        return None
+    return (f"Ollama model '{model}' is not installed (every call would return HTTP 404). "
+            f"Installed: {', '.join(installed) or 'none'}. Run 'ollama pull {model}' or pick one with --model.")
+
+
 def run_suite(tasks, k=1, backend="auto", model=None, runner=None, on_task=None):
     """Runs tasks in order. Each finished task is handed to on_task (which
     persists it) BEFORE the next one starts. Ctrl-C while a task runs stops
@@ -476,15 +507,14 @@ def main(argv=None) -> int:
     print(f"Backend {args.backend}{f' ({model})' if model else ''}, k={args.k}")
 
     if args.backend == "ollama":
-        # Preflight: refuse to start or log to ledger if backend is unreachable
-        import urllib.request
-        try:
-            with urllib.request.urlopen("http://localhost:11434/api/tags", timeout=1.5):
-                pass
-        except Exception as e:
-            print(f"[!] Backend ollama is unreachable at http://localhost:11434 ({e}).\n"
-                  f"    Refusing to execute to prevent evidence ledger contamination.\n"
-                  f"    Start ollama or use --backend gemini.", file=sys.stderr)
+        # Preflight: refuse to start or log to the ledger if the daemon is
+        # unreachable OR the requested model is not installed. Ollama answers
+        # a missing model with HTTP 404 on every call, which would otherwise be
+        # recorded as a "complete" round of coding failures.
+        problem = ollama_preflight(model)
+        if problem:
+            print(f"[!] {problem}\n"
+                  f"    Refusing to execute to prevent evidence ledger contamination.", file=sys.stderr)
             return 1
     elif args.backend == "gemini":
         osiris = _load_osiris()

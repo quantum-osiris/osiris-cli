@@ -64,6 +64,10 @@ MIN_MENTOR_CANDIDATES = 9  # ... or overall
 Z95 = 1.959964
 COMPATIBLE_RUNNERS = {
     "d18f87f49f03cb0911164e178cc79ac42c74267b8429aa64c1b68d5e39469b26",  # v4.3.0 baseline runner
+    # 3cf2cb42 runner. Its successor differs only in osiris_bench.main()'s
+    # pre-run Ollama preflight (model-installed check); prompts, the candidate
+    # loop and the gates are byte-identical, so rounds stay comparable.
+    "e48927f381297e3d05f7f0e9c42226548c905998390939293bdf45fb720d8f96",
 }
 
 

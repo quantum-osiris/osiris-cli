@@ -115,7 +115,10 @@ def test_bench_preflight_blocks_missing_ollama_model_without_running_round(capsy
 
 def test_protege_excludes_http_404_missing_model_from_coding_failure_scorecard(tmp_path):
     assert osiris_bench.runner_sha256() == protege.current_runner()
-    assert osiris_bench.runner_sha256() == "e48927f381297e3d05f7f0e9c42226548c905998390939293bdf45fb720d8f96"
+    # Drift tripwire: a runner change must be deliberate. e48927f3 (3cf2cb42) is kept
+    # comparable via COMPATIBLE_RUNNERS; only main()'s pre-run preflight changed.
+    assert osiris_bench.runner_sha256() == "af49b2bd7707c36ff94cc0f87d307846294afefb5a35cb808f8524d41e53264c"
+    assert "e48927f381297e3d05f7f0e9c42226548c905998390939293bdf45fb720d8f96" in protege.COMPATIBLE_RUNNERS
 
     suite, runner = "a" * 64, "b" * 64
     prev = protege.GENESIS
