@@ -128,11 +128,14 @@ class GitHubBridge:
             }
 
         try:
+            env = dict(os.environ, GH_PROMPT_DISABLED="1", GH_NO_UPDATE_NOTIFIER="1", NO_COLOR="1")
             res = subprocess.run(
                 [self.gh_binary, "auth", "status"],
                 capture_output=True,
                 text=True,
-                check=False
+                check=False,
+                timeout=DEFAULT_TIMEOUT_S,
+                env=env,
             )
             # gh auth status exits 0 when fully authenticated
             is_auth = (res.returncode == 0)
@@ -167,74 +170,57 @@ class GitHubBridge:
 
     def list_prs(self, limit: int = 10) -> Dict[str, Any]:
         """List open pull requests (Read-Only tier)."""
-        if not self.is_installed():
-            return {"status": "ERROR", "reason": "gh CLI not installed"}
-
+        r = self.run_gh([
+            "pr", "list",
+            "--limit", str(limit),
+            "--json", "number,title,state,headRefName,url,updatedAt",
+        ])
+        if not r["ok"]:
+            return {"status": "ERROR", "kind": r["kind"], "reason": r["stderr"] or "Failed to list PRs"}
         try:
-            cmd = [
-                self.gh_binary, "pr", "list",
-                "--limit", str(limit),
-                "--json", "number,title,state,headRefName,url,updatedAt"
-            ]
-            res = subprocess.run(cmd, capture_output=True, text=True, check=False)
-            if res.returncode != 0:
-                return {"status": "ERROR", "reason": res.stderr.strip() or "Failed to list PRs"}
-            prs = json.loads(res.stdout) if res.stdout.strip() else []
+            prs = json.loads(r["stdout"]) if r["stdout"].strip() else []
             return {"status": "SUCCESS", "prs": prs}
         except Exception as e:
-            return {"status": "ERROR", "reason": str(e)}
+            return {"status": "ERROR", "kind": "BAD_RESPONSE", "reason": redact(str(e))}
 
     def view_pr(self, pr_id: Union[int, str]) -> Dict[str, Any]:
         """View PR details avoiding classic projectCards GraphQL issues (Read-Only tier)."""
-        if not self.is_installed():
-            return {"status": "ERROR", "reason": "gh CLI not installed"}
-
+        r = self.run_gh([
+            "pr", "view", str(pr_id),
+            "--json", "number,title,state,headRefName,baseRefName,url,body",
+        ])
+        if not r["ok"]:
+            return {"status": "ERROR", "kind": r["kind"], "reason": r["stderr"] or f"Failed to view PR #{pr_id}"}
         try:
-            cmd = [
-                self.gh_binary, "pr", "view", str(pr_id),
-                "--json", "number,title,state,headRefName,baseRefName,url,body"
-            ]
-            res = subprocess.run(cmd, capture_output=True, text=True, check=False)
-            if res.returncode != 0:
-                return {"status": "ERROR", "reason": res.stderr.strip() or f"Failed to view PR #{pr_id}"}
-            pr_data = json.loads(res.stdout) if res.stdout.strip() else {}
+            pr_data = json.loads(r["stdout"]) if r["stdout"].strip() else {}
             return {"status": "SUCCESS", "pr": pr_data}
         except Exception as e:
-            return {"status": "ERROR", "reason": str(e)}
+            return {"status": "ERROR", "kind": "BAD_RESPONSE", "reason": redact(str(e))}
 
     def checks_pr(self, pr_id: Union[int, str]) -> Dict[str, Any]:
         """View CI/CD check runs for a PR (Read-Only tier)."""
         if not self.is_installed():
             return {"status": "ERROR", "reason": "gh CLI not installed"}
-
-        try:
-            cmd = [self.gh_binary, "pr", "checks", str(pr_id)]
-            res = subprocess.run(cmd, capture_output=True, text=True, check=False)
-            return {
-                "status": "SUCCESS" if res.returncode == 0 else "FAILED",
-                "output": (res.stdout or res.stderr).strip()
-            }
-        except Exception as e:
-            return {"status": "ERROR", "reason": str(e)}
+        r = self.run_gh(["pr", "checks", str(pr_id)])
+        return {
+            "status": "SUCCESS" if r["ok"] else "FAILED",
+            "output": (r["stdout"] or r["stderr"]).strip(),
+        }
 
     def list_repos(self, limit: int = 10) -> Dict[str, Any]:
         """List repositories for authenticated user (Read-Only tier)."""
-        if not self.is_installed():
-            return {"status": "ERROR", "reason": "gh CLI not installed"}
-
+        r = self.run_gh([
+            "repo", "list",
+            "--limit", str(limit),
+            "--json", "nameWithOwner,isPrivate,updatedAt,url",
+        ])
+        if not r["ok"]:
+            return {"status": "ERROR", "kind": r["kind"], "reason": r["stderr"] or "Failed to list repos"}
         try:
-            cmd = [
-                self.gh_binary, "repo", "list",
-                "--limit", str(limit),
-                "--json", "nameWithOwner,isPrivate,updatedAt,url"
-            ]
-            res = subprocess.run(cmd, capture_output=True, text=True, check=False)
-            if res.returncode != 0:
-                return {"status": "ERROR", "reason": res.stderr.strip() or "Failed to list repos"}
-            repos = json.loads(res.stdout) if res.stdout.strip() else []
+            repos = json.loads(r["stdout"]) if r["stdout"].strip() else []
             return {"status": "SUCCESS", "repos": repos}
         except Exception as e:
-            return {"status": "ERROR", "reason": str(e)}
+            return {"status": "ERROR", "kind": "BAD_RESPONSE", "reason": redact(str(e))}
 
     def merge_pr(self, pr_id: Union[int, str], grant_id: Optional[str] = None) -> Dict[str, Any]:
         """
