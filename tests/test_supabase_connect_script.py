@@ -37,8 +37,8 @@ def test_apply_remote_migrations_idempotently_applies_both_sql_files() -> None:
 
     res = _MOD.apply_remote_migrations("sbp_test_token", http=fake_mgmt)
     assert res["applied_migrations"] == [
-        "20261116120000_osiris_workspace.sql",
-        "20261116130000_osiris_workspace_ownership_and_lifecycle.sql",
+        "20261116145612_osiris_workspace.sql",
+        "20261116145623_osiris_workspace_ownership_and_lifecycle.sql",
     ]
     assert len(queries) == 5
 

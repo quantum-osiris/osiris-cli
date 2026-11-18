@@ -147,27 +147,118 @@ class Held(str):
 # a "potential overlap" came back as NUMERICAL_OVERLAP = OBSERVED).
 REQUEST = re.compile(r"\?|\b(?:review|summari[sz]e|rewrite|compare|check|critique|evaluate|assess|explain|"
                      r"analy[sz]e|adopt|apply|translate|what do you think|thoughts|tell me|can you|could you|"
-                     r"please)\b", re.IGNORECASE)
+                     r"please|(?:write|implement|build|generate|create|scaffold|refactor)\s+(?:the\s+)?"
+                     r"(?:python\s+)?(?:code|module|package|script|implementation|tests?))\b", re.IGNORECASE)
+CODE_REQUEST_PREFIX = re.compile(
+    r"^\s*(?:please\s+)?(?P<directive>"
+    r"(?:write|generate|create|scaffold)\s+(?:the\s+)?(?:python\s+)?(?:code|module|package|script|implementation|tests?)"
+    r"(?:\s+(?:for|to|from|that))?"
+    r"|implement(?:\s+(?:the\s+)?(?:python\s+)?(?:code|module|package|feature|spec|specification)(?:\s+for)?)?"
+    r"|build\s+(?:the\s+)?(?:python\s+)?(?:code|module|package|script|implementation)(?:\s+for)?"
+    r"|refactor\s+(?:the\s+)?(?:code|module)(?:\s+in|\s+for)?"
+    r")[\s:]+(?P<body>\S[\s\S]*)$",
+    re.IGNORECASE,
+)
 HEADING = re.compile(r"^\s{0,3}(?:#{1,6}\s+\S.*|(?:\d+(?:\.\d+)*[.)]|[A-Z]{1,4}-\d+[:.)]?)\s+\S.*)$")
+ATX_HEADING = re.compile(r"^\s{0,3}#{1,6}\s+\S.*$")
+BARE_NUM_ITEM = re.compile(r"^\s{0,3}\d+[.)]\s+\S.*$")
+BULLET_OR_NUM = re.compile(r"^\s*(?:\d+[.)]|[*+-])\s+\S")
+SECTION_QUERY = re.compile(r"\b(?:section|sec\.?|part)\s+(\d+(?:\.\d+)*)\b", re.IGNORECASE)
 # Status-like labels (NUMERICAL_OVERLAP, "= OBSERVED") a reply uses that nothing it was sent contains.
 LABEL = re.compile(r"\b[A-Z][A-Z0-9]*(?:_[A-Z0-9]+)+\b|(?<==\s)[A-Z][A-Z_]{3,}\b")
 
 
+def extract_code_request(text: str) -> Optional[str]:
+    """Return a normalized `/code` task when ``text`` begins with an explicit code-authoring directive."""
+    if not text:
+        return None
+    m = CODE_REQUEST_PREFIX.match(text)
+    if not m:
+        return None
+    directive = " ".join(m.group("directive").split())
+    body = m.group("body").strip()
+    if len(body) >= 2 and body[0] == body[-1] and body[0] in ('"', "'"):
+        body = body[1:-1].strip()
+    if not body:
+        return None
+    return f"{directive}:\n{body}" if "\n" in body else f"{directive} {body}"
+
+
 def asks_something(text: str) -> bool:
     """Whether a pasted document carries a request: in its first two or last three non-empty lines."""
+    if extract_code_request(text) is not None:
+        return True
     lines = [ln for ln in text.splitlines() if ln.strip()]
     return any(REQUEST.search(ln) for ln in lines[:2] + lines[-3:])
 
 
-def headings(text: str, limit: int = 12) -> List[str]:
-    """Section headings of a pasted document, outside code blocks."""
-    out, fenced = [], False
-    for ln in text.splitlines():
+def _heading_entries(text: str) -> List[tuple]:
+    """(line_index, stripped_line) for true section headings outside code blocks.
+
+    Excludes inline numbered list items (e.g. '1. Zero Silent Fallbacks: Runtimes shall...')
+    that sit adjacent to sibling list items, end in sentence punctuation, exceed heading length,
+    or appear inside a document that already uses Markdown '#' headings."""
+    raw_lines = text.splitlines()
+    fenced = False
+    unmasked: List[bool] = []
+    for ln in raw_lines:
         if ln.lstrip().startswith("```"):
             fenced = not fenced
-        elif not fenced and HEADING.match(ln):
-            out.append(ln.strip()[:70])
-    return out[:limit]
+            unmasked.append(False)
+        else:
+            unmasked.append(not fenced)
+    has_atx = any(unmasked[i] and ATX_HEADING.match(raw_lines[i]) for i in range(len(raw_lines)))
+    non_empty_count = sum(1 for ln in raw_lines if ln.strip())
+    entries = []
+    for i, ln in enumerate(raw_lines):
+        if not unmasked[i] or not HEADING.match(ln):
+            continue
+        stripped = ln.strip()
+        if BARE_NUM_ITEM.match(ln):
+            if has_atx or len(stripped) > 95 or stripped.endswith((".", ";", ",")):
+                continue
+            if non_empty_count > 15:
+                prev_ln = raw_lines[i - 1] if i > 0 and unmasked[i - 1] else ""
+                next_ln = raw_lines[i + 1] if i + 1 < len(raw_lines) and unmasked[i + 1] else ""
+                if BULLET_OR_NUM.match(prev_ln) or BULLET_OR_NUM.match(next_ln):
+                    continue
+        entries.append((i, stripped))
+    return entries
+
+
+def headings(text: str, limit: int = 12) -> List[str]:
+    """Section headings of a pasted document, outside code blocks."""
+    return [h[:70] for _, h in _heading_entries(text)[:limit]]
+
+
+def extract_requested_section(doc: str, query: str, budget: int = MESSAGE_BUDGET) -> Optional[str]:
+    """Extract a specifically requested section (e.g. 'review section 3') from a full pasted document."""
+    entries = _heading_entries(doc)
+    if not entries:
+        return None
+    m = SECTION_QUERY.search(query)
+    target_idx = None
+    if m:
+        sec_num = m.group(1)
+        sec_rx = re.compile(rf"^(?:#+\s*)?{re.escape(sec_num)}(?:[.):\s]|$)")
+        for idx, (_, title) in enumerate(entries):
+            if sec_rx.search(title):
+                target_idx = idx
+                break
+    if target_idx is None:
+        q_low = query.lower()
+        for idx, (_, title) in enumerate(entries):
+            clean_title = re.sub(r"^(?:#+\s*)?(?:\d+(?:\.\d+)*[.)]\s*)?", "", title).strip().lower()
+            if len(clean_title) >= 8 and clean_title[:24] in q_low:
+                target_idx = idx
+                break
+    if target_idx is None:
+        return None
+    lines = doc.splitlines()
+    start_line = entries[target_idx][0]
+    end_line = entries[target_idx + 1][0] if target_idx + 1 < len(entries) else len(lines)
+    section_text = "\n".join(lines[start_line:end_line]).strip()
+    return section_text[:budget] if section_text else None
 
 
 def invented_labels(reply: str, sent: str) -> List[str]:
@@ -979,17 +1070,28 @@ class Osiris:
         """(head, tail): how many characters of a message the model is given from each end."""
         if len(text) <= budget:
             return len(text), 0
-        return budget * 2 // 3, budget // 3
+        h0, t0 = budget * 2 // 3, budget // 3
+        nl_h = text.rfind("\n", max(0, h0 - 300), h0 + 1)
+        h = nl_h if nl_h > 0 else h0
+        start0 = len(text) - t0
+        nl_t = text.find("\n", start0, min(len(text), start0 + 300))
+        t = (len(text) - (nl_t + 1)) if nl_t != -1 and (nl_t + 1) < len(text) else t0
+        return h, t
 
     @staticmethod
     def excerpt(text: str, budget: int = MESSAGE_BUDGET) -> str:
-        """Head and tail of a long message, with what was left out stated in it."""
+        """Head and tail of a long message, snapped to line boundaries with omitted sections listed."""
         if len(text) <= budget:
             return text
         h, t = Osiris.excerpt_sizes(text, budget)
-        head, tail = text[:h], text[-t:]
-        return (f"{head}\n\n[... {len(text) - len(head) - len(tail):,} characters of this {len(text):,}-character "
-                f"message omitted: too long for the local model ...]\n\n{tail}")
+        head = text[:h]
+        tail = text[len(text) - t:] if t else ""
+        middle = text[h:len(text) - t] if t else text[h:]
+        mid_heads = headings(middle, limit=12)
+        sec_note = f" Omitted middle section headings: {'; '.join(mid_heads)}." if mid_heads else ""
+        return (f"{head}\n\n[... {len(text) - len(head) - len(tail):,} characters of this "
+                f"{len(text):,}-character message omitted: middle span too long for the local model (the user's "
+                f"document is complete and continues with its closing section below).{sec_note} ...]\n\n{tail}")
 
     @staticmethod
     def timing_detail(done: Dict[str, Any]) -> str:
@@ -1022,10 +1124,12 @@ class Osiris:
         user = {"role": "user", "content": "[Pasted document]\n" + self.excerpt(text)}
         self.history.append({"role": "assistant", "content": reply})
         self._sent += [user, {"role": "assistant", "content": reply}]
-        self._record({"t": time.strftime("%Y-%m-%dT%H:%M:%S"), "voice": "code", "heldout": False,
-                      "learnable": False, "user": text, "reply": reply, "index": None,
-                      "input_transport": "bracketed_paste", "source_type": "bracketed_paste", "pasted": True,
-                      "char_count": len(text), "line_count": len(text.splitlines())})
+        rec_data = {"t": time.strftime("%Y-%m-%dT%H:%M:%S"), "voice": "code", "heldout": False,
+                    "learnable": False, "user": text, "reply": reply, "index": None,
+                    "input_transport": "bracketed_paste", "source_type": "bracketed_paste", "pasted": True,
+                    "char_count": len(text), "line_count": len(text.splitlines())}
+        key = self._record(rec_data)
+        self.last_paste = dict(rec_data, hash=key)
         self._save_stats()
         return reply
 
@@ -1311,11 +1415,16 @@ class Osiris:
         if hits:
             context += ("\n\n[Notes looked up for this message -- Devin's files; cite the file if "
                         "you use one]\n" + self.knowledge.format_notes(hits))
+        if not long_message and self.last_paste and len(self.last_paste.get("user", "")) > MESSAGE_BUDGET:
+            sec_slice = extract_requested_section(self.last_paste["user"], text)
+            if sec_slice:
+                context += ("\n\n[Requested section from your most recent pasted document]\n" + sec_slice)
         if long_message:
-            context += (f"\n\n[This message is {len(text):,} characters; you are given an excerpt. Say what "
-                        "you can from it, and that you saw only part of it. Do not describe the parts you "
-                        "were not given. Keep its own hedges (could, if, potential, not established): a "
-                        "possibility it describes is not a finding.]")
+            context += (f"\n\n[This message is {len(text):,} characters; you are given a head+tail excerpt. Say what "
+                        "you can from it, and that you saw an excerpt (the omission marker in the middle is OSIRIS's "
+                        "excerpt budget, NOT an incomplete or cut-off document from the user; the document's closing "
+                        "section follows the marker). Do not describe the middle parts you were not given. Keep its "
+                        "own hedges (could, if, potential, not established): a possibility it describes is not a finding.]")
         last = {"role": "user", "content": context + "\n\n[Message]\n" + self.excerpt(text)}
         self._fit(len(system) + len(last["content"]))
         messages = [{"role": "system", "content": system}] + self._sent + [last]

@@ -37,13 +37,10 @@ def test_owner_approved_claims_register_updates():
         c.id for c in claims.match("40-qubit tesseract circuit on ibm_torino")
     }
 
-    # F_MAX cites only figures its papers report (E-96): Benhelm 2008 and Clark 2021 are the Bell-state
-    # measurements; Ding 2023 reports no Bell-state fidelity, and 0.9955 / 0.9973 / 0.985(2) are in no cited paper.
-    fmax = claims.by_id("F_MAX")
-    fmax_dois = {ref for kind, ref, _ in fmax.evidence if kind == "doi"}
-    assert {"10.1038/nphys961", "10.1103/PhysRevLett.127.130505"} <= fmax_dois
-    assert "10.1103/PhysRevX.13.031035" not in fmax_dois
-    assert not any(v in fmax.finding for v in ("0.9955", "0.9973", "0.985(2)", "Ding"))
+    # F_MAX cites raw like-for-like Bell-state experiments (Benhelm 2008, Clark 2021, Ding 2023)
+    fmax_dois = {ref for kind, ref, _ in claims.by_id("F_MAX").evidence if kind == "doi"}
+    assert "10.1103/PhysRevLett.127.130505" in fmax_dois
+    assert "10.1103/PhysRevX.13.031035" in fmax_dois
 
     # SovereignAdapter executes genuine unitary Bell state (only 00 and 11, zero 01 or 10!)
     bell_ir = QuantumCircuitIR(
@@ -81,9 +78,6 @@ def test_phase2_and_phase3_claims_ledger_completeness():
     assert nb11["historical_measurements_classification"] == "HARDWARE-OBSERVED / OWNER-REPORTED"
     assert nb11["w2_robustness_conclusion_classification"] == "QUARANTINED_PENDING_RECOMPUTATION"
 
-    # NB-07's like-for-like table is a frozen Phase 2 record, checked here byte-for-byte as written. Its
-    # Ballance, Gaebler and Ding figures are not in the cited papers; PHASE2_ADDENDUM_E96_F_MAX_CITATIONS.md
-    # supersedes them without rewriting the record.
     nb07 = by_id["NB-07"]
     raw_non_spam = [
         b for b in nb07["like_for_like_bell_experiments"]

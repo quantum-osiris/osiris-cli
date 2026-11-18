@@ -69,6 +69,69 @@ def test_mwpm_corrects_all_weight_t_data_and_measurement_faults() -> None:
                 assert _QEC.decode_shot_mwpm(dec, syn, np.ones(d, dtype=np.uint8)) == 1
 
 
+def test_bp_osd_corrects_single_data_and_measurement_faults() -> None:
+    for d in (3, 5, 7):
+        dec = _QEC.build_bp_decoder(distance=d, rounds=3)
+        for logical in (0, 1):
+            base = np.full(d, logical, dtype=np.uint8)
+            for site in range(d):
+                data = base.copy()
+                data[site] ^= 1
+                assert _QEC.decode_shot_bp(dec, np.zeros((3, d - 1), dtype=np.uint8), data) == logical
+
+            for round_index in range(3):
+                for check in range(d - 1):
+                    syndromes = np.zeros((3, d - 1), dtype=np.uint8)
+                    syndromes[round_index, check] = 1
+                    assert _QEC.decode_shot_bp(dec, syndromes, base) == logical
+
+
+def test_bp_osd_zero_fallback_returns_detector_consistent_estimate() -> None:
+    dec = _QEC.build_bp_decoder(distance=7, rounds=5)
+    rng = np.random.default_rng(20261116)
+    faults = (rng.random(len(dec.edge_detectors)) < 0.02).astype(np.uint8)
+    target = _QEC._fault_syndrome(dec, faults)
+    estimate = _QEC.decode_faults_bp(dec, target, max_iterations=1)
+    assert np.array_equal(_QEC._fault_syndrome(dec, estimate), target)
+
+
+def test_bp_decoder_rejects_malformed_detector_syndromes() -> None:
+    dec = _QEC.build_bp_decoder(distance=3, rounds=1)
+    with pytest.raises(ValueError, match="binary vector"):
+        _QEC.decode_faults_bp(dec, np.array([0, 2, 0, 0], dtype=np.uint8))
+
+
+def test_bp_osd_supports_hypergraph_parity_checks() -> None:
+    parity_checks = np.array(
+        [
+            [1, 1, 0],
+            [1, 0, 1],
+            [1, 1, 1],
+        ],
+        dtype=np.uint8,
+    )
+    dec = _QEC.build_bp_decoder_from_parity_checks(parity_checks, [0.02, 0.03, 0.04])
+    assert len(dec.edge_detectors[0]) == 3
+
+    target = np.array([1, 1, 1], dtype=np.uint8)
+    estimate = _QEC.decode_faults_bp(dec, target)
+    reconstructed = (parity_checks @ estimate) % 2
+    assert np.array_equal(reconstructed, target)
+
+
+def test_repetition_evaluator_adds_bp_metrics_only_when_requested() -> None:
+    counts = {"00000": 8}
+    without_bp = _QEC.evaluate_repetition_counts(counts, distance=3, rounds=1, logical_state=0)
+    assert "p_logical_bp_osd" not in without_bp
+
+    bp_decoder = _QEC.build_bp_decoder(distance=3, rounds=1)
+    with_bp = _QEC.evaluate_repetition_counts(
+        counts, distance=3, rounds=1, logical_state=0, bp_decoder=bp_decoder
+    )
+    assert with_bp["bp_osd_logical_errors"] == 0.0
+    assert with_bp["p_logical_bp_osd"] == 0.0
+
+
 def test_subthreshold_exponential_logical_error_suppression_across_d3_d5_d7() -> None:
     noise = NoiseModel()
     noise.add_all_qubit_quantum_error(depolarizing_error(0.002, 1), ["x", "sx", "h"])

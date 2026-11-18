@@ -306,3 +306,15 @@ def test_end_to_end_project_task_council_proposal_persisted_and_retrieved(server
                for d in proj["osiris_dispositions"])
     assert "test-service-key" not in json.dumps(detail_resp)
 
+
+
+def test_qiskit_operations_share_one_worker_thread():
+    """Regression: simulations from successive request threads segfaulted qiskit (see QISKIT_OPERATIONS)."""
+    import threading
+    seen = []
+    for _ in range(3):
+        t = threading.Thread(target=lambda: seen.append(ide_api.qiskit_worker().submit(threading.get_ident)))
+        t.start(); t.join()
+    assert len(set(seen)) == 1
+    assert {"compile", "run_slice", "files_run", "notebook_run"} <= ide_api.QISKIT_OPERATIONS
+    assert set(ide_api.QISKIT_OPERATIONS) <= set(ide_api.ROUTES.values())

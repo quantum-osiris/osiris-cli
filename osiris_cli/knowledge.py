@@ -64,7 +64,20 @@ def _sources(living_home: str, base: str) -> List[str]:
             listed = json.load(f).get("sources") or DEFAULT_SOURCES
     except (OSError, ValueError):
         listed = DEFAULT_SOURCES
-    return [p if os.path.isabs(p) else os.path.join(base, p) for p in listed]
+    resolved = []
+    roots = (base, os.path.join(base, "osiris-assessment", "work"), os.path.join(base, "osiris-assessment"))
+    for p in listed:
+        if os.path.isabs(p):
+            resolved.append(p)
+            continue
+        chosen = os.path.join(base, p)
+        for r in roots:
+            cand = os.path.join(r, p)
+            if os.path.isfile(cand):
+                chosen = cand
+                break
+        resolved.append(chosen)
+    return resolved
 
 
 def chunk_markdown(text: str) -> List[tuple]:
@@ -157,7 +170,7 @@ class Knowledge:
 
     def brief(self) -> str:
         parts = ["Devin's projects:\n" + PROJECTS]
-        for src in sorted(self.texts, key=lambda k: k != SCORECARD_SOURCE):
+        for src in sorted(self.texts, key=lambda k: not k.endswith(SCORECARD_SOURCE)):
             verdicts = scorecard_verdicts(self.texts[src])
             if verdicts:
                 parts.append(f"Pre-registered results so far (from {src}, generated from "
@@ -173,7 +186,7 @@ class Knowledge:
         case and '-' vs ' ' ("substrate opt 2" finds "substrate-opt-2")."""
         flat = " " + re.sub(r"[-_]", " ", text.lower()) + " "
         rows = []
-        for src in sorted(self.texts, key=lambda k: k != SCORECARD_SOURCE):
+        for src in sorted(self.texts, key=lambda k: not k.endswith(SCORECARD_SOURCE)):
             for row in scorecard_verdicts(self.texts[src]):
                 name = re.sub(r"[-_]", " ", row.split(":")[0].lower()).strip()
                 if name and re.search(r"(?<![\w])" + re.escape(name) + r"(?![\w])", flat):

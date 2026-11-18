@@ -361,7 +361,12 @@ def test_owner_and_server_columns_cannot_be_forged(stack):
         raw("POST", "/osiris_projects", b["access_token"], {"name": "x", "owner_id": a["user"]["id"]})
     assert e.value.code == "FORBIDDEN"
     p = s.create_project(a["access_token"], "Forge")
-    assert raw("PATCH", f"/osiris_projects?id=eq.{p['id']}", b["access_token"], {"owner_id": b["user"]["id"]}) == []
+    for tok in (a["access_token"], b["access_token"]):        # owner_id is not a writable column for anyone
+        with pytest.raises(StoreError) as e:
+            raw("PATCH", f"/osiris_projects?id=eq.{p['id']}", tok, {"owner_id": b["user"]["id"]})
+        assert e.value.code == "FORBIDDEN"
+    assert raw("PATCH", f"/osiris_projects?id=eq.{p['id']}", b["access_token"], {"name": "taken"}) == []   # rename: owner only
+    assert s.projects(a["access_token"])[0]["owner_id"] == a["user"]["id"]
     f = raw("POST", "/osiris_files", a["access_token"], {"project_id": p["id"], "path": "f.dna", "content": "abc",
                                                           "revision": 99, "content_sha256": "f" * 64})[0]
     assert f["revision"] == 1 and f["content_sha256"] == hashlib.sha256(b"abc").hexdigest()
@@ -469,3 +474,93 @@ def test_run_of_a_stored_file_that_does_not_compile_executes_nothing(stack):
     f = s.create_file(tok, s.create_project(tok, "Bad")["id"], "legacy.dna", LEGACY)
     r = api.files_run({"user_token": tok, "file_id": f["id"], "revision": 1})
     assert r["status"] == "REJECTED" and r["executed"] is False and "simulation" not in r and "receipt" not in r
+
+
+# ───────────────────────── IDE API 1.4.0: notebook cells ─────────────────────────
+def _notebook(*cells):
+    return json.dumps({"format": "osiris-notebook", "version": 1, "title": "t",
+                       "cells": [{"id": i, "type": t, "source": s} for i, t, s in cells]}, sort_keys=True)
+
+
+def test_notebook_cell_run_is_bound_to_notebook_revision_and_cell(stack):
+    s, api = stack["store"], stack["api"]
+    tok = stack["sign_in"]("nora@example.test")["access_token"]
+    p = s.create_project(tok, "Notebook")
+    text = _notebook(("intro", "markdown", "# Bell"), ("bell", "dnalang", BELL))
+    f = s.create_file(tok, p["id"], "notebooks/bell.dnanb", text)
+    r = api.notebook_run({"user_token": tok, "file_id": f["id"], "revision": 1, "cell_id": "bell", "shots": 400,
+                          "seed": 5, "source": "organism Evil { }"})
+    check("POST /api/v1/notebook/run", r)
+    assert r["status"] == "COMPLETED" and r["executed"] is True and sum(r["simulation"]["counts"].values()) == 400
+    b = r["source_binding"]
+    assert b["cell_id"] == "bell" and b["revision"] == 1 and b["notebook_format"] == "osiris-notebook/1"
+    assert b["cell_source_sha256"] == "sha256:" + hashlib.sha256(BELL.encode()).hexdigest() == r["compile"]["source_sha256"]
+    assert b["content_sha256"] == "sha256:" + hashlib.sha256(text.encode()).hexdigest()
+    runs = api.files_runs({"user_token": tok, "file_id": f["id"]})
+    assert runs["chain_valid"] is True and runs["runs"][-1]["source_binding"]["cell_id"] == "bell"
+    assert runs["runs"][-1]["receipt_hash"] == r["receipt"]["hash"]
+
+    # stale revision executes nothing
+    assert s.save_file(tok, f["id"], 1, _notebook(("bell", "dnalang", BELL + "// v2\n")))["status"] == "SAVED"
+    stale = api.notebook_run({"user_token": tok, "file_id": f["id"], "revision": 1, "cell_id": "bell"})
+    assert stale["status"] == "REVISION_MISMATCH" and stale["executed"] is False
+    # markdown, unknown cells, other users, non-notebooks are refused
+    for cell, kind in (("intro", "NOTEBOOK_CELL_NOT_FOUND"), ("nope", "NOTEBOOK_CELL_NOT_FOUND")):
+        with pytest.raises(ide_api.ApiError) as e:
+            api.notebook_run({"user_token": tok, "file_id": f["id"], "revision": 2, "cell_id": cell})
+        assert e.value.kind == kind
+    other = stack["sign_in"]("oscar@example.test")["access_token"]
+    with pytest.raises(ide_api.ApiError) as e:
+        api.notebook_run({"user_token": other, "file_id": f["id"], "revision": 2, "cell_id": "bell"})
+    assert e.value.status == 404
+    plain = s.create_file(tok, p["id"], "bell.dna", BELL)
+    with pytest.raises(ide_api.ApiError) as e:
+        api.notebook_run({"user_token": tok, "file_id": plain["id"], "revision": 1, "cell_id": "bell"})
+    assert e.value.kind == "NOTEBOOK_INVALID"
+
+
+def test_markdown_cell_is_not_executable(stack):
+    s, api = stack["store"], stack["api"]
+    tok = stack["sign_in"]("nora@example.test")["access_token"]
+    f = s.create_file(tok, s.create_project(tok, "NB2")["id"], "n.dnanb", _notebook(("m", "markdown", "text")))
+    with pytest.raises(ide_api.ApiError) as e:
+        api.notebook_run({"user_token": tok, "file_id": f["id"], "revision": 1, "cell_id": "m"})
+    assert e.value.kind == "NOTEBOOK_CELL_NOT_EXECUTABLE" and e.value.status == 400
+
+
+def test_notebook_format_rejects_malformed_content():
+    from osiris_cli import notebook_format as nbf
+    for bad in ("x", "{}", '{"format":"osiris-notebook","version":2,"cells":[]}',
+                _notebook(("a", "python", "print(1)")), _notebook(("a", "markdown", ""), ("a", "markdown", "")),
+                _notebook(("bad id!", "markdown", ""))):
+        with pytest.raises(nbf.NotebookFormatError):
+            nbf.parse(bad)
+    assert nbf.parse(_notebook(("a", "dnalang", BELL)))["cells"][0]["id"] == "a"
+
+
+# ───────────────────────── IDE API 1.5.0: rename ─────────────────────────
+def test_rename_keeps_identity_and_receipts_and_refuses_stale_or_taken_paths(stack):
+    s, api = stack["store"], stack["api"]
+    tok = stack["sign_in"]("rita@example.test")["access_token"]
+    p = s.create_project(tok, "Rename")
+    f = s.create_file(tok, p["id"], "notebooks/a.dnanb", _notebook(("bell", "dnalang", BELL)))
+    s.create_file(tok, p["id"], "notebooks/taken.dnanb", _notebook())
+    run = api.notebook_run({"user_token": tok, "file_id": f["id"], "revision": 1, "cell_id": "bell", "shots": 50})
+    r = api.files_rename({"user_token": tok, "file_id": f["id"], "base_revision": 1, "path": "notebooks/b.dnanb"})
+    check("POST /api/v1/files/rename", r)
+    assert r["status"] == "RENAMED" and r["file"]["id"] == f["id"] and r["file"]["revision"] == 2
+    assert r["file"]["content_sha256"] == f["content_sha256"]
+    assert [x["receipt_hash"] for x in api.files_runs({"user_token": tok, "file_id": f["id"]})["runs"]] == [run["receipt"]["hash"]]
+    stale = api.files_rename({"user_token": tok, "file_id": f["id"], "base_revision": 1, "path": "notebooks/c.dnanb"})
+    assert stale["status"] == "CONFLICT" and stale["current"]["path"] == "notebooks/b.dnanb"
+    with pytest.raises(ide_api.ApiError) as e:
+        api.files_rename({"user_token": tok, "file_id": f["id"], "base_revision": 2, "path": "notebooks/taken.dnanb"})
+    assert e.value.kind == "EDITOR_PATH_EXISTS" and e.value.status == 409
+    with pytest.raises(ide_api.ApiError) as e:
+        api.files_rename({"user_token": tok, "file_id": f["id"], "base_revision": 2, "path": "../escape"})
+    assert e.value.status == 400
+    other = stack["sign_in"]("sam@example.test")["access_token"]
+    with pytest.raises(ide_api.ApiError) as e:
+        api.files_rename({"user_token": other, "file_id": f["id"], "base_revision": 2, "path": "notebooks/mine.dnanb"})
+    assert e.value.status == 404
+    assert s.file(tok, f["id"])["path"] == "notebooks/b.dnanb"

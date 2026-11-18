@@ -1,24 +1,6 @@
 -- OSIRIS workspace v2: explicit ownership boundary, RLS read policies for authenticated owners,
 -- and bounded objective excerpt for UI retrieval.
---
--- Target: Supabase project "osiris" (ref eirdsaeutzkzepibnfxf).
--- Depends on: 20261116120000_osiris_workspace.sql
---
--- Security boundaries:
---   1. Developer MCP access: schema inspection/migrations only; never used at application runtime.
---   2. OSIRIS backend (service_role): sole writer via PostgREST (`OSIRIS_SUPABASE_SERVICE_KEY`).
---   3. End-user auth (`authenticated` JWT): read-only access strictly scoped to rows whose project
---      has `owner_id = auth.uid()`. Rows with `owner_id is null` (local operator backend mode) remain
---      invisible to `authenticated` and `anon`. `anon` retains zero privileges.
---
--- Rollback:
---   drop policy if exists osiris_dispositions_owner_select on public.osiris_dispositions;
---   drop policy if exists osiris_tasks_owner_select on public.osiris_tasks;
---   drop policy if exists osiris_projects_owner_select on public.osiris_projects;
---   revoke select on public.osiris_projects, public.osiris_tasks, public.osiris_dispositions from authenticated;
---   alter table public.osiris_dispositions drop column if exists objective_excerpt;
---   drop index if exists public.osiris_projects_owner_idx;
---   alter table public.osiris_projects drop column if exists owner_id;
+-- Depends on: osiris_workspace
 
 alter table public.osiris_projects
   add column if not exists owner_id uuid references auth.users(id) on delete restrict;

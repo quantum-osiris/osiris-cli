@@ -7,7 +7,7 @@ Configuration, from the environment: ``OSIRIS_SUPABASE_URL`` (https://<ref>.supa
 ``OSIRIS_SUPABASE_SERVICE_KEY``. Without both, every call raises ``StoreError("NOT_CONFIGURED")``:
 there is no local stand-in that would make an unsaved record look saved.
 
-The tables are created by supabase/migrations/20261116120000_osiris_workspace.sql.
+The tables are created by supabase/migrations/20261116145612_osiris_workspace.sql.
 """
 
 from __future__ import annotations
@@ -22,6 +22,7 @@ from typing import Any, Callable, Dict, List, Optional
 PROJECT_REF = "eirdsaeutzkzepibnfxf"
 TASK_STATUSES = ("todo", "doing", "done")
 _URL = re.compile(r"^https://([a-z0-9]{20})\.supabase\.co/?$")
+_LOCAL_URL = re.compile(r"^http://(127\.0\.0\.1|localhost):\d{2,5}/?$")
 _UUID = re.compile(r"^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$")
 Http = Callable[[str, str, Dict[str, str], Optional[bytes]], Any]
 
@@ -73,9 +74,29 @@ class WorkspaceStore:
             raise StoreError("WRONG_PROJECT", f"configured for {m.group(1)}, expected {expected_ref}")
         self._base, self._key, self._http = url.rstrip("/") + "/rest/v1", key, http
 
+    @classmethod
+    def local(cls, url: Optional[str] = None, key: Optional[str] = None, http: Http = _http) -> "WorkspaceStore":
+        """The loopback stand-in (supabase/local_stack/server.mjs) only: never a remote host.
+
+        Reads OSIRIS_SUPABASE_LOCAL_URL and OSIRIS_SUPABASE_LOCAL_SECRET_KEY. The hosted constructor's
+        project lock is unchanged; this is a separate, explicit entry point for local development.
+        """
+        url = (os.environ.get("OSIRIS_SUPABASE_LOCAL_URL", "") if url is None else url).strip()
+        key = (os.environ.get("OSIRIS_SUPABASE_LOCAL_SECRET_KEY", "") if key is None else key).strip()
+        if not url or not key:
+            raise StoreError("NOT_CONFIGURED", "OSIRIS_SUPABASE_LOCAL_URL and OSIRIS_SUPABASE_LOCAL_SECRET_KEY are not both set")
+        if not _LOCAL_URL.match(url):
+            raise StoreError("BAD_CONFIG", "OSIRIS_SUPABASE_LOCAL_URL must be http://127.0.0.1:<port> or http://localhost:<port>")
+        if not key.startswith("sb_secret_local_"):
+            raise StoreError("BAD_CONFIG", "the local stand-in's secret key is expected (sb_secret_local_...)")
+        store = cls.__new__(cls)
+        store._base, store._key, store._http = url.rstrip("/") + "/rest/v1", key, http
+        return store
+
     def _call(self, method: str, path: str, body: Any = None) -> List[Dict[str, Any]]:
-        headers = {"apikey": self._key, "Authorization": f"Bearer {self._key}", "Content-Type": "application/json",
-                   "Prefer": "return=representation"}
+        headers = {"apikey": self._key, "Content-Type": "application/json", "Prefer": "return=representation"}
+        if not self._key.startswith("sb_secret_"):
+            headers["Authorization"] = f"Bearer {self._key}"
         rows = self._http(method, self._base + path, headers, None if body is None else json.dumps(body).encode())
         if not isinstance(rows, list) or not all(isinstance(r, dict) for r in rows):
             raise StoreError("BAD_RESPONSE", "Supabase did not return a list of rows")
@@ -126,12 +147,43 @@ class WorkspaceStore:
         self._uuid(project_id)
         if task_id is not None:
             self._uuid(task_id)
+        row = {"project_id": project_id, "task_id": task_id, **self._disposition(result)}
+        return self._one(self._call("POST", "/osiris_dispositions", row))
+
+    def claim_proposal_request(self, request_id: Optional[str] = None) -> Optional[Dict[str, Any]]:
+        if request_id is not None:
+            self._uuid(request_id)
+        rows = self._call("POST", "/rpc/osiris_claim_proposal_request", {"p_request_id": request_id})
+        if not rows:
+            return None
+        claimed = self._one(rows)
+        self._uuid(claimed.get("lease_id"))
+        if not isinstance(claimed.get("objective"), str):
+            raise StoreError("BAD_RESPONSE", "the claimed objective is missing")
+        return claimed
+
+    def finish_proposal_request(self, request_id: str, lease_id: str, result: Dict[str, Any]) -> Dict[str, Any]:
+        self._uuid(request_id)
+        self._uuid(lease_id)
+        if result.get("allow_cloud") is not False or (result.get("receipt") or {}).get("chain_valid") is not True:
+            raise StoreError("INVALID_INPUT", "a local council result with a verified receipt is required")
+        response = self._one(self._call("POST", "/rpc/osiris_finish_proposal_request", {
+            "p_request_id": request_id,
+            "p_lease_id": lease_id,
+            "p_disposition": self._disposition(result),
+        }))
+        if response.get("request_id") != request_id:
+            raise StoreError("BAD_RESPONSE", "the saved disposition refers to another request")
+        return response
+
+    @staticmethod
+    def _disposition(result: Dict[str, Any]) -> Dict[str, Any]:
         auth = result.get("authority") or {}
         if result.get("schema") != "osiris-agent-task/v1" or auth.get("execution") != "NONE" or auth.get("executed") is not False:
             raise StoreError("INVALID_INPUT", "not an OSIRIS council result without execution authority")
         import hashlib
-        row = {
-            "project_id": project_id, "task_id": task_id, "council_task_id": result["task_id"],
+        return {
+            "council_task_id": result["task_id"],
             "objective_sha256": hashlib.sha256(result["objective"].encode("utf-8")).hexdigest(),
             "objective_excerpt": str(result["objective"]).strip()[:280],
             "decision": result["decision"], "reason": str(result["reason"])[:2000], "aiden_verdict": result.get("aiden_verdict"),
@@ -143,7 +195,6 @@ class WorkspaceStore:
                         "resolved_digest": (a.get("route") or {}).get("resolved_digest")} for a in result.get("agents", [])],
             "executed": False,
         }
-        return self._one(self._call("POST", "/osiris_dispositions", row))
 
     def dispositions(self, project_id: str, task_id: Optional[str] = None) -> List[Dict[str, Any]]:
         self._uuid(project_id)

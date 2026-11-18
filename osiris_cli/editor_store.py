@@ -247,6 +247,30 @@ class EditorStore:
             raise StoreError("NOT_FOUND", "no such file, or it is not yours")
         return {"status": "CONFLICT", "current": current[0]}
 
+    def rename_file(self, token: str, file_id: Any, base_revision: Any, path: Any) -> Dict[str, Any]:
+        """Change a file's path only if it is still at ``base_revision`` (the store bumps the revision; id,
+        project and content are unchanged, so run receipts that name the file id still find it).
+        Returns {"status": "RENAMED", "file": row} or {"status": "CONFLICT", "current": metadata}."""
+        self._uuid(file_id)
+        self._check_path(path)
+        if isinstance(base_revision, bool) or not isinstance(base_revision, int) or base_revision < 1:
+            raise StoreError("INVALID_INPUT", "base_revision must be a positive integer")
+        try:
+            rows = self._rows("PATCH", f"/osiris_files?id=eq.{file_id}&revision=eq.{base_revision}"
+                                       f"&select={_FILE_COLUMNS}", token, {"path": path})
+        except StoreError as e:
+            if e.code == "CONFLICT":
+                raise StoreError("PATH_EXISTS", "a file with this path already exists in the project") from None
+            raise
+        if len(rows) == 1:
+            if rows[0].get("path") != path or rows[0].get("revision") != base_revision + 1:
+                raise StoreError("BAD_RESPONSE", "the store did not confirm the new path and revision")
+            return {"status": "RENAMED", "file": rows[0]}
+        current = self._rows("GET", f"/osiris_files?select={_FILE_COLUMNS}&id=eq.{file_id}", token)
+        if len(current) != 1:
+            raise StoreError("NOT_FOUND", "no such file, or it is not yours")
+        return {"status": "CONFLICT", "current": current[0]}
+
     def delete_file(self, token: str, file_id: Any) -> Dict[str, Any]:
         self._uuid(file_id)
         rows = self._rows("DELETE", f"/osiris_files?id=eq.{file_id}&select=id,path,revision", token)

@@ -664,12 +664,14 @@ def execute_ignite(state: Optional[OsirisReplState] = None, dry_run: bool = Fals
     if otc is not None:
         try:
             import genome
-            g = genome.get()
-            organism_id = g.get("organism_id", "")
-            gen = g.get("generation", 0)
+            seed_traits = getattr(otc, "ACTIVE_TRAITS_SEED", [])
+            genome.init_if_missing(seed_traits)
             targets = genome.pick_ignite_targets(exclude=otc._ignite_in_flight())
             promoted_count = len(targets)
             otc._ignite()
+            g = genome.get()
+            organism_id = g.get("organism_id", "")
+            gen = g.get("generation", 0)
         except Exception as e:
             print(f"  └─ Metamorphosis Trigger Warning: {e}\n")
     else:
@@ -677,8 +679,8 @@ def execute_ignite(state: Optional[OsirisReplState] = None, dry_run: bool = Fals
 
     # Log ignition / metamorphosis to evidence ledger
     h = state.log_event("IGNITION", {
-        "substrate": "node_alpha",
-        "arch": "aarch64",
+        "substrate": substrate_label(hp),
+        "arch": getattr(hp, "arch", None) or platform.machine(),
         "gamma_floor": state.coherence_floor,
         "mentor_model": mentor_model,
         "speaking_gate_open": gate_open,
@@ -1384,8 +1386,24 @@ def get_living():
 
 
 def handle_livlm_prompt(state: OsirisReplState, prompt: str) -> None:
-    """Plain text is conversation with OSIRIS.
-    Records every exchange; learns only from eligible material you explicitly approve."""
+    """Plain text is conversation with OSIRIS, except explicit code-authoring directives
+    ('write the code for ...', 'implement the code for ...') which route to the governed
+    /code tool loop after pre-model claims verification."""
+    from osiris_cli import living as living_mod
+    code_task = living_mod.extract_code_request(prompt)
+    if code_task is not None:
+        try:
+            from osiris_cli import claims as claims_mod
+            hits = claims_mod.match(prompt)
+            if hits:
+                print("\n" + claims_mod.console_block(hits))
+        except Exception:  # noqa: BLE001 - claims lookup must not block /code routing
+            pass
+        print("\n[OSIRIS::L1] Explicit code-authoring directive detected -> routing to governed /code loop")
+        from osiris_cli import code_agent
+        code_agent.run_code_command(state, code_task)
+        return
+
     tier, _reason = state.firewall.classify(prompt)
     input_transport = "unknown"
     if otc is not None and hasattr(otc, "_last_input") and "pasted" in otc._last_input:
@@ -1762,8 +1780,11 @@ def update_checkout(repo: str, run: Callable = subprocess.run) -> bool:
     def git(*args):
         return run(["git", "-C", repo, *args], capture_output=True, text=True)
 
-    if git("status", "--porcelain", "--untracked-files=no").stdout.strip():
-        print(f"[OSIRIS::SYNC] not updated: {repo} has uncommitted changes")
+    dirty = git("status", "--porcelain", "--untracked-files=no").stdout.strip()
+    if dirty:
+        changed = ", ".join(ln[3:].strip() for ln in dirty.splitlines()[:5])
+        more = f" (+{len(dirty.splitlines()) - 5} more)" if len(dirty.splitlines()) > 5 else ""
+        print(f"[OSIRIS::SYNC] not updated: {repo} has uncommitted changes ({changed}{more})")
         return False
     fetched = git("fetch", "origin")
     if fetched.returncode:
@@ -1908,7 +1929,7 @@ def execute_trio(rest: str) -> None:
 # keeps the set in step with the source.
 REPL_COMMANDS = {
     "/apply", "/architecture", "/benchmark", "/bridges", "/chat", "/check", "/clean", "/closure",
-    "/code", "/core", "/digest", "/discard", "/dna", "/experiment", "/fast", "/firewall", "/forge",
+    "/code", "/core", "/digest", "/discard", "/dna", "/eval-audit", "/experiment", "/fast", "/firewall", "/forge",
     "/forget", "/gemini", "/help", "/ignite", "/ingest", "/intent", "/introspect", "/learn",
     "/ledger", "/legit", "/mentor", "/mesh", "/mutate", "/nclm", "/ollama", "/osiris", "/physics",
     "/power", "/pr", "/publish", "/q", "/remember", "/retrieval", "/run", "/self", "/sim",
@@ -1923,6 +1944,7 @@ READ_ONLY_COMMANDS = {
 }
 # Commands that need words after them to do anything.
 NEEDS_ARGUMENT = {"/code": "/code explain osiris_cli/living.py", "/legit": "/legit list",
+                  "/eval-audit": "/eval-audit qkernel <run_dir>",
                   "/remember": "/remember <fact>", "/forget": "/forget <words>",
                   "/self": "/self <text>", "/chat": "/chat <message>", "/dna": '/dna "<intent>"',
                   "/gemini": "/gemini <question>", "/physics": "/physics chsh"}
@@ -2170,8 +2192,32 @@ def dispatch_command(state: OsirisReplState, line: str) -> None:
     elif cmd in ("/ledger", "ledger"):
         execute_ledger(state)
     elif cmd in ("/swarm", "swarm", "/evolve", "evolve"):
-        steps = int(parts[1]) if len(parts) > 1 and parts[1].isdigit() else 10
-        execute_swarm(state, steps=steps)
+        trailing = line_clean[len(parts[0]):].strip()
+        if not trailing:
+            execute_swarm(state, steps=10)
+        elif trailing.isdigit() and int(trailing) > 0:
+            execute_swarm(state, steps=int(trailing))
+        else:
+            preview = trailing.splitlines()[0][:80]
+            n_lines = len(trailing.splitlines())
+            print(f"\n[!] {parts[0]} [N] steps the local XY8 dynamical-decoupling ALife controller "
+                  f"(expected an integer step count, got {n_lines} line(s), {len(trailing):,} chars: {preview!r}).\n"
+                  f"    Refusing to discard your input into an unrelated DD loop.")
+            if otc is not None:
+                istate = getattr(otc, "_intent_state", None)
+                if isinstance(istate, dict):
+                    istate.update(text=trailing, cls="engineering", pasted=("\n" in trailing))
+                sugg = getattr(otc, "_pending_suggestions", None)
+                goal_one_line = " ".join(trailing.splitlines()[0].split())[:240]
+                if isinstance(sugg, dict):
+                    sugg.clear()
+                    sugg.update({"1": f"/plan {goal_one_line}", "2": "/swarm 10", "0": "/home"})
+                print("    [1] Draft an Architect plan (/plan) from its title/goal\n"
+                      "    [2] Run /swarm 10 (local XY8 ALife telemetry)\n"
+                      "    [0] Home menu\n"
+                      "    Or prefix the paste with 'review ' to have OSIRIS review the document.\n")
+            else:
+                print("    Use '/plan <goal>', 'review <text>', or '/swarm 10'.\n")
     elif cmd in ("/mesh", "mesh"):
         execute_mesh(state)
     elif cmd in ("/introspect", "introspect", "/introspection"):
@@ -2319,6 +2365,9 @@ def dispatch_command(state: OsirisReplState, line: str) -> None:
     elif cmd == "/legit":
         from osiris_cli import claims
         print("\n" + claims.command(line_clean[len(parts[0]):]) + "\n")
+    elif cmd == "/eval-audit":
+        from osiris_cli import reproducible_eval
+        print("\n" + reproducible_eval.run_command(line_clean[len(parts[0]):].strip()) + "\n")
     elif cmd == "/physics":
         from osiris_cli import physics_checks
         print("\n" + physics_checks.run_command(line_clean[len(parts[0]):].strip()) + "\n")

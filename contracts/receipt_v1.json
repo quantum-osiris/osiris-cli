@@ -1,0 +1,86 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://osiris.agiledefensesystems.com/contracts/receipt_v1.json",
+  "title": "OSIRIS Canonical Cryptographic Evidence Receipt Schema v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "receipt_version",
+    "receipt_id",
+    "actor",
+    "execution_parameters",
+    "timestamps",
+    "state_mutations",
+    "evidence_class",
+    "hardware",
+    "chain_valid",
+    "prev_hash",
+    "hash"
+  ],
+  "properties": {
+    "receipt_version": {
+      "type": "string",
+      "const": "1.0"
+    },
+    "receipt_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "actor": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "kind"],
+      "properties": {
+        "id": { "type": "string", "minLength": 1 },
+        "kind": { "type": "string", "enum": ["user", "service", "operator_gate0"] }
+      }
+    },
+    "execution_parameters": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["input_sha256", "output_sha256", "target_profile"],
+      "properties": {
+        "input_sha256": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+        "output_sha256": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+        "target_profile": { "type": "string", "minLength": 1 },
+        "compiler_version": { "type": "string" },
+        "environment": { "type": "string" }
+      }
+    },
+    "timestamps": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["received_at", "dispatched_at", "completed_at"],
+      "properties": {
+        "received_at": { "type": "string", "format": "date-time" },
+        "dispatched_at": { "type": "string", "format": "date-time" },
+        "completed_at": { "type": "string", "format": "date-time" }
+      }
+    },
+    "state_mutations": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "evidence_class": {
+      "type": "string",
+      "enum": ["SIMULATED", "HARDWARE_ATTESTED"]
+    },
+    "hardware": {
+      "type": "boolean"
+    },
+    "chain_valid": {
+      "type": "boolean"
+    },
+    "prev_hash": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$"
+    },
+    "hash": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$"
+    },
+    "signature": {
+      "type": "string"
+    }
+  }
+}

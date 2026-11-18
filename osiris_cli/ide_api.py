@@ -31,7 +31,7 @@ from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from typing import Any, Callable, Dict, Optional, Tuple
 from urllib.parse import urlparse
 
-API_VERSION = "1.3.0"
+API_VERSION = "1.5.0"
 MAX_BODY = 256 * 1024
 TOKEN_HEADER = "X-OSIRIS-Token"
 TOKEN_PLACEHOLDER = "__OSIRIS_SESSION_TOKEN__"
@@ -208,7 +208,7 @@ class Backend:
         if os.path.isfile(self.slice_receipts):
             valid = Receipts.verify(self.slice_receipts)
             with open(self.slice_receipts, encoding="utf-8") as fh:
-                rows = [json.loads(l) for l in fh if l.strip()]
+                rows = [json.loads(ln) for ln in fh if ln.strip()]
         try:
             gh = self.gateway.receipts()
         except Exception as e:  # receipts must still render if GitHub is unavailable
@@ -217,9 +217,10 @@ class Backend:
                 "github": gh}
 
     def propose(self, body: Dict[str, Any]) -> Dict[str, Any]:
-        from osiris_cli.github_gateway import OPERATIONS, GatewayError
         from osiris_governance.canonical import strict_parse_json
         from osiris_governance.github_policy import WRITE_CAPABILITIES
+
+        from osiris_cli.github_gateway import OPERATIONS, GatewayError
         op, repo, args = body.get("op"), body.get("repo"), body.get("args") or {}
         if not isinstance(args, dict):
             raise ApiError(400, "INVALID_INPUT", "args must be an object")
@@ -328,7 +329,7 @@ class Backend:
     def dnalang_info(self) -> Dict[str, Any]:
         """What this service can actually do for the editor. Versions come from the imported packages."""
         from osiris_cli import vertical_slice as vs
-        from osiris_cli.editor_store import MAX_FILE_BYTES, target_status
+        from osiris_cli.editor_store import MAX_FILE_BYTES
         return {"compiler": {"name": "dnalang", "version": vs._versions()["dnalang"]},
                 "versions": vs._versions(),
                 "operations": {"parse": True, "check": True, "compile": True, "simulate": True,
@@ -410,6 +411,10 @@ class Backend:
         return self._editor_call(lambda s: s.save_file(body.get("user_token"), body.get("file_id"),
                                                        body.get("base_revision"), body.get("content")))
 
+    def files_rename(self, body: Dict[str, Any]) -> Dict[str, Any]:
+        return self._editor_call(lambda s: s.rename_file(body.get("user_token"), body.get("file_id"),
+                                                         body.get("base_revision"), body.get("path")))
+
     def files_delete(self, body: Dict[str, Any]) -> Dict[str, Any]:
         return self._editor_call(lambda s: s.delete_file(body.get("user_token"), body.get("file_id")))
 
@@ -430,6 +435,45 @@ class Backend:
         runner = self._slice_runner or run_slice
         try:
             result = runner(row["content"], shots=body.get("shots", 2000), seed=body.get("seed", 1234),
+                            receipts_path=self.slice_receipts, binding=binding)
+        except SliceInputError as e:
+            raise ApiError(400, "INVALID_INPUT", str(e))
+        return {**result, "executed": result.get("status") in ("COMPLETED", "FAILED")}
+
+    def notebook_run(self, body: Dict[str, Any]) -> Dict[str, Any]:
+        """Simulate one DNA-Lang cell of one stored notebook revision (API 1.4.0). As with files_run, the
+        notebook is read from the store with the caller's token; no source text is taken from the request.
+        The receipt's binding names the notebook file, its revision and digest, the cell id and the
+        digest of that cell's source."""
+        from osiris_cli import notebook_format as nbf
+        from osiris_cli.vertical_slice import SliceInputError, run_slice
+        revision, cell_id = body.get("revision"), body.get("cell_id")
+        if isinstance(revision, bool) or not isinstance(revision, int) or revision < 1:
+            raise ApiError(400, "INVALID_INPUT", "revision must be a positive integer")
+        if not isinstance(cell_id, str) or not cell_id:
+            raise ApiError(400, "INVALID_INPUT", "cell_id is required")
+        row = self._editor_call(lambda s: s.file(body.get("user_token"), body.get("file_id")))
+        if row["revision"] != revision:
+            return {"status": "REVISION_MISMATCH", "requested_revision": revision,
+                    "current": {"revision": row["revision"], "content_sha256": row["content_sha256"]},
+                    "executed": False}
+        try:
+            nb = nbf.parse(row["content"])
+        except nbf.NotebookFormatError as e:
+            raise ApiError(400, "NOTEBOOK_INVALID", str(e))
+        try:
+            c = nbf.cell(nb, cell_id)
+        except KeyError:
+            raise ApiError(404, "NOTEBOOK_CELL_NOT_FOUND", f"revision {revision} has no cell {cell_id!r}")
+        if c["type"] not in nbf.EXECUTABLE:
+            raise ApiError(400, "NOTEBOOK_CELL_NOT_EXECUTABLE", f"cell {cell_id!r} is {c['type']}; only DNA-Lang cells run")
+        binding = {"project_id": row["project_id"], "file_id": row["id"], "path": row["path"],
+                   "revision": row["revision"], "content_sha256": "sha256:" + row["content_sha256"],
+                   "notebook_format": f"{nbf.FORMAT}/{nbf.VERSION}", "cell_id": c["id"],
+                   "cell_source_sha256": nbf.source_sha256(c["source"])}
+        runner = self._slice_runner or run_slice
+        try:
+            result = runner(c["source"], shots=body.get("shots", 2000), seed=body.get("seed", 1234),
                             receipts_path=self.slice_receipts, binding=binding)
         except SliceInputError as e:
             raise ApiError(400, "INVALID_INPUT", str(e))
@@ -460,7 +504,9 @@ class Backend:
     def assist(self, body: Dict[str, Any]) -> Dict[str, Any]:
         from osiris_cli import editor_assist
         try:
-            return editor_assist.assist(body, route_fn=self._assist_route_fn)
+            from osiris_cli.vertical_slice import compile_source
+            return editor_assist.assist(body, route_fn=self._assist_route_fn,
+                                        compile_fn=lambda src: on_qiskit_thread(lambda: compile_source(src)))
         except editor_assist.AssistError as e:
             raise ApiError(400, "INVALID_INPUT", str(e))
 
@@ -504,10 +550,41 @@ ROUTES = {
     ("POST", "/api/v1/files/create"): "files_create",
     ("POST", "/api/v1/files/save"): "files_save",
     ("POST", "/api/v1/files/delete"): "files_delete",
+    ("POST", "/api/v1/files/rename"): "files_rename",
     ("POST", "/api/v1/files/run"): "files_run",
     ("POST", "/api/v1/files/runs"): "files_runs",
+    ("POST", "/api/v1/notebook/run"): "notebook_run",
     ("POST", "/api/v1/assist"): "assist",
 }
+
+
+# F-34: every route that reaches Qiskit/Aer runs on one long-lived thread with a bounded backlog
+# (osiris_cli/qiskit_worker.py explains the crash and the policy).
+# assist is not listed: only its compile step runs on the worker (Backend.assist), so a slow model
+# cannot hold up simulations. dnalang_info is listed because it imports qiskit/qiskit_aer.
+QISKIT_OPERATIONS = frozenset({"compile", "run_slice", "organism", "files_run", "notebook_run", "dnalang_info"})
+QISKIT_WORKER = None
+
+
+_WORKER_LOCK = threading.Lock()
+
+
+def qiskit_worker():
+    global QISKIT_WORKER
+    with _WORKER_LOCK:
+        if QISKIT_WORKER is None:
+            from osiris_cli.qiskit_worker import QiskitWorker
+            QISKIT_WORKER = QiskitWorker()
+        return QISKIT_WORKER
+
+
+def on_qiskit_thread(call):
+    """Run `call` on the shared Qiskit thread; an overfull backlog is a 503, never an unbounded wait."""
+    from osiris_cli.qiskit_worker import Busy
+    try:
+        return qiskit_worker().submit(call)
+    except Busy as e:
+        raise ApiError(503, "SIMULATOR_BUSY", str(e))
 
 
 def make_handler(backend: Backend, token: str, console_dir: Optional[str], allowed_hosts: Tuple[str, ...]):
@@ -553,8 +630,21 @@ def make_handler(backend: Backend, token: str, console_dir: Optional[str], allow
                     if method != "GET":
                         raise ApiError(405, "METHOD_NOT_ALLOWED", "static files are GET only")
                     return self._static(path)
-                if not hmac.compare_digest(self.headers.get(TOKEN_HEADER, ""), token):
-                    raise ApiError(401, "TOKEN_REQUIRED", f"missing or wrong {TOKEN_HEADER}")
+                provided_token = (
+                    self.headers.get(TOKEN_HEADER)
+                    or self.headers.get("X-Session-Token")
+                    or (
+                        self.headers.get("Authorization", "")[7:].strip()
+                        if self.headers.get("Authorization", "").lower().startswith("bearer ")
+                        else ""
+                    )
+                )
+                if not hmac.compare_digest(provided_token, token):
+                    raise ApiError(
+                        401,
+                        "TOKEN_REQUIRED",
+                        f"missing or wrong {TOKEN_HEADER}, X-Session-Token, or Authorization Bearer credential",
+                    )
                 name = ROUTES.get((method, path))
                 if name is None:
                     raise ApiError(404 if not any(p == path for _, p in ROUTES) else 405, "NO_ROUTE",
@@ -573,7 +663,8 @@ def make_handler(backend: Backend, token: str, console_dir: Optional[str], allow
                     if not isinstance(body, dict):
                         raise ApiError(400, "BAD_JSON", "body must be a JSON object")
                 fn = getattr(backend, name)
-                result = fn(body) if method == "POST" else fn()
+                call = (lambda: fn(body)) if method == "POST" else fn
+                result = on_qiskit_thread(call) if name in QISKIT_OPERATIONS else call()
                 self._json(200, {"api_version": API_VERSION, **result})
             except ApiError as e:
                 self._error(e)
@@ -669,6 +760,8 @@ def main(argv=None) -> int:
         pass
     finally:
         httpd.server_close()
+        if QISKIT_WORKER is not None:      # admitted runs finish and write their receipts
+            QISKIT_WORKER.shutdown()
     return 0
 
 

@@ -34,9 +34,11 @@ SIBLING_CHECKOUTS = (
 
 def add_optional_paths() -> List[str]:
     """Append (never prepend) existing optional locations to ``sys.path``; return those added."""
+    work_root = Path.home() / "osiris-assessment" / "work"
     candidates = [str(REPO_ROOT)]
     candidates += [p for p in os.environ.get("OSIRIS_EXTRA_PATHS", "").split(os.pathsep) if p]
     candidates += [str(Path.home() / name) for name in SIBLING_CHECKOUTS]
+    candidates += [str(work_root / name) for name in SIBLING_CHECKOUTS]
     candidates += [str(Path.home())]
     added = []
     for path in candidates:

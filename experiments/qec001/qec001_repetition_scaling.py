@@ -12,7 +12,10 @@ Implements:
   3. Exact Minimum-Weight Perfect Matching (MWPM) via Edmonds' Blossom algorithm
      (`networkx.algorithms.matching.min_weight_matching`) on the space-time syndrome
      graph, compared against un-decoded majority vote.
-  4. Logical error per syndrome cycle epsilon_L(d, R) = 0.5 * (1 - (1 - 2*P_L)^(1/R))
+  4. Experimental sum-product Belief Propagation with OSD-0 fallback (BP+OSD-0)
+      on the same independent graphlike detector model, available as a separate
+      comparison decoder (not a qLDPC or hypergraph decoder).
+  5. Logical error per syndrome cycle epsilon_L(d, R) = 0.5 * (1 - (1 - 2*P_L)^(1/R))
      and error-suppression factor Lambda_{d -> d+2} = epsilon_L(d) / epsilon_L(d+2).
 """
 
@@ -168,6 +171,272 @@ def compute_detectors(syndromes: np.ndarray, data_bits: np.ndarray) -> np.ndarra
     all_checks = np.vstack([syndromes, final_checks])
     prev = np.vstack([np.zeros((1, n_checks), dtype=np.uint8), all_checks[:-1]])
     return (all_checks ^ prev).astype(np.uint8)
+
+
+@dataclass(frozen=True)
+class BPDetectorDecoder:
+    """Binary Tanner-graph model used by the experimental sum-product BP+OSD-0 decoder."""
+
+    distance: int | None
+    rounds: int | None
+    edge_detectors: Tuple[Tuple[int, ...], ...]
+    edge_probabilities: np.ndarray
+    edge_logical_flip: np.ndarray
+    check_neighbors: Tuple[Tuple[Tuple[int, int], ...], ...]
+
+
+def build_bp_decoder_from_parity_checks(
+    parity_check_matrix: np.ndarray,
+    error_probabilities: Sequence[float],
+    logical_flips: Sequence[int] | None = None,
+) -> BPDetectorDecoder:
+    """Build a BP+OSD-0 model from a binary parity-check matrix.
+
+    Columns may touch any number of checks, so this constructor supports generic
+    binary hypergraph parity checks. For CSS quantum codes, apply it separately to
+    the relevant X- or Z-error component; it does not itself resolve quantum
+    degeneracy or provide a joint logical-Pauli decoder.
+    """
+    matrix = np.asarray(parity_check_matrix)
+    if matrix.ndim != 2 or not matrix.size:
+        raise ValueError("parity_check_matrix must be a non-empty 2D binary matrix")
+    if not np.isin(matrix, (0, 1)).all():
+        raise ValueError("parity_check_matrix must be binary")
+    matrix = matrix.astype(np.uint8, copy=False)
+
+    probabilities = np.asarray(error_probabilities, dtype=float)
+    if probabilities.shape != (matrix.shape[1],) or not np.isfinite(probabilities).all():
+        raise ValueError("error_probabilities must be a finite vector with one value per qubit")
+    if np.any(probabilities < 0.0) or np.any(probabilities > 1.0):
+        raise ValueError("error_probabilities must be between 0 and 1")
+    probabilities = np.clip(probabilities, 1e-6, 1.0 - 1e-6)
+
+    if logical_flips is None:
+        flips = np.zeros(matrix.shape[1], dtype=np.uint8)
+    else:
+        flips = np.asarray(logical_flips)
+        if flips.shape != (matrix.shape[1],) or not np.isin(flips, (0, 1)).all():
+            raise ValueError("logical_flips must be a binary vector with one value per qubit")
+        flips = flips.astype(np.uint8, copy=False)
+
+    edge_detectors = tuple(
+        tuple(int(check) for check in np.flatnonzero(matrix[:, variable]))
+        for variable in range(matrix.shape[1])
+    )
+    check_neighbors: List[List[Tuple[int, int]]] = [[] for _ in range(matrix.shape[0])]
+    for variable, detectors in enumerate(edge_detectors):
+        for slot, check in enumerate(detectors):
+            check_neighbors[check].append((variable, slot))
+
+    return BPDetectorDecoder(
+        distance=None,
+        rounds=None,
+        edge_detectors=edge_detectors,
+        edge_probabilities=probabilities,
+        edge_logical_flip=flips,
+        check_neighbors=tuple(tuple(neighbors) for neighbors in check_neighbors),
+    )
+
+
+def build_bp_decoder(
+    distance: int,
+    rounds: int,
+    p_data: float = 0.008,
+    p_meas: float = 0.012,
+    p_hook: float = 0.003,
+) -> BPDetectorDecoder:
+    """Build a graphlike space-time detector model for sum-product BP and OSD-0.
+
+    This uses the same simplified independent edge priors as ``build_mwpm_decoder``.
+    It is a useful BP comparison on the current repetition-code experiment, but it
+    does not model correlated hyperedges, quantum degeneracy, or qLDPC codes.
+    """
+    if distance not in DISTANCES:
+        raise ValueError(f"distance must be in {DISTANCES}, got {distance}")
+    if rounds < 1:
+        raise ValueError(f"rounds must be >= 1, got {rounds}")
+
+    n_checks = distance - 1
+    n_rows = rounds + 1
+    n_detectors = n_rows * n_checks
+    edge_detectors: List[Tuple[int, ...]] = []
+    edge_probabilities: List[float] = []
+    edge_logical_flip: List[int] = []
+
+    def add_edge(detectors: Tuple[int, ...], probability: float, logical_flip: int = 0) -> None:
+        edge_detectors.append(detectors)
+        edge_probabilities.append(min(0.499, max(1e-6, float(probability))))
+        edge_logical_flip.append(logical_flip)
+
+    for row in range(n_rows):
+        # A boundary edge creates one detector; only the left edge flips D_0.
+        add_edge((row * n_checks,), p_data, logical_flip=1)
+        add_edge((row * n_checks + n_checks - 1,), p_data)
+
+        # Interior data faults create adjacent spatial detectors.
+        for check in range(n_checks - 1):
+            u = row * n_checks + check
+            add_edge((u, u + 1), p_data)
+
+        if row < n_rows - 1:
+            # Measurement/reset faults connect consecutive time slices.
+            for check in range(n_checks):
+                u = row * n_checks + check
+                add_edge((u, (row + 1) * n_checks + check), p_meas)
+            # The existing model's CNOT hook approximation is a space-time diagonal.
+            for check in range(1, n_checks):
+                u = row * n_checks + check
+                add_edge((u, (row + 1) * n_checks + check - 1), p_hook)
+
+    check_neighbors: List[List[Tuple[int, int]]] = [[] for _ in range(n_detectors)]
+    for variable, detectors in enumerate(edge_detectors):
+        for slot, check in enumerate(detectors):
+            check_neighbors[check].append((variable, slot))
+
+    return BPDetectorDecoder(
+        distance=distance,
+        rounds=rounds,
+        edge_detectors=tuple(edge_detectors),
+        edge_probabilities=np.asarray(edge_probabilities, dtype=float),
+        edge_logical_flip=np.asarray(edge_logical_flip, dtype=np.uint8),
+        check_neighbors=tuple(tuple(neighbors) for neighbors in check_neighbors),
+    )
+
+
+def _fault_syndrome(decoder: BPDetectorDecoder, faults: np.ndarray) -> np.ndarray:
+    """Return the detector parity generated by a binary vector of fault variables."""
+    syndrome = np.zeros(len(decoder.check_neighbors), dtype=np.uint8)
+    for variable in np.flatnonzero(faults):
+        for check in decoder.edge_detectors[int(variable)]:
+            syndrome[check] ^= 1
+    return syndrome
+
+
+def _osd_zero_fallback(
+    decoder: BPDetectorDecoder,
+    target: np.ndarray,
+    hard_decision: np.ndarray,
+    posterior_llr: np.ndarray,
+) -> np.ndarray:
+    """Repair a BP hard decision using OSD-0, pivoting least-reliable variables first."""
+    n_checks = len(decoder.check_neighbors)
+    n_variables = len(decoder.edge_detectors)
+    residual = target ^ _fault_syndrome(decoder, hard_decision)
+    matrix = np.zeros((n_checks, n_variables + 1), dtype=np.uint8)
+    for variable, detectors in enumerate(decoder.edge_detectors):
+        for check in detectors:
+            matrix[check, variable] = 1
+    matrix[:, -1] = residual
+
+    # OSD-0 keeps the BP decisions on free variables and solves only the pivots.
+    variable_order = np.argsort(np.abs(posterior_llr), kind="stable")
+    pivot_variables: List[int] = []
+    rank = 0
+    for variable in variable_order:
+        candidates = np.flatnonzero(matrix[rank:, variable])
+        if candidates.size == 0:
+            continue
+        pivot_row = rank + int(candidates[0])
+        matrix[[rank, pivot_row]] = matrix[[pivot_row, rank]]
+        rows_below = np.flatnonzero(matrix[rank + 1 :, variable]) + rank + 1
+        if rows_below.size:
+            matrix[rows_below] ^= matrix[rank]
+        pivot_variables.append(int(variable))
+        rank += 1
+        if rank == n_checks:
+            break
+
+    if np.any(matrix[rank:, -1]):
+        raise ValueError("Detector syndrome is outside the decoder model's reachable space")
+
+    adjustment = np.zeros(n_variables, dtype=np.uint8)
+    for row in range(rank - 1, -1, -1):
+        variable = pivot_variables[row]
+        later_pivots = pivot_variables[row + 1 :]
+        rhs = int(matrix[row, -1])
+        if later_pivots:
+            rhs ^= int(np.dot(matrix[row, later_pivots], adjustment[later_pivots]) & 1)
+        adjustment[variable] = rhs
+
+    candidate = hard_decision ^ adjustment
+    if not np.array_equal(_fault_syndrome(decoder, candidate), target):
+        raise RuntimeError("OSD-0 failed to produce a detector-consistent fault estimate")
+    return candidate
+
+
+def decode_faults_bp(
+    decoder: BPDetectorDecoder,
+    detectors: np.ndarray,
+    max_iterations: int = 50,
+) -> np.ndarray:
+    """Estimate binary fault variables with sum-product BP and an OSD-0 fallback.
+
+    The returned estimate is guaranteed to reproduce the requested detector
+    syndrome. BP may not find that estimate itself; in that case OSD-0 solves a
+    low-reliability parity subsystem. Hyperedges are supported, but CSS quantum
+    degeneracy and joint logical-Pauli decoding are outside this prototype.
+    """
+    target = np.asarray(detectors)
+    expected_shape = (len(decoder.check_neighbors),)
+    if target.shape != expected_shape or not np.isin(target, (0, 1)).all():
+        raise ValueError(f"detectors must be a binary vector of shape {expected_shape}")
+    if max_iterations < 1:
+        raise ValueError("max_iterations must be >= 1")
+    target = target.astype(np.uint8, copy=False)
+
+    probabilities = decoder.edge_probabilities
+    prior_llr = np.log((1.0 - probabilities) / probabilities)
+    variable_messages = [
+        np.full(len(detectors), prior_llr[variable], dtype=float)
+        for variable, detectors in enumerate(decoder.edge_detectors)
+    ]
+    check_messages = [np.zeros(len(messages), dtype=float) for messages in variable_messages]
+
+    for _ in range(max_iterations):
+        for check, neighbors in enumerate(decoder.check_neighbors):
+            parity_sign = -1.0 if target[check] else 1.0
+            for variable, slot in neighbors:
+                product = 1.0
+                for other_variable, other_slot in neighbors:
+                    if other_variable != variable:
+                        product *= math.tanh(0.5 * variable_messages[other_variable][other_slot])
+                product = min(1.0 - 1e-12, max(-1.0 + 1e-12, product))
+                check_messages[variable][slot] = parity_sign * 2.0 * math.atanh(product)
+
+        posterior_llr = prior_llr + np.asarray([messages.sum() for messages in check_messages])
+        hard_decision = (posterior_llr < 0.0).astype(np.uint8)
+        if np.array_equal(_fault_syndrome(decoder, hard_decision), target):
+            return hard_decision
+
+        for variable, detectors_for_variable in enumerate(decoder.edge_detectors):
+            for slot, _ in enumerate(detectors_for_variable):
+                other_messages = [
+                    check_messages[variable][other_slot]
+                    for other_slot in range(len(detectors_for_variable))
+                    if other_slot != slot
+                ]
+                variable_messages[variable][slot] = prior_llr[variable] + sum(other_messages)
+
+    return _osd_zero_fallback(decoder, target, hard_decision, posterior_llr)
+
+
+def decode_shot_bp(
+    decoder: BPDetectorDecoder,
+    syndromes: np.ndarray,
+    data_bits: np.ndarray,
+    max_iterations: int = 50,
+) -> int:
+    """Decode one repetition-code shot to its logical value using BP+OSD-0."""
+    if decoder.distance is None or decoder.rounds is None:
+        raise ValueError("decode_shot_bp requires a repetition-code BP decoder")
+    if syndromes.shape != (decoder.rounds, decoder.distance - 1):
+        raise ValueError("syndromes do not match the BP decoder dimensions")
+    if data_bits.shape != (decoder.distance,):
+        raise ValueError("data_bits do not match the BP decoder distance")
+    detectors = compute_detectors(syndromes, data_bits).ravel()
+    faults = decode_faults_bp(decoder, detectors, max_iterations=max_iterations)
+    correction = int(np.dot(faults, decoder.edge_logical_flip) & 1)
+    return int(data_bits[0]) ^ correction
 
 
 @dataclass(frozen=True)
@@ -335,11 +604,13 @@ def evaluate_repetition_counts(
     rounds: int,
     logical_state: int,
     decoder: PrecomputedMWPMDecoder | None = None,
+    bp_decoder: BPDetectorDecoder | None = None,
 ) -> Dict[str, float]:
-    """Evaluate MWPM logical error rate, naive majority-vote error rate, and logical error per cycle."""
+    """Evaluate MWPM, optional BP+OSD-0, majority vote, and logical error per cycle."""
     dec = decoder or build_mwpm_decoder(distance, rounds)
     total_shots = 0
     mwpm_errors = 0
+    bp_osd_errors = 0
     majority_errors = 0
     det_sum = 0.0
     n_det_sites = (rounds + 1) * (distance - 1)
@@ -357,6 +628,11 @@ def evaluate_repetition_counts(
         if pred_mwpm != logical_state:
             mwpm_errors += n
 
+        if bp_decoder is not None:
+            pred_bp_osd = decode_shot_bp(bp_decoder, syn, dat)
+            if pred_bp_osd != logical_state:
+                bp_osd_errors += n
+
         pred_maj = 1 if int(dat.sum()) > (distance // 2) else 0
         if pred_maj != logical_state:
             majority_errors += n
@@ -371,7 +647,7 @@ def evaluate_repetition_counts(
     eps_cycle_hi = logical_error_per_cycle(min(0.499999, p_err + p_err_se), rounds)
     eps_cycle_lo = logical_error_per_cycle(max(0.0, p_err - p_err_se), rounds)
 
-    return {
+    result = {
         "shots": float(total_shots),
         "mwpm_logical_errors": float(mwpm_errors),
         "p_logical_mwpm": p_err,
@@ -381,6 +657,16 @@ def evaluate_repetition_counts(
         "epsilon_per_cycle_se": 0.5 * abs(eps_cycle_hi - eps_cycle_lo),
         "mean_defect_probability": det_sum / (total_shots * n_det_sites),
     }
+    if bp_decoder is not None:
+        p_bp_osd = bp_osd_errors / total_shots
+        result.update(
+            {
+                "bp_osd_logical_errors": float(bp_osd_errors),
+                "p_logical_bp_osd": p_bp_osd,
+                "epsilon_per_cycle_bp_osd": logical_error_per_cycle(p_bp_osd, rounds),
+            }
+        )
+    return result
 
 
 def logical_error_per_cycle(p_logical: float, rounds: int) -> float:
