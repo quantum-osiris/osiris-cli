@@ -49,6 +49,50 @@ TEXT_TOOL_CALL_MODELS = ("qwen2.5-coder",)
 _SHELL_ONLY_TOKENS = {"|", "||", "&&", ";", "&", ">", ">>", "<", "<<", "2>", "2>&1", "&>"}
 _DANGEROUS = [re.compile(p) for p in (r"^rm$", r"^dd$", r"^mkfs", r"^shutdown$", r"^reboot$")]
 
+# Commands that change credentials or account state, or publish outside this machine. The
+# tool loop never runs them, whatever the model was told: a task often contains pasted text
+# (reports, logs, READMEs) whose instructions are not the user's, and a y/N prompt reading
+# "Run `gh auth logout`?" does not say that it signs this machine out of GitHub.
+_WRAPPERS = {"sudo", "doas", "env", "command", "nohup", "nice", "time", "exec"}
+_ACCOUNT_RULES = {
+    "gh": {"auth", "secret", "ssh-key", "gpg-key", "variable", "release", "workflow",
+           ("pr", "merge"), ("pr", "create"), ("repo", "create"), ("repo", "delete"),
+           ("repo", "edit"), ("repo", "rename"), ("repo", "archive"), ("api", None)},
+    "git": {"push", "credential", ("config", "--global"), ("config", "--system"),
+            ("remote", "set-url"), ("remote", "add")},
+    "vercel": None, "supabase": None, "gcloud": None, "aws": None, "az": None, "netlify": None,
+    "ssh-keygen": None, "ssh-add": None, "gpg": None, "passwd": None,
+    "npm": {"publish", "login", "adduser", "token"}, "pnpm": {"publish", "login"},
+    "yarn": {"publish", "npm"}, "twine": {"upload"}, "docker": {"push", "login"},
+    "ollama": {"push", "rm"},
+}
+
+
+def _account_action(argv: List[str]) -> Optional[str]:
+    """Why `argv` changes credentials/account state or publishes, or None."""
+    args = list(argv)
+    while args and os.path.basename(args[0]) in _WRAPPERS:
+        args = args[1:]
+        while args and (args[0].startswith("-") or "=" in args[0]):
+            args = args[1:]
+    if not args:
+        return None
+    prog = os.path.basename(args[0])
+    if prog not in _ACCOUNT_RULES:
+        return None
+    rules = _ACCOUNT_RULES[prog]
+    if rules is None:
+        return f"'{prog}' acts on a cloud or credential account"
+    rest = [a for a in args[1:]]
+    sub = next((a for a in rest if not a.startswith("-")), "")
+    for rule in rules:
+        if isinstance(rule, str) and rule == sub:
+            return f"'{prog} {sub}' changes credentials, account state or published state"
+        if isinstance(rule, tuple) and rule[0] == sub:
+            if rule[1] is None or rule[1] in rest:
+                return f"'{prog} {' '.join(x for x in rule if x)}' changes credentials, account state or published state"
+    return None
+
 SYSTEM = (
     "You are OSIRIS's coding tool loop. Use the tools to look at real files before you "
     "answer; never invent file contents, results or test outcomes. Paths are relative to "
@@ -524,6 +568,9 @@ class CodeAgent:
             raise Denied(f"shell syntax {shell_bits} is not supported: one program, no shell")
         if any(rx.search(os.path.basename(argv[0])) for rx in _DANGEROUS):
             raise Denied(f"'{argv[0]}' is not allowed from the tool loop")
+        account = _account_action(argv)
+        if account:
+            raise Denied(f"{account}; the tool loop never runs these. If you mean it, run it yourself in a terminal.")
         work = self._confine(cwd)
 
         payload = {"argv": argv, "cwd": work}
