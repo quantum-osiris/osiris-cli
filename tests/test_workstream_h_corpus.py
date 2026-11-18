@@ -412,3 +412,46 @@ def test_fixture_12_crash_restart_in_flight_task_without_duplicate_side_effects(
     assert s2 == "SKIPPED_ALREADY_APPLIED"
     assert len(side_effect_calls) == 1
     assert target.read_text(encoding="utf-8") == "COUNT = 1\n"
+
+
+def test_h13_quantum_origin_mermin_m3_pqc_enclave_bridge() -> None:
+    """H13: Verify Quantinuum Quantum Origin Mermin-M3 certified entropy seeds feed FIPS 204 PQCEnclaveGate."""
+    import sys
+    from pathlib import Path
+    gov_src = Path("/home/osiris/osiris-assessment/work/osiris-governance/src")
+    if gov_src.exists() and str(gov_src) not in sys.path:
+        sys.path.insert(0, str(gov_src))
+
+    from osiris_governance.quantum_origin_entropy import QuantumOriginEntropyProvider
+    from osiris_cli.pqc_enclave import PQCEnclaveGate
+
+    counts = {
+        "XXX": {"000": 985, "011": 985, "101": 985, "110": 985, "001": 27, "010": 27, "100": 27, "111": 27},
+        "XYY": {"001": 985, "010": 985, "100": 985, "111": 985, "000": 27, "011": 27, "101": 27, "110": 27},
+        "YXY": {"001": 985, "010": 985, "100": 985, "111": 985, "000": 27, "011": 27, "101": 27, "110": 27},
+        "YYX": {"001": 985, "010": 985, "100": 985, "111": 985, "000": 27, "011": 27, "101": 27, "110": 27},
+    }
+    provider = QuantumOriginEntropyProvider()
+    receipt = provider.extract_certified_seed(
+        counts,
+        output_bytes=64,
+        evidence_class="SIMULATED",
+        provider_job_id=None,
+    )
+    assert receipt.evidence_class == "SIMULATED"
+    assert receipt.provider_job_id is None
+    assert receipt.mermin_evaluation.certified is True
+    assert receipt.mermin_evaluation.m3_lower_bound > 2.0
+
+    enclave = PQCEnclaveGate()
+    payload_sha = enclave.compute_payload_digest(receipt.seed_bytes)
+    grant = enclave.generate_hybrid_grant(
+        sequence_index=1,
+        prev_block_hash="0" * 64,
+        event_type="QUANTUM_ORIGIN_MERMIN_M3_SEED_GRANT",
+        payload_sha256=payload_sha,
+        operation_schema=receipt.to_manifest(),
+        ed25519_sig_hex=receipt.seed_sha256,
+    )
+    ok, msg = enclave.verify_grant_integrity(grant)
+    assert ok is True, msg
