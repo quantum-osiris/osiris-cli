@@ -87,16 +87,87 @@ def ollama_installed(host: Optional[str] = None, timeout: float = 3.0) -> Dict[s
     return {m.get("name", ""): m.get("digest", "") for m in data.get("models", [])}
 
 
+def ollama_capabilities(host: Optional[str] = None, timeout: float = 3.0) -> Dict[str, List[str]]:
+    """Installed Ollama model capabilities, name -> list of capability strings (e.g. 'completion', 'tools', 'vision').
+    Reads 'capabilities' from /api/tags and queries POST /api/show when an entry omits capabilities."""
+    from ..providers.ollama_compat import ollama_base_url
+    base = ollama_base_url(host)
+    with urllib.request.urlopen(f"{base}/api/tags", timeout=timeout) as resp:
+        data = json.loads(resp.read().decode())
+    out: Dict[str, List[str]] = {}
+    for m in data.get("models", []):
+        name = m.get("name", "")
+        if not name:
+            continue
+        caps = m.get("capabilities")
+        if isinstance(caps, list):
+            out[name] = [str(c) for c in caps]
+        else:
+            try:
+                req = urllib.request.Request(
+                    f"{base}/api/show",
+                    data=json.dumps({"model": name}).encode("utf-8"),
+                    headers={"Content-Type": "application/json"},
+                    method="POST",
+                )
+                with urllib.request.urlopen(req, timeout=timeout) as sresp:
+                    sdata = json.loads(sresp.read().decode())
+                scaps = sdata.get("capabilities")
+                out[name] = [str(c) for c in scaps] if isinstance(scaps, list) else ["completion"]
+            except Exception:
+                out[name] = ["completion"]
+    return out
+
+
+def ensure_single_model_residency(
+    target_model: str,
+    host: Optional[str] = None,
+    timeout: float = 5.0,
+) -> List[str]:
+    """8 GB VRAM guard: query /api/ps and unload any currently resident model != target_model
+    via keep_alive=0 so two 4B/8B models never thrash GPU VRAM simultaneously."""
+    from ..providers.ollama_compat import ollama_base_url
+    base = ollama_base_url(host)
+    evicted: List[str] = []
+    try:
+        with urllib.request.urlopen(f"{base}/api/ps", timeout=timeout) as resp:
+            ps_data = json.loads(resp.read().decode())
+    except Exception:
+        return evicted
+    for m in ps_data.get("models", []):
+        loaded_name = m.get("name") or m.get("model") or ""
+        if loaded_name and loaded_name != target_model:
+            try:
+                req = urllib.request.Request(
+                    f"{base}/api/generate",
+                    data=json.dumps({"model": loaded_name, "keep_alive": 0}).encode("utf-8"),
+                    headers={"Content-Type": "application/json"},
+                    method="POST",
+                )
+                with urllib.request.urlopen(req, timeout=timeout):
+                    pass
+                evicted.append(loaded_name)
+            except Exception:
+                pass
+    return evicted
+
+
 def _call_ollama(model: str, system: str, prompt: str, max_tokens: int, temperature: float) -> Dict[str, Any]:
     from ..providers.base import Message, ProviderRequest
     from ..providers.ollama_compat import OllamaCompatibilityProvider
+    evicted = ensure_single_model_residency(model)
     provider = OllamaCompatibilityProvider(model=model, timeout=OLLAMA_TIMEOUT)
     resp = provider.chat(ProviderRequest(messages=[Message("user", prompt)], model=model, system=system,
                                          temperature=temperature, max_tokens=max_tokens,
                                          timeout=OLLAMA_TIMEOUT, think=False, num_ctx=OLLAMA_CONTEXT))
     if resp.error:
         raise RuntimeError(resp.error)
-    return {"text": resp.content, "model": resp.model, "is_mock": bool(getattr(resp, "is_mock", False))}
+    return {
+        "text": resp.content,
+        "model": resp.model,
+        "is_mock": bool(getattr(resp, "is_mock", False)),
+        "evicted_models": evicted,
+    }
 
 
 def _call_gemini(model: Optional[str], system: str, prompt: str, max_tokens: int, temperature: float,
@@ -109,7 +180,9 @@ def _call_gemini(model: Optional[str], system: str, prompt: str, max_tokens: int
 
 def route(role: str, system: str, prompt: str, *, cloud_allowed: bool = False,
           routes: Optional[Dict[str, List[str]]] = None, max_tokens: int = 1500, temperature: float = 0.3,
+          required_capabilities: Optional[List[str]] = None,
           installed: Optional[Callable[[], Dict[str, str]]] = None,
+          capabilities: Optional[Callable[[], Dict[str, List[str]]]] = None,
           call_ollama: Optional[Callable[..., Dict[str, Any]]] = None,
           call_gemini: Optional[Callable[..., Dict[str, Any]]] = None) -> Tuple[str, Dict[str, Any]]:
     """Run the first eligible candidate for ``role`` that answers. Returns (text, route record);
@@ -125,6 +198,7 @@ def route(role: str, system: str, prompt: str, *, cloud_allowed: bool = False,
     call_gemini = call_gemini or _call_gemini
     attempts: List[Dict[str, Any]] = []
     local: Optional[Dict[str, str]] = None
+    local_caps: Optional[Dict[str, List[str]]] = None
     local_error: Optional[str] = None
 
     for index, candidate in enumerate(candidates):
@@ -154,6 +228,20 @@ def route(role: str, system: str, prompt: str, *, cloud_allowed: bool = False,
                 attempt.update(status="MODEL_UNAVAILABLE",
                                reason=f"{model} is not installed in Ollama; no other model was substituted")
                 continue
+            if required_capabilities:
+                if local_caps is None:
+                    try:
+                        local_caps = (capabilities or ollama_capabilities)()
+                    except Exception:
+                        local_caps = {}
+                model_caps = set(local_caps.get(model, []))
+                missing_caps = [c for c in required_capabilities if c not in model_caps]
+                if missing_caps:
+                    attempt.update(
+                        status="CAPABILITY_UNSUPPORTED",
+                        reason=f"{model} lacks required capability {missing_caps!r} (reported: {sorted(model_caps)})",
+                    )
+                    continue
             try:
                 out = call_ollama(model, system, prompt, max_tokens, temperature)
             except Exception as e:  # noqa: BLE001

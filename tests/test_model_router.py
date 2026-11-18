@@ -149,3 +149,48 @@ def test_a_malformed_model_reply_fails_the_task(tmp_path):
     out = council.run_task("Plan", receipts_path=str(tmp_path / "a.jsonl"), claims=[],
                            model_fn=lambda role, s, p: ({"not": "text"}, "fake"))
     assert out["decision"] == "FAILED"
+
+
+def test_required_capabilities_skips_gemma_without_tools_and_selects_tool_capable_model():
+    routes = {"CODER": ["ollama:gemma3:4b", "ollama:qwen2.5-coder:7b"]}
+    installed = {"gemma3:4b": "sha-gemma", "qwen2.5-coder:7b": "sha-qwen-coder"}
+    caps = {
+        "gemma3:4b": ["completion", "vision"],
+        "qwen2.5-coder:7b": ["completion", "tools", "insert"],
+    }
+    calls, kw = kit(installed=installed)
+    kw["routes"] = routes
+    kw["capabilities"] = lambda: caps
+    text, rec = mr.route("CODER", "S", "P", required_capabilities=["tools"], **kw)
+    assert text == "local answer"
+    assert calls == [("ollama", "qwen2.5-coder:7b")]
+    assert rec["resolved_model"] == "qwen2.5-coder:7b"
+    assert rec["fallback_used"] is True
+    assert rec["attempts"][0]["status"] == "CAPABILITY_UNSUPPORTED"
+    assert "tools" in rec["attempts"][0]["reason"]
+
+
+def test_single_model_residency_evicts_other_loaded_models_on_8gb_gpu(monkeypatch):
+    requests_sent = []
+
+    class _FakeResp:
+        def __init__(self, payload):
+            self._payload = payload
+        def read(self):
+            return json.dumps(self._payload).encode("utf-8")
+        def __enter__(self):
+            return self
+        def __exit__(self, *a):
+            return False
+
+    def fake_urlopen(req_or_url, timeout=5.0):
+        if isinstance(req_or_url, str) and req_or_url.endswith("/api/ps"):
+            return _FakeResp({"models": [{"name": "gemma3:4b"}, {"name": "qwen3:8b"}]})
+        body = json.loads(req_or_url.data.decode("utf-8"))
+        requests_sent.append((req_or_url.full_url, body))
+        return _FakeResp({"done": True})
+
+    monkeypatch.setattr(mr.urllib.request, "urlopen", fake_urlopen)
+    evicted = mr.ensure_single_model_residency("qwen2.5-coder:7b", host="http://127.0.0.1:11434")
+    assert evicted == ["gemma3:4b", "qwen3:8b"]
+    assert all(b["keep_alive"] == 0 for _, b in requests_sent)
