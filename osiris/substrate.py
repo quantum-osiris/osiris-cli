@@ -20,6 +20,8 @@ import os
 import platform
 from typing import Any, Dict, Optional
 
+from osiris_cli.node_ids import NODE_ALPHA, NODE_BETA, NODE_GENERIC
+
 ALPHA_TIMEOUT_S = 300.0
 BETA_TIMEOUT_S = 1800.0
 INTERACTIVE_TIMEOUT_S = 120.0
@@ -62,10 +64,10 @@ def node_type() -> str:
     if p is not None:
         return p.node_type.value
     if _fallback_alpha():
-        return "NODE_ALPHA_MOBILE"
+        return NODE_ALPHA
     if _arch() in ("x86_64", "amd64"):
-        return "NODE_BETA_COMPUTE"
-    return "NODE_GENERIC_EDGE"
+        return NODE_BETA
+    return NODE_GENERIC
 
 
 def node_id() -> str:
@@ -82,7 +84,7 @@ def execution_timeout_s(override: Optional[float] = None) -> float:
     p = _profile()
     if p is not None:
         return float(p.execution_timeout_s)
-    return BETA_TIMEOUT_S if node_type() == "NODE_BETA_COMPUTE" else ALPHA_TIMEOUT_S
+    return BETA_TIMEOUT_S if node_type() == NODE_BETA else ALPHA_TIMEOUT_S
 
 
 def interactive_timeout_s(override: Optional[float] = None) -> float:
