@@ -444,6 +444,11 @@ def run(core, *, hours: float, batch: int = 8, max_steps: Optional[int] = None, 
     lesson_train = to_bytes(lessons) if lessons else None
     chat_held = to_bytes(chat["heldout"]) if chat["heldout"] else None
     if len(doc_train) <= SEQ:
+        progress({"kind": "end", "reason": "empty corpus (check ~/.osiris/living/corpus.json)", "steps": 0, "hours": 0.0})
+        try:
+            os.remove(lock)
+        except OSError:
+            pass
         raise SystemExit("OSIRIS train: the corpus is empty -- check ~/.osiris/living/corpus.json")
     arch_train = to_bytes([d.text for d in arch_docs if not d.heldout]) if arch_docs else None
     arch_share = float(cfg.get("archive_share", ARCHIVE_SHARE))

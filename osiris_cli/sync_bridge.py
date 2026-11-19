@@ -115,16 +115,26 @@ Transferring git commits preserves cryptographic digests without granting execut
   3. In Termux (Node Alpha):
      • pkg install -y openssh rsync
      • sshd -p 8022
-  4. From Node Beta (Push or Pull):
-     • Push to phone: rsync -avz --delete -e 'ssh -p 8022' ~/repos/osiris-cli/ localhost:~/src/repos/osiris-cli/
-     • Pull to workstation: rsync -avz --delete -e 'ssh -p 8022' localhost:~/src/repos/osiris-cli/ ~/repos/osiris-cli/
+  4. Prefer Git fetch/pull for an existing checkout. For a one-time file transfer,
+     use a new, empty staging directory (never the active repository):
+     • Create a destination that does not already exist:
+       ssh -p 8022 localhost 'mkdir -p ~/src/staging && mkdir ~/src/staging/osiris-cli'
+     • Preview the transfer and inspect the file list:
+       rsync -avz --dry-run --itemize-changes -e 'ssh -p 8022' ~/repos/osiris-cli/ localhost:~/src/staging/osiris-cli/
+     • Only after checking the preview, repeat without --dry-run:
+       rsync -avz -e 'ssh -p 8022' ~/repos/osiris-cli/ localhost:~/src/staging/osiris-cli/
+     • Compare and review staged files before manually integrating them.
+     • Never add --delete; it can remove destination-only files.
 
 \033[1;37m[CHANNEL B: Bluetooth PAN (Direct Mobile Tethering)]\033[0m
   1. Pair Galaxy S26 Ultra (Node Alpha) and Workstation via Bluetooth.
   2. Enable "Bluetooth Tethering" on S26 Ultra (creates local network interface, e.g. bnep0).
   3. Workstation connects via Bluetooth Network Connection (obtains local subnet IP, e.g. 192.168.44.X).
-  4. Node Beta executes rsync directly over the Bluetooth PAN IP to port 8022:
-     • rsync -avz -e 'ssh -p 8022' ./ <Phone_PAN_IP>:~/src/repos/osiris-cli/
+  4. Create a fresh staging directory, then preview and review the transfer:
+     • ssh -p 8022 <Phone_PAN_IP> 'mkdir -p ~/src/staging && mkdir ~/src/staging/osiris-cli'
+     • rsync -avz --dry-run --itemize-changes -e 'ssh -p 8022' ./ <Phone_PAN_IP>:~/src/staging/osiris-cli/
+     • Inspect the preview, then repeat without --dry-run to copy; integrate staged files manually.
+     • Never sync directly over an active checkout or add --delete.
 
 \033[1;37m[STORAGE CONSTRAINTS]\033[0m
   • Never sync git repositories into /sdcard/ (Scoped Storage mounts noexec and has FUSE latency).

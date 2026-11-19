@@ -230,6 +230,8 @@ def get_last_paste_candidate(living_home: str) -> Optional[PasteCandidate]:
                 rec = json.loads(line)
                 # Check for bracketed_paste, unknown transport, or unconsented records
                 transport = rec.get("input_transport") or rec.get("source_type") or "unknown"
+                if transport == "internal_review":
+                    continue
                 is_paste = (transport in ("bracketed_paste", "paste") or
                             rec.get("pasted") is True or
                             rec.get("learnable") is False)
