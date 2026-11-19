@@ -7,12 +7,13 @@ Tests verifying status dashboard and /ignite command truthfulness:
 
 import io
 import sys
+from types import ModuleType, SimpleNamespace
 from unittest.mock import patch
 import pytest
 
-from osiris_cli import claims
+from osiris_cli import claims, osiris_repl
 from osiris_cli.osiris_repl import (OsirisReplState, claims_summary, display_status, execute_ignite,
-                                    substrate_label)
+                                    execute_swarm, substrate_label)
 
 
 def _profile(**overrides):
@@ -187,3 +188,53 @@ def test_execute_ignite_dry_run():
     assert res["promoted_count"] == 0
     assert len(state.evidence_ledger) == initial_ledger_len
     assert state.ignited is False
+
+
+def test_execute_swarm_requires_explicit_ignition(capsys):
+    state = OsirisReplState()
+    initial_events = list(state.evidence_ledger)
+    result = execute_swarm(state, steps=1)
+    output = capsys.readouterr().out
+    assert result == {"status": "BLOCKED", "reason": "explicit ignition required"}
+    assert "run /ignite explicitly" in output
+    assert state.ignited is False
+    assert state.evidence_ledger == initial_events
+
+
+def test_execute_swarm_labels_aer_results_as_simulation(tmp_path, monkeypatch, capsys):
+    class FakeController:
+        def __init__(self, _fitness, structural):
+            assert structural is True
+            self.best_score = 0.75
+            self.genome = {}
+            self.space = SimpleNamespace(key=lambda _genome: "local-genome")
+            chain = SimpleNamespace(head="audit-head")
+            self.agent = SimpleNamespace(organism=SimpleNamespace(chain=chain))
+
+        def step(self):
+            return {
+                "edit": "keep",
+                "score": 0.75,
+                "best": 0.75,
+                "noise_rate": 0.01,
+                "audit_head": "audit-head",
+            }
+
+    bridge_module = ModuleType("bridge")
+    bridge_module.__path__ = []
+    fitness_module = ModuleType("bridge.quantum_fitness")
+    fitness_module.DDController = FakeController
+    fitness_module.QuantumFitness = lambda **_kwargs: object()
+    monkeypatch.setitem(sys.modules, "bridge", bridge_module)
+    monkeypatch.setitem(sys.modules, "bridge.quantum_fitness", fitness_module)
+    monkeypatch.setattr(osiris_repl, "results_dir", lambda _name: tmp_path)
+    monkeypatch.setattr(osiris_repl.time, "sleep", lambda _seconds: None)
+
+    state = OsirisReplState()
+    state.ignited = True
+    result = execute_swarm(state, steps=1)
+    output = capsys.readouterr().out
+    assert result == {"status": "SUCCESS", "execution_kind": "SIMULATION", "best_score": 0.75}
+    assert "[LOCAL SIMULATION] Aer-backed" in output
+    assert "Best Simulated DD Score" in output
+    assert state.evidence_ledger[-1]["details"]["execution_kind"] == "SIMULATION"

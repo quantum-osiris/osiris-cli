@@ -105,9 +105,10 @@ class DualSubstrateKeySync:
             subprocess.run([adb_bin, "forward", "tcp:8022", "tcp:8022"], capture_output=True, check=False)
             subprocess.run([adb_bin, "shell", "mkdir -p /sdcard/crsm"], capture_output=True, check=False)
 
-            # Convert WSL path to Windows path if invoking adb.exe via WSL interop
+            # Convert WSL path to Windows path if running under WSL interop
+            is_wsl = os.path.exists("/proc/version") and "microsoft" in pathlib.Path("/proc/version").read_text(errors="ignore").lower()
             push_src = str(self.pub_key_path)
-            if adb_bin.endswith(".exe") and shutil.which("wslpath"):
+            if (adb_bin.endswith(".exe") or is_wsl) and shutil.which("wslpath"):
                 wp = subprocess.run(["wslpath", "-w", push_src], capture_output=True, text=True, check=False)
                 if wp.returncode == 0 and wp.stdout.strip():
                     push_src = wp.stdout.strip()
@@ -123,7 +124,7 @@ class DualSubstrateKeySync:
             # Pull Node Alpha's Termux key if already exported to /sdcard/crsm/node_alpha_ed25519.pub
             alpha_tmp = self.osiris_home / "node_alpha_ed25519.pub"
             pull_dst = str(alpha_tmp)
-            if adb_bin.endswith(".exe") and shutil.which("wslpath"):
+            if (adb_bin.endswith(".exe") or is_wsl) and shutil.which("wslpath"):
                 wp = subprocess.run(["wslpath", "-w", pull_dst], capture_output=True, text=True, check=False)
                 if wp.returncode == 0 and wp.stdout.strip():
                     pull_dst = wp.stdout.strip()

@@ -101,6 +101,9 @@ class TestDualNodeSyncBridge(unittest.TestCase):
         self.assertIn("Cross-node transfer is a data operation, not an authorization operation.", runbook)
         self.assertIn("Android Wireless Debugging", runbook)
         self.assertIn("Bluetooth PAN", runbook)
+        self.assertIn("--dry-run", runbook)
+        self.assertNotIn("rsync -avz --delete", runbook)
+        self.assertIn("new, empty staging directory", runbook)
         self.assertIn("8022", runbook)
         self.assertIn("Scoped Storage", runbook)
 

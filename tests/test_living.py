@@ -7,6 +7,7 @@ from osiris_cli.living import Osiris
 
 class ScriptedMentor:
     base = "scripted://"
+    local_review_allowed = True
 
     def __init__(self, reply="Hello Devin.", model="qwen2.5:7b", fail=None):
         self.reply, self._model, self.fail, self.calls = reply, model, fail, []
