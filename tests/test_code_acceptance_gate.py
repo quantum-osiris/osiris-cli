@@ -31,6 +31,13 @@ def repo(tmp_path, monkeypatch):
     return root
 
 
+@pytest.fixture(autouse=True)
+def _signing_key_set_up(tmp_path):
+    """Keys are no longer created on first use; set them up the explicit way, as an operator would."""
+    from osiris_cli.pqc_enclave import setup_local_keys
+    setup_local_keys(str(tmp_path / "runs" / "_enclave"), confirm=lambda prompt: True)
+
+
 def call(name, **args):
     return {"content": "", "tool_calls": [{"function": {"name": name, "arguments": args}}]}
 

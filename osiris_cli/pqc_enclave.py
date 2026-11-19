@@ -66,6 +66,10 @@ class GrantVerificationError(RuntimeError):
     """Raised when a grant fails trust-root, signature, payload, scope, expiry, or replay checks."""
 
 
+class KeySetupRequired(RuntimeError):
+    """Raised when no local operator signing key is set up yet. The message says how to set one up."""
+
+
 class PQCAlgorithm(str, Enum):
     ED25519_CLASSICAL = "Ed25519"
     ML_DSA_44 = "ML-DSA-44"
@@ -207,7 +211,7 @@ def format_approval_summary(
             "┌─ OSIRIS LOCAL OPERATOR GRANT REQUEST ──────────────────────────────",
             f"│ Action:      {action}",
             f"│ Scope:       {scope_text}",
-            f"│ Summary:     {summary}",
+            "│ Summary:     " + str(summary).replace("\n", "\n│              "),
             f"│ Digest:      {payload_sha256}",
             f"│ Signer:      {operator_id} ({key_fingerprint[:23]}…) · TTL {int(ttl_seconds)}s",
             "└────────────────────────────────────────────────────────────────────",
@@ -311,10 +315,14 @@ class PQCEnclaveGate:
         enclave_dir: Optional[str] = None,
         *,
         operator_id: str = DEFAULT_OPERATOR_ID,
-        allow_init: bool = True,
+        allow_init: bool = False,
     ) -> "PQCEnclaveGate":
-        """Load the operator's local signing keys from `enclave_dir` (`~/.osiris/enclave`),
-        initializing once on first use when `allow_init=True`. Never overwrites existing keys."""
+        """Load the operator's local signing keys from `enclave_dir` (`~/.osiris/enclave`).
+
+        Creating keys and enrolling them in the trust store happens only with `allow_init=True`,
+        which only `setup_local_keys` (an explicit, operator-approved step) passes. Otherwise a
+        missing key or trust store raises `KeySetupRequired` with readable setup instructions.
+        Never overwrites existing keys or an existing trust store."""
         if not _CRYPTO_AVAILABLE:
             raise RuntimeError("pyca/cryptography >= 47 is required")
         base = os.path.abspath(os.path.expanduser(enclave_dir or default_enclave_dir()))
@@ -339,7 +347,7 @@ class PQCEnclaveGate:
 
         if not ed_exists:
             if not allow_init:
-                raise RuntimeError(f"No local operator signing keys initialized in {base}")
+                raise KeySetupRequired(onboarding_text(base))
             ed_priv = Ed25519PrivateKey.generate()
             ml_priv = MLDSA65PrivateKey.generate()
             ed_seed = ed_priv.private_bytes(Encoding.Raw, PrivateFormat.Raw, NoEncryption())
@@ -364,7 +372,13 @@ class PQCEnclaveGate:
         ml_pub_hex = ml_priv.public_key().public_bytes(Encoding.Raw, PublicFormat.Raw).hex()
         fp = compute_key_fingerprint(ed_pub_hex, ml_pub_hex)
 
-        # Initialize trust root ONLY if absent; never silently overwrite an existing trust store.
+        # Initialize trust root ONLY during explicit setup, and only if absent; never overwrite it.
+        if not os.path.exists(trusted_path) and not allow_init:
+            raise KeySetupRequired(
+                f"Signing keys exist in {base} but the trusted-key list is missing, so nothing they "
+                "sign can be verified. Re-enrol them with:\n"
+                f"    python -m osiris_cli.pqc_enclave setup --enclave-dir {base}"
+            )
         if not os.path.exists(trusted_path):
             trust_doc = {
                 "schema_version": 1,
@@ -741,6 +755,8 @@ class PQCEnclaveGate:
             return False, "Malformed pqc_envelope"
         if env.get("specification") != "NIST FIPS 204":
             return False, "Unsupported PQC specification; must be NIST FIPS 204"
+        if env.get("algorithm") != PQCAlgorithm.HYBRID_ED25519_ML_DSA_65.value:
+            return False, "Grant is not a hybrid Ed25519 + ML-DSA-65 grant; a weaker algorithm is not accepted"
 
         expected_prehash = self.compute_shake256_prehash(
             str(grant["payload_sha256"]), context=str(grant["event_type"])
@@ -847,3 +863,117 @@ class PQCEnclaveGate:
                 return False, replay_err
 
         return True, "VERIFIED_HYBRID_PQC_OK"
+
+
+# ----------------------------------------------------------------------
+# One-time key setup (explicit, operator-approved) and onboarding text
+# ----------------------------------------------------------------------
+def onboarding_text(enclave_dir: Optional[str] = None) -> str:
+    base = os.path.abspath(os.path.expanduser(enclave_dir or default_enclave_dir()))
+    return "\n".join(
+        [
+            "OSIRIS has no signing key set up yet, so it cannot record your approvals.",
+            "Setting one up is a one-time step. It creates a key pair (Ed25519 + ML-DSA-65) in",
+            f"    {base}",
+            "readable only by you, and lists its public half as the key OSIRIS trusts.",
+            "The private key never leaves this machine and is never printed or uploaded.",
+            "To set it up, run:",
+            f"    python -m osiris_cli.pqc_enclave setup --enclave-dir {base}",
+            "or answer yes when OSIRIS offers to do it.",
+        ]
+    )
+
+
+def keys_present(enclave_dir: Optional[str] = None) -> bool:
+    base = os.path.abspath(os.path.expanduser(enclave_dir or default_enclave_dir()))
+    return all(
+        os.path.exists(os.path.join(base, n))
+        for n in ("operator_ed25519.key", "operator_mldsa65.key", "trusted_operator_keys.json")
+    )
+
+
+def setup_local_keys(
+    enclave_dir: Optional[str] = None,
+    *,
+    confirm: Callable[[str], bool],
+    out: Callable[[str], None] = lambda s: None,
+    operator_id: str = DEFAULT_OPERATOR_ID,
+) -> "PQCEnclaveGate":
+    """Create the operator's key pair and trust entry after the operator explicitly agrees.
+
+    Refuses when keys already exist (nothing is replaced) and when the operator says no.
+    Prints only the public fingerprint.
+    """
+    base = os.path.abspath(os.path.expanduser(enclave_dir or default_enclave_dir()))
+    if keys_present(base):
+        gate = PQCEnclaveGate.load_or_init_local(base, operator_id=operator_id)
+        out(f"Signing key already set up in {base} (fingerprint {gate.key_fingerprint[:23]}…). Nothing changed.")
+        return gate
+    trusted_path = os.path.join(base, "trusted_operator_keys.json")
+    key_files = [os.path.join(base, n) for n in ("operator_ed25519.key", "operator_mldsa65.key")]
+    if os.path.exists(trusted_path) and not any(os.path.exists(k) for k in key_files):
+        raise KeySetupRequired(
+            f"{trusted_path} already lists trusted keys but the private keys are missing. OSIRIS will "
+            "not create new keys next to an existing trust list; restore the keys or move the list aside."
+        )
+    out(onboarding_text(base))
+    if not bool(confirm(f"Create the signing key in {base} now? [y/N] ")):
+        raise ApprovalDeniedError("operator did not approve key setup")
+    gate = PQCEnclaveGate.load_or_init_local(base, operator_id=operator_id, allow_init=True)
+    out(f"Signing key created. Fingerprint {gate.key_fingerprint[:23]}… (public; safe to share).")
+    return gate
+
+
+def load_or_onboard(
+    enclave_dir: Optional[str] = None,
+    *,
+    confirm: Optional[Callable[[str], bool]] = None,
+    out: Callable[[str], None] = lambda s: None,
+) -> "PQCEnclaveGate":
+    """Load the local signer. When none is set up, offer the one-time setup through `confirm`
+    (the operator's own prompt); without a prompt, raise `KeySetupRequired` with instructions."""
+    try:
+        return PQCEnclaveGate.load_or_init_local(enclave_dir)
+    except KeySetupRequired:
+        if confirm is None or keys_present(enclave_dir):
+            raise
+        try:
+            return setup_local_keys(enclave_dir, confirm=confirm, out=out)
+        except ApprovalDeniedError:
+            raise KeySetupRequired(onboarding_text(enclave_dir)) from None
+
+
+def main(argv: Optional[Sequence[str]] = None) -> int:
+    import argparse
+    import sys
+
+    ap = argparse.ArgumentParser(prog="python -m osiris_cli.pqc_enclave",
+                                 description="Set up or inspect the local OSIRIS signing key.")
+    ap.add_argument("command", choices=["setup", "status"])
+    ap.add_argument("--enclave-dir", default=None)
+    args = ap.parse_args(argv)
+
+    def ask(prompt: str) -> bool:
+        if not sys.stdin.isatty():
+            print("Key setup needs you at the keyboard; stdin is not a terminal.", file=sys.stderr)
+            return False
+        return input(prompt).strip().lower() in ("y", "yes")
+
+    if args.command == "status":
+        if not keys_present(args.enclave_dir):
+            print(onboarding_text(args.enclave_dir))
+            return 1
+        gate = PQCEnclaveGate.load_or_init_local(args.enclave_dir)
+        print(f"Signing key set up. Operator {gate.operator_id}; fingerprint {gate.key_fingerprint}.")
+        print(f"Trusted keys: {len(gate.trusted_key_records())}.")
+        return 0
+    try:
+        setup_local_keys(args.enclave_dir, confirm=ask, out=print)
+    except ApprovalDeniedError:
+        print("No key was created.")
+        return 1
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

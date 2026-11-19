@@ -315,9 +315,13 @@ class CodeAgent:
         receipts_path: Optional[str] = None,
         write_nudges: int = 0,
         enclave: Optional[Any] = None,
+        session_grant: Optional[Dict[str, Any]] = None,
     ):
         self.root = os.path.realpath(root or os.getcwd())
         self._enclave = enclave
+        # A signed session approval from the operator (osiris_cli.session_approval). The model has
+        # no tool that can create or change it; it only lets listed commands run without a prompt.
+        self._session_grant = session_grant
         env_model = os.environ.get("OSIRIS_CODE_MODEL", "").strip() or None
         self._pinned_model: Optional[str] = model or env_model
         self.model = self._pinned_model or DEFAULT_MODEL
@@ -856,21 +860,37 @@ class CodeAgent:
         digest = _digest(payload)
         cmd_scope = ["SUBPROCESS_EXEC", work]
         enclave = self._get_enclave()
-        from osiris_cli.pqc_enclave import ApprovalDeniedError
-        try:
-            pqc_grant = enclave.request_approved_grant(
-                action="code.run_command",
-                scope=cmd_scope,
-                summary=f"Run `{shlex.join(argv)}` in {work}",
-                payload_sha256=digest,
-                operation_schema=payload,
-                confirm=self._confirm,
-                out=self._out,
-                prompt=f"Run `{shlex.join(argv)}` in {work}? [y/N] ",
-                ttl_seconds=60.0,
-            )
-        except ApprovalDeniedError:
-            raise Denied("the user did not approve this command")
+        from osiris_cli.pqc_enclave import ApprovalDeniedError, GrantVerificationError
+        from osiris_cli import session_approval as sa
+        pqc_grant = None
+        if self._session_grant is not None:
+            ok_s, _why, scope = sa.verify_session_grant(enclave, self._session_grant)
+            covered = sa.covers_command(scope, argv, work) if ok_s else (False, _why)
+            if covered[0]:
+                try:
+                    pqc_grant = sa.issue_child_grant(
+                        enclave, self._session_grant, action="code.run_command", scope=cmd_scope,
+                        payload_sha256=digest, operation_schema=payload, covered=covered)
+                    self._out(f"  [session] running `{shlex.join(argv)}` (listed in your session approval)")
+                except GrantVerificationError as exc:
+                    self._out(f"  [session] not covered ({exc}); asking you instead")
+            else:
+                self._out(f"  [session] `{shlex.join(argv)}` is not covered ({covered[1]}); asking you")
+        if pqc_grant is None:
+            try:
+                pqc_grant = enclave.request_approved_grant(
+                    action="code.run_command",
+                    scope=cmd_scope,
+                    summary=f"Run `{shlex.join(argv)}` in {work}",
+                    payload_sha256=digest,
+                    operation_schema=payload,
+                    confirm=self._confirm,
+                    out=self._out,
+                    prompt=f"Run `{shlex.join(argv)}` in {work}? [y/N] ",
+                    ttl_seconds=60.0,
+                )
+            except ApprovalDeniedError:
+                raise Denied("the user did not approve this command")
         now = time.time()
         grant = ExecutionGrant(grant_id=pqc_grant["grant_id"], payload_digest=digest,
                                authorized_by="operator", authorized_at=now, expires_at=now + 60,
@@ -889,6 +909,8 @@ class CodeAgent:
             expected_event_type="code.run_command",
             consume=True,
         )
+        if ok_pqc:
+            ok_pqc, why_pqc = sa.verify_child_link(enclave, pqc_grant, self._session_grant)
         if not ok_pqc or not grant.is_valid(recomputed_digest):
             raise Denied(f"execution grant verification failed: {why_pqc}")
         try:
@@ -910,6 +932,7 @@ class CodeAgent:
             return f"TIMEOUT after {limit:.0f}s", {
                 "grant_id": grant.grant_id,
                 "key_fingerprint": pqc_grant["key_fingerprint"],
+                "approval_mode": pqc_grant.get("approval_mode"),
                 "digest": digest,
                 "timed_out": True,
             }
@@ -917,6 +940,7 @@ class CodeAgent:
         return (out or f"(exit code {proc.returncode}, no output)"), {
             "grant_id": grant.grant_id,
             "key_fingerprint": pqc_grant["key_fingerprint"],
+            "approval_mode": pqc_grant.get("approval_mode"),
             "digest": digest,
             "exit_code": proc.returncode,
             "stdout_sha256": _sha256_bytes(stdout.encode("utf-8")),
@@ -924,9 +948,14 @@ class CodeAgent:
         }
 
     def _get_enclave(self):
+        # No throwaway self-trusting key: approvals are signed by the operator's local key and
+        # verified against its trust store. With no key set up, the operator is offered setup.
         if self._enclave is None:
-            from osiris_cli.pqc_enclave import PQCEnclaveGate
-            self._enclave = PQCEnclaveGate()
+            from osiris_cli.pqc_enclave import KeySetupRequired, load_or_onboard
+            try:
+                self._enclave = load_or_onboard(confirm=self._confirm, out=self._out)
+            except KeySetupRequired as exc:
+                raise Denied(str(exc))
         return self._enclave
 
 
@@ -1191,8 +1220,12 @@ def run_code_command(state: Any, rest: str) -> CodeResult:
         return CodeResult("", "ERROR", [], "--accept with --multi")
     _repl_acceptance = None
     log = getattr(state, "log_event", None)
-    from osiris_cli.pqc_enclave import PQCEnclaveGate
-    repl_enclave = PQCEnclaveGate.load_or_init_local()
+    from osiris_cli.pqc_enclave import KeySetupRequired, load_or_onboard
+    try:
+        repl_enclave = load_or_onboard(confirm=_tty_confirm, out=print)
+    except KeySetupRequired as exc:
+        print(f"\n[/code] {exc}\n")
+        return CodeResult("", "ERROR", [], "no signing key set up")
     agent = CodeAgent(model=model, max_writes=max_writes, log=(lambda e, d: log(e, d)) if log else None,
                       receipts_path=REPL_RECEIPTS if accept else None, write_nudges=1 if accept else 0,
                       enclave=repl_enclave)
