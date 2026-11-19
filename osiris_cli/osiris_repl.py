@@ -1453,12 +1453,26 @@ def get_living():
     return _LIVING
 
 
+def _resolve_input_transport(prompt: str) -> str:
+    pasted_attr = getattr(prompt, "pasted", None)
+    if pasted_attr is not None:
+        return "bracketed_paste" if bool(pasted_attr) else "typed"
+    if otc is not None and isinstance(getattr(otc, "_last_input", None), dict) and "pasted" in otc._last_input:
+        return "bracketed_paste" if bool(otc._last_input.get("pasted")) else "typed"
+    return "unknown"
+
+
 def handle_livlm_prompt(state: OsirisReplState, prompt: str) -> None:
-    """Plain text is conversation with OSIRIS, except explicit code-authoring directives
-    ('write the code for ...', 'implement the code for ...') which route to the governed
-    /code tool loop after pre-model claims verification."""
+    """Plain text is conversation with OSIRIS, except explicit operator code-authoring
+    directives ('write the code for ...', 'implement the code for ...') which route to the
+    governed /code tool loop. Multi-line bracketed pastes never auto-execute /code: pasted
+    documents are passive data quarantined in `last_paste` until explicitly invoked."""
     from osiris_cli import living as living_mod
-    code_task = living_mod.extract_code_request(prompt)
+
+    input_transport = _resolve_input_transport(prompt)
+    is_multiline_paste = (input_transport == "bracketed_paste") and ("\n" in prompt.strip())
+
+    code_task = None if is_multiline_paste else living_mod.extract_code_request(prompt)
     if code_task is not None:
         try:
             from osiris_cli import claims as claims_mod
@@ -1469,13 +1483,14 @@ def handle_livlm_prompt(state: OsirisReplState, prompt: str) -> None:
             pass
         print("\n[OSIRIS::L1] Explicit code-authoring directive detected -> routing to governed /code loop")
         from osiris_cli import code_agent
+        try:
+            code_task = living_mod.attach_referenced_paste_context(code_task, get_living())
+        except Exception:  # noqa: BLE001
+            pass
         code_agent.run_code_command(state, code_task)
         return
 
     tier, _reason = state.firewall.classify(prompt)
-    input_transport = "unknown"
-    if otc is not None and hasattr(otc, "_last_input") and "pasted" in otc._last_input:
-        input_transport = "bracketed_paste" if bool(otc._last_input.get("pasted")) else "typed"
 
     # If true transport metadata is unavailable or bracketed paste was used,
     # conservatively require review before any training promotion.
@@ -2146,17 +2161,30 @@ def dispatch_held(state: OsirisReplState, line: str) -> None:
     run a command and drop the rest. Typed lines and one-line pastes dispatch as usual."""
     if getattr(line, "pasted", False) and "\n" in line.strip():
         try:
-            handle_livlm_prompt(state, line.strip())
+            from osiris_cli.living import Held
+            handle_livlm_prompt(state, Held(line.strip(), pasted=True))
         except Exception as exc:  # noqa: BLE001 - as safe_dispatch: the session continues
             print(f"\n[!] the held paste failed: {type(exc).__name__}: {str(exc)[:200]}\n")
         return
     safe_dispatch(state, line)
 
 
+_MULTILINE_COMMAND_ALLOWLIST = {"/code", "/learn", "learn", "/swarm", "swarm", "/evolve", "evolve"}
+
+
 def dispatch_command(state: OsirisReplState, line: str) -> None:
     line_clean = line.strip()
     if not line_clean:
         return
+
+    # 0. Multi-line bracketed pastes starting with slash commands (e.g. `/apply\n...` from a
+    # pasted terminal transcript) are passive content, never automatic slash-command execution.
+    if _resolve_input_transport(line) == "bracketed_paste" and "\n" in line_clean:
+        first_tok = line_clean.split()[0].lower()
+        if first_tok not in _MULTILINE_COMMAND_ALLOWLIST:
+            from osiris_cli.living import Held
+            handle_livlm_prompt(state, Held(line_clean, pasted=True))
+            return
 
     # 1. Menu keys. A key on the menu on screen runs its command; a lettered tool
     # works from any screen; any other bare number or letter is not a message
@@ -2533,8 +2561,13 @@ def dispatch_command(state: OsirisReplState, line: str) -> None:
         needle = line_clean[len(parts[0]):].strip()
         print("[OSIRIS] " + (get_living().forget(needle) if needle else "use /forget <words in the fact>"))
     elif cmd == "/code":
-        from osiris_cli import code_agent
-        code_agent.run_code_command(state, line_clean[len(parts[0]):].strip())
+        from osiris_cli import code_agent, living as living_mod
+        raw_rest = line_clean[len(parts[0]):].strip()
+        try:
+            raw_rest = living_mod.attach_referenced_paste_context(raw_rest, get_living())
+        except Exception:  # noqa: BLE001
+            pass
+        code_agent.run_code_command(state, raw_rest)
     elif cmd == "/gemini":
         from osiris_cli import gemini_gateway
         print("\n" + gemini_gateway.run_command(line_clean[len(parts[0]):].strip()) + "\n")
