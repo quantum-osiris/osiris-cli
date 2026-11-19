@@ -79,7 +79,9 @@ def test_compact_panel_has_one_row_per_layer_and_states_the_gate(tmp_path, ledge
 
 def test_full_view_lists_what_is_not_built(tmp_path, ledger):
     text = arch.full(osiris_ui.Canvas("plain", 100), arch.live_state(living(tmp_path), Console))
-    assert "not built: an independent critic that tries to falsify a candidate" in text
+    assert "AST contract extractor + independent L5 critic" in text
+    assert "not built: an independent critic that tries to falsify a candidate" not in text
+    assert "not built: a quarantine queue for inconclusive candidates" in text
     assert text.count("not built:") == sum(len(ly.missing) for ly in arch.LAYERS) + \
         sum(len(s[2]) for s in arch.SUBSYSTEMS)
 

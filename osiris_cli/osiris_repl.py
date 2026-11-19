@@ -580,14 +580,17 @@ def print_banner():
         return
 
     cols = get_terminal_width()
+    hp = getattr(SESSION, "hardware_profile", None)
+    is_termux = bool(getattr(hp, "is_termux", False))
     print("\033[96m" + BANNER.strip() + "\033[0m\n")
     if cols >= 100:
         print("\033[90m  Mode: desktop wide (≥100 cols)\033[0m")
-    else:
+    elif is_termux:
         print("\033[90m  Mode: MOBILE COMPACT / TERMUX (<100 cols) | Adaptive View Enabled\033[0m")
+    else:
+        print("\033[90m  Mode: compact narrow (<100 cols) | Adaptive View Enabled\033[0m")
     
     # Dynamic Hardware Mesh Substrate Evaluation
-    hp = getattr(SESSION, "hardware_profile", None)
     if hp:
         print(f"\033[92m  [SUBSTRATE MESH] {substrate_label(hp)}\033[0m")
         print(f"\033[90m  [RESOURCE LIMITS] Horizon: {hp.execution_timeout_s:.0f}s (Extended={hp.allow_extended_horizons}) | Coherence Floor: {hp.coherence_floor}\033[0m\n")
@@ -710,8 +713,8 @@ def execute_learn(state: Optional[OsirisReplState] = None, generations: int = 5)
     return {"status": "UNMEASURED", "generations": 0, "reason": "No active simulation subject; synthetic evidence emission blocked per SYS-022"}
 
 
-def execute_dna(state: Optional[OsirisReplState] = None, intent: str = "Synthesize error repair gene for K8 tau-sweep") -> Dict[str, Any]:
-    """Synthesize .dna genome with L0 AST Firewall verification."""
+def execute_dna(state: Optional[OsirisReplState] = None, intent: str = "Synthesize XY4 decoupling gene for 2-qubit Bell pair") -> Dict[str, Any]:
+    """Synthesize a dnalang v0.4.0 organism and verify it through the real AST, semantic, and IR lowering pipeline."""
     if state is None:
         state = SESSION
 
@@ -721,38 +724,101 @@ def execute_dna(state: Optional[OsirisReplState] = None, intent: str = "Synthesi
     print(f"  ├─ Policy Digest: SHA-256 {intent_hash[:16]}")
     print(f"  └─ Coherence Threshold: Γ_floor = {state.coherence_floor:.4f} [Configured Policy Threshold]")
 
-    print("\n\033[1;36m[AST FIREWALL] Parsing generated dna::}{lang genome...\033[0m")
-    print("  ├─ System Call Leak Check:         \033[1;32mPASS\033[0m")
-    print("  ├─ Substitution Invariant Check:    \033[1;32mPASS\033[0m")
-    print(f"  ├─ Policy Floor Check (Γ ≤ {state.coherence_floor:.3f}): \033[1;32mPASS\033[0m")
-
-    gene_slug = re.sub(r'[^a-zA-Z0-9_]+', '_', intent.lower().strip())[:32].strip('_') or 'sovereign_intent'
+    gene_slug = re.sub(r"[^a-zA-Z0-9_]+", "_", intent.lower().strip())[:28].strip("_") or "sovereign_intent"
+    if gene_slug[0].isdigit():
+        gene_slug = f"g_{gene_slug}"
+    org_name = "Org_" + "".join(part.capitalize() for part in gene_slug.split("_") if part)[:28]
     gene_id = f"gene_{gene_slug}"
-    tau_us = 46.9787
-    loci = [
-        f"locus 0x01: dynamical_decoupling(sequence='XY4', tau_us={tau_us:.4f});",
-        f"locus 0x02: policy_constraint(coherence_floor={state.coherence_floor:.4f}, type='configured_threshold');",
-        f"locus 0x03: bind_intent(intent_hash=\"{intent_hash[:16]}\");"
-    ]
-    loci_str = "\n    ".join(loci)
 
-    dna_code = f"""```dna
-// OSIRIS Synthesized Genome: {intent}
-gene {gene_id} {{
-    {loci_str}
-    
-    express {{
-        enforce_floor(coherence_floor <= {state.coherence_floor:.4f});
-        yield coherence_gain;
-    }}
-}}
-```"""
+    raw_dna = (
+        f"// OSIRIS Synthesized Genome: {intent}\n"
+        f"organism {org_name} {{\n"
+        f"  meta {{\n"
+        f"    intent_sha256: \"{intent_hash[:16]}\",\n"
+        f"    coherence_floor: {state.coherence_floor:.4f},\n"
+        f"    threshold_kind: \"configured_policy\"\n"
+        f"  }}\n"
+        f"  gene {gene_id}(tau: duration) on a, b {{\n"
+        f"    h a;\n"
+        f"    cx a, b;\n"
+        f"    wait(tau / 2) a, b;\n"
+        f"    echo(X) a, b;\n"
+        f"    wait(tau) a, b;\n"
+        f"    echo(Y) a, b;\n"
+        f"    wait(tau) a, b;\n"
+        f"    echo(X) a, b;\n"
+        f"    wait(tau) a, b;\n"
+        f"    echo(Y) a, b;\n"
+        f"    wait(tau / 2) a, b;\n"
+        f"    cleave a -> c0;\n"
+        f"    cleave b -> c1;\n"
+        f"  }}\n"
+        f"  genome {{\n"
+        f"    {gene_id}(1us) @ [0, 1];\n"
+        f"  }}\n"
+        f"}}"
+    )
+
+    print("\n\033[1;36m[AST FIREWALL] Compiling generated dna::}{::lang organism...\033[0m")
+    verified = False
+    compiler_name = "unavailable"
+    op_count = 0
+    errors: List[str] = []
+    warnings_list: List[str] = []
+    try:
+        import dnalang as _dnalang
+        compiler_name = f"dnalang-{getattr(_dnalang, '__version__', '0.4.0')}"
+        try:
+            org_ast = _dnalang.parse(raw_dna)
+            diags = _dnalang.check(org_ast)
+            errors = list(diags.errors)
+            warnings_list = list(diags.warnings)
+            if diags.ok():
+                circuit = _dnalang.lower(org_ast)
+                op_count = len(circuit.ops)
+                verified = True
+        except Exception as exc:
+            errors.append(str(exc))
+    except ImportError:
+        compiler_name = "uninstalled"
+
+    if compiler_name == "uninstalled":
+        print("  ├─ dnalang Compiler Check:         \033[1;33mUNVERIFIED (dnalang package not in PYTHONPATH)\033[0m")
+    elif verified:
+        print(f"  ├─ Parser ({compiler_name}):          \033[1;32mPASS\033[0m")
+        parity_status = "PASS (even X/Y echo parity)" if not warnings_list else f"WARN ({'; '.join(warnings_list)})"
+        print(f"  ├─ Semantic & DD-Parity Check:     \033[1;32m{parity_status}\033[0m")
+        print(f"  └─ QC-IR Lowering ({op_count} ops):        \033[1;32mPASS\033[0m")
+    else:
+        print(f"  └─ Compiler Verification ({compiler_name}): \033[1;31mFAIL\033[0m ({'; '.join(errors)})")
+        h = state.log_event("GENE_SYNTHESIS_REJECTED", {"intent": intent, "gene": gene_id, "errors": errors})
+        return {"status": "REJECTED", "event_hash": h, "gene": gene_id, "verified": False, "errors": errors}
+
+    dna_code = f"```dna\n{raw_dna}\n```"
     print("\n\033[1;37m[GENOME EMITTED]\033[0m")
     print(dna_code)
-    print(f"\033[1;32m[SYNTHESIS] Gene '{gene_id}' validated against AST firewall.\033[0m\n")
+    if verified:
+        print(f"\033[1;32m[SYNTHESIS] Organism '{org_name}' ('{gene_id}') verified by {compiler_name}.\033[0m\n")
+    else:
+        print(f"\033[1;33m[SYNTHESIS] Organism '{org_name}' emitted without compiler verification ({compiler_name}).\033[0m\n")
 
-    h = state.log_event("GENE_SYNTHESIS", {"intent": intent, "locus_count": len(loci), "gene": gene_id})
-    return {"status": "SUCCESS", "event_hash": h, "gene": gene_id}
+    h = state.log_event("GENE_SYNTHESIS", {
+        "intent": intent,
+        "organism": org_name,
+        "gene": gene_id,
+        "verified": verified,
+        "compiler": compiler_name,
+        "op_count": op_count,
+    })
+    return {
+        "status": "SUCCESS" if verified else "UNVERIFIED",
+        "event_hash": h,
+        "organism": org_name,
+        "gene": gene_id,
+        "dna_source": raw_dna,
+        "verified": verified,
+        "op_count": op_count,
+    }
 
 
 def execute_ledger(state: Optional[OsirisReplState] = None) -> Dict[str, Any]:
@@ -1929,10 +1995,10 @@ def execute_trio(rest: str) -> None:
 # keeps the set in step with the source.
 REPL_COMMANDS = {
     "/apply", "/architecture", "/benchmark", "/bridges", "/chat", "/check", "/clean", "/closure",
-    "/code", "/core", "/digest", "/discard", "/dna", "/eval-audit", "/experiment", "/fast", "/firewall", "/forge",
+    "/code", "/core", "/digest", "/discard", "/dna", "/edge", "/eval-audit", "/experiment", "/fast", "/firewall", "/forge",
     "/forget", "/gemini", "/help", "/ignite", "/ingest", "/intent", "/introspect", "/learn",
     "/ledger", "/legit", "/mentor", "/mesh", "/mutate", "/nclm", "/ollama", "/osiris", "/physics",
-    "/power", "/pr", "/publish", "/q", "/remember", "/retrieval", "/run", "/self", "/sim",
+    "/power", "/pr", "/provision", "/publish", "/q", "/remember", "/retrieval", "/run", "/self", "/sim",
     "/status", "/swarm", "/sync", "/tetra1d", "/tournament", "/train", "/trio", "/unlearn",
     "/update", "/validate", "/voice", "/welcome",
 }
@@ -2175,9 +2241,44 @@ def dispatch_command(state: OsirisReplState, line: str) -> None:
         elif sub == "status":
             st = paste_learning.get_learning_status(living_obj.home)
             print("\n" + paste_learning.format_learning_status(st) + "\n")
-        else:
-            steps = int(parts[1]) if len(parts) > 1 and parts[1].isdigit() else 5
+        elif not sub or (len(parts) == 2 and parts[1].isdigit()):
+            steps = int(parts[1]) if len(parts) == 2 and parts[1].isdigit() else 5
             execute_learn(state, generations=steps)
+        else:
+            trailing = line_clean[len(parts[0]):].strip()
+            if len(trailing) >= 2 and trailing[0] == trailing[-1] and trailing[0] in ('"', "'"):
+                trailing = trailing[1:-1].strip()
+            if not trailing:
+                execute_learn(state, generations=5)
+            else:
+                idx = living_obj.stats.get("exchanges", 0)
+                living_obj.stats["exchanges"] = idx + 1
+                reply_note = "[Captured via /learn for governed review; nothing promoted until confirmed.]"
+                rec_data = {
+                    "t": time.strftime("%Y-%m-%dT%H:%M:%S"),
+                    "voice": "code",
+                    "heldout": False,
+                    "learnable": False,
+                    "user": trailing,
+                    "reply": reply_note,
+                    "index": idx,
+                    "input_transport": "bracketed_paste",
+                    "is_multiline": "\n" in trailing,
+                    "char_count": len(trailing),
+                    "line_count": len(trailing.splitlines()),
+                    "source_type": "bracketed_paste",
+                    "pasted": True,
+                }
+                key = living_obj._record(rec_data)
+                living_obj.last_paste = dict(rec_data, hash=key)
+                living_obj._save_stats()
+                if otc is not None and isinstance(getattr(otc, "_intent_state", None), dict):
+                    otc._intent_state.update(text=trailing, cls="engineering", pasted=True)
+                candidate = paste_learning.get_last_paste_candidate(living_obj.home)
+                if candidate is not None:
+                    print("\n" + paste_learning.format_review_card(candidate) + "\n")
+                else:
+                    print("\n[OSIRIS] Captured input in ledger; run '/learn last' to review.\n")
     elif cmd in ("/unlearn", "unlearn"):
         from osiris_cli import paste_learning
         target_id = parts[1] if len(parts) > 1 else ""
@@ -2406,6 +2507,15 @@ def dispatch_command(state: OsirisReplState, line: str) -> None:
         execute_pr(parts[1:])
     elif cmd in ("/sync", "sync"):
         execute_sync(parts[1:])
+    elif cmd in ("/provision", "provision", "/edge", "edge"):
+        from osiris_cli import edge_provisioner
+        import shlex as _shlex
+        raw_tail = line_clean[len(parts[0]):].strip()
+        try:
+            sub_argv = _shlex.split(raw_tail) if raw_tail else ["status"]
+        except ValueError:
+            sub_argv = raw_tail.split() if raw_tail else ["status"]
+        edge_provisioner.run_provision_command(sub_argv)
     elif cmd in ("/update", "update"):
         execute_update()
     elif cmd in ("/help", "help", "?"):
@@ -2462,7 +2572,10 @@ def boot_repl() -> None:
             else:
                 line = input(prompt)
             line = line.strip()
-        except (EOFError, KeyboardInterrupt):
+        except KeyboardInterrupt:
+            print("^C")
+            continue
+        except EOFError:
             print("\n[OSIRIS] Session closed.")
             break
 
@@ -2499,6 +2612,9 @@ def main(argv: Optional[List[str]] = None) -> None:
     if argv and argv[0] in ("retrieval", "/retrieval"):
         from osiris_cli import retrieval
         sys.exit(retrieval.main(argv[1:]))
+    if argv and argv[0] in ("provision", "/provision", "edge", "/edge"):
+        from osiris_cli import edge_provisioner
+        sys.exit(edge_provisioner.run_provision_command(argv[1:]))
     if argv and argv[0] in ("check", "/check"):
         # E-24: `osiris check [ledger|...] [--home DIR]` names the data home it read and exits non-zero when the
         # exchange log is tampered with or unreadable. --home reads another home (Termux's, from PRoot).
