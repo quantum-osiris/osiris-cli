@@ -38,6 +38,7 @@ DEFAULT_SOURCES = [
     "organism_sim/docs/PROGRAM.md",
     "dnalang-core/README.md",
     "bridge/README.md",
+    "osiris-cli/docs/research/NOTEBOOKLM_SYNTHESIS_AUDIT_2026_11_16.md",
 ]
 SCORECARD_SOURCE = "organism_sim/README.md"
 

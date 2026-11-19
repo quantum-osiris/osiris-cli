@@ -3,11 +3,12 @@
 from __future__ import annotations
 
 import io
+import json
 from unittest.mock import patch
 
 import genome
 import osiris_termux_console as otc
-from osiris_cli import claims, living, osiris_repl
+from osiris_cli import claims, living, osiris_repl, paste_learning
 from osiris_cli.osiris_repl import OsirisReplState, dispatch_command, execute_ignite
 from tests.test_living import ScriptedMentor, make
 
@@ -79,13 +80,125 @@ def test_excerpt_snaps_to_line_boundaries_and_lists_omitted_sections():
 def test_bare_paste_records_last_paste_and_serves_requested_middle_section(tmp_path):
     mentor = ScriptedMentor()
     o, _ = make(tmp_path, mentor=mentor)
-    o.converse(ARCH_SPEC_FIXTURE, input_transport="bracketed_paste")
+    acknowledgement = o.converse(ARCH_SPEC_FIXTURE, input_transport="bracketed_paste")
     assert o.last_paste is not None and o.last_paste["user"] == ARCH_SPEC_FIXTURE
+    assert "Run /review for a section-by-section review" in acknowledgement
     o.converse("review section 3")
     sent = mentor.calls[-1][-1]["content"]
     assert "[Requested section from your most recent pasted document]" in sent
     assert "3. P0 Remediation: Contract Standardization & Schema Unification" in sent
     assert "Frontend API Route Proxy: app/api/osiris/plan/route.ts" in sent
+    assert "only that section was additionally provided" in sent
+
+
+def test_generic_long_document_review_is_explicitly_limited_to_excerpt(tmp_path):
+    mentor = ScriptedMentor()
+    o, _ = make(tmp_path, mentor=mentor)
+    doc = (
+        "Document start\n"
+        + ("Opening text.\n" * 500)
+        + "UNSEEN_MIDDLE_MARKER\n"
+        + ("Middle-only material.\n" * 700)
+        + "Document end\n"
+        + ("Closing text.\n" * 500)
+    )
+    o.converse(doc, input_transport="bracketed_paste")
+    o.converse("review it")
+    messages = mentor.calls[-1]
+    sent = "\n".join(message["content"] for message in messages)
+    assert "Do not claim to have reviewed the complete document" in sent
+    assert "head-and-tail excerpt" in sent
+    assert "UNSEEN_MIDDLE_MARKER" not in sent
+
+
+def test_document_review_chunks_preserve_all_source_text():
+    document = (
+        "# Overview\n"
+        + ("Overview detail.\n" * 250)
+        + "\n# Risks\n"
+        + ("Risk detail.\n" * 220)
+    )
+    chunks = living.document_review_chunks(document, chunk_chars=300)
+    assert len(chunks) == 2
+    assert "".join(chunks[0]["parts"]) + "".join(chunks[1]["parts"]) == document
+    assert all(len(part) <= 300 for section in chunks for part in section["parts"])
+
+
+def test_review_last_paste_reviews_each_chunk_and_records_coverage(tmp_path):
+    mentor = ScriptedMentor()
+    o, out = make(tmp_path, mentor=mentor)
+    document = (
+        "# Overview\n"
+        + ("Overview detail.\n" * 250)
+        + "\n# Risks\n"
+        + ("Risk detail.\n" * 220)
+    )
+    o.converse(document, input_transport="bracketed_paste")
+
+    result = o.review_last_paste()
+    coverage = result["coverage"]["review_coverage"]
+    assert result["status"] == "COMPLETE"
+    assert coverage["sections_not_read"] == []
+    assert len(coverage["sections_read"]) == 2
+    assert len(mentor.calls) == sum(len(section["parts"]) for section in living.document_review_chunks(document))
+    assert all(len(call) == 2 for call in mentor.calls)
+    assert all("[Source segment]" in call[-1]["content"] for call in mentor.calls)
+    assert o.last_paste["user"] == document
+    assert o.last_paste["review_coverage"] == result["coverage"]
+    assert not o.core.learned
+    assert "[DOCUMENT REVIEW COMPLETE]" in "".join(out)
+    assert not hasattr(o, "force_core_voice")
+    with open(o.log_path, encoding="utf-8") as ledger:
+        receipt = json.loads(ledger.readlines()[-1])
+    assert receipt["hash"] == result["receipt_hash"]
+    assert receipt["source_hash"] == coverage["source_versions"][0].removeprefix("sha256:")
+    assert receipt["coverage"]["sections_not_read"] == []
+    assert paste_learning.get_last_paste_candidate(o.home).text == document
+
+
+def test_document_review_reports_unread_sections_when_mentor_fails(tmp_path):
+    mentor = ScriptedMentor(fail=ConnectionError("offline"))
+    o, _ = make(tmp_path, mentor=mentor)
+    document = "# One\n" + ("Evidence.\n" * 400) + "\n# Two\nMore evidence.\n"
+    o.converse(document, input_transport="bracketed_paste")
+
+    result = o.review_last_paste()
+    coverage = result["coverage"]["review_coverage"]
+    assert result["status"] == "PARTIAL"
+    assert coverage["sections_read"] == []
+    assert coverage["sections_not_read"] == ["1: # One", "2: # Two"]
+    assert len(mentor.calls) == 1
+
+
+def test_document_review_refuses_unconfirmed_remote_mentor(tmp_path):
+    mentor = ScriptedMentor()
+    mentor.local_review_allowed = False
+    o, _ = make(tmp_path, mentor=mentor)
+    document = "# Private\n" + ("Private content.\n" * 250)
+    o.converse(document, input_transport="bracketed_paste")
+
+    result = o.review_last_paste()
+    assert result == {"status": "LOCAL_MENTOR_REQUIRED", "coverage": None}
+    assert mentor.calls == []
+
+
+def test_document_review_only_allows_loopback_ollama():
+    assert living.OllamaMentor(base="http://localhost:11434").local_review_allowed
+    assert living.OllamaMentor(base="http://127.0.0.1:11434").local_review_allowed
+    assert not living.OllamaMentor(base="https://models.example.test").local_review_allowed
+
+
+def test_review_command_routes_to_last_paste_review(monkeypatch):
+    called = []
+
+    class FakeLiving:
+        def review_last_paste(self):
+            called.append(True)
+
+    monkeypatch.setattr(osiris_repl, "get_living", FakeLiving)
+    assert osiris_repl.bare_command("review") == "/review"
+    dispatch_command(OsirisReplState(), "/review")
+    assert called == [True]
 
 
 def test_execute_ignite_initializes_missing_genome_without_catch22(tmp_path, monkeypatch):

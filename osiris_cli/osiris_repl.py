@@ -805,14 +805,15 @@ def execute_ledger(state: Optional[OsirisReplState] = None) -> Dict[str, Any]:
 # ═══════════════════════════════════════════════════════════════════════════════
 
 def execute_swarm(state: Optional[OsirisReplState] = None, steps: int = 10) -> Dict[str, Any]:
-    """Boots NCLM ALife Organism & Dynamical Decoupling Bridge with live hash-chained telemetry."""
+    """Run the local Aer-backed DD simulation with hash-chained telemetry."""
     if state is None:
         state = SESSION
 
     if not state.ignited:
-        execute_ignite(state)
+        print("[OSIRIS::SWARM] blocked: run /ignite explicitly before starting the local simulation.")
+        return {"status": "BLOCKED", "reason": "explicit ignition required"}
 
-    print(f"\n\033[1;35m[OSIRIS::SWARM] Booting NCLM Organismic Swarm (steps={steps})...\033[0m")
+    print(f"\n\033[1;35m[OSIRIS::SWARM] [LOCAL SIMULATION] Aer-backed DD search (steps={steps})...\033[0m")
     try:
         from bridge.quantum_fitness import DDController, QuantumFitness
         ledger_dir = results_dir("swarm_runs")
@@ -834,7 +835,7 @@ def execute_swarm(state: Optional[OsirisReplState] = None, steps: int = 10) -> D
         print(f"  ├─ Ledger File:    {ledger_path.name}")
         print("  └─ Streaming Hash-Chained Telemetry:")
         print("     " + "-" * 72)
-        print(f"     {'STEP':<5} | {'EDIT':<10} | {'SCORE (F)':<10} | {'BEST (F)':<10} | {'NOISE':<8} | {'AUDIT HEAD':<16}")
+        print(f"     {'STEP':<5} | {'EDIT':<10} | {'SIM SCORE':<10} | {'SIM BEST':<10} | {'NOISE':<8} | {'AUDIT HEAD':<16}")
         print("     " + "-" * 72)
 
         for step_i in range(1, steps + 1):
@@ -845,17 +846,18 @@ def execute_swarm(state: Optional[OsirisReplState] = None, steps: int = 10) -> D
             time.sleep(0.04)
 
         print("     " + "-" * 72)
-        print(f"\033[1;32m[OSIRIS::SWARM] Completed {steps} evolutionary cycles.\033[0m")
-        print(f"  ├─ Best DD Score : {controller.best_score:.6f}")
+        print(f"\033[1;32m[OSIRIS::SWARM] Completed {steps} local simulation cycles.\033[0m")
+        print(f"  ├─ Best Simulated DD Score : {controller.best_score:.6f}")
         print(f"  ├─ Final Genome   : {controller.space.key(controller.genome)}")
         print(f"  └─ Cryptographic Audit Head: {controller.agent.organism.chain.head}\n")
         
         state.log_event("SWARM_EVOLUTION", {
             "steps": steps,
+            "execution_kind": "SIMULATION",
             "best_score": controller.best_score,
             "audit_head": controller.agent.organism.chain.head
         })
-        return {"status": "SUCCESS", "best_score": controller.best_score}
+        return {"status": "SUCCESS", "execution_kind": "SIMULATION", "best_score": controller.best_score}
     except Exception as e:
         print(f"[OSIRIS::ERROR] Swarm execution error: {e}")
         return {"status": "ERROR", "error": str(e)}
@@ -1630,8 +1632,31 @@ def execute_sync(args: Optional[List[str]] = None) -> None:
         print("\n" + DualNodeSyncBridge.format_status_card() + "\n")
     elif sub in ("plan", "runbook", "guide"):
         print(DualNodeSyncBridge.format_runbook())
+    elif sub in ("provision", "x3", "gamma"):
+        execute_provision(args[1:])
     else:
-        print(f"[SYNC] Unknown subcommand '{sub}'. Usage: /sync [status|plan]")
+        print(f"[SYNC] Unknown subcommand '{sub}'. Usage: /sync [status|plan|provision]")
+
+def execute_provision(args: Optional[List[str]] = None) -> None:
+    """Executes Adaptive Multi-Substrate Edge Node Provisioning & Administration."""
+    from osiris_cli.edge_provisioner import AdaptiveEdgeProvisioner
+    args = args or []
+    sub = args[0].lower() if args else "status"
+
+    if sub in ("status", "discover", "check"):
+        print("\n" + AdaptiveEdgeProvisioner.format_dashboard() + "\n")
+    elif sub in ("build", "deploy", "run", "ppkg"):
+        rc = AdaptiveEdgeProvisioner.run_primitive_pipeline()
+        if rc == 0:
+            print("\n" + AdaptiveEdgeProvisioner.format_dashboard() + "\n")
+    elif sub in ("flash", "ffu"):
+        AdaptiveEdgeProvisioner.run_ffu_flash(args[1] if len(args) > 1 else None)
+    elif sub == "verify":
+        rep = AdaptiveEdgeProvisioner.verify_artifacts()
+        print("\n\033[1;36m[OSIRIS::PROVISION ARTIFACT VERIFICATION]\033[0m")
+        print(json.dumps(rep, indent=2) + "\n")
+    else:
+        print(f"[PROVISION] Unknown subcommand '{sub}'. Usage: osiris provision [status|discover|build|deploy|verify|flash [ffu_path]]")
 
 
 # ═══════════════════════════════════════════════════════════════════════════════
@@ -1780,30 +1805,62 @@ def update_checkout(repo: str, run: Callable = subprocess.run) -> bool:
     def git(*args):
         return run(["git", "-C", repo, *args], capture_output=True, text=True)
 
-    dirty = git("status", "--porcelain", "--untracked-files=no").stdout.strip()
-    if dirty:
-        changed = ", ".join(ln[3:].strip() for ln in dirty.splitlines()[:5])
-        more = f" (+{len(dirty.splitlines()) - 5} more)" if len(dirty.splitlines()) > 5 else ""
+    branch = git("branch", "--show-current")
+    if branch.returncode:
+        print(f"[OSIRIS::ERROR] could not determine checkout branch: {(branch.stderr or '').strip()[:200]}")
+        return False
+    branch_name = branch.stdout.strip()
+    if branch_name != "main":
+        name = branch_name or "detached HEAD"
+        print(f"[OSIRIS::SYNC] not updated: automatic updates are limited to main (current: {name})")
+        return False
+
+    status = git("status", "--porcelain=v1", "-z", "--untracked-files=all")
+    if status.returncode:
+        print(f"[OSIRIS::ERROR] git status failed: {(status.stderr or '').strip()[:200]}")
+        return False
+    dirty_entries = [entry for entry in status.stdout.split("\0") if entry]
+    dirty_paths = []
+    i = 0
+    while i < len(dirty_entries):
+        entry = dirty_entries[i]
+        status_code, path = entry[:2], entry[3:]
+        if status_code.strip() in ("R", "C") and i + 1 < len(dirty_entries):
+            path = f"{dirty_entries[i + 1]} -> {path}"
+            i += 1
+        dirty_paths.append(path)
+        i += 1
+    if dirty_paths:
+        changed = ", ".join(dirty_paths[:5])
+        more = f" (+{len(dirty_paths) - 5} more)" if len(dirty_paths) > 5 else ""
         print(f"[OSIRIS::SYNC] not updated: {repo} has uncommitted changes ({changed}{more})")
         return False
+
     fetched = git("fetch", "origin")
     if fetched.returncode:
         print(f"[OSIRIS::ERROR] git fetch failed: {(fetched.stderr or '').strip()[:200]}")
         return False
-    ahead, behind = (int(n) for n in git("rev-list", "--left-right", "--count", "HEAD...origin/main").stdout.split())
-    branch = git("branch", "--show-current").stdout.strip() or "HEAD"
+    counts = git("rev-list", "--left-right", "--count", "HEAD...origin/main")
+    if counts.returncode:
+        print(f"[OSIRIS::ERROR] could not compare with origin/main: {(counts.stderr or '').strip()[:200]}")
+        return False
+    try:
+        ahead, behind = (int(n) for n in counts.stdout.split())
+    except ValueError:
+        print("[OSIRIS::ERROR] git returned an invalid ahead/behind count for origin/main")
+        return False
     if not behind:
-        print(f"[OSIRIS::SYNC] {branch} already has everything on origin/main")
+        print("[OSIRIS::SYNC] main already has everything on origin/main")
         return False
     if ahead:
-        print(f"[OSIRIS::SYNC] not updated: {branch} has {ahead} commit(s) that origin/main does not, and is "
+        print(f"[OSIRIS::SYNC] not updated: main has {ahead} commit(s) that origin/main does not, and is "
               f"{behind} behind. Merge to combine them: git -C {repo} merge origin/main")
         return False
     merged = git("merge", "--ff-only", "origin/main")
     if merged.returncode:
         print(f"[OSIRIS::ERROR] fast-forward failed: {(merged.stderr or '').strip()[:200]}")
         return False
-    print(f"[OSIRIS::SYNC] {branch} fast-forwarded by {behind} commit(s) to origin/main")
+    print(f"[OSIRIS::SYNC] main fast-forwarded by {behind} commit(s) to origin/main")
     return True
 
 
@@ -1812,6 +1869,7 @@ def display_help() -> None:
     print("\n\033[1;37mAvailable OSIRIS Apex Commands:\033[0m")
     print("  \033[1;36mConversation\033[0m")
     print("    <any text>           Talk to OSIRIS (commands need a leading /)")
+    print("    /review              Review the last paste by section (local loopback Ollama only; coverage reported)")
     print("    /osiris              OSIRIS's core: step, held-out score, speaking gate")
     print("    /self <text>         Hear the core's own raw voice, even before it has earned it")
     print("    /mentor [model]      Choose which local Ollama model speaks while the core learns")
@@ -1932,7 +1990,7 @@ REPL_COMMANDS = {
     "/code", "/core", "/digest", "/discard", "/dna", "/eval-audit", "/experiment", "/fast", "/firewall", "/forge",
     "/forget", "/gemini", "/help", "/ignite", "/ingest", "/intent", "/introspect", "/learn",
     "/ledger", "/legit", "/mentor", "/mesh", "/mutate", "/nclm", "/ollama", "/osiris", "/physics",
-    "/power", "/pr", "/publish", "/q", "/remember", "/retrieval", "/run", "/self", "/sim",
+    "/power", "/pr", "/publish", "/q", "/remember", "/review", "/retrieval", "/run", "/self", "/sim",
     "/status", "/swarm", "/sync", "/tetra1d", "/tournament", "/train", "/trio", "/unlearn",
     "/update", "/validate", "/voice", "/welcome",
 }
@@ -2241,6 +2299,11 @@ def dispatch_command(state: OsirisReplState, line: str) -> None:
         msg = line_clean[len(parts[0]):].strip()
         if msg:
             handle_livlm_prompt(state, msg)
+    elif cmd == "/review":
+        if len(parts) != 1:
+            print("\n[OSIRIS] Usage: /review (reviews the most recent pasted document)\n")
+        else:
+            get_living().review_last_paste()
     elif cmd == "/osiris":
         trailing = line_clean[len(parts[0]):].strip()
         if trailing:
@@ -2406,6 +2469,8 @@ def dispatch_command(state: OsirisReplState, line: str) -> None:
         execute_pr(parts[1:])
     elif cmd in ("/sync", "sync"):
         execute_sync(parts[1:])
+    elif cmd in ("/provision", "provision"):
+        execute_provision(parts[1:])
     elif cmd in ("/update", "update"):
         execute_update()
     elif cmd in ("/help", "help", "?"):
@@ -2527,7 +2592,7 @@ def main(argv: Optional[List[str]] = None) -> None:
         "action",
         nargs="?",
         default=None,
-        choices=["update", "ignite", "swarm", "mesh", "benchmark", "status", "power", "repl", "pr", "sync", "tetra1d", "closure", "mutate", "sim", "interactive"],
+        choices=["update", "ignite", "swarm", "mesh", "benchmark", "status", "power", "repl", "pr", "sync", "provision", "tetra1d", "closure", "mutate", "sim", "interactive"],
         help="Direct command to execute (default: launch REPL)"
     )
     parser.add_argument(
@@ -2591,6 +2656,8 @@ def main(argv: Optional[List[str]] = None) -> None:
         execute_pr(args.subargs)
     elif args.action == "sync":
         execute_sync(args.subargs)
+    elif args.action == "provision":
+        execute_provision(args.subargs)
     elif args.action == "tetra1d":
         execute_tetra1d(SESSION)
     elif args.action == "closure":

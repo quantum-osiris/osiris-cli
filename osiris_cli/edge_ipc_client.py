@@ -18,16 +18,60 @@ import hashlib
 import json
 import os
 import pathlib
+import subprocess
 import sys
 import time
 import urllib.error
 import urllib.request
-from typing import Any, Dict, Optional, Tuple
+from typing import Any, Dict, List, Optional, Tuple
 
 from cryptography.exceptions import InvalidSignature
 from cryptography.hazmat.primitives.asymmetric import ed25519
 
 DEFAULT_BASE_URL = "http://127.0.0.1:8080"
+WIN_CURL_INTEROP = "/mnt/c/Windows/System32/curl.exe"
+
+
+def _can_use_wsl_curl_bridge(url: str) -> bool:
+    if not url.startswith("http://127.0.0.1:") and not url.startswith("http://localhost:"):
+        return False
+    if not os.path.exists(WIN_CURL_INTEROP):
+        return False
+    return os.path.exists("/proc/version") and "microsoft" in pathlib.Path("/proc/version").read_text(errors="ignore").lower()
+
+
+def _wsl_curl_request(
+    method: str,
+    url: str,
+    headers: Optional[Dict[str, str]] = None,
+    data: Optional[bytes] = None,
+    timeout: float = 10.0,
+) -> Tuple[int, str]:
+    cmd: List[str] = [
+        WIN_CURL_INTEROP,
+        "-sS",
+        "-X",
+        method,
+        "--max-time",
+        str(max(1, int(timeout))),
+        "-w",
+        "\n__HTTP_CODE__:%{http_code}",
+    ]
+    for k, v in (headers or {}).items():
+        cmd.extend(["-H", f"{k}: {v}"])
+    if data is not None:
+        cmd.extend(["--data-binary", "@-"])
+    proc = subprocess.run(cmd + [url], input=data, capture_output=True, check=False)
+    out = proc.stdout.decode("utf-8", errors="replace")
+    if "\n__HTTP_CODE__:" in out:
+        body, code_str = out.rsplit("\n__HTTP_CODE__:", 1)
+        try:
+            code = int(code_str.strip())
+        except ValueError:
+            code = 0
+        if code > 0:
+            return code, body
+    raise urllib.error.URLError(proc.stderr.decode("utf-8", errors="replace").strip() or "WSL curl bridge failed")
 
 
 def resolve_base_url(override: Optional[str] = None) -> str:
@@ -132,6 +176,13 @@ def check_bridge_health(base_url: Optional[str] = None, timeout: float = 3.0) ->
                 data = json.loads(response.read().decode("utf-8"))
                 return {"status": "ONLINE", "details": data}
     except Exception as exc:
+        if _can_use_wsl_curl_bridge(url):
+            try:
+                code, body = _wsl_curl_request("GET", url, timeout=timeout)
+                if code == 200:
+                    return {"status": "ONLINE", "details": json.loads(body)}
+            except Exception:
+                pass
         return {"status": "OFFLINE", "error": str(exc)}
     return {"status": "OFFLINE", "error": "Unknown failure"}
 
@@ -152,6 +203,15 @@ def check_ledger_readiness(base_url: Optional[str] = None, timeout: float = 5.0)
             pass
         return {"status": "NOT_READY", "chain_valid": False, "error": f"HTTP {exc.code}: {body or 'Ledger verification failed.'}"}
     except Exception as exc:
+        if _can_use_wsl_curl_bridge(url):
+            try:
+                code, body = _wsl_curl_request("GET", url, timeout=timeout)
+                if code == 200:
+                    data = json.loads(body)
+                    return {"status": "READY", "chain_valid": bool(data.get("chain_valid", True)), "details": data}
+                return {"status": "NOT_READY", "chain_valid": False, "error": f"HTTP {code}: {body}"}
+            except Exception:
+                pass
         return {"status": "OFFLINE", "chain_valid": False, "error": str(exc)}
     return {"status": "OFFLINE", "chain_valid": False, "error": "Unknown failure"}
 
@@ -172,16 +232,12 @@ def enroll_edge_key(
     ).encode("utf-8")
     sig_b64, ts_str = sign_payload(body, key_dir=key_dir)
     url = f"{resolve_base_url(base_url)}/v1/keys/enroll"
-    req = urllib.request.Request(
-        url,
-        data=body,
-        headers={
-            "Content-Type": "application/json",
-            "X-Signature-Ed25519": sig_b64,
-            "X-Timestamp": ts_str,
-        },
-        method="POST",
-    )
+    hdrs = {
+        "Content-Type": "application/json",
+        "X-Signature-Ed25519": sig_b64,
+        "X-Timestamp": ts_str,
+    }
+    req = urllib.request.Request(url, data=body, headers=hdrs, method="POST")
     try:
         with urllib.request.urlopen(req, timeout=timeout) as response:
             return json.loads(response.read().decode("utf-8"))
@@ -189,6 +245,14 @@ def enroll_edge_key(
         err_txt = exc.read().decode("utf-8", errors="replace")
         return {"status": "ERROR", "http_code": exc.code, "error": err_txt}
     except Exception as exc:
+        if _can_use_wsl_curl_bridge(url):
+            try:
+                code, resp_body = _wsl_curl_request("POST", url, headers=hdrs, data=body, timeout=timeout)
+                if code == 200:
+                    return json.loads(resp_body)
+                return {"status": "ERROR", "http_code": code, "error": resp_body}
+            except Exception:
+                pass
         return {"status": "OFFLINE", "error": str(exc)}
 
 
@@ -214,17 +278,13 @@ def send_osiris_intent(
     data_bytes = json.dumps(payload).encode("utf-8")
     signature, timestamp = sign_payload(data_bytes, key_dir=key_dir)
 
-    req = urllib.request.Request(
-        endpoint,
-        data=data_bytes,
-        headers={
-            "Content-Type": "application/json",
-            "Accept": "text/event-stream",
-            "X-Signature-Ed25519": signature,
-            "X-Timestamp": timestamp,
-        },
-        method="POST",
-    )
+    hdrs = {
+        "Content-Type": "application/json",
+        "Accept": "text/event-stream",
+        "X-Signature-Ed25519": signature,
+        "X-Timestamp": timestamp,
+    }
+    req = urllib.request.Request(endpoint, data=data_bytes, headers=hdrs, method="POST")
 
     if stream_stdout:
         print(f"[*] Dispatching Ed25519-signed intent to Android Bridge at {endpoint}...")
@@ -260,6 +320,34 @@ def send_osiris_intent(
             print(f"\n[-] IPC Bridge Rejected Request (HTTP {exc.code}): {err_body}")
         return {"ok": False, "http_code": exc.code, "error": err_body}
     except urllib.error.URLError as exc:
+        if _can_use_wsl_curl_bridge(endpoint):
+            try:
+                code, resp_body = _wsl_curl_request("POST", endpoint, headers=hdrs, data=data_bytes, timeout=timeout)
+                if code != 200:
+                    if stream_stdout:
+                        print(f"\n[-] IPC Bridge Rejected Request (HTTP {code}): {resp_body}")
+                    return {"ok": False, "http_code": code, "error": resp_body}
+                for line in resp_body.splitlines():
+                    decoded = line.strip()
+                    if not decoded.startswith("data: "):
+                        continue
+                    content = decoded[6:]
+                    if content == "[DONE]":
+                        break
+                    try:
+                        chunk = json.loads(content)
+                        chunks.append(chunk)
+                        text_piece = chunk.get("status", "")
+                        if stream_stdout and text_piece:
+                            sys.stdout.write(str(text_piece))
+                            sys.stdout.flush()
+                    except json.JSONDecodeError:
+                        chunks.append({"raw": content})
+                if stream_stdout:
+                    print("\n[+] Signed IPC Stream completed successfully.")
+                return {"ok": True, "chunks": chunks}
+            except Exception:
+                pass
         if stream_stdout:
             print(f"\n[-] IPC Bridge Connection Failed: {exc.reason}. Ensure BridgeCoreService is running.")
         return {"ok": False, "error": str(exc.reason)}
