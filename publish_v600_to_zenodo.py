@@ -249,15 +249,14 @@ def main():
     }
     op_schema_sha256 = hashlib.sha256(json.dumps(op_schema, sort_keys=True).encode()).hexdigest()
 
-    # Generate hybrid PQC grant
-    ed25519_sig = hashlib.sha512(f"GATE0_ED25519:{payload_sha}:{prev_hash}".encode()).hexdigest()
+    # Generate hybrid PQC grant signed by local enclave keys (no manual signature hex)
     grant = gate.generate_hybrid_grant(
         sequence_index=next_seq,
         prev_block_hash=prev_hash,
         event_type="SYS021_V600_ZENODO_AND_GITHUB_RELEASE_GRANT",
         payload_sha256=payload_sha,
         operation_schema=op_schema,
-        ed25519_sig_hex=ed25519_sig
+        scope="zenodo.v600.release",
     )
 
     valid, reason = gate.verify_grant_integrity(grant)
