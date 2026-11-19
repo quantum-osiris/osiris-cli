@@ -286,8 +286,12 @@ class Probes:
 
     def files(self, msg: str) -> List[Dict[str, str]]:
         found, seen = [], set()
-        for raw in re.findall(r"(?:~/|/)?[\w.\-]+(?:/[\w.\-]+)+\.\w+|[\w\-]+\.(?:md|txt|json|py|dna|toml|yaml|yml)\b", msg):
-            if raw in seen:
+        doi_or_host = re.compile(r"^(?:10\.\d{4,9}/|(?:https?:/)?[\w.\-]+\.(?:org|com|io|net|edu|gov|ai)/)", re.I)
+        # Strip full URLs first so URL path tails are never probed as local files
+        scrubbed = re.sub(r"https?://\S+", " ", msg)
+        scrubbed = re.sub(r"\bdoi\s*:\s*10\.\d{4,9}/\S+", " ", scrubbed, flags=re.I)
+        for raw in re.findall(r"(?<![\w:/.-])(?:(?:~/|/)?[\w.\-]+(?:/[\w.\-]+)+\.[A-Za-z][A-Za-z0-9]{1,7}|[\w\-]+\.(?:md|txt|json|py|dna|toml|yaml|yml))\b", scrubbed):
+            if raw in seen or doi_or_host.match(raw):
                 continue
             seen.add(raw)
             if len(found) >= MAX_FILE_CHECKS:   # read or not: a pasted log names dozens of paths

@@ -443,7 +443,7 @@ def test_h13_quantum_origin_mermin_m3_pqc_enclave_bridge() -> None:
     assert receipt.mermin_evaluation.certified is True
     assert receipt.mermin_evaluation.m3_lower_bound > 2.0
 
-    enclave = PQCEnclaveGate()
+    enclave = PQCEnclaveGate()  # real Ed25519 + ML-DSA-65 keys generated per instance
     payload_sha = enclave.compute_payload_digest(receipt.seed_bytes)
     grant = enclave.generate_hybrid_grant(
         sequence_index=1,
@@ -451,7 +451,14 @@ def test_h13_quantum_origin_mermin_m3_pqc_enclave_bridge() -> None:
         event_type="QUANTUM_ORIGIN_MERMIN_M3_SEED_GRANT",
         payload_sha256=payload_sha,
         operation_schema=receipt.to_manifest(),
-        ed25519_sig_hex=receipt.seed_sha256,
     )
     ok, msg = enclave.verify_grant_integrity(grant)
     assert ok is True, msg
+
+    # Tampered signature must fail closed (real cryptographic verification)
+    tampered = json.loads(json.dumps(grant))
+    sig = bytearray(bytes.fromhex(tampered["pqc_envelope"]["ml_dsa_signature"]))
+    sig[0] ^= 0x01
+    tampered["pqc_envelope"]["ml_dsa_signature"] = sig.hex()
+    ok2, _ = enclave.verify_grant_integrity(tampered)
+    assert ok2 is False
