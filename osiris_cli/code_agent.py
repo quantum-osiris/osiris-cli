@@ -26,8 +26,10 @@ import difflib
 import hashlib
 import json
 import os
+import platform
 import re
 import shlex
+import shutil
 import signal
 import subprocess
 import time
@@ -48,6 +50,17 @@ TEXT_TOOL_CALL_MODELS = ("qwen2.5-coder",)
 #: Shell syntax that has no meaning without a shell; refused with a clear reason.
 _SHELL_ONLY_TOKENS = {"|", "||", "&&", ";", "&", ">", ">>", "<", "<<", "2>", "2>&1", "&>"}
 _DANGEROUS = [re.compile(p) for p in (r"^rm$", r"^dd$", r"^mkfs", r"^shutdown$", r"^reboot$")]
+_BARE_INTERACTIVE_REPLS = frozenset({
+    "powershell", "powershell.exe", "pwsh", "pwsh.exe", "cmd", "cmd.exe",
+    "python", "python3", "bash", "sh", "zsh", "node", "irb",
+})
+
+
+def _is_wsl() -> bool:
+    try:
+        return "microsoft" in platform.release().lower()
+    except Exception:  # noqa: BLE001
+        return False
 
 # Commands that change credentials or account state, or publish outside this machine. The
 # tool loop never runs them, whatever the model was told: a task often contains pasted text
@@ -242,6 +255,7 @@ class CodeAgent:
         log: Optional[Callable[[str, Dict[str, Any]], Any]] = None,
         out: Callable[[str], None] = print,
         max_steps: int = MAX_STEPS,
+        max_writes: int = 1,
         installed_fn: Optional[Callable[[], Dict[str, str]]] = None,
         receipts_path: Optional[str] = None,
     ):
@@ -257,11 +271,13 @@ class CodeAgent:
         self._log = log or (lambda event, details: None)
         self._out = out
         self.max_steps = max_steps
+        self.max_writes = max(1, int(max_writes))
         self._installed_fn = installed_fn
         self.receipts_path = receipts_path
         self.decisions: List[Dict[str, Any]] = []
         self._wrote = False
         self._pending_proposal: Optional[Dict[str, Any]] = None
+        self._pending_proposals: Dict[str, Dict[str, Any]] = {}
         self.resolved_digest: Optional[str] = None
 
     # ── model ────────────────────────────────────────────────────────────────
@@ -378,7 +394,8 @@ class CodeAgent:
             os.fsync(f.fileno())
         os.replace(tmp, target)
         self._pending_proposal = None
-        self._wrote = False
+        self._pending_proposals.pop(prop["rel_path"], None)
+        self._wrote = bool(self._pending_proposals)
         rec = {
             "tool": "apply_write",
             "decision": "GRANTED",
@@ -395,6 +412,61 @@ class CodeAgent:
             rec["receipt_hash"] = row["hash"]
         return rec
 
+    def apply_all_pending_writes(self, approve: Callable[[List[Dict[str, Any]]], bool]) -> List[Dict[str, Any]]:
+        """Atomically validate and apply all staged multi-file proposals after explicit operator approval."""
+        if not self._pending_proposals:
+            raise Denied("no pending write proposals to apply")
+        proposals = [dict(p) for p in self._pending_proposals.values()]
+        for prop in proposals:
+            target = prop["abs_path"]
+            existed_now = os.path.exists(target)
+            current_sha = _sha256_bytes(open(target, "rb").read()) if existed_now else None
+            if existed_now != prop["existed_at_proposal"] or current_sha != prop["before_sha256"]:
+                self._pending_proposals.clear()
+                self._pending_proposal = None
+                self._wrote = False
+                raise Denied(f"target file '{prop['rel_path']}' changed on disk since proposal; refusing stale batch apply")
+        if not approve(proposals):
+            records = []
+            for prop in proposals:
+                rec = {"tool": "apply_write", "decision": "DENIED", "path": prop["rel_path"],
+                       "after_sha256": prop["after_sha256"], "reason": "operator declined patch batch"}
+                self.decisions.append(rec)
+                self._log("CODE_TOOL", rec)
+                records.append(rec)
+            return records
+
+        records = []
+        for prop in proposals:
+            target = prop["abs_path"]
+            os.makedirs(os.path.dirname(target), exist_ok=True)
+            tmp = f"{target}.osiris-tmp-{uuid.uuid4().hex[:8]}"
+            data = prop["content"].encode("utf-8")
+            with open(tmp, "wb") as f:
+                f.write(data)
+                f.flush()
+                os.fsync(f.fileno())
+            os.replace(tmp, target)
+            rec = {
+                "tool": "apply_write",
+                "decision": "GRANTED",
+                "path": prop["rel_path"],
+                "before_sha256": prop["before_sha256"],
+                "after_sha256": _sha256_bytes(open(target, "rb").read()),
+            }
+            self.decisions.append(rec)
+            self._log("CODE_TOOL", rec)
+            if self.receipts_path:
+                from osiris_cli.trio_authz import Receipts
+                os.makedirs(os.path.dirname(os.path.abspath(self.receipts_path)), exist_ok=True)
+                row = Receipts(self.receipts_path).append("code.agent.apply_write", rec)
+                rec["receipt_hash"] = row["hash"]
+            records.append(rec)
+        self._pending_proposals.clear()
+        self._pending_proposal = None
+        self._wrote = False
+        return records
+
     def run(self, task: str) -> CodeResult:
         run_id = f"code-{uuid.uuid4().hex[:12]}"
         if self._live_ollama:
@@ -406,6 +478,8 @@ class CodeAgent:
             {"role": "system", "content": f"{SYSTEM}\nWorking directory: {self.root}"},
             {"role": "user", "content": task},
         ]
+        seen_calls: Dict[str, Dict[str, Any]] = {}
+        consecutive_breaker_steps = 0
         for _ in range(self.max_steps):
             resp = self._chat(messages, TOOLS, self.model)
             if "error" in resp:
@@ -421,6 +495,7 @@ class CodeAgent:
             if not calls:
                 return self._finish(run_id, task, content or "(no answer)", "SUCCESS")
             messages.append({"role": "assistant", "content": content, "tool_calls": calls})
+            all_tripped = True
             for call in calls:
                 fn = call.get("function", {}) or {}
                 name = fn.get("name", "")
@@ -430,16 +505,54 @@ class CodeAgent:
                 except (ValueError, TypeError):
                     args = None
                 if args is None:
+                    all_tripped = False
                     result = f"ERROR: arguments for {name} are not a JSON object"
                     bad = {"tool": name, "origin": origin, "decision": "ERROR",
                            "reason": "arguments are not a JSON object"}
                     self.decisions.append(bad)
                     self._log("CODE_TOOL", bad)
                 else:
-                    result = self.call(name, args, origin)
+                    call_sig = _digest({"tool": name, "args": args})
+                    prev = seen_calls.get(call_sig)
+                    if prev is not None and (prev["decision"] in ("DENIED", "ERROR") or prev["count"] >= 2):
+                        prev["count"] += 1
+                        result = (
+                            f"DENIED: duplicate call blocked by circuit breaker -- identical {name} call "
+                            f"already returned {prev['decision']} ({prev['summary']}). Do not repeat this call; "
+                            f"use a different command/tool or answer from what you observed."
+                        )
+                        blocked = {
+                            "tool": name,
+                            "origin": origin,
+                            "args": {k: str(v)[:200] for k, v in args.items() if k != "content"},
+                            "decision": "DENIED",
+                            "reason": "duplicate_call_circuit_breaker",
+                            "previous_decision": prev["decision"],
+                        }
+                        self.decisions.append(blocked)
+                        self._log("CODE_TOOL", blocked)
+                        self._out(f"\033[33m    ✗ {result}\033[0m")
+                    else:
+                        all_tripped = False
+                        result = self.call(name, args, origin)
+                        last_dec = self.decisions[-1]["decision"] if self.decisions else "GRANTED"
+                        seen_calls[call_sig] = {
+                            "decision": last_dec,
+                            "count": (prev["count"] + 1) if prev else 1,
+                            "summary": result[:160],
+                        }
                 if len(result) > _MAX_TOOL_RESULT:
                     result = result[:3000] + f"\n...[{len(result) - 3000} chars omitted]...\n" + result[-1500:]
                 messages.append({"role": "tool", "content": result, "name": name})
+            if all_tripped:
+                consecutive_breaker_steps += 1
+                if consecutive_breaker_steps >= 2:
+                    return self._finish(
+                        run_id, task, "", "CIRCUIT_BREAKER",
+                        "halted repeated identical tool call after duplicate-call circuit breaker tripped twice",
+                    )
+            else:
+                consecutive_breaker_steps = 0
         return self._finish(run_id, task, "", "MAX_STEPS", f"no answer within {self.max_steps} steps")
 
     # ── one tool call ────────────────────────────────────────────────────────
@@ -522,9 +635,15 @@ class CodeAgent:
 
     def _write_file(self, path, content):
         abs_path = self._confine(path)  # refuse early with a reason the model can read
-        if self._wrote or self._has_pending_write():
-            raise Denied("a write is already pending; the user must /apply or discard it first")
         rel_path = os.path.relpath(abs_path, self.root)
+        if self.max_writes == 1:
+            if self._wrote or self._has_pending_write():
+                raise Denied("a write is already pending; the user must /apply or discard it first")
+        else:
+            if not self._wrote and self._has_pending_write():
+                raise Denied("a write is already pending; the user must /apply or discard it first")
+            if rel_path not in self._pending_proposals and len(self._pending_proposals) >= self.max_writes:
+                raise Denied(f"maximum staged writes ({self.max_writes}) reached for this task")
         new_text = str(content)
         existed = os.path.exists(abs_path)
         old_bytes = open(abs_path, "rb").read() if existed else b""
@@ -540,7 +659,7 @@ class CodeAgent:
         if not self._propose_write(str(path), new_text):
             raise Denied("the REPL's write check refused this path")
         self._wrote = True
-        self._pending_proposal = {
+        prop = {
             "abs_path": abs_path,
             "rel_path": rel_path,
             "content": new_text,
@@ -549,9 +668,17 @@ class CodeAgent:
             "after_sha256": after_sha,
             "diff": diff,
         }
+        self._pending_proposal = prop
+        self._pending_proposals[rel_path] = prop
         return ("PROPOSED: the diff is on the user's screen. It is applied only if they type /apply; "
                 "do not say the file was written."), {
             "path": str(path), "chars": len(new_text), "before_sha256": before_sha, "after_sha256": after_sha}
+
+    def _resolve_command_binary(self, prog: str, work: str) -> Optional[str]:
+        if prog.startswith(("./", "../")) or (os.sep in prog and not os.path.isabs(prog)):
+            cand = self._confine(os.path.join(work, prog))
+            return cand if (os.path.isfile(cand) and os.access(cand, os.X_OK)) else None
+        return shutil.which(prog)
 
     def _run_command(self, command, cwd=".", timeout=None):
         from osiris.substrate import interactive_timeout_s
@@ -572,6 +699,25 @@ class CodeAgent:
         if account:
             raise Denied(f"{account}; the tool loop never runs these. If you mean it, run it yourself in a terminal.")
         work = self._confine(cwd)
+
+        resolved_bin = self._resolve_command_binary(argv[0], work)
+        if resolved_bin is None:
+            exe_name = argv[0] + ".exe" if not argv[0].lower().endswith(".exe") else argv[0]
+            wsl_ps = "/mnt/c/Windows/System32/WindowsPowerShell/v1.0/powershell.exe"
+            if _is_wsl() or shutil.which(exe_name) or (
+                os.path.basename(argv[0]).lower() == "powershell" and os.path.exists(wsl_ps)
+            ):
+                raise Denied(
+                    f"program not found: {argv[0]} (WSL2 detected: Windows binaries require '.exe' and "
+                    f"non-interactive flags, e.g. 'powershell.exe -NoProfile -NonInteractive -Command \"...\"')"
+                )
+            raise Denied(f"program not found: {argv[0]}")
+
+        if len(argv) == 1 and os.path.basename(argv[0]).lower() in _BARE_INTERACTIVE_REPLS:
+            raise Denied(
+                f"bare '{argv[0]}' starts an interactive REPL with stdin=/dev/null; pass non-interactive "
+                f"execution flags (e.g. -c or -NoProfile -NonInteractive -Command)"
+            )
 
         payload = {"argv": argv, "cwd": work}
         digest = _digest(payload)
@@ -664,19 +810,28 @@ def normalize_code_task(task: str) -> str:
 
 
 def run_code_command(state: Any, rest: str) -> CodeResult:
-    """`/code [--model NAME] <task>` from the REPL."""
+    """`/code [--multi] [--model NAME] <task>` from the REPL."""
     model = None
-    m = re.match(r"^\s*--model\s+(\S+)(?:\s+(.*))?$", rest, re.DOTALL)
-    if m:
-        model = m.group(1)
-        rest = m.group(2) or ""
+    max_writes = 1
+    while True:
+        m_multi = re.match(r"^\s*--multi(?:\s+(.*))?$", rest, re.DOTALL)
+        if m_multi:
+            max_writes = 4
+            rest = m_multi.group(1) or ""
+            continue
+        m_model = re.match(r"^\s*--model\s+(\S+)(?:\s+(.*))?$", rest, re.DOTALL)
+        if m_model:
+            model = m_model.group(1)
+            rest = m_model.group(2) or ""
+            continue
+        break
     task = normalize_code_task(rest)
     if not task:
-        print("Usage: /code [--model NAME] <task>   -- tools: read/list/grep, proposed writes "
+        print("Usage: /code [--multi] [--model NAME] <task>   -- tools: read/list/grep, proposed writes "
               "(/apply), approved commands")
         return CodeResult("", "ERROR", [], "no task")
     log = getattr(state, "log_event", None)
-    agent = CodeAgent(model=model, log=(lambda e, d: log(e, d)) if log else None)
+    agent = CodeAgent(model=model, max_writes=max_writes, log=(lambda e, d: log(e, d)) if log else None)
     print(f"\n\033[1;36m[/code]\033[0m {agent.model} · working directory {agent.root}")
     result = agent.run(task)
     granted = sum(1 for d in result.decisions if d["decision"] == "GRANTED")

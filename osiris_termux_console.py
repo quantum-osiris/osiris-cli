@@ -102,19 +102,24 @@ ARCHITECT_PREFERENCES = (
 )
 
 SYNTHESIZER_PREFERENCES = (
+    "qwen2.5-coder:7b",
+    "deepseek-coder",
+    "qwen3:8b",
+    "qwen2.5:7b",
     "gemma2:2b",
     "gemma-3-1b",
     "gemma-3-4b",
     "gemma-2-2b",
     "gemma3:1b",
     "gemma:2b",
-    "qwen2.5-coder:7b",
-    "deepseek-coder",
-    "qwen2.5:7b",
     "qwen2.5:1.5b",
     "llama3.2:1b",
     "smollm2:360m",
 )
+
+SYNTHESIS_MAX_TOKENS = 4096
+SCHEMA_MAX_TOKENS = 2048  # Bounded under GBNF JSON-schema decoding so Ollama does not spin or HTTP 500
+
 
 def _detect_installed_ollama_models(timeout: float = 1.0) -> list:
     base = OLLAMA_GEN_URL.rsplit("/api/", 1)[0]
@@ -126,31 +131,89 @@ def _detect_installed_ollama_models(timeout: float = 1.0) -> list:
     except Exception:
         return []
 
-def _resolve_active_models():
+
+def _protege_mentor_ranking(installed: list, bench_dir: str = None) -> tuple:
+    """Consult verified bench ledger (`protege.py`) to prefer mentors with verified passes
+    and demote models with >=3 scored candidates and 0 verified passes."""
+    if not installed:
+        return [], set()
+    try:
+        import protege
+        entries, problem = (
+            protege.load_ledger(bench_dir) if bench_dir is not None else protege.load_ledger()
+        )
+        if problem or not entries:
+            return [], set()
+        bdir = bench_dir if bench_dir is not None else protege.BENCH_DIR
+        cands, _ = protege.candidates(entries, protege.current_suite(), protege.current_runner(), bench_dir=bdir)
+        card = protege.scorecard(cands)
+        if not card:
+            return [], set()
+        _picks, overall = protege.route(card)
+        ranked = []
+        if overall and overall.startswith("ollama/"):
+            lead = overall.split("/", 1)[1]
+            if lead in installed:
+                ranked.append(lead)
+        scored_verified = []
+        demoted = set()
+        for mentor_id, stats in card.items():
+            if not mentor_id.startswith("ollama/"):
+                continue
+            mname = mentor_id.split("/", 1)[1]
+            if mname not in installed:
+                continue
+            if stats.get("verified", 0) > 0:
+                lb = protege.wilson_lower(stats["verified"], stats["candidates"])
+                scored_verified.append((lb, stats["verified"], -stats.get("false_confidence", 0), mname))
+            elif stats.get("candidates", 0) >= 3 and stats.get("verified", 0) == 0:
+                demoted.add(mname)
+        scored_verified.sort(reverse=True)
+        for _lb, _v, _fc, mname in scored_verified:
+            if mname not in ranked:
+                ranked.append(mname)
+        return ranked, demoted
+    except Exception:
+        return [], set()
+
+
+def _pick_preferred_model(installed: list, preferences: tuple, ranked: list, demoted: set, prefer_ranked_first: bool) -> str:
+    non_demoted = [m for m in installed if m not in demoted]
+    pool_order = [non_demoted, installed] if non_demoted else [installed]
+    if prefer_ranked_first and ranked:
+        return ranked[0]
+    for pool in pool_order:
+        if ranked:
+            for r in ranked:
+                if r in pool:
+                    return r
+        # 1. Exact preference match first (prevents 'gemma3:1b' prefix-matching 'gemma3:4b' ahead of 'qwen2.5-coder:7b')
+        for pref in preferences:
+            if pref in pool:
+                return pref
+        # 2. Family prefix match fallback
+        for pref in preferences:
+            prefix = pref.split(":")[0]
+            matched = next((m for m in pool if pref in m or m.startswith(prefix)), None)
+            if matched:
+                return matched
+    return (non_demoted or installed)[0]
+
+
+def _resolve_active_models(installed: list = None, bench_dir: str = None):
     global CHAT_MODEL, CODE_MODEL
     # If user explicitly specified via env var, honor it
     if os.environ.get("OSIRIS_CHAT_MODEL") and os.environ.get("OSIRIS_CODE_MODEL"):
         return
-    installed = _detect_installed_ollama_models(timeout=1.0)
+    if installed is None:
+        installed = _detect_installed_ollama_models(timeout=1.0)
     if not installed:
         return
+    ranked, demoted = _protege_mentor_ranking(installed, bench_dir=bench_dir)
     if not os.environ.get("OSIRIS_CHAT_MODEL"):
-        for pref in ARCHITECT_PREFERENCES:
-            matched = next((m for m in installed if pref in m or m.startswith(pref.split(":")[0])), None)
-            if matched:
-                CHAT_MODEL = matched
-                break
-        else:
-            CHAT_MODEL = installed[0]
-
+        CHAT_MODEL = _pick_preferred_model(installed, ARCHITECT_PREFERENCES, ranked, demoted, prefer_ranked_first=bool(ranked))
     if not os.environ.get("OSIRIS_CODE_MODEL"):
-        for pref in SYNTHESIZER_PREFERENCES:
-            matched = next((m for m in installed if pref in m or m.startswith(pref.split(":")[0])), None)
-            if matched:
-                CODE_MODEL = matched
-                break
-        else:
-            CODE_MODEL = installed[0]
+        CODE_MODEL = _pick_preferred_model(installed, SYNTHESIZER_PREFERENCES, ranked, demoted, prefer_ranked_first=True)
 
 try:
     _resolve_active_models()
@@ -653,60 +716,136 @@ preserving every existing public function unless the story requires changing it)
         else:
             write_path = f"osiris_story_{story['id']}.py"
         module_name = os.path.splitext(os.path.basename(write_path))[0]
+        from osiris_cli import production_synth
+
+        existing_contract = None
+        if current is not None:
+            try:
+                existing_contract = production_synth.extract_module_contract(current)
+            except SyntaxError:
+                existing_contract = None
+
+        story_spec = trait if is_ignite else story["text"]
+        contract_block = production_synth.format_contract_prompt_block(story_spec, existing_contract)
         # Ignite stories send the trait itself, not the internal "[structural]
         # implement dormant trait:" label -- with the label, Gemini blocked 5/6
         # otherwise-identical prompts (blockReason=OTHER), without it 0/2.
         prompt = f"""You are OSIRIS Sovereign Synthesizer implementing one Agile user story.
 
-USER STORY: {trait if is_ignite else story['text']}
-{current_block}
+USER STORY: {story_spec}
+
+{contract_block}{current_block}
 Propose a small, real, self-contained Python module implementing this, AND a discrete
-test that proves it works (assert statements exercising the specific behavior this
-story requires).
-{structured_proposal.instructions(write_path, module_name)}
+test that proves it works (assert statements exercising normal behavior, duplicates/idempotency,
+and boundary inputs).
+{production_synth.delimited_instructions(write_path, module_name)}
 """
         if is_ignite:
-            # Display-only, from values OSIRIS already knows -- the model is no
-            # longer asked to print it (its output is schema-constrained JSON).
+            # Display-only, from values OSIRIS already knows.
             print(f"\n  [LOCUS]       {write_path}")
             print(f"  [OPERATION]   {'SPLICE' if current is not None else 'NEW MODULE'}")
-            print(f"  [CONSTRAINT]  proot_sandbox_pass (enforced below unconditionally, not a toggle)")
+            print(f"  [CONSTRAINT]  proot_sandbox_pass + L5_contract_critic (enforced unconditionally)")
         started_at = time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime())
         trace = []  # per attempt: backend, and the stage verify() reached
 
+        critic_source = production_synth.synthesize_independent_critic_tests(
+            module_name=module_name,
+            story_text=story_spec,
+            contract=existing_contract,
+            existing_source=current,
+        )
+        guard = production_synth.ProductionConfinementGuard(
+            root=os.getcwd(),
+            target_rel_path=write_path,
+            contract=existing_contract,
+        )
+        repo_pytest_targets = production_synth.discover_repo_pytest_targets(os.getcwd(), write_path)
+        parsed_by_id = {}
+        seen_hashes = set()
+        attempt_seq = [0]
+
         def generate(feedback, prompt=prompt, trace=trace):
-            raw = _synthesize(prompt + (verify_loop.feedback_block(feedback) if feedback else ""),
-                              structured=True)
+            attempt_seq[0] += 1
+            idx = attempt_seq[0]
+            fb_text = production_synth.diagnostic_feedback_block(feedback, "delimited") if feedback else ""
+            raw = _synthesize(prompt + fb_text, structured=False)
             trace.append({"backend": _last_backend.get("name"), "model": _last_backend.get("model"),
                           "stage": "generate", "sandbox_log": None})
-            proposal = structured_proposal.parse_proposal(raw)
-            if proposal is None:
+            parsed = production_synth.parse_delimited_or_json_proposal(raw, default_path=write_path)
+            if parsed is None:
                 return None, f"backend {_last_backend['name']} returned no usable proposal (empty or malformed)"
-            return proposal, ""
+            cid = f"sprint-{story['id']}-{idx}"
+            parsed_by_id[cid] = parsed
+            return verify_loop.CandidateArtifact(
+                candidate_id=cid,
+                artifact_type="module",
+                payload=parsed["module"],
+                metadata={"path": parsed["path"]},
+            ), ""
 
-        def verify(proposal, write_path=write_path, current=current, trace=trace):
+        def hermetic_verify(cand_art, write_path=write_path, current=current, trace=trace):
+            parsed = parsed_by_id.get(cand_art.candidate_id, {})
             trace[-1]["stage"] = "path"
-            if os.path.normpath(proposal["path"]) != os.path.normpath(write_path):
-                return False, f"proposed '{proposal['path']}' instead of the assigned '{write_path}'"
+            if os.path.normpath(parsed.get("path", "")) != os.path.normpath(write_path):
+                return False, f"proposed '{parsed.get('path')}' instead of the assigned '{write_path}'", {}
             if current is not None:
                 trace[-1]["stage"] = "api"
-                # Modifying a live module: the model's own test can pass on a file
-                # that silently dropped the functions the rest of osiris imports.
-                dropped = _public_names(current) - _public_names(proposal["module"])
+                dropped = _public_names(current) - _public_names(cand_art.payload)
                 if dropped:
-                    return False, f"drops existing public name(s) {sorted(dropped)}"
+                    return False, f"drops existing public name(s) {sorted(dropped)}", {}
+            mod_sha = hashlib.sha256(cand_art.payload.encode("utf-8")).hexdigest()
+            if mod_sha in seen_hashes:
+                return False, "DUPLICATE_CANDIDATE: identical module already failed verification", {}
+            seen_hashes.add(mod_sha)
+            combined_test, combine_err = production_synth.combine_verification_tests(
+                parsed.get("test", ""), critic_source
+            )
+            if combine_err or combined_test is None:
+                return False, combine_err or "invalid test block", {}
             trace[-1]["stage"] = "sandbox"
-            result = _run_sandboxed_test(os.path.basename(write_path), proposal["module"], proposal["test"])
+            ok, out = _run_sandboxed_test(os.path.basename(write_path), cand_art.payload, combined_test)
             trace[-1]["sandbox_log"] = _last_sandbox["path"]
-            return result
+            if not ok:
+                return False, out, {}
+            if repo_pytest_targets:
+                trace[-1]["stage"] = "repo_pytest"
+                py_ok, py_out = production_synth.run_repo_pytest_in_overlay(
+                    root=os.getcwd(),
+                    target_rel_path=write_path,
+                    candidate_source=cand_art.payload,
+                    pytest_rel_paths=repo_pytest_targets,
+                )
+                if not py_ok:
+                    return False, f"repository pytest failed ({', '.join(repo_pytest_targets)}):\n{py_out}", {}
+            receipt = {
+                "evaluator_id": "osiris.sprint.production_synth",
+                "candidate_digest": cand_art.compute_digest(),
+            }
+            return True, out, receipt
 
         def on_attempt(a, sid=story["id"]):
             if a["ok"]:
-                print(f"[*] story #{sid}: candidate {a['n']}/{k} PASSED the sandbox.")
+                print(f"[*] story #{sid}: candidate {a['n']}/{k} PASSED contract, L5 critic, and sandbox.")
             else:
                 print(f"[!] story #{sid}: candidate {a['n']}/{k} failed: {a['reason'].strip()[-150:]}")
 
-        proposal, attempts = verify_loop.first_passing(generate, verify, k, on_attempt)
+        winner_art, raw_attempts = verify_loop.verified_first_passing(
+            generate, hermetic_verify, k, confinement_guard=guard, on_attempt=on_attempt
+        )
+        attempts = [
+            {
+                "n": a["n"],
+                "ok": a["ok"],
+                "reason": a["reason"],
+                "candidate": (
+                    parsed_by_id.get(a["candidate"].candidate_id)
+                    if isinstance(a.get("candidate"), verify_loop.CandidateArtifact)
+                    else None
+                ),
+            }
+            for a in raw_attempts
+        ]
+        proposal = parsed_by_id.get(winner_art.candidate_id) if winner_art is not None else None
         write_error = _check_write_safety(write_path, allow_self_modify)[1] if proposal else None
         outcome = "write_rejected" if write_error else "proposed" if proposal else "no_candidate_passed"
         try:
@@ -5258,57 +5397,87 @@ def query_model(prompt: str, model: str, stream: bool = True, timeout: int = 420
     except Exception:
         pass
 
+    token_limit = SCHEMA_MAX_TOKENS if fmt else SYNTHESIS_MAX_TOKENS
+    options_dict = {"temperature": 0.1, "num_predict": token_limit}
+    if fmt:
+        options_dict["num_ctx"] = 8192
     payload = {
         "model": model,
         "prompt": prompt,
         "stream": stream,
         "keep_alive": "30m",
-        "options": {"temperature": 0.1, "num_predict": 1536}
+        "options": options_dict,
     }
     if fmt:
         payload["format"] = fmt  # Ollama constrains decoding to this JSON schema
-    
-    req = urllib.request.Request(
-        OLLAMA_GEN_URL,
-        data=json.dumps(payload).encode("utf-8"),
-        headers={"Content-Type": "application/json"}
-    )
-    
+
+    def _build_req(body_dict: dict):
+        return urllib.request.Request(
+            OLLAMA_GEN_URL,
+            data=json.dumps(body_dict).encode("utf-8"),
+            headers={"Content-Type": "application/json"},
+        )
+
     full_text = []
-    try:
-        with urllib.request.urlopen(req, timeout=timeout) as resp:
-            _last_backend.update(name="ollama", model=model, substituted=False, is_mock=False)
-            if stream:
-                with _stdout_lock:
-                    for line in resp:
-                        if line:
-                            chunk = json.loads(line.decode("utf-8", errors="ignore"))
-                            if chunk.get("model"):
-                                _last_backend["model"] = chunk["model"]
-                            token = chunk.get("response", "")
-                            sys.stdout.write(token)
-                            sys.stdout.flush()
-                            full_text.append(token)
-                            if chunk.get("done", False):
-                                break
+    for attempt_idx in range(2):
+        req = _build_req(payload)
+        try:
+            with urllib.request.urlopen(req, timeout=timeout) as resp:
+                _last_backend.update(name="ollama", model=model, substituted=False, is_mock=False, error=None)
+                if stream:
+                    with _stdout_lock:
+                        for line in resp:
+                            if line:
+                                chunk = json.loads(line.decode("utf-8", errors="ignore"))
+                                if chunk.get("model"):
+                                    _last_backend["model"] = chunk["model"]
+                                token = chunk.get("response", "")
+                                sys.stdout.write(token)
+                                sys.stdout.flush()
+                                full_text.append(token)
+                                if chunk.get("done", False):
+                                    break
+                        print()
+                else:
+                    body = json.loads(resp.read().decode("utf-8", errors="ignore"))
+                    if body.get("model"):
+                        _last_backend["model"] = body["model"]
+                    return body.get("response", "")
+                break
+        except urllib.error.HTTPError as he:
+            if attempt_idx == 0 and he.code in (500, 502, 503, 504):
+                # Transient llama.cpp / GBNF KV-cache failure: retry once with compact context ceiling
+                payload = dict(payload)
+                payload["options"] = {"temperature": 0.0, "num_predict": 1536, "num_ctx": 4096}
+                full_text.clear()
+                continue
+            _last_backend["error"] = f"Inference error with {model}: {he}"
+            with _stdout_lock:
+                installed = _detect_installed_ollama_models(timeout=1.0)
+                if installed and model not in installed and os.environ.get("OSIRIS_ALLOW_MODEL_SUBSTITUTION") == "1":
+                    fallback_model = installed[0]
+                    print(f"\n[!] Model '{model}' not found in Ollama (HTTP {he.code}). Explicit substitution enabled -> '{fallback_model}'...")
+                    res = query_model(prompt, fallback_model, stream=stream, timeout=timeout, fmt=fmt)
+                    _last_backend.update(requested_model=model, model=fallback_model, substituted=True)
+                    return res
+                print(f"\n[!] Inference error with {model}: {he} (no model substituted)")
+                if stream:
                     print()
-            else:
-                body = json.loads(resp.read().decode("utf-8", errors="ignore"))
-                if body.get("model"):
-                    _last_backend["model"] = body["model"]
-                return body.get("response", "")
-    except Exception as e:
-        _last_backend["error"] = f"Inference error with {model}: {e}"
-        with _stdout_lock:
-            installed = _detect_installed_ollama_models(timeout=1.0)
-            if installed and model not in installed and os.environ.get("OSIRIS_ALLOW_MODEL_SUBSTITUTION") == "1":
-                fallback_model = installed[0]
-                print(f"\n[!] Model '{model}' not found in Ollama (HTTP 404). Explicit substitution enabled -> '{fallback_model}'...")
-                res = query_model(prompt, fallback_model, stream=stream, timeout=timeout, fmt=fmt)
-                _last_backend.update(requested_model=model, model=fallback_model, substituted=True)
-                return res
-            print(f"\n[!] Inference error with {model}: {e} (no model substituted)")
-            if stream: print()
+            break
+        except Exception as e:
+            _last_backend["error"] = f"Inference error with {model}: {e}"
+            with _stdout_lock:
+                installed = _detect_installed_ollama_models(timeout=1.0)
+                if installed and model not in installed and os.environ.get("OSIRIS_ALLOW_MODEL_SUBSTITUTION") == "1":
+                    fallback_model = installed[0]
+                    print(f"\n[!] Model '{model}' not found in Ollama. Explicit substitution enabled -> '{fallback_model}'...")
+                    res = query_model(prompt, fallback_model, stream=stream, timeout=timeout, fmt=fmt)
+                    _last_backend.update(requested_model=model, model=fallback_model, substituted=True)
+                    return res
+                print(f"\n[!] Inference error with {model}: {e} (no model substituted)")
+                if stream:
+                    print()
+            break
             
     return "".join(full_text)
 
@@ -5347,7 +5516,7 @@ def _synthesize(prompt: str, system_prompt: str = "", structured: bool = False,
             req = ProviderRequest(
                 prompt=full,
                 model=target_model,
-                max_tokens=1536,
+                max_tokens=SYNTHESIS_MAX_TOKENS,
                 response_schema=structured_proposal.PROPOSAL_SCHEMA if structured else None,
             )
             resp = prov.generate(req)
@@ -5411,7 +5580,7 @@ IMMEDIATE_COMMANDS = {
     "/engage", "/ui", "/help", "/mentors", "/bench", "/gaps", "/ask", "/plan", "/experiment",
     "/experiments", "/facts", "/cancel", "/reroute", "/focus", "/digest", "/lab", "/import", "/sources",
     "/source", "/map", "/hypothesis", "/hypotheses", "/outcome", "/trial", "/evolve", "/capabilities", "/discover",
-    "/pr", "/sync",
+    "/pr", "/sync", "/provision", "/edge",
     "exit", "quit",
 }
 
@@ -5421,7 +5590,7 @@ IMMEDIATE_COMMANDS = {
 READ_ONLY_COMMANDS = {"/status", "/why", "/home", "/runs", "/runs stats", "/help", "/ui", "/mentors", "/digest",
                       "/lab", "/sources", "/map", "/hypotheses",
                       "/ui rich", "/ui plain", "/ui access", "/intent", "/intent status",
-                      "/organism", "/organism status", "/pr", "/sync"}
+                      "/organism", "/organism status", "/pr", "/sync", "/provision status", "/edge"}
 
 # OSIRIS_INTENT_CARD=0 sends free-form input straight to the models, as before.
 INTENT_CARD = os.environ.get("OSIRIS_INTENT_CARD", "1") != "0"
@@ -5584,97 +5753,111 @@ INPUT LOG:
 """
     enhanced_spec = query_model(architect_prompt, CHAT_MODEL, stream=True)
     if not enhanced_spec.strip():
-        print("[*] Stage 1 output empty or Ollama model unavailable. Routing to Sovereign NCLM Transformer...")
-        _spawn_organism_learn(raw_text)
+        print("[!] Stage 1 output empty or Ollama model unavailable -- nothing proposed and nothing trained.")
         return False
 
     print("\n" + "─" * 65)
-    print(f" 🦠 MODEL 2 [{CODE_MODEL}]: PRODUCTION CODE SYNTHESIS")
+    print(f" 🦠 MODEL 2 [{CODE_MODEL}]: CLOSED-LOOP PRODUCTION SYNTHESIS & L5 CRITIC")
     print("─" * 65)
-    print(f"[*] Dispatching specification -> {organism_file}...")
+
+    from osiris_cli import production_synth
 
     modify_intent = MODIFY_INTENT_RE.search(raw_text)
     allow_self_modify = SELF_MODIFY_OVERRIDE in raw_text
 
+    target_rel_path = organism_file
+    existing_source = None
     if modify_intent:
-        coder_prompt = f"""You are OSIRIS Sovereign Synthesizer. Based strictly on this specification, propose ONE
-file to write or modify on disk. Output EXACTLY one block in this exact format and nothing else:
-<WRITE_FILE path="relative/path/to/file.py">
-...the complete new file content...
-</WRITE_FILE>
-Rule 1: DO NOT write conversational filler, explanations, or warnings outside the tag.
-Rule 2: path must be a relative path (no leading /, no ..).
-Rule 3: Ensure strict typing and imports are present in the content.
+        py_mentions = re.findall(r"\b([A-Za-z0-9_./-]+\.py)\b", raw_text)
+        for cand_rel in py_mentions:
+            cand_abs, err = _check_write_safety(cand_rel, allow_self_modify)
+            if not err and cand_abs and os.path.isfile(cand_abs):
+                target_rel_path = os.path.relpath(cand_abs, os.getcwd())
+                with open(cand_abs, encoding="utf-8", errors="replace") as f:
+                    existing_source = f.read()
+                break
 
-SPECIFICATION:
-{enhanced_spec}
-"""
-    else:
-        coder_prompt = f"""You are OSIRIS Sovereign Synthesizer. Write complete, runnable Python code based strictly on this specification.
-Rule 1: DO NOT write conversational filler, explanations, or warnings.
-Rule 2: Enclose code in a single markdown Python fence.
-Rule 3: Ensure strict typing and imports are present.
+    print(f"[*] Dispatching closed-loop synthesis (k={SPRINT_DEFAULT_K}) -> {target_rel_path}...")
+    last_raw_reply = [""]
 
-SPECIFICATION:
-{enhanced_spec}
-"""
-    raw_code = _synthesize(coder_prompt)
+    def _propose_raw(full_prompt: str) -> str:
+        out = _synthesize(full_prompt, structured=False)
+        last_raw_reply[0] = out
+        return out
 
-    if modify_intent:
-        write_match = WRITE_FILE_RE.search(raw_code)
-        if write_match:
-            target_path, content = write_match.group(1).strip(), write_match.group(2)
-            if target_path.endswith(".py"):
-                payload_reason = payload_gate.check_payload(content)
-                if payload_reason:
-                    _record_intent_feedback("modify", 0.0)
-                    print(f"[!] WRITE_FILE rejected by placeholder gate: {payload_reason}\n")
-                    _spawn_organism_learn(raw_text + "\n" + enhanced_spec)
-                    return
-            _record_intent_feedback("modify", 1.0)
-            _propose_write(target_path, content, allow_self_modify)
-            _spawn_organism_learn(raw_text + "\n" + enhanced_spec + "\n" + raw_code)
-            return
-        _record_intent_feedback("modify", 0.0)
-        print("[!] Modify-intent detected but no WRITE_FILE block found; falling back to plain synthesis.\n")
+    outcome_res = production_synth.run_production_synthesis(
+        root=os.getcwd(),
+        target_rel_path=target_rel_path,
+        story_text=enhanced_spec,
+        propose_raw_fn=_propose_raw,
+        sandbox_test_fn=_run_sandboxed_test,
+        existing_source=existing_source,
+        k=SPRINT_DEFAULT_K,
+        use_delimited_prompt=True,
+        enforce_target_path=(existing_source is not None),
+        run_repo_pytest=True,
+    )
 
-    code = extract_code(raw_code)
+    intent_category = "modify" if modify_intent else "synthesis"
+    if outcome_res.winner is not None:
+        win_path = outcome_res.winner["path"]
+        win_code = outcome_res.winner["module"]
+        _record_intent_feedback(intent_category, 1.0)
+        print("[*] Candidate passed AST contract, placeholder gate, L5 critic, and hermetic sandbox -- proposed for /apply.")
+        _propose_write(win_path, win_code, allow_self_modify)
+        return True
+
+    # Fallback when a backend returns a single <WRITE_FILE> or fenced module without a test_proposal block:
+    # enforce AST compilation, placeholder gate, contract preservation, and L5 critic before staging.
+    raw_code = last_raw_reply[0]
+    write_match = WRITE_FILE_RE.search(raw_code) if modify_intent else None
+    cand_path = write_match.group(1).strip() if write_match else target_rel_path
+    code = production_synth.strip_code_fences(write_match.group(2)) if write_match else extract_code(raw_code)
 
     if not code:
-        _record_intent_feedback("synthesis", 0.0)
-        print("[!] Synthesis failed or model refused the prompt.\n")
-        _spawn_organism_learn(raw_text + "\n" + enhanced_spec)
-        return
+        _record_intent_feedback(intent_category, 0.0)
+        last_reason = outcome_res.attempts[-1]["reason"] if outcome_res.attempts else "empty model output"
+        print(f"[!] Synthesis failed verification ({last_reason}) -- nothing written and nothing trained.\n")
+        return False
 
     try:
-        tree = ast.parse(code, filename=organism_file)
-        compile(tree, organism_file, 'exec')
-        # AST-clean only proves it parses; refuse to stamp stub code as locked.
+        tree = ast.parse(code, filename=cand_path)
+        compile(tree, cand_path, "exec")
         payload_reason = payload_gate.check_payload(code)
         if payload_reason:
-            _record_intent_feedback("synthesis", 0.1)
-            print(f"[!] Placeholder gate: {payload_reason} -- nothing written.\n")
-            _spawn_organism_learn(raw_text + "\n" + enhanced_spec)
-            return
+            _record_intent_feedback(intent_category, 0.1)
+            print(f"[!] Placeholder gate: {payload_reason} -- nothing written and nothing trained.\n")
+            return False
+        if outcome_res.contract is not None:
+            violations = production_synth.verify_contract_preservation(outcome_res.contract, code)
+            if violations:
+                _record_intent_feedback(intent_category, 0.2)
+                print(f"[!] Contract preservation gate failed: {'; '.join(violations)} -- nothing written.\n")
+                return False
+        mod_name = os.path.splitext(os.path.basename(cand_path))[0]
+        critic_only = (
+            outcome_res.critic_source.rstrip()
+            + "\n\ndef test_proposal():\n    assert callable(run_all_critic_checks)\n    run_all_critic_checks()\n"
+        )
+        ok_sbx, sbx_out = _run_sandboxed_test(os.path.basename(cand_path), code, critic_only)
+        if not ok_sbx:
+            _record_intent_feedback(intent_category, 0.2)
+            print(f"[!] Sandbox L5 critic check failed: {sbx_out.strip()[-200:]} -- nothing written.\n")
+            return False
 
-        # Proposed, not written: this path used to save the file at once with
-        # no /apply (2026-09-24: "hello osiris" -> an invented OSIRISSystems
-        # class in osiris_organism_*.py), plus a sprint_backlog_*.json that
-        # nothing read. Now it is a pending write like every other one.
-        _record_intent_feedback("synthesis", 1.0)
-        print(f"[*] Candidate parses and passes the placeholder gate -- proposed, not written.")
-        _propose_write(organism_file, code, allow_self_modify)
-        _spawn_organism_learn(raw_text + "\n" + enhanced_spec + "\n" + code)
-
+        _record_intent_feedback(intent_category, 1.0)
+        print("[*] Candidate parses and passes placeholder + L5 contract critic gates -- proposed, not written.")
+        _propose_write(cand_path, code, allow_self_modify)
+        return True
     except SyntaxError as se:
-        _record_intent_feedback("synthesis", 0.3)
+        _record_intent_feedback(intent_category, 0.3)
         print(f"[!] AST Syntax Fracture at line {se.lineno}: {se.msg}")
         print(f"[!] Offending line: {se.text}\n")
-        _spawn_organism_learn(raw_text + "\n" + enhanced_spec)
+        return False
     except Exception as e:
-        _record_intent_feedback("synthesis", 0.0)
+        _record_intent_feedback(intent_category, 0.0)
         print(f"[!] Compilation / File Error: {e}\n")
-        _spawn_organism_learn(raw_text + "\n" + enhanced_spec)
+        return False
 
 def _council_engines(substrate_ok: bool):
     """The startup council card's rows, each state read from a real check."""

@@ -31,6 +31,45 @@ STRATEGIES = {
             "of them -- not only the easy case. Output exactly the format required below, nothing else.\n\n"
         ),
     },
+    "contract-critic-v1": {
+        "about": "preserve existing AST attribute/return contracts on modify tasks, remove fixed-length regex "
+                 "truncation caps, and test duplicate calls + >250-char boundary inputs",
+        "text": (
+            "BEFORE WRITING CODE, silently verify these 5 production contracts:\n"
+            "1. API & Container Preservation: If modifying existing code, keep every public symbol, parameter "
+            "name, and `__init__` attribute type unchanged (e.g. if `self.stories` is a `list`, keep it a `list` "
+            "-- NEVER replace it with a `dict`).\n"
+            "2. Non-None Idempotent Returns: If an existing method returns an ID/value (e.g. `return story['id']`), "
+            "duplicate/repeated calls MUST return the existing item's ID/value -- NEVER `return None`.\n"
+            "3. Zero Arbitrary Length Caps: Remove fixed regex ceilings like `.{0,160}` so lines > 250 chars "
+            "match cleanly up to newline or end-of-string.\n"
+            "4. Embedded Token & Failure Boundaries: Match decimals/identifiers before punctuation (e.g. `0.97.`), "
+            "and keep permanent auth failures sticky until explicit reset.\n"
+            "5. Adversarial Test Suite: In `test_proposal()`, assert normal inputs, duplicate calls (checking exact "
+            "return value and container `isinstance`), empty/invalid inputs, and a >250-character boundary input.\n"
+            "Output ONLY the exact format requested below, with no markdown fences inside JSON strings.\n\n"
+        ),
+    },
+    "contract-critic-v2": {
+        "about": "compact (<80 lines) JSON-safe modules, whole-token number grounding reported by value, "
+                 "idempotent existing-ID return + list preservation, and decimal-safe sentence extraction",
+        "text": (
+            "CRITICAL OUTPUT & CONTRACT RULES (keep both `module` and `test` concise, under 70 lines each, "
+            "with zero markdown fences inside JSON strings so the JSON object closes cleanly):\n"
+            "1. Modify Preservation: Keep every existing class/function signature and `__init__` container type "
+            "(if `self.stories` is a `list`, keep it a `list` of dicts -- NEVER convert it to a `dict`).\n"
+            "2. Duplicate / Idempotent Return: When avoiding duplicate open items, check existing open items "
+            "and `return existing['id']` (NEVER `return None`, and do not increment `next_id` on duplicates).\n"
+            "3. Unsourced Number Grounding: When checking claims against evidence, extract standalone numbers "
+            "with `re.findall(r'(?<!\\w)\\d+(?:\\.\\d+)?(?!\\w)', ...)` so `3` does NOT match `13` and `0.9722.` "
+            "matches `0.9722`; for each number in the claim absent from the evidence set, append a problem string "
+            "containing that exact number value (e.g. `f'unsourced number: {num}'`), while keeping existing checks.\n"
+            "4. Unbounded Sentence Extraction: Never use fixed regex caps like `.{0,160}`; match up to `\\n` and "
+            "end at a sentence period `\\.(?!\\d)(?:\\s|$)` so >250-char descriptions stay whole and `0.97` is not split.\n"
+            "5. Compact Adversarial `test_proposal()`: Write 6-10 focused `assert` lines testing duplicates, "
+            "unsourced vs sourced numbers (`3` vs `13`), and a >220-char string.\n\n"
+        ),
+    },
 }
 
 

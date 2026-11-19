@@ -69,9 +69,11 @@ LAYERS = (
     Layer("L5", "Verify", (
         ("sandboxed test run after a static AST check", "osiris_termux_console._run_sandboxed_test · /why"),
         ("placeholder gate rejects stub code", "payload_gate.py"),
+        ("AST contract extractor + independent L5 critic (isolated from candidate code)",
+         "osiris_cli/production_synth.py"),
         ("physics checks: bounds and unit sanity", "osiris_cli/physics_checks.py · /physics"),
         ("read-only probes: trainer, git, ledger, system, evidence", "osiris_cli/probes.py"),
-    ), ("an independent critic that tries to falsify a candidate",)),
+    ), ()),
     Layer("L6", "Benchmark", (
         ("bench ledger with hashed artifacts", "protege.py · /bench · /mentors"),
         ("paired pre/post scoring of the core on held-out exchanges", "osiris_cli/prepost.py"),
@@ -100,6 +102,11 @@ SUBSYSTEMS = (
         ("ledger row written before any IBM submission", "dnalang-core backends/ibm.py"),
         ("Aer ground truth for decoupling search", "bridge/noise.py"),
     ), ("a hardware-readiness gate in OSIRIS (resource model, noise sensitivity sweep)",)),
+    ("Edge provisioning & administration", (
+        ("multi-substrate discovery + UEFI-FFU vs MTP USB state guard", "osiris_cli/edge_provisioner.py · /provision status"),
+        ("declarative dna::}{::lang regulatory & rule edge runtime (64-step budget)", "osiris_cli/dnalang/edge_organism.py · /provision simulate"),
+        ("verifiable LF-clean .ppkg / Termux bundle stager + dnalang Ledger", "osiris_cli/edge_provisioner.py · /provision stage|verify"),
+    ), ()),
 )
 
 
@@ -164,7 +171,8 @@ def live_state(living=None, console=None) -> Dict[str, Tuple[str, str]]:
         return ("verified", text) if ok else ("review", "ollama UNREACHABLE: " + text)
 
     def l5():
-        return "current", "deterministic, no model · no independent critic yet"
+        from osiris_cli import production_synth  # noqa: F401
+        return "verified", "AST contract gate + independent L5 critic · sandbox + placeholder gate"
 
     def l6():
         if console is None:

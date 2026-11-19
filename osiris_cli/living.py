@@ -147,13 +147,16 @@ class Held(str):
 # A long paste with no request in its first or last lines is acknowledged by code, not restated
 # by a model (2026-10-08: a pasted policy proposal was "restated" from an excerpt, cut off, and
 # a "potential overlap" came back as NUMERICAL_OVERLAP = OBSERVED).
-REQUEST = re.compile(r"\?|\b(?:review|summari[sz]e|rewrite|compare|check|critique|evaluate|assess|explain|"
-                     r"analy[sz]e|adopt|apply|translate|what do you think|thoughts|tell me|can you|could you|"
-                     r"please|conduct|grok(?:king)?|refine|recursively|deduce|provision(?:ing)?|administer|"
-                     r"administrating|implement|build|create|develop|fix|solve|enhance|advance|upgrade|"
-                     r"optimize|extract|synthesize|audit|deploy|orchestrate|"
-                     r"(?:write|generate|scaffold|refactor)\s+(?:the\s+)?"
-                     r"(?:python\s+)?(?:code|module|package|script|implementation|tests?))\b", re.IGNORECASE)
+REQUEST = re.compile(
+    r"\?|\b(?:review|summari[sz]e|rewrite|compare|check|critique|evaluate|assess|explain|"
+    r"analy[sz]e|adopt|apply|translate|what do you think|thoughts|tell me|can you|could you|"
+    r"please|conduct\s+\w+|grok(?:king)?|(?:recursively|iteratively)\s+\w+|refine|deduce|"
+    r"provision(?:\s+(?:the|this|edge|node|device|package))?|administer|administrate|diagnose|orchestrate|solve|enhance|"
+    r"fix\s+(?:this|the|these|all|errors?|bugs?)|"
+    r"(?:write|implement|build|generate|create|scaffold|refactor)\s+(?:the\s+)?"
+    r"(?:python\s+)?(?:code|module|package|script|implementation|tests?))\b",
+    re.IGNORECASE,
+)
 CODE_REQUEST_PREFIX = re.compile(
     r"^\s*(?:please\s+)?(?P<directive>"
     r"(?:write|generate|create|scaffold)\s+(?:the\s+)?(?:python\s+)?(?:code|module|package|script|implementation|tests?)"
@@ -189,6 +192,36 @@ def extract_code_request(text: str) -> Optional[str]:
     return f"{directive}:\n{body}" if "\n" in body else f"{directive} {body}"
 
 
+def _clean_edge_line(line: str) -> str:
+    s = line.strip()
+    while s and s[0] in ('"', "'", ">"):
+        s = s[1:].strip()
+    while s and s[-1] in ('"', "'"):
+        s = s[:-1].strip()
+    return s
+
+
+def extract_paste_directive(text: str) -> Optional[str]:
+    """Extract an explicit operator request from the opening (first 2) or closing (last 5) non-empty lines."""
+    if not text:
+        return None
+    code_req = extract_code_request(text)
+    if code_req is not None:
+        return code_req
+    lines = [ln for ln in text.splitlines() if ln.strip()]
+    if not lines:
+        return None
+    for ln in reversed(lines[-5:]):
+        cleaned = _clean_edge_line(ln)
+        if cleaned and REQUEST.search(cleaned):
+            return cleaned[:600]
+    for ln in lines[:2]:
+        cleaned = _clean_edge_line(ln)
+        if cleaned and REQUEST.search(cleaned):
+            return cleaned[:600]
+    return None
+
+
 def asks_something(text: str) -> bool:
     """Whether a pasted document carries a request: in its first two or last five non-empty lines.
 
@@ -197,8 +230,8 @@ def asks_something(text: str) -> bool:
     the paste ("conduct ... and solve ...")."""
     if extract_code_request(text) is not None:
         return True
-    lines = [ln for ln in text.splitlines() if ln.strip()]
-    return any(REQUEST.search(ln) for ln in lines[:2] + lines[-5:])
+    lines = [_clean_edge_line(ln) for ln in text.splitlines() if ln.strip()]
+    return any(ln and REQUEST.search(ln) for ln in lines[:2] + lines[-5:])
 
 
 def _heading_entries(text: str) -> List[tuple]:
@@ -1605,6 +1638,9 @@ class Osiris:
                         "excerpt budget, NOT an incomplete or cut-off document from the user; the document's closing "
                         "section follows the marker). Do not describe the middle parts you were not given. Keep its "
                         "own hedges (could, if, potential, not established): a possibility it describes is not a finding.]")
+            directive = extract_paste_directive(text)
+            if directive:
+                context += f"\n\n[Explicit operator directive attached to this paste -- address this directly]\n{directive}"
         last = {"role": "user", "content": context + "\n\n[Message]\n" + self.excerpt(text)}
         self._fit(len(system) + len(last["content"]))
         messages = [{"role": "system", "content": system}] + self._sent + [last]
