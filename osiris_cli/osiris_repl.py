@@ -2400,10 +2400,19 @@ def dispatch_command(state: OsirisReplState, line: str) -> None:
         if msg:
             handle_livlm_prompt(state, msg)
     elif cmd == "/review":
-        if len(parts) != 1:
-            print("\n[OSIRIS] Usage: /review (reviews the most recent pasted document)\n")
-        else:
+        if len(parts) == 1:
             get_living().review_last_paste()
+        else:
+            args_rest = parts[1:]
+            resume_flag = "--resume" in args_rest or "resume" in args_rest
+            spec_tokens = [tok for tok in args_rest if tok not in ("--resume", "resume")]
+            if len(spec_tokens) > 1 or (spec_tokens and not re.match(r"^\d+(?:-\d+)?$", spec_tokens[0])):
+                print("\n[OSIRIS] Usage: /review [N | N-M | --resume] (reviews the most recent pasted document)\n")
+            else:
+                get_living().review_last_paste(
+                    section_spec=spec_tokens[0] if spec_tokens else None,
+                    resume=resume_flag,
+                )
     elif cmd == "/osiris":
         trailing = line_clean[len(parts[0]):].strip()
         if trailing:
