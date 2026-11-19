@@ -44,6 +44,7 @@ def summary(repo, *steps, final="done", **kw):
     kw.setdefault("accept", ACCEPT)
     kw.setdefault("receipts", str(repo.parent / "receipts.jsonl"))
     kw.setdefault("confirm", lambda prompt: False)
+    kw.setdefault("runs_dir", str(repo.parent / "runs"))
     return run_task("fix add", root=str(repo), chat=scripted(*steps, final=final), out=lambda s: None, **kw)
 
 
@@ -213,7 +214,8 @@ def test_repl_run_receipt_records_unbacked_claims(repo):
 
 def test_cli_exit_codes(repo, monkeypatch, capsys):
     monkeypatch.setattr(code_agent.CodeAgent, "_preflight_live_model", lambda self: ("UNAVAILABLE", "DAEMON_UNAVAILABLE: x"))
-    rc = task_main(["fix", "--root", str(repo), "--accept", ACCEPT, "--receipts", str(repo.parent / "c.jsonl")])
+    rc = task_main(["fix", "--root", str(repo), "--accept", ACCEPT, "--receipts", str(repo.parent / "c.jsonl"),
+                    "--runs-dir", str(repo.parent / "runs")])
     assert rc == 2 and json.loads(capsys.readouterr().out)["disposition"] == "UNAVAILABLE"
 
 

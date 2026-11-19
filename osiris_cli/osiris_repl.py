@@ -2197,11 +2197,15 @@ def dispatch_command(state: OsirisReplState, line: str) -> None:
                     print("\n[!] /apply: nothing pending.\n")
                 else:
                     otc._apply_pending_write()
+                    from osiris_cli import code_agent
+                    code_agent.after_console_apply()
             elif cmd == "/discard":
                 if otc._pending_write["path"] is None:
                     print("\n[!] /discard: nothing pending.\n")
                 else:
                     otc._discard_pending_write()
+                    from osiris_cli import code_agent
+                    code_agent.discard_repl_acceptance()
             elif cmd in ("/digest", "/ingest") and (len(parts) > 1 or cmd == "/ingest"):
                 execute_digest(state, line_clean[len(parts[0]):].strip().strip('\'\"'))
             elif cmd in ("/run", "/runs") and parts[1:2] != ["show"]:
