@@ -361,6 +361,8 @@ class Backend:
             raise ApiError(404, "NO_RUN", f"no run {run_id}")
         s = summarize(run)
         s["root"] = self._home_label(run.get("root"))
+        if isinstance(s.get("task_run"), dict) and isinstance(s["task_run"].get("ledger"), str):
+            s["task_run"] = dict(s["task_run"], ledger=self._home_label(s["task_run"]["ledger"]))
         s.pop("source", None)
         s["source"] = {k: (run.get("source") or {}).get(k) for k in ("git_head", "git_dirty")}
         budget = 20_000
