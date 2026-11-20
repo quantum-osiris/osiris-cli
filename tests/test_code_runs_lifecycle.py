@@ -39,6 +39,16 @@ def store(tmp_path):
     return RunStore(str(tmp_path / "runs"))
 
 
+KEY_DIRS = ("runs/_enclave",)
+
+@pytest.fixture(autouse=True)
+def _signing_key_set_up(tmp_path):
+    """Keys are no longer created on first use; set them up the explicit way, as an operator would."""
+    from osiris_cli.pqc_enclave import setup_local_keys
+    for d in KEY_DIRS:
+        setup_local_keys(str(tmp_path / d), confirm=lambda prompt: True)
+
+
 def call(name, **args):
     return {"content": "", "tool_calls": [{"function": {"name": name, "arguments": args}}]}
 

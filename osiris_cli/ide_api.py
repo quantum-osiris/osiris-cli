@@ -326,8 +326,13 @@ class Backend:
                 "verification": v.get("decision"), "exit_code": v.get("exit_code"),
                 "files_changed": [a["path"] for a in run.get("applied", []) if a.get("decision") == "GRANTED"],
                 "last_reason": hist[-1].get("reason", "")[:300] if hist else "",
+                # run_id is random and updated_at has 1 s resolution; file mtime
+                # (rewritten atomically on every state change) breaks same-second ties.
+                "_mtime": os.path.getmtime(os.path.join(store.dir, name)),
             })
-        rows.sort(key=lambda r: (r["updated_at"] or "", r["run_id"]), reverse=True)
+        rows.sort(key=lambda r: (r["updated_at"] or "", r["_mtime"], r["run_id"]), reverse=True)
+        for r in rows:
+            r.pop("_mtime", None)
         return {"available": True, "count": len(rows), "runs": rows[:200],
                 "runs_dir": self._home_label(self.code_runs_dir)}
 

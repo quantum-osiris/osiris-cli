@@ -30,10 +30,12 @@ import sys
 import uuid
 from typing import Any, Callable, Dict, List, Optional, Sequence, Tuple
 
-from osiris_cli import code_critic
+from osiris_cli import code_critic, session_approval
 from osiris_cli.code_agent import CodeAgent, append_receipt, atomic_write, edit_claims, file_sha256, verify_applied
 from osiris_cli.code_runs import DEFAULT_DIR, TERMINAL, RunError, RunStore, source_snapshot
 from osiris_cli.pqc_enclave import (
+    KeySetupRequired,
+    load_or_onboard,
     ApprovalDeniedError,
     GrantVerificationError,
     PQCEnclaveGate,
@@ -97,6 +99,26 @@ def proposals_grant_spec(
     return payload_sha256, scope, schema, summary
 
 
+def _session_write_grant(signer, run, session_grant, payload_sha, scope, schema, out):
+    """A child grant for this run's writes when the session covers every file, else None
+    (the caller then asks the operator about this change)."""
+    ok, why, sscope = session_approval.verify_session_grant(signer, session_grant)
+    covered = (session_approval.covers_paths(sscope, run["root"], [p["rel_path"] for p in run["proposals"]])
+               if ok else (False, why))
+    if not covered[0]:
+        out(f"  [session] this change is not covered ({covered[1]}); asking you")
+        return None
+    try:
+        grant = session_approval.issue_child_grant(
+            signer, session_grant, action="code.apply_writes", scope=scope,
+            payload_sha256=payload_sha, operation_schema=schema, covered=covered)
+    except GrantVerificationError as exc:
+        out(f"  [session] not covered ({exc}); asking you")
+        return None
+    out(f"  [session] applying {len(run['proposals'])} change(s) inside your session approval")
+    return grant
+
+
 def apply_idempotent(
     run: Dict[str, Any],
     store: RunStore,
@@ -131,6 +153,8 @@ def apply_idempotent(
         consume=True,
         consumer_id=run["run_id"],
     )
+    if ok:
+        ok, reason = session_approval.verify_child_link(verifier, grant, run.get("session_grant"))
     if not ok:
         raise GrantVerificationError(reason)
 
@@ -161,6 +185,9 @@ def apply_idempotent(
             "approval": run.get("write_approval"),
             "grant_id": grant["grant_id"],
             "key_fingerprint": grant["key_fingerprint"],
+            "approval_mode": grant.get("approval_mode"),
+            "session_grant_id": (run.get("session_grant") or {}).get("grant_id")
+            if grant.get("approval_mode") == "session" else None,
             "already_applied": not write,
         }
         prior = next((a for a in run.get("applied", []) if a["path"] == p["rel_path"]), None)
@@ -207,18 +234,28 @@ def _advance(
                     run["root"], run["proposals"]
                 )
                 try:
-                    signer = PQCEnclaveGate.load_or_init_local(eff_enclave_dir)
-                    grant = signer.request_approved_grant(
-                        action="code.apply_writes",
-                        scope=scope,
-                        summary=summary_text,
-                        payload_sha256=payload_sha,
-                        operation_schema=schema,
-                        confirm=confirm,
-                        out=out,
-                        prompt=f"Apply {len(run['proposals'])} change(s) to {run['root']}? [y/N] ",
-                        approved_by_flag=approve_writes,
-                    )
+                    signer = load_or_onboard(eff_enclave_dir, confirm=confirm, out=out)
+                    grant = None
+                    session_grant = run.get("session_grant")
+                    if session_grant is not None:
+                        grant = _session_write_grant(signer, run, session_grant, payload_sha, scope, schema, out)
+                    if grant is None:
+                        grant = signer.request_approved_grant(
+                            action="code.apply_writes",
+                            scope=scope,
+                            summary=summary_text,
+                            payload_sha256=payload_sha,
+                            operation_schema=schema,
+                            confirm=confirm,
+                            out=out,
+                            prompt=f"Apply {len(run['proposals'])} change(s) to {run['root']}? [y/N] ",
+                            approved_by_flag=approve_writes,
+                        )
+                except KeySetupRequired as exc:
+                    run["verification"] = {"decision": "BLOCKED", "reasons": [str(exc)]}
+                    store.transition(run, "BLOCKED", "no signing key set up; nothing written")
+                    out(f"\n{exc}")
+                    break
                 except ApprovalDeniedError:
                     run["write_approval"] = None
                     run["applied"] = [
@@ -356,14 +393,25 @@ def run_task(
     stop_after: Optional[str] = None,
     enclave_dir: Optional[str] = None,
     trusted_keys_path: Optional[str] = None,
+    session: Optional[session_approval.SessionScope] = None,
 ) -> Dict[str, Any]:
     """Run one task through every stage and return its summary.
+
+    ``session`` is an operator-approved scope (see ``osiris_cli.session_approval``): the
+    operator approves it once at the start, and writes and commands inside it then need no
+    further prompt. Anything outside it is asked about as before.
 
     ``stop_after`` ends this process's work at that state, as a crash would (tests).
     """
     store = store or RunStore(runs_dir or DEFAULT_DIR)
     eff_enclave_dir = _enclave_dir_for_store(store, enclave_dir)
-    cmd_enclave = PQCEnclaveGate.load_or_init_local(eff_enclave_dir) if allow_commands else None
+    cmd_enclave = None
+    session_grant = None
+    if allow_commands or session is not None:
+        cmd_enclave = load_or_onboard(eff_enclave_dir, confirm=confirm, out=out)
+    if session is not None:
+        # The one approval for the whole session. Declining it raises ApprovalDeniedError.
+        session_grant = session_approval.request_session_grant(cmd_enclave, session, confirm=confirm, out=out)
     agent = CodeAgent(
         root=root,
         model=model,
@@ -376,6 +424,7 @@ def run_task(
         receipts_path=receipts,
         write_nudges=1 if require_change else 0,
         enclave=cmd_enclave,
+        session_grant=session_grant if allow_commands else None,
     )
     run_id = f"code-{uuid.uuid4().hex[:12]}"
     run = store.create(
@@ -397,6 +446,9 @@ def run_task(
             "trusted_keys_path": trusted_keys_path,
         },
     )
+    if session_grant is not None:
+        run["session_grant"] = session_grant
+        store.save(run)
     with store.locked(run_id):
         run["source"] = source_snapshot(agent.root)
         store.transition(run, "CONTEXT_READY", f"git HEAD {run['source']['git_head']}")
@@ -421,7 +473,7 @@ def run_task(
             tool_calls=[
                 {
                     k: d.get(k)
-                    for k in ("tool", "decision", "reason", "path", "exit_code", "grant_id")
+                    for k in ("tool", "decision", "reason", "path", "exit_code", "grant_id", "approval_mode")
                     if d.get(k) is not None
                 }
                 for d in result.decisions
@@ -566,6 +618,18 @@ def main(argv: Optional[List[str]] = None) -> int:
     ap.add_argument("--runs-dir", default=DEFAULT_DIR, help="durable run records")
     ap.add_argument("--enclave-dir", default=None, help="local operator PQC enclave key directory")
     ap.add_argument("--accept-timeout", type=float, default=600.0)
+    ap.add_argument(
+        "--session-edit", action="append", default=[], metavar="GLOB",
+        help="session approval: files the agent may change without asking, relative to --root "
+        "(repeatable, e.g. 'src/*.py'). You approve the whole session once at the start.",
+    )
+    ap.add_argument(
+        "--session-command", action="append", default=[], metavar="CMD",
+        help="session approval: an exact test/build command that may run without asking "
+        "(repeatable, e.g. 'python -m pytest -q'). Shells, network, installs, deletes, "
+        "pushes and deploys are refused.",
+    )
+    ap.add_argument("--session-minutes", type=int, default=session_approval.DEFAULT_SESSION_MINUTES)
     g = ap.add_mutually_exclusive_group()
     g.add_argument("--resume", metavar="RUN_ID")
     g.add_argument("--cancel", metavar="RUN_ID")
@@ -591,27 +655,47 @@ def main(argv: Optional[List[str]] = None) -> int:
         else:
             if not a.task:
                 ap.error("a task is required (or --list/--status/--resume/--cancel)")
-            summary = run_task(
-                a.task,
-                root=a.root,
-                accept=a.accept,
-                model=a.model,
-                multi=a.multi,
-                approve_writes=a.approve_writes,
-                allow_commands=a.allow_commands,
-                require_change=not a.no_change_ok,
-                receipts=a.receipts,
-                accept_timeout=a.accept_timeout,
-                store=store,
-                critic_model=a.critic_model,
-                allow_test_edits=a.allow_test_edits,
-                enclave_dir=a.enclave_dir,
-            )
+            session = None
+            if a.session_edit or a.session_command:
+                try:
+                    session = session_approval.SessionScope.build(
+                        a.root, a.session_edit, a.session_command, a.session_minutes)
+                except session_approval.SessionScopeError as exc:
+                    _err(f"[code_task] session not started: {exc}")
+                    return 2
+            try:
+                summary = _run_cli_task(a, store, session)
+            except KeySetupRequired as exc:
+                _err(f"[code_task] {exc}")
+                return 2
+            except ApprovalDeniedError:
+                _err("[code_task] session not approved; nothing ran")
+                return 1
     except RunError as exc:
         _err(f"[code_task] {exc}")
         return 1
     print(json.dumps(summary, indent=2, default=str))
     return exit_code(summary)
+
+
+def _run_cli_task(a: argparse.Namespace, store: RunStore, session: Optional[session_approval.SessionScope]):
+    return run_task(
+        a.task,
+        root=a.root,
+        accept=a.accept,
+        model=a.model,
+        multi=a.multi,
+        approve_writes=a.approve_writes,
+        allow_commands=a.allow_commands or bool(session and session.commands),
+        require_change=not a.no_change_ok,
+        receipts=a.receipts,
+        accept_timeout=a.accept_timeout,
+        store=store,
+        critic_model=a.critic_model,
+        allow_test_edits=a.allow_test_edits,
+        enclave_dir=a.enclave_dir,
+        session=session,
+            )
 
 
 if __name__ == "__main__":

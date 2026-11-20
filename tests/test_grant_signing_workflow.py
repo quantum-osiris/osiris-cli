@@ -43,6 +43,16 @@ FIXED = "def add(a: int, b: int) -> int:\n    return a + b\n"
 TEST_SRC = "from calc import add\n\ndef test_add():\n    assert add(4, 5) == 9\n"
 
 
+KEY_DIRS = ("enclave", "runs/_enclave", "agent_enclave")
+
+@pytest.fixture(autouse=True)
+def _signing_key_set_up(tmp_path):
+    """Keys are no longer created on first use; set them up the explicit way, as an operator would."""
+    from osiris_cli.pqc_enclave import setup_local_keys
+    for d in KEY_DIRS:
+        setup_local_keys(str(tmp_path / d), confirm=lambda prompt: True)
+
+
 def _call(name: str, **args):
     return {"content": "", "tool_calls": [{"function": {"name": name, "arguments": args}}]}
 
