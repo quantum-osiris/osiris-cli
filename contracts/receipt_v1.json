@@ -63,7 +63,7 @@
     },
     "evidence_class": {
       "type": "string",
-      "enum": ["SIMULATED", "HARDWARE_ATTESTED"]
+      "enum": ["SIMULATED", "HARDWARE_ATTESTED", "PREVIEW", "SYNDROME_SIMULATED", "STATIC_RECORD"]
     },
     "hardware": {
       "type": "boolean"

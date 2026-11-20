@@ -173,7 +173,7 @@ def test_routes_over_http_require_token(env):
             return r.status, out
         assert req("GET", "/api/v1/code/runs", tok=False)[0] == 401
         st, out = req("GET", "/api/v1/code/runs")
-        assert st == 200 and out["api_version"] == "1.6.0" and out["runs"][0]["run_id"] == s["run_id"]
+        assert st == 200 and out["api_version"] == ide_api.API_VERSION and out["runs"][0]["run_id"] == s["run_id"]
         st, out = req("POST", "/api/v1/code/run", {"run_id": s["run_id"]})
         assert st == 200 and out["state"] == "SUCCEEDED"
     finally:

@@ -173,11 +173,14 @@ def validate_contract(
             violations.append({"field": "execution_mode", "issue": "Missing required property 'execution_mode'"})
 
         if contract_name == "receipt_v1.json":
-            if payload.get("evidence_class") == "SIMULATED" and payload.get("hardware") is not False:
+            if (
+                payload.get("evidence_class") in ("SIMULATED", "PREVIEW", "SYNDROME_SIMULATED", "STATIC_RECORD")
+                and payload.get("hardware") is not False
+            ):
                 violations.append(
                     {
                         "field": "hardware",
-                        "issue": "Simulated execution receipts must set hardware strictly to false",
+                        "issue": "Non-hardware execution receipts must set hardware strictly to false",
                     }
                 )
 
