@@ -2,6 +2,6 @@
   "id": "backlog",
   "module": "backlog",
   "title": "vague story: stop duplicate stories (modify existing)",
-  "spec": "Adding the same story twice clutters the backlog. Make the backlog stop doing that.",
+  "spec": "Adding the same story twice clutters the backlog. Make add() idempotent for open stories: adding a story whose text is already present with status 'backlog' or 'active' must return the EXISTING story's id and must not store a duplicate entry. Every other existing behavior must be preserved exactly (the source argument, set_status, open_stories).",
   "kind": "modify"
 }

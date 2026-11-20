@@ -2,6 +2,6 @@
   "id": "claims",
   "module": "claims",
   "title": "vague story: catch made-up numbers (modify existing)",
-  "spec": "Proposals keep showing up with numbers nobody can find anywhere. Catch those.",
+  "spec": "Proposals keep showing up with numbers nobody can find anywhere. Catch those: every number in the claim must appear in the cited evidence as a WHOLE number -- a digit inside a longer number (3 inside 13) does not count. Keep the check a single, non-recursive pass over the evidence text: never follow citations into further files recursively, and never loop on cyclic references. Existing behavior must be preserved (including the 'no evidence cited' case).",
   "kind": "modify"
 }
