@@ -24,6 +24,7 @@ from __future__ import annotations
 
 import difflib
 import hashlib
+import itertools
 import json
 import os
 import platform
@@ -276,7 +277,9 @@ def text_tool_calls_enabled(model: Optional[str]) -> bool:
 @dataclass
 class CodeResult:
     answer: str
-    status: str  # SUCCESS | ERROR | MAX_STEPS | MODEL_UNAVAILABLE | UNAVAILABLE
+    #: SUCCESS | ERROR | MAX_STEPS | CIRCUIT_BREAKER | MODEL_UNAVAILABLE | UNAVAILABLE, and for a run
+    #: given a task context (osiris_cli.task_context): STOPPED_BUDGET | BLOCKED.
+    status: str
     decisions: List[Dict[str, Any]] = field(default_factory=list)
     error: str = ""
     run_id: str = ""
@@ -286,6 +289,11 @@ class CodeResult:
     receipt_hash: Optional[str] = None
     #: Sentences in the answer that claim a file change no apply_write receipt backs.
     unbacked_claims: List[str] = field(default_factory=list)
+    #: For a run given a task context: why it was stopped (max_steps, max_tool_calls, max_tokens,
+    #: max_wall_s, repeated_failure, not_permitted) or None, what it spent, and the context's digest.
+    stop_reason: Optional[str] = None
+    usage: Dict[str, Any] = field(default_factory=dict)
+    context_sha256: Optional[str] = None
 
 
 def _digest(payload: Dict[str, Any]) -> str:
@@ -316,8 +324,21 @@ class CodeAgent:
         write_nudges: int = 0,
         enclave: Optional[Any] = None,
         session_grant: Optional[Dict[str, Any]] = None,
+        context: Optional[Any] = None,
+        task_ledger: Optional[Any] = None,
+        clock: Callable[[], float] = time.monotonic,
     ):
         self.root = os.path.realpath(root or os.getcwd())
+        # The task's run context (osiris_cli.task_context.TaskRunContext): which tools this run may
+        # use and what it may spend. When given, its BudgetMeter governs the loop instead of
+        # max_steps, and the run is opened and closed in task_ledger. The model has no tool that
+        # can read or change it. Without one, the loop behaves exactly as it did before contexts.
+        self._context = context
+        self._task_ledger = task_ledger
+        self._clock = clock
+        self.meter: Optional[Any] = None
+        self._stop: Optional[Any] = None
+        self._ledger_opened = False
         self._enclave = enclave
         # A signed session approval from the operator (osiris_cli.session_approval). The model has
         # no tool that can create or change it; it only lets listed commands run without a prompt.
@@ -399,7 +420,8 @@ class CodeAgent:
         resp = provider.chat(request)
         if resp.error:
             return {"error": resp.error}
-        return {"content": resp.content, "tool_calls": resp.tool_calls or []}
+        return {"content": resp.content, "tool_calls": resp.tool_calls or [],
+                "tokens": int(resp.eval_count or 0) + int(resp.prompt_eval_count or 0)}
 
     def _record_receipt(self, run_id: str, task: str, status: str, error: str = "",
                         unbacked: Optional[List[str]] = None) -> Optional[str]:
@@ -419,13 +441,63 @@ class CodeAgent:
             "error": error[:400] if error else "",
             "decisions": list(self.decisions),
             "unbacked_claims": list(unbacked or []),
+            **self._task_run_fields(),
         })
         return row["hash"]
+
+    def _task_run_fields(self) -> Dict[str, Any]:
+        """What a governed run adds to its receipt; nothing for a run without a context."""
+        if self._context is None:
+            return {}
+        return {"task_run": {"run_id": self._context.run_id, "context_sha256": self._context.context_sha256,
+                             "risk_tier": self._context.risk_tier, "cost_class": self._context.cost_class,
+                             "stop_reason": self._stop.reason if self._stop else None,
+                             "usage": self.meter.usage() if self.meter is not None else {}}}
 
     def _applied_writes(self) -> List[Dict[str, Any]]:
         return [d for d in self.decisions if d.get("tool") == "apply_write" and d.get("decision") == "GRANTED"]
 
+    def _stopped(self, run_id: str, task: str, stop: Any) -> CodeResult:
+        """End a governed run at a budget cap or a permission block."""
+        self._stop = stop
+        self._out(f"\033[33m  ■ {stop}\033[0m")
+        return self._finish(run_id, task, "", stop.status, str(stop))
+
+    def _begin_governed(self, run_id: str) -> Optional[Any]:
+        """Before any model call: the context must be this run's, must permit what the agent was
+        built to do, and must be recorded. Returns a Stop (BLOCKED) or None."""
+        from osiris_cli import task_context as tc
+        ctx = self._context
+        if ctx.run_id != run_id:
+            return tc.Stop(tc.BLOCKED, "context_invalid",
+                           f"run {run_id}: the context given was issued to run {ctx.run_id}")
+        try:
+            tc.TaskRunContext.from_dict(ctx.to_dict())   # still hashes to its own digest
+        except tc.TaskContextError as exc:
+            return tc.Stop(tc.BLOCKED, "context_invalid", f"run {run_id}: {exc}")
+        stop = tc.require(ctx, max_writes=self.max_writes)
+        if stop is not None:
+            return stop
+        self.meter = ctx.meter(self._clock)
+        if self._task_ledger is not None:
+            try:
+                self._task_ledger.open(ctx)
+                self._ledger_opened = True
+            except tc.TaskLedgerError as exc:
+                return tc.Stop(tc.BLOCKED, "ledger_unavailable", f"run {run_id}: {exc}; nothing was run")
+        return None
+
     def _finish(self, run_id: str, task: str, answer: str, status: str, error: str = "") -> CodeResult:
+        if self._ledger_opened:
+            from osiris_cli.task_context import BLOCKED, TaskLedgerError
+            self._ledger_opened = False
+            try:
+                self._task_ledger.close(self._context, status, stop=self._stop,
+                                        usage=self.meter.usage() if self.meter is not None else {},
+                                        detail=error)
+            except TaskLedgerError as exc:
+                # The run happened but its close could not be recorded: nothing it proposed advances.
+                status, answer, error = BLOCKED, "", f"{exc}; run left open in the task ledger"
         unbacked = edit_claims(answer) if status == "SUCCESS" and not self._applied_writes() else []
         self.run_id, self.last_status, self.last_answer = run_id, status, answer
         r_hash = self._record_receipt(run_id, task, status, error, unbacked)
@@ -441,6 +513,9 @@ class CodeAgent:
             resolved_model=resolved,
             resolved_digest=self.resolved_digest,
             receipt_hash=r_hash,
+            stop_reason=self._stop.reason if self._stop else None,
+            usage=self.meter.usage() if self.meter is not None else {},
+            context_sha256=self._context.context_sha256 if self._context is not None else None,
         )
 
     def apply_pending_write(self, approve: Callable[[Dict[str, Any]], bool]) -> Dict[str, Any]:
@@ -606,7 +681,13 @@ class CodeAgent:
         return records
 
     def run(self, task: str, run_id: Optional[str] = None) -> CodeResult:
-        run_id = run_id or f"code-{uuid.uuid4().hex[:12]}"
+        run_id = run_id or (self._context.run_id if self._context is not None else f"code-{uuid.uuid4().hex[:12]}")
+        self._stop, self.meter = None, None
+        if self._context is not None:
+            blocked = self._begin_governed(run_id)
+            if blocked is not None:
+                return self._stopped(run_id, task, blocked)
+        meter = self.meter
         if self._live_ollama:
             fail = self._preflight_live_model()
             if fail is not None:
@@ -618,7 +699,13 @@ class CodeAgent:
         ]
         seen_calls: Dict[str, Dict[str, Any]] = {}
         consecutive_breaker_steps = 0
-        for _ in range(self.max_steps):
+        # Without a context: max_steps turns, as before. With one: the meter ends the loop, at the
+        # step cap or at any other cap, and every turn and tool call is charged before it happens.
+        for _ in (range(self.max_steps) if meter is None else itertools.count()):
+            if meter is not None:
+                stop = meter.begin_step()
+                if stop is not None:
+                    return self._stopped(run_id, task, stop)
             resp = self._chat(messages, TOOLS, self.model)
             if "error" in resp:
                 err = str(resp["error"])
@@ -627,6 +714,8 @@ class CodeAgent:
                 return self._finish(run_id, task, "", st, err)
             content = resp.get("content", "") or ""
             calls = list(resp.get("tool_calls") or [])
+            if meter is not None:
+                meter.charge_tokens(resp.get("tokens"), content + json.dumps(calls, default=str))
             origin = "native"
             if not calls and text_tool_calls_enabled(self.model):
                 calls, origin = parse_text_tool_calls(content), "text"
@@ -647,6 +736,10 @@ class CodeAgent:
             messages.append({"role": "assistant", "content": content, "tool_calls": calls})
             all_tripped = True
             for call in calls:
+                if meter is not None:
+                    stop = meter.begin_tool_call()
+                    if stop is not None:
+                        return self._stopped(run_id, task, stop)
                 fn = call.get("function", {}) or {}
                 name = fn.get("name", "")
                 raw = fn.get("arguments", {}) or {}
@@ -691,16 +784,20 @@ class CodeAgent:
                             "count": (prev["count"] + 1) if prev else 1,
                             "summary": result[:160],
                         }
+                if meter is not None:
+                    meter.note(bool(self.decisions) and self.decisions[-1].get("decision") == "GRANTED")
                 if len(result) > _MAX_TOOL_RESULT:
                     result = result[:3000] + f"\n...[{len(result) - 3000} chars omitted]...\n" + result[-1500:]
                 messages.append({"role": "tool", "content": result, "name": name})
             if all_tripped:
                 consecutive_breaker_steps += 1
                 if consecutive_breaker_steps >= 2:
-                    return self._finish(
-                        run_id, task, "", "CIRCUIT_BREAKER",
-                        "halted repeated identical tool call after duplicate-call circuit breaker tripped twice",
-                    )
+                    why = "halted repeated identical tool call after duplicate-call circuit breaker tripped twice"
+                    if meter is not None:
+                        from osiris_cli.task_context import STOPPED_BUDGET, Stop
+                        return self._stopped(run_id, task, Stop(STOPPED_BUDGET, "repeated_failure",
+                                                                f"run {run_id}: {why}"))
+                    return self._finish(run_id, task, "", "CIRCUIT_BREAKER", why)
             else:
                 consecutive_breaker_steps = 0
         return self._finish(run_id, task, "", "MAX_STEPS", f"no answer within {self.max_steps} steps")
@@ -718,6 +815,9 @@ class CodeAgent:
             }.get(name)
             if handler is None:
                 raise Denied(f"unknown tool {name!r}")
+            if self._context is not None and not self._context.permissions.allows_tool(name):
+                raise Denied(f"this task run ({self._context.run_id}) does not permit {name}; "
+                             f"it may use: {', '.join(self._context.permissions.tools) or 'no tools'}")
             result, extra = handler(**args)
             decision.update(decision="GRANTED", **extra)
         except Denied as exc:
@@ -1186,6 +1286,16 @@ def discard_repl_acceptance() -> None:
 _ACCEPT_OPT = re.compile(r"""^\s*--accept\s+(?:"([^"]+)"|'([^']+)')(?:\s+(.*))?$""", re.DOTALL)
 
 
+def _repl_task_ledger() -> str:
+    """Where /code's task runs are recorded: the shared ledger, or beside REPL_RECEIPTS when
+    that has been pointed elsewhere (so a test never writes ~/.osiris/tasks)."""
+    from osiris_cli import task_context
+    default = os.path.join(os.path.expanduser("~"), ".osiris", "code", "receipts.jsonl")
+    if os.path.realpath(REPL_RECEIPTS) == os.path.realpath(default):
+        return task_context.DEFAULT_LEDGER
+    return os.path.join(os.path.dirname(os.path.abspath(REPL_RECEIPTS)), "task_runs.jsonl")
+
+
 def run_code_command(state: Any, rest: str) -> CodeResult:
     """`/code [--multi] [--model NAME] [--accept "CMD"] <task>` from the REPL."""
     global _repl_acceptance
@@ -1226,11 +1336,23 @@ def run_code_command(state: Any, rest: str) -> CodeResult:
     except KeySetupRequired as exc:
         print(f"\n[/code] {exc}\n")
         return CodeResult("", "ERROR", [], "no signing key set up")
+    # This task's run: an ID, the risk tier of the operator's words, what the loop may use, and
+    # its budget. Commands are permitted to be asked for; each still needs its own y/N.
+    from osiris_cli import task_context
+    try:
+        context = task_context.new_context(
+            task, kind="code", run_id=f"code-{uuid.uuid4().hex[:12]}", max_writes=max_writes,
+            perms=task_context.permissions(propose_writes=True, run_commands=True))
+    except task_context.TaskContextError as exc:
+        print(f"\n[/code] not started: {exc}\n")
+        return CodeResult("", task_context.BLOCKED, [], f"no task context: {exc}")
     agent = CodeAgent(model=model, max_writes=max_writes, log=(lambda e, d: log(e, d)) if log else None,
                       receipts_path=REPL_RECEIPTS if accept else None, write_nudges=1 if accept else 0,
-                      enclave=repl_enclave)
+                      enclave=repl_enclave, context=context,
+                      task_ledger=task_context.TaskLedger(_repl_task_ledger()))
     print(f"\n\033[1;36m[/code]\033[0m {agent.model} · working directory {agent.root}")
-    result = agent.run(task)
+    print(f"\033[2m  task run {context.summary()}\033[0m")
+    result = agent.run(task, run_id=context.run_id)
     granted = sum(1 for d in result.decisions if d["decision"] == "GRANTED")
     denied = len(result.decisions) - granted
     if result.status == "SUCCESS":

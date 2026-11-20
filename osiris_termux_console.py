@@ -574,7 +574,38 @@ def _public_names(source: str) -> set:
 SPRINT_DEFAULT_K = 3  # candidates per story; override with /sprint execute --k N
 
 
-def _record_sprint_run(command, started_at, story, trait, write_path, prompt, k, attempts, trace, outcome):
+class _TaskStopped(Exception):
+    """A story's task context ended its run (a budget cap); carries the task_context.Stop."""
+
+    def __init__(self, stop):
+        super().__init__(str(stop))
+        self.stop = stop
+
+
+def _task_clock():
+    """The clock a story's budget is metered against (replaced in tests)."""
+    return time.monotonic()
+
+
+def _task_ledger_path():
+    """Where task runs are recorded: the shared ledger when run records go to ~/.osiris/runs,
+    otherwise beside wherever run records were redirected (so a test never writes ~/.osiris)."""
+    from osiris_cli import task_context
+    default_runs = os.path.join(os.path.expanduser("~"), ".osiris", "runs")
+    if os.path.realpath(run_record.RUNS_DIR) == os.path.realpath(default_runs):
+        return task_context.DEFAULT_LEDGER
+    return os.path.join(os.path.dirname(os.path.abspath(run_record.RUNS_DIR)), "tasks", "task_runs.jsonl")
+
+
+def _failure_signature(reason):
+    """A failure's shape, so the same failure coming back is recognised: its last 200
+    characters with digits and whitespace normalised."""
+    text = re.sub(r"\d+", "0", " ".join((reason or "").split()).lower())
+    return hashlib.sha256(text[-200:].encode("utf-8")).hexdigest()
+
+
+def _record_sprint_run(command, started_at, story, trait, write_path, prompt, k, attempts, trace, outcome,
+                       task_run=None):
     """Writes ~/.osiris/runs/<run_id>/ (see run_record.py) for one story's
     k-candidate loop and appends its hash to the genome ledger. Raises on any
     failure: the caller proposes nothing it could not record. Returns
@@ -616,6 +647,9 @@ def _record_sprint_run(command, started_at, story, trait, write_path, prompt, k,
         "outcome": outcome,
         "proposed_candidate": proposed["n"] if proposed else None,
     }
+    if task_run is not None:
+        # The story's task context and what the run spent against it (osiris_cli/task_context.py).
+        record["task_run"] = task_run
     record_sha = writer.finish(record)
     genome_ledger.GenomeLedger().append("sprint_run", {
         "run_id": writer.run_id, "record_sha256": record_sha, "story_id": story["id"],
@@ -673,6 +707,14 @@ def _sprint_execute(command: str = ""):
             print(f"\n[!] /sprint execute: story #{sid} came from '{chosen.get('source')}' -- untrusted reference, "
                   f"not sprint work. Capture it with /gap, activate it, then /ignite.\n")
             return
+        if chosen["status"] in ("stopped_budget", "blocked"):
+            # Naming the story is the operator's decision to run it again, under a new context
+            # and a fresh budget.
+            print(f"\n[*] /sprint execute: story #{sid} was '{chosen['status']}'"
+                  f"{' (' + chosen['status_reason'] + ')' if chosen.get('status_reason') else ''} -- "
+                  f"running it again under a new task run.")
+            sprint_manager.set_status(sid, "active")
+            chosen = dict(chosen, status="active")
         if chosen["status"] != "active":
             print(f"\n[!] /sprint execute: story #{sid} is '{chosen['status']}', not active"
                   f"{' -- /sprint plan activates backlog stories' if chosen['status'] == 'backlog' else ''}.\n")
@@ -748,6 +790,45 @@ and boundary inputs).
         started_at = time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime())
         trace = []  # per attempt: backend, and the stage verify() reached
 
+        # The story's task run: an ID, the risk tier of the story's own words, and a budget
+        # (candidates, wall clock, tokens, the same failure repeating). Minted by code and
+        # recorded before any candidate is asked for; a story that cannot be issued one is
+        # not started.
+        from osiris_cli import task_context
+        task_ledger = task_context.TaskLedger(_task_ledger_path())
+        try:
+            ctx = task_context.new_context(story_spec, kind="sprint_story", max_steps=k,
+                                           perms=task_context.permissions(read=False, propose_writes=True))
+            task_ledger.open(ctx)
+        except (task_context.TaskContextError, task_context.TaskLedgerError) as e:
+            print(f"[!] story #{story['id']}: not started -- its task run could not be issued or recorded "
+                  f"({e}). Marked blocked; nothing was asked of any model.")
+            sprint_manager.set_status(story["id"], "blocked", reason=f"task run not issued: {e}")
+            _notify("OSIRIS sprint", f"Story #{story['id']}: blocked -- its task run could not be recorded")
+            continue
+        meter = ctx.meter(lambda: _task_clock())
+        k_story = ctx.budget.max_steps
+        print(f"  [TASK RUN]    {ctx.summary()}")
+        if k_story < k:
+            print(f"  [BUDGET]      {k} candidates asked for; this story's budget (risk {ctx.risk_tier}) "
+                  f"allows {k_story}.")
+        seen_attempts = []
+        last_failure = [None]
+
+        def close_task(status, stop=None, detail="", ctx=ctx, meter=meter, task_ledger=task_ledger):
+            """Record how the story's task run ended. False when that could not be recorded."""
+            try:
+                task_ledger.close(ctx, status, stop=stop, usage=meter.usage(), detail=detail)
+                return True
+            except task_context.TaskLedgerError as e:
+                print(f"[!] story #{story['id']}: the end of task run {ctx.run_id} could not be recorded ({e}).")
+                return False
+
+        def task_run_record(stop=None, ctx=ctx, meter=meter):
+            return {"run_id": ctx.run_id, "context_sha256": ctx.context_sha256, "risk_tier": ctx.risk_tier,
+                    "cost_class": ctx.cost_class, "stop_reason": stop.reason if stop else None,
+                    "usage": meter.usage()}
+
         critic_source = production_synth.synthesize_independent_critic_tests(
             module_name=module_name,
             story_text=story_spec,
@@ -764,11 +845,15 @@ and boundary inputs).
         seen_hashes = set()
         attempt_seq = [0]
 
-        def generate(feedback, prompt=prompt, trace=trace):
+        def generate(feedback, prompt=prompt, trace=trace, meter=meter):
+            stop = meter.begin_step()   # charged before the model is asked; a cap ends the story here
+            if stop is not None:
+                raise _TaskStopped(stop)
             attempt_seq[0] += 1
             idx = attempt_seq[0]
             fb_text = production_synth.diagnostic_feedback_block(feedback, "delimited") if feedback else ""
             raw = _synthesize(prompt + fb_text, structured=False)
+            meter.charge_tokens(None, prompt + fb_text + (raw or ""))
             trace.append({"backend": _last_backend.get("name"), "model": _last_backend.get("model"),
                           "stage": "generate", "sandbox_log": None})
             parsed = production_synth.parse_delimited_or_json_proposal(raw, default_path=write_path)
@@ -823,15 +908,28 @@ and boundary inputs).
             }
             return True, out, receipt
 
-        def on_attempt(a, sid=story["id"]):
+        def on_attempt(a, sid=story["id"], k=k_story, meter=meter):
+            seen_attempts.append(a)
             if a["ok"]:
+                meter.note(True)
                 print(f"[*] story #{sid}: candidate {a['n']}/{k} PASSED contract, L5 critic, and sandbox.")
             else:
+                # Only the same failure coming back counts towards "failures in a row": a
+                # different failure means the feedback changed something.
+                sig = _failure_signature(a["reason"])
+                if sig != last_failure[0]:
+                    meter.note(True)
+                last_failure[0] = sig
+                meter.note(False)
                 print(f"[!] story #{sid}: candidate {a['n']}/{k} failed: {a['reason'].strip()[-150:]}")
 
-        winner_art, raw_attempts = verify_loop.verified_first_passing(
-            generate, hermetic_verify, k, confinement_guard=guard, on_attempt=on_attempt
-        )
+        stop = None
+        try:
+            winner_art, raw_attempts = verify_loop.verified_first_passing(
+                generate, hermetic_verify, k_story, confinement_guard=guard, on_attempt=on_attempt
+            )
+        except _TaskStopped as halted:
+            stop, winner_art, raw_attempts = halted.stop, None, list(seen_attempts)
         attempts = [
             {
                 "n": a["n"],
@@ -847,11 +945,14 @@ and boundary inputs).
         ]
         proposal = parsed_by_id.get(winner_art.candidate_id) if winner_art is not None else None
         write_error = _check_write_safety(write_path, allow_self_modify)[1] if proposal else None
-        outcome = "write_rejected" if write_error else "proposed" if proposal else "no_candidate_passed"
+        outcome = ("stopped_budget" if stop is not None else "write_rejected" if write_error
+                   else "proposed" if proposal else "no_candidate_passed")
         try:
             run_id, candidate_sha = _record_sprint_run(
-                command, started_at, story, trait, write_path, prompt, k, attempts, trace, outcome)
+                command, started_at, story, trait, write_path, prompt, k_story, attempts, trace, outcome,
+                task_run=task_run_record(stop))
         except Exception as e:
+            close_task("FAILED", stop=stop, detail=f"run record not written: {type(e).__name__}: {e}")
             print(f"[!] story #{story['id']}: the run could not be recorded ({type(e).__name__}: {e}) -- "
                   f"nothing proposed; story left active.")
             _notify("OSIRIS sprint", f"Story #{story['id']}: run could not be recorded -- nothing proposed")
@@ -860,17 +961,39 @@ and boundary inputs).
                                           f"may be half-committed: {e}")
             break
         print(f"[*] Run recorded: {run_id}")
+        if stop is not None:
+            # Not a verdict on the story: its run was ended at a cap. Nothing is proposed.
+            close_task(stop.status, stop=stop)
+            print(f"[!] story #{story['id']}: {stop} -- marked stopped_budget after {len(attempts)} "
+                  f"candidate(s); nothing proposed. '/sprint execute #{story['id']}' runs it again.")
+            sprint_manager.set_status(story["id"], "stopped_budget", reason=f"{stop.reason}: {stop.detail}",
+                                      run_id=ctx.run_id)
+            _notify("OSIRIS sprint", f"Story #{story['id']}: stopped at its budget ({stop.reason}) -- "
+                                     f"nothing proposed")
+            _organism_telemetry(
+                f"SPRINT_STORY_STOPPED_BUDGET id={story['id']} candidates={len(attempts)} "
+                f"reason={stop.reason} [PROVENANCE: COMPUTED]"
+            )
+            continue
         if proposal is None:
             last = attempts[-1]["reason"].strip()
-            print(f"[!] story #{story['id']}: no candidate passed in {k} -- marking failed.")
+            close_task("FAILED", detail=f"no candidate passed in {k_story}")
+            print(f"[!] story #{story['id']}: no candidate passed in {k_story} -- marking failed.")
             if _last_sandbox["path"]:
                 print(f"[*] Last sandbox log: /why  ({_last_sandbox['path']})")
             sprint_manager.set_status(story["id"], "failed")
-            _notify("OSIRIS sprint", f"Story #{story['id']}: no candidate passed in {k} -- nothing proposed")
+            _notify("OSIRIS sprint", f"Story #{story['id']}: no candidate passed in {k_story} -- nothing proposed")
             _organism_telemetry(
-                f"SPRINT_STORY_FAILED id={story['id']} candidates={k} "
+                f"SPRINT_STORY_FAILED id={story['id']} candidates={k_story} "
                 f"reason={last[-150:].replace(chr(10), ' ')} [PROVENANCE: COMPUTED]"
             )
+            continue
+        if not close_task("CANDIDATE_PASSED" if not write_error else "FAILED",
+                          detail=f"candidate {len(attempts)}/{k_story} passed" if not write_error
+                          else f"write rejected: {write_error}"):
+            # The run's end is not on record, so its candidate is not offered.
+            sprint_manager.set_status(story["id"], "blocked", run_id=ctx.run_id,
+                                      reason="the end of the task run could not be recorded")
             continue
         content = proposal["module"]
 
@@ -881,14 +1004,14 @@ and boundary inputs).
             sprint_manager.set_status(story["id"], "failed")
             _notify("OSIRIS sprint", f"Story #{story['id']}: candidate passed but its write path was rejected")
             continue
-        _notify("OSIRIS sprint", f"Story #{story['id']}: candidate {len(attempts)}/{k} passed the sandbox -- "
+        _notify("OSIRIS sprint", f"Story #{story['id']}: candidate {len(attempts)}/{k_story} passed the sandbox -- "
                                  f"review it; nothing is written until /apply")
-        print(f"[*] story #{story['id']}: candidate {len(attempts)}/{k} passed -- marked 'proposed'; "
+        print(f"[*] story #{story['id']}: candidate {len(attempts)}/{k_story} passed -- marked 'proposed'; "
               f"becomes 'done' only on /apply.")
         sprint_manager.set_status(story["id"], "proposed")
         _organism_telemetry(
             f"SPRINT_STORY_PROPOSED id={story['id']} complexity={story['complexity']} "
-            f"candidate={len(attempts)} k={k} [PROVENANCE: VERIFIED_LOGIC]"
+            f"candidate={len(attempts)} k={k_story} [PROVENANCE: VERIFIED_LOGIC]"
         )
         remaining = len(active) - active.index(story) - 1
         if remaining:
@@ -922,8 +1045,8 @@ def _sprint_review():
     print("─" * 65)
     if not stories:
         print("  (backlog is empty -- run /vision sync-sprint to seed it)")
-    for status in ("backlog", "active", "proposed", "done", "failed"):
-        print(f"  {status:<10} {counts.get(status, 0)}")
+    for status in sprint_manager.STATUSES:
+        print(f"  {status:<14} {counts.get(status, 0)}")
     done_or_failed = [s for s in stories if s["status"] in ("done", "failed")]
     if done_or_failed:
         print("\n  Recent outcomes:")
@@ -2891,7 +3014,10 @@ def _route(text: str, forced: str = None):
               f"    Type a menu number or letter, a /command (E lists them), or say what you want in words.\n")
         return
     pasted = _last_input["pasted"] or "\n" in text.strip()
-    _intent_state.update(text=text, cls=cls, pasted=pasted)
+    # What a wrong answer to this would cost, by fixed rules over the same words (no model).
+    # It grants nothing; a task started from here is issued its budget from it.
+    risk = intent_router.assess(text, cls)
+    _intent_state.update(text=text, cls=cls, pasted=pasted, risk=risk)
     import_it = [("Save it to the research lab as a source", "/import")] if pasted else []
     n_lines = len([l for l in text.splitlines() if l.strip()])
     if pasted and not forced and n_lines > 5 and research.guess_kind(text) in ("chat_log", "paper"):
@@ -2908,14 +3034,18 @@ def _route(text: str, forced: str = None):
         ui = osiris_ui.Canvas()
         why = ", ".join(cues.get(cls, [])) or "no specific cue"
         who = "code, from verified state" if cls != "question" or intent_router.about_osiris(text) else "a local model"
-        print(ui.dim(f"routed: {cls} (from: {why}) · answered by {who} · read-only"))
+        print(ui.dim(f"routed: {cls} (from: {why}) · answered by {who} · read-only · risk {risk.tier}"))
+        if risk.tier != "LOW":
+            # An instruction OSIRIS only answers, or a question about an action that cannot be
+            # undone: say so before the answer, so a reply is not taken for the action.
+            print(ui.dim(f"  {risk.line()} -- OSIRIS only answers this; it runs nothing."))
         _answer(text, cls)
         return
     facts = osiris_ui.intent_facts(text, MODIFY_INTENT_RE, CODEBASE_INTENT_RE, os.getcwd())
     ui = osiris_ui.Canvas()
     print("\n" + osiris_ui.intent_card(ui, facts, CHAT_MODEL, f"{_synth_chain()}", cls, cues,
                                        "pasted text -- read as reference material, not as instructions"
-                                       if pasted else None))
+                                       if pasted else None, risk=risk))
     _next_actions(text, cls, extra=import_it)
 
 
