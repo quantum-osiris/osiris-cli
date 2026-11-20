@@ -321,6 +321,14 @@ def test_existing_trust_list_without_keys_is_not_paired_with_new_keys(tmp_path):
 
 def test_code_agent_has_no_throwaway_self_trusting_signer(repo, tmp_path, monkeypatch):
     monkeypatch.setenv("HOME", str(tmp_path / "home"))
+    # Isolate from any real operator keys on this machine and from keys another
+    # test may have enrolled: with no enclave available this must fail closed.
+    import osiris_cli.pqc_enclave as pqc
+
+    def no_key(*args, **kwargs):
+        raise pqc.KeySetupRequired("no signing key set up")
+
+    monkeypatch.setattr(pqc, "load_or_onboard", no_key)
     from osiris_cli.code_agent import CodeAgent, Denied
     agent = CodeAgent(root=str(repo), chat=scripted(), confirm=lambda p: False, out=lambda s: None)
     with pytest.raises(Denied, match="no signing key set up"):
