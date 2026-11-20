@@ -211,7 +211,7 @@ REGISTER: Tuple[Claim, ...] = (
           "The author's own concordance analysis: four effective parameters for four independent "
           "predictions leaves zero degrees of freedom, and the naive 5.2σ claim is unsubstantiated. "
           "Constants fitted to reproduce known values are not predictions of them.",
-          (HONEST,), (r"penteract", r"zero[- ]parameter", r"Ω\s*_?Λ|omega[_\s]*lambda|dark energy density",
+          (HONEST,), (r"penteract", r"zero[- ]parameter[^.\n]{0,90}?(?:cosmolog\w*|Ω\s*_?Λ|omega[_\s]*lambda|n_s\b|0\.00298|geometric constant|dark energy|concordance)|(?:cosmolog\w*|Ω\s*_?Λ|omega[_\s]*lambda|n_s\b|0\.00298|geometric constant|dark energy)[^.\n]{0,90}?zero[- ]parameter", r"Ω\s*_?Λ|omega[_\s]*lambda|dark energy density",
                       r"0\.00298|tensor[- ]to[- ]scalar", r"neutron dark decay"),
           testable="r = 0.00298 is a genuine forward prediction; LiteBIRD (about 2032) can test it."),
     Claim("WORMHOLE", "127-qubit traversable wormhole on ibm_torino (world record)", "NO_EVIDENCE",

@@ -314,8 +314,10 @@ class CodeAgent:
         installed_fn: Optional[Callable[[], Dict[str, str]]] = None,
         receipts_path: Optional[str] = None,
         write_nudges: int = 0,
+        enclave: Optional[Any] = None,
     ):
         self.root = os.path.realpath(root or os.getcwd())
+        self._enclave = enclave
         env_model = os.environ.get("OSIRIS_CODE_MODEL", "").strip() or None
         self._pinned_model: Optional[str] = model or env_model
         self.model = self._pinned_model or DEFAULT_MODEL
@@ -449,12 +451,40 @@ class CodeAgent:
         if existed_now != prop["existed_at_proposal"] or current_sha != prop["before_sha256"]:
             self._pending_proposal = None
             raise Denied("target file changed on disk since the proposal was generated; refusing stale apply")
-        if not approve(prop):
+        enclave = self._get_enclave()
+        write_schema = {
+            "action": "code.apply_writes",
+            "files": [{"rel_path": prop["rel_path"], "before_sha256": prop["before_sha256"], "after_sha256": prop["after_sha256"]}],
+            "root": self.root,
+        }
+        write_digest = _digest(write_schema)
+        write_scope = ["code.apply_writes", self.root, prop["rel_path"]]
+        from osiris_cli.pqc_enclave import ApprovalDeniedError
+        try:
+            pqc_grant = enclave.request_approved_grant(
+                action="code.apply_writes",
+                scope=write_scope,
+                summary=f"Apply {prop['rel_path']} ({(prop['before_sha256'] or 'new')[:10]}->{prop['after_sha256'][:10]})",
+                payload_sha256=write_digest,
+                operation_schema=write_schema,
+                confirm=lambda _prompt: bool(approve(prop)),
+                out=self._out,
+            )
+        except ApprovalDeniedError:
             rec = {"tool": "apply_write", "decision": "DENIED", "path": prop["rel_path"],
                    "after_sha256": prop["after_sha256"], "reason": "operator declined patch"}
             self.decisions.append(rec)
             self._log("CODE_TOOL", rec)
             return rec
+        ok_g, why_g = enclave.verify_grant_integrity(
+            pqc_grant,
+            expected_payload_sha256=write_digest,
+            expected_scope=write_scope,
+            expected_event_type="code.apply_writes",
+            consume=True,
+        )
+        if not ok_g:
+            raise Denied(f"grant verification failed: {why_g}")
         os.makedirs(os.path.dirname(target), exist_ok=True)
         tmp = f"{target}.osiris-tmp-{uuid.uuid4().hex[:8]}"
         data = prop["content"].encode("utf-8")
@@ -472,6 +502,8 @@ class CodeAgent:
             "path": prop["rel_path"],
             "before_sha256": prop["before_sha256"],
             "after_sha256": _sha256_bytes(open(target, "rb").read()),
+            "grant_id": pqc_grant["grant_id"],
+            "key_fingerprint": pqc_grant["key_fingerprint"],
         }
         self.decisions.append(rec)
         self._log("CODE_TOOL", rec)
@@ -496,7 +528,27 @@ class CodeAgent:
                 self._pending_proposal = None
                 self._wrote = False
                 raise Denied(f"target file '{prop['rel_path']}' changed on disk since proposal; refusing stale batch apply")
-        if not approve(proposals):
+        enclave = self._get_enclave()
+        ordered = sorted(proposals, key=lambda p: str(p["rel_path"]))
+        batch_schema = {
+            "action": "code.apply_writes",
+            "files": [{"rel_path": p["rel_path"], "before_sha256": p["before_sha256"], "after_sha256": p["after_sha256"]} for p in ordered],
+            "root": self.root,
+        }
+        batch_digest = _digest(batch_schema)
+        batch_scope = ["code.apply_writes", self.root, *[p["rel_path"] for p in ordered]]
+        from osiris_cli.pqc_enclave import ApprovalDeniedError
+        try:
+            pqc_grant = enclave.request_approved_grant(
+                action="code.apply_writes",
+                scope=batch_scope,
+                summary=f"Apply {len(ordered)} staged file(s): " + ", ".join(p["rel_path"] for p in ordered),
+                payload_sha256=batch_digest,
+                operation_schema=batch_schema,
+                confirm=lambda _prompt: bool(approve(proposals)),
+                out=self._out,
+            )
+        except ApprovalDeniedError:
             records = []
             for prop in proposals:
                 rec = {"tool": "apply_write", "decision": "DENIED", "path": prop["rel_path"],
@@ -505,6 +557,16 @@ class CodeAgent:
                 self._log("CODE_TOOL", rec)
                 records.append(rec)
             return records
+
+        ok_g, why_g = enclave.verify_grant_integrity(
+            pqc_grant,
+            expected_payload_sha256=batch_digest,
+            expected_scope=batch_scope,
+            expected_event_type="code.apply_writes",
+            consume=True,
+        )
+        if not ok_g:
+            raise Denied(f"grant verification failed: {why_g}")
 
         records = []
         for prop in proposals:
@@ -523,6 +585,8 @@ class CodeAgent:
                 "path": prop["rel_path"],
                 "before_sha256": prop["before_sha256"],
                 "after_sha256": _sha256_bytes(open(target, "rb").read()),
+                "grant_id": pqc_grant["grant_id"],
+                "key_fingerprint": pqc_grant["key_fingerprint"],
             }
             self.decisions.append(rec)
             self._log("CODE_TOOL", rec)
@@ -790,20 +854,43 @@ class CodeAgent:
 
         payload = {"argv": argv, "cwd": work}
         digest = _digest(payload)
-        if not self._confirm(f"Run `{shlex.join(argv)}` in {work}? [y/N] "):
+        cmd_scope = ["SUBPROCESS_EXEC", work]
+        enclave = self._get_enclave()
+        from osiris_cli.pqc_enclave import ApprovalDeniedError
+        try:
+            pqc_grant = enclave.request_approved_grant(
+                action="code.run_command",
+                scope=cmd_scope,
+                summary=f"Run `{shlex.join(argv)}` in {work}",
+                payload_sha256=digest,
+                operation_schema=payload,
+                confirm=self._confirm,
+                out=self._out,
+                prompt=f"Run `{shlex.join(argv)}` in {work}? [y/N] ",
+                ttl_seconds=60.0,
+            )
+        except ApprovalDeniedError:
             raise Denied("the user did not approve this command")
         now = time.time()
-        grant = ExecutionGrant(grant_id=f"grant-{uuid.uuid4().hex[:12]}", payload_digest=digest,
+        grant = ExecutionGrant(grant_id=pqc_grant["grant_id"], payload_digest=digest,
                                authorized_by="operator", authorized_at=now, expires_at=now + 60,
-                               scope=["SUBPROCESS_EXEC", work])
+                               scope=cmd_scope)
         horizon = interactive_timeout_s()
         try:
             limit = min(float(timeout), horizon) if timeout else horizon
         except (TypeError, ValueError):
             limit = horizon
-        # Verified against the exact argv/cwd about to run, not what was asked about.
-        if not grant.is_valid(_digest({"argv": argv, "cwd": work})):
-            raise Denied("execution grant no longer matches the command")
+        # Verified cryptographically against the exact argv/cwd about to run, and consumed once.
+        recomputed_digest = _digest({"argv": argv, "cwd": work})
+        ok_pqc, why_pqc = enclave.verify_grant_integrity(
+            pqc_grant,
+            expected_payload_sha256=recomputed_digest,
+            expected_scope=cmd_scope,
+            expected_event_type="code.run_command",
+            consume=True,
+        )
+        if not ok_pqc or not grant.is_valid(recomputed_digest):
+            raise Denied(f"execution grant verification failed: {why_pqc}")
         try:
             proc = subprocess.Popen(
                 argv, shell=False, cwd=work, stdin=subprocess.DEVNULL,
@@ -820,15 +907,27 @@ class CodeAgent:
             except OSError:
                 proc.kill()
             proc.communicate()
-            return f"TIMEOUT after {limit:.0f}s", {"grant_id": grant.grant_id, "digest": digest, "timed_out": True}
+            return f"TIMEOUT after {limit:.0f}s", {
+                "grant_id": grant.grant_id,
+                "key_fingerprint": pqc_grant["key_fingerprint"],
+                "digest": digest,
+                "timed_out": True,
+            }
         out = stdout + (f"\n[stderr]\n{stderr}" if stderr.strip() else "")
         return (out or f"(exit code {proc.returncode}, no output)"), {
             "grant_id": grant.grant_id,
+            "key_fingerprint": pqc_grant["key_fingerprint"],
             "digest": digest,
             "exit_code": proc.returncode,
             "stdout_sha256": _sha256_bytes(stdout.encode("utf-8")),
             "stderr_sha256": _sha256_bytes(stderr.encode("utf-8")),
         }
+
+    def _get_enclave(self):
+        if self._enclave is None:
+            from osiris_cli.pqc_enclave import PQCEnclaveGate
+            self._enclave = PQCEnclaveGate()
+        return self._enclave
 
 
     # ── acceptance gate ──────────────────────────────────────────────────────
@@ -1092,8 +1191,11 @@ def run_code_command(state: Any, rest: str) -> CodeResult:
         return CodeResult("", "ERROR", [], "--accept with --multi")
     _repl_acceptance = None
     log = getattr(state, "log_event", None)
+    from osiris_cli.pqc_enclave import PQCEnclaveGate
+    repl_enclave = PQCEnclaveGate.load_or_init_local()
     agent = CodeAgent(model=model, max_writes=max_writes, log=(lambda e, d: log(e, d)) if log else None,
-                      receipts_path=REPL_RECEIPTS if accept else None, write_nudges=1 if accept else 0)
+                      receipts_path=REPL_RECEIPTS if accept else None, write_nudges=1 if accept else 0,
+                      enclave=repl_enclave)
     print(f"\n\033[1;36m[/code]\033[0m {agent.model} · working directory {agent.root}")
     result = agent.run(task)
     granted = sum(1 for d in result.decisions if d["decision"] == "GRANTED")
