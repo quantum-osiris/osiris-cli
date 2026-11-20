@@ -22,7 +22,6 @@ from osiris_cli.code_agent import CodeAgent, Denied, run_acceptance, verify_appl
 from osiris_cli.code_runs import RunStore
 from osiris_cli.exec_kernel import CommandRequest, ExecJournal, classify_json_payload
 from osiris_cli.living import Osiris
-from osiris_cli.orchestration import evolution_bridge, trio
 from osiris_cli.orchestration.evidence_firewall import ExecutionEvidence
 from osiris_cli.pqc_enclave import PQCEnclaveGate
 
@@ -552,6 +551,7 @@ def test_t11_crit05_high02_v603_med05_verify_chain_tail_hardening(tmp_path: Path
 # ── T-12 / HIGH-05 / MED-01: honest pytest parsing & PromotionPolicy ─────────
 
 def test_t12_high05_med01_pytest_xfail_xpass_spoof_and_skip_promotion(tmp_path: Path) -> None:
+    from osiris_cli.orchestration import evolution_bridge, trio
     repo = tmp_path / "repo"
     repo.mkdir()
     (repo / "test_suite.py").write_text(
