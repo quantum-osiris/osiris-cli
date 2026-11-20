@@ -39,6 +39,31 @@ def test_canonical_contracts_enforce_fail_closed_invariants():
     assert ok2 is False and err2["error_code"] == "SCHEMA_VALIDATION_FAILED" and err2["status"] == "REFUSED"
     assert any(v["field"] == "execution_mode" for v in err2["violating_fields"])
 
+    # 1b. plan_v1.json: accepts tokenized argv + cwd + measurable gates, refuses raw command string
+    argv_plan = {
+        **valid_plan,
+        "steps": [
+            {"id": "s1", "type": "run_command", "argv": ["pytest", "-q"], "cwd": ".", "lines_changed": 0},
+        ],
+        "gates": {
+            "passed": True,
+            "checks": [
+                {"name": "max_files_touched", "measured": 0, "threshold": 10, "passed": True, "reason": "ok"},
+                {"name": "max_lines_changed", "measured": 0, "threshold": 500, "passed": True, "reason": "ok"},
+                {"name": "protected_paths_matched", "measured": 0, "threshold": 0, "passed": True, "reason": "ok"},
+                {"name": "highest_tier_allowed", "measured": "VERIFY", "threshold": "MUTATE", "passed": True, "reason": "ok"},
+            ],
+        },
+    }
+    assert cv.validate_contract("plan_v1.json", argv_plan, require_execution_mode_on_plan=True) == (True, None)
+
+    shell_cmd_plan = {
+        **valid_plan,
+        "steps": [{"id": "s1", "type": "run_command", "command": "pytest -q"}],
+    }
+    ok_cmd, err_cmd = cv.validate_contract("plan_v1.json", shell_cmd_plan)
+    assert ok_cmd is False and err_cmd["error_code"] == "SCHEMA_VALIDATION_FAILED"
+
     # 2. execution_v1.json
     valid_exec = {
         "execution_version": "1.0",
