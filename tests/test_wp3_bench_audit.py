@@ -36,23 +36,40 @@ class TestTaskSpecContracts:
     def _spec(self, name):
         return json.loads((TASKS / name / "task.json").read_text(encoding="utf-8"))["spec"]
 
+    def _suite_version(self):
+        import osiris_bench
+        h = osiris_bench.suite_sha256()
+        if h.startswith("09037df636145b1e"):
+            return "v1"
+        assert h.startswith("125a27de6d2fe733"), h
+        return "v2"
+
     def test_backlog_spec_states_idempotency_and_existing_id(self):
         spec = self._spec("backlog")
-        assert "idempotent" in spec
-        assert "EXISTING story's id" in spec
-        assert "must not store a duplicate" in spec
+        if self._suite_version() == "v2":
+            assert "idempotent" in spec
+            assert "EXISTING story's id" in spec
+            assert "must not store a duplicate" in spec
+        else:
+            assert "clutters the backlog" in spec  # v1 original
 
     def test_claims_spec_states_whole_number_and_cycle_safe_resolution(self):
         spec = self._spec("claims")
-        assert "WHOLE number" in spec
-        assert "3 inside 13" in spec
-        assert "non-recursive" in spec and "cyclic" in spec
+        if self._suite_version() == "v2":
+            assert "WHOLE number" in spec
+            assert "3 inside 13" in spec
+            assert "non-recursive" in spec and "cyclic" in spec
+        else:
+            assert "Catch those" in spec  # v1 original
 
     def test_gaps_spec_states_no_length_limit(self):
         spec = self._spec("gaps")
-        assert "NO length limit" in spec
-        assert "never truncated" in spec
-        assert "decimal point" in spec
+        if self._suite_version() == "v2":
+            assert "NO length limit" in spec
+            assert "never truncated" in spec
+            assert "decimal point" in spec
+        else:
+            assert "comes out whole" in spec  # v1 original
 
     def test_hidden_acceptance_tests_untouched(self):
         # The audit may tighten prompts only; acceptance/reference/known_bad
@@ -64,14 +81,15 @@ class TestTaskSpecContracts:
         acc = (TASKS / "gaps" / "acceptance.py").read_text(encoding="utf-8")
         assert "a long gap must come out whole" in acc
 
-    def test_suite_hash_changed_and_recorded(self):
-        # Tightening task.json necessarily changes suite_sha256; the new hash
-        # is what future runs must register (old 09037df63614... runs are not
-        # comparable to the tightened suite).
+    def test_suite_hash_is_a_registered_version(self):
+        # Two registered suite versions exist and are NEVER directly comparable:
+        # v1 = 09037df636145b1e... (pre-#55 specs; restored on main by
+        # fix/benchmark-suite-hash-restore) and v2 = 125a27de6d2fe733... (tightened
+        # specs, preserved on benchmark-suite-v2-candidate). Whichever is on disk
+        # must be one of the two; results must be attributed to that version.
         import osiris_bench
-        assert osiris_bench.suite_sha256() != "09037df636145b1e" + "0" * 0 or True  # full hash below
         full = osiris_bench.suite_sha256()
-        assert full.startswith("125a27de6d2fe733"), full
+        assert full.startswith("09037df636145b1e") or full.startswith("125a27de6d2fe733"), full
 
 
 # ── RTX 5050 harness ─────────────────────────────────────────────────────────
