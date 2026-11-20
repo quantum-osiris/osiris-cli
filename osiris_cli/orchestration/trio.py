@@ -93,9 +93,13 @@ def run_pytest(workdir: str, timeout: float = 60.0, sandboxed: bool = False
     passed = set(re.findall(r"^PASSED (\S+)", out, re.M))
     failed = set(re.findall(r"^FAILED (\S+)", out, re.M))
     errors = len(re.findall(r"^ERROR ", out, re.M))
+    skipped = sum(
+        int(m.group(1)) if m.group(1) else 1
+        for m in re.finditer(r"^SKIPPED (?:\[(\d+)\] )?", out, re.M)
+    )
     return (ExecutionEvidence(argv, rc, len(passed), len(failed), errors,
                               hashlib.sha256(out.encode()).hexdigest(), out[-1500:],
-                              tree_digest(workdir)), passed, failed)
+                              tree_digest(workdir), skipped=skipped), passed, failed)
 
 
 # ── Research ─────────────────────────────────────────────────────────────────
