@@ -31,6 +31,7 @@ from .schemas import (
     DecomposedPlan,
     ExecutionGrant,
     IntentProposal,
+    SignedGrant,
     TaskSpec,
     VerificationReport,
 )
@@ -46,28 +47,33 @@ class GovernedAgentEngine:
         provider: Optional[BaseModelProvider] = None,
         ledger_file: Optional[str] = None,
         allowed_paths: Optional[List[str]] = None,
+        verification_agent: Optional[VerificationAgent] = None,
+        grant_clock=None,
     ):
         self.provider = provider or get_active_provider()
         self.intent_agent = IntentAgent(self.provider)
         self.architect_agent = ArchitectAgent(self.provider)
         self.implementation_agent = ImplementationAgent(self.provider)
-        self.verification_agent = VerificationAgent()
+        self.verification_agent = verification_agent or VerificationAgent()
+        # Only for tests: grants.authorize's NTP check. None uses the real clock check.
+        self._grant_clock = grant_clock
         self.research_agent = ResearchAgent()
         self.memory_agent = MemoryLineageAgent(ledger_file)
         self.allowed_paths = allowed_paths or ["."]
-        self._proposals: Dict[Tuple[str, str], CodeProposal] = {}
+        self._proposals: Dict[str, CodeProposal] = {}
 
     def run_sprint_step(
         self,
         goal: str,
         target_file: str,
-        grant: Optional[ExecutionGrant] = None,
+        grant: Optional[SignedGrant] = None,
         proposal: Optional[CodeProposal] = None,
     ) -> Dict[str, Any]:
         """
         Execute one complete governed cycle.
-        If grant is provided and matches the proposed digest, applies change;
-        otherwise stops at VERIFIED stage ready for authorization.
+        Without a grant it stops after verification and returns ``action_digest``, the digest the
+        owner signs (scope GovernanceController.APPLY_SCOPE). With an owner-signed grant for that
+        digest and a PASS verification of the same proposal, it applies the change.
         """
         # 1. Intent interpretation
         intent = self.intent_agent.interpret(goal)
@@ -78,12 +84,12 @@ class GovernedAgentEngine:
 
         # 3. Implementation synthesis (reuse operator-reviewed proposal bound to grant when present)
         if proposal is None and grant is not None:
-            proposal = self._proposals.get((target_file, grant.payload_digest))
+            proposal = self._proposals.get(os.path.realpath(target_file))
         if proposal is None:
             proposal = self.implementation_agent.synthesize(task)
-            self._proposals[(target_file, proposal.payload_digest())] = proposal
+        self._proposals[os.path.realpath(target_file)] = proposal
 
-        # 4. Independent verification (AST firewall + compilation)
+        # 4. Independent verification (AST firewall + test shape + sandboxed pytest)
         verification = self.verification_agent.verify(proposal)
 
         # 5. Authorization decision (GovernanceController)
@@ -91,8 +97,14 @@ class GovernedAgentEngine:
         auth_message = "NOT_REQUESTED"
         if grant is not None:
             authorized, auth_message = GovernanceController.authorize_execution(
-                proposal, grant, allowed_paths=self.allowed_paths
+                proposal, grant, allowed_paths=self.allowed_paths, verification=verification,
+                clock=self._grant_clock,
             )
+
+        try:
+            action_digest = GovernanceController.action_digest(proposal)
+        except Exception:
+            action_digest = None
 
         # 6. Governed Application (apply change only if authorized)
         applied = False
@@ -136,5 +148,6 @@ class GovernedAgentEngine:
             "applied": applied,
             "apply_message": apply_message,
             "payload_digest": proposal.payload_digest(),
+            "action_digest": action_digest,
             "ledger_receipt_hash": receipt_hash,
         }

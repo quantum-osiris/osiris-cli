@@ -101,8 +101,11 @@ def test_detail_has_lifecycle_diff_and_bound_receipts(env):
 
 def test_home_directory_is_not_exposed_in_command_or_output(env):
     store = RunStore(str(env["runs"]))
+    (env["repo"] / "emit_home.py").write_text(
+        f"print({str(env['home']) + '/secret/path'!r})\n", encoding="utf-8"
+    )
     s = run_task("x", root=str(env["repo"]), chat=scripted(), out=lambda m: None, store=store,
-                 receipts=str(env["receipts"]), accept=f"{sys.executable} -c \"print('{env['home']}/secret/path')\"",
+                 receipts=str(env["receipts"]), accept=f"{sys.executable} emit_home.py",
                  require_change=False)
     d = env["backend"].code_run({"run_id": s["run_id"]})
     assert str(env["home"]) not in json.dumps(d), d["verification"]

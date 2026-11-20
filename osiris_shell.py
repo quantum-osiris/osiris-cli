@@ -18,6 +18,7 @@ import textwrap
 import traceback
 from datetime import datetime
 from pathlib import Path
+from typing import Optional
 
 # Ensure imports resolve
 sys.path.insert(0, str(Path(__file__).parent))
@@ -61,7 +62,7 @@ BOOT_SEQUENCE = [
 def print_boot_screen():
     """Print the epic boot screen with animated init sequence."""
     if sys.stdout.isatty():
-        sys.stdout.write("\x1b[2J\x1b[H")
+        sys.stdout.write("\033[2J\033[H")
         sys.stdout.flush()
     print(BOOT_LOGO)
 
@@ -83,7 +84,7 @@ def print_boot_screen():
             model = client.model or "detecting..."
             print(f"  [32m✓[0m  Ollama:       [1;32mONLINE[0m  ({model})")
         else:
-            print("  [33m⚠[0m  Ollama:       [33mOFFLINE[0m (install: curl -fsSL https://ollama.com/install.sh | sh)")
+            print("  [33m⚠[0m  Ollama:       [33mOFFLINE[0m (install from https://ollama.com/download; verify checksum)")
     except Exception:
         print("  [33m⚠[0m  Ollama:       [33mNOT AVAILABLE[0m")
 
@@ -462,7 +463,7 @@ def run_ollama(params: dict) -> str:
         if not check_ollama():
             return (
                 "Ollama is not running.\n"
-                "  Install:  curl -fsSL https://ollama.com/install.sh | sh\n"
+                "  Install:  download from https://ollama.com/download and verify checksum before running\n"
                 "  Start:    ollama serve\n"
                 "  Pull:     ollama pull qwen2.5:1.5b"
             )
@@ -679,56 +680,100 @@ SHELL_PASSTHROUGH = {"ollama", "pip", "pip3", "git", "docker", "kubectl",
                      "python3", "pytest", "gh"}
 
 
-def _exec_shell(cmd: str) -> str:
-    """Execute a system command through osiris_cli.exec_kernel (no shell=True) with live streaming."""
-    import shlex
+_ANSI_ESC_RE = __import__("re").compile(r"\x1b\[[0-?]*[ -/]*[@-~]|\x1b\][^\x07\x1b]*(?:\x07|\x1b\\)")
+_SHELL_MAX_CAPTURE_CHARS = 65536
+
+
+def _default_shell_root() -> str:
+    from osiris_cli.exec_policy import default_root
+    return default_root()
+
+
+def _exec_shell(
+    cmd: str,
+    *,
+    root: Optional[str] = None,
+    cwd: Optional[str] = None,
+    confirm=None,
+    journal=None,
+    artifacts_dir=None,
+    stream_live: bool = False,
+) -> str:
+    """Execute a governed single-program command through ``osiris_cli.exec_kernel``
+    (never ``shell=True``), confined to the workspace root with ANSI-stripped bounded output."""
+    import threading
     from osiris_cli import exec_kernel
+    from osiris_cli.exec_policy import CommandRequest
 
-    print(f"  [90m⚛ Running: {cmd}[0m")
-    try:
-        argv = shlex.split(cmd, posix=True)
-    except ValueError as exc:
-        return f"Shell syntax error: {exc}"
-    if not argv:
-        return "(empty command)"
+    tokens, err = exec_kernel._split_shell_command(cmd)
+    if err is not None:
+        return f"Command refused: {err}"
 
-    chunks = []
+    eff_root = os.path.realpath(root) if root else _default_shell_root()
+    eff_cwd = os.path.realpath(cwd) if cwd else os.path.realpath(os.getcwd())
 
-    def _stream(_kind: str, text: str) -> None:
-        for line in text.splitlines(keepends=True):
-            print(f"  {line}", end="", flush=True)
-        chunks.append(text)
-
-    def _confirm(prompt: str, _cls) -> bool:
+    def _tty_confirm(prompt: str, _cls) -> bool:
         if not sys.stdin.isatty():
             return False
         try:
-            ans = input(f"  {prompt}").strip().lower()
+            ans = input(prompt)
         except (EOFError, KeyboardInterrupt):
             return False
-        return ans in ("y", "yes")
+        return ans.strip().lower() in ("y", "yes")
 
-    cwd = os.getcwd()
-    req = exec_kernel.CommandRequest(
-        argv=tuple(argv),
-        cwd=cwd,
-        origin="human",
-        timeout_s=300.0,
-        root=cwd,
-    )
-    res = exec_kernel.run(req, confirm=_confirm, journal=exec_kernel.ExecJournal(), stream=_stream)
-    if res.decision == "DENY":
-        return f"Denied by execution policy: {'; '.join(res.reasons)}"
-    if res.decision == "ASK_DECLINED":
-        return "Command cancelled by operator."
-    if res.timed_out:
-        return "Command timed out after 300 s."
-    if res.decision == "ERROR" and res.exit_code is None:
-        return f"Shell error: {'; '.join(res.reasons)}"
-    out = "".join(chunks).strip() or (res.stdout_view + ("\n" + res.stderr_view if res.stderr_view else "")).strip()
-    if res.exit_code not in (0, None) and not out:
+    eff_confirm = confirm if confirm is not None else _tty_confirm
+    eff_journal = journal if journal is not None else exec_kernel.ExecJournal()
+
+    stream_lock = threading.Lock()
+    captured_chars = 0
+
+    def _stream(_kind: str, text: str) -> None:
+        nonlocal captured_chars
+        clean = _ANSI_ESC_RE.sub("", text)
+        with stream_lock:
+            if captured_chars < _SHELL_MAX_CAPTURE_CHARS:
+                take = clean[: _SHELL_MAX_CAPTURE_CHARS - captured_chars]
+                captured_chars += len(take)
+                print(take, end="", flush=True)
+
+    print(f"  [90m⚛ Running: {cmd}[0m")
+    try:
+        res = exec_kernel.run(
+            CommandRequest(
+                argv=tuple(tokens),
+                cwd=eff_cwd,
+                origin="human",
+                root=eff_root,
+            ),
+            confirm=eff_confirm,
+            journal=eff_journal,
+            artifacts_dir=artifacts_dir,
+            stream=_stream if stream_live else None,
+        )
+    except Exception as exc:
+        return f"Shell error: {exc}"
+
+    if res.decision in ("DENY", "ASK_DECLINED"):
+        reason = "; ".join(res.reasons) or res.decision
+        return f"Command refused ({res.decision}): {reason}"
+    if res.timed_out or res.decision == "TIMEOUT":
+        horizon_s = exec_kernel.time_limit(None)
+        return f"Command timed out after {horizon_s:.0f} s."
+    if res.decision == "ERROR":
+        reason = "; ".join(res.reasons) or "execution error"
+        return f"Shell error: {reason}"
+
+    if stream_live:
+        return "" if res.exit_code == 0 else f"(exit code {res.exit_code})"
+
+    out = _ANSI_ESC_RE.sub("", res.stdout_view or "")
+    err_txt = _ANSI_ESC_RE.sub("", res.stderr_view or "")
+    combined = (out + (f"\n[stderr]\n{err_txt}" if err_txt.strip() else "")).strip()
+    if len(combined) > _SHELL_MAX_CAPTURE_CHARS:
+        combined = combined[:_SHELL_MAX_CAPTURE_CHARS] + "\n...(truncated)"
+    if res.exit_code not in (0, None) and not combined:
         return f"(exit code {res.exit_code})"
-    return out if out else "(command completed)"
+    return combined if combined else "(command completed)"
 
 
 # ═══════════════════════════════════════════════════════════════════════════
@@ -758,7 +803,7 @@ def process_input(user_input: str, intent_engine) -> str:
     # ── Shell passthrough: recognised system commands ──
     # "run <tool> ..." → execute shell command (not experiment)
     if first_word == "run" and len(words) > 1 and words[1].lower() in SHELL_PASSTHROUGH:
-        return _exec_shell(" ".join(words[1:]))
+        return _exec_shell(text[len(words[0]):].lstrip())
     # Bare system tool invocation (e.g. "ollama pull ...")
     if first_word in SHELL_PASSTHROUGH and first_word not in DIRECT_COMMANDS:
         return _exec_shell(text)

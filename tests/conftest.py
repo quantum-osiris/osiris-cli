@@ -40,6 +40,11 @@ _TEST_ENCLAVE = tempfile.mkdtemp(prefix="osiris-test-enclave-")
 os.environ["OSIRIS_ENCLAVE_DIR"] = _TEST_ENCLAVE
 atexit.register(shutil.rmtree, _TEST_ENCLAVE, ignore_errors=True)
 
+_TEST_EXEC_DIR = tempfile.mkdtemp(prefix="osiris-test-exec-")
+os.environ.setdefault("OSIRIS_EXEC_JOURNAL", os.path.join(_TEST_EXEC_DIR, "exec_journal.jsonl"))
+os.environ.setdefault("OSIRIS_EXEC_ARTIFACTS_DIR", os.path.join(_TEST_EXEC_DIR, "runs"))
+atexit.register(shutil.rmtree, _TEST_EXEC_DIR, ignore_errors=True)
+
 
 @pytest.fixture(scope="session", autouse=True)
 def _throwaway_operator_key():

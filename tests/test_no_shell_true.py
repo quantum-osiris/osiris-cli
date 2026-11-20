@@ -1,195 +1,282 @@
-"""AST gate forbidding live shell=True, os.system, and direct subprocess bypasses,
-plus regression tests for exec_kernel --classify-json and wired callers (CAP-0005)."""
+"""Hardened repo-wide AST gate forbidding shell=True, os.system, os.popen, os.exec*,
+asyncio.create_subprocess_shell, dynamic getattr escapes, and direct subprocess spawns
+in kernel-owned modules (MED-06)."""
 
 from __future__ import annotations
 
 import ast
 import json
-import os
-import subprocess
-import sys
+from collections import Counter
 from pathlib import Path
 from typing import Dict, List, Set, Tuple
 
 import pytest
 
-from osiris_cli import exec_kernel
-
-REPO_ROOT = Path(__file__).resolve().parents[1]
+REPO_ROOT = Path(__file__).resolve().parent.parent
 ALLOWLIST_PATH = Path(__file__).resolve().parent / "fixtures" / "shell_true_allowlist.json"
 
 SKIP_DIRS = {
     ".git",
     "__pycache__",
     ".pytest_cache",
-    ".tox",
+    "node_modules",
+    ".venv",
+    "venv",
     "build",
     "dist",
     "tests",
-    ".venv",
-    "venv",
+    "docs",
 }
 
-FORBIDDEN_CALLS = {
-    "os.system",
-    "os.popen",
-    "subprocess.getoutput",
-    "subprocess.getstatusoutput",
-    "pty.spawn",
-    "os.posix_spawn",
-    "os.posix_spawnp",
+FORBIDDEN_OS_FUNCS = {
+    "system",
+    "popen",
+    "execl",
+    "execle",
+    "execlp",
+    "execlpe",
+    "execv",
+    "execve",
+    "execvp",
+    "execvpe",
+    "spawnl",
+    "spawnle",
+    "spawnlp",
+    "spawnlpe",
+    "spawnv",
+    "spawnve",
+    "spawnvp",
+    "spawnvpe",
 }
-FORBIDDEN_PREFIXES = ("os.exec", "os.spawn")
+
+SUBPROCESS_FUNCS = {
+    "Popen",
+    "run",
+    "call",
+    "check_call",
+    "check_output",
+    "getoutput",
+    "getstatusoutput",
+}
+
+# Modules whose subprocess execution MUST flow exclusively through osiris_cli.exec_kernel.
 KERNEL_OWNED_MODULES = (
     "osiris_cli/code_agent.py",
     "osiris_shell.py",
+    "osiris_cli/tui_inline.py",
 )
-SUBPROCESS_SPAWN_ATTRS = {"Popen", "run", "call", "check_output", "check_call"}
 
 
-def _call_name(node: ast.AST) -> str:
-    if isinstance(node, ast.Name):
-        return node.id
-    if isinstance(node, ast.Attribute):
-        parent = _call_name(node.value)
-        return f"{parent}.{node.attr}" if parent else node.attr
-    return ""
-
-
-def _scan_forbidden_calls() -> List[Tuple[str, int, str]]:
-    hits: List[Tuple[str, int, str]] = []
-    for path in sorted(REPO_ROOT.rglob("*.py")):
-        if any(part in SKIP_DIRS for part in path.parts) or path.name.endswith(".bak"):
+def _iter_repo_python_files() -> List[Path]:
+    out: List[Path] = []
+    for p in sorted(REPO_ROOT.rglob("*.py")):
+        rel_parts = p.relative_to(REPO_ROOT).parts
+        if any(part in SKIP_DIRS for part in rel_parts):
             continue
-        rel = path.relative_to(REPO_ROOT).as_posix()
-        src = path.read_text(encoding="utf-8", errors="replace")
-        try:
-            tree = ast.parse(src, filename=rel)
-        except SyntaxError:
-            continue
-        for node in ast.walk(tree):
-            if not isinstance(node, ast.Call):
-                continue
-            fn = _call_name(node.func)
-            for kw in node.keywords:
-                if kw.arg == "shell":
-                    is_const_false = isinstance(kw.value, ast.Constant) and kw.value.value is False
-                    if not is_const_false:
-                        hits.append((rel, node.lineno, f"{fn}(shell=True)"))
-            if fn in FORBIDDEN_CALLS or fn.startswith(FORBIDDEN_PREFIXES):
-                hits.append((rel, node.lineno, fn))
-    return hits
+        out.append(p)
+    return out
 
 
-def _load_allowlist() -> Dict[str, object]:
-    return json.loads(ALLOWLIST_PATH.read_text(encoding="utf-8"))
+def _collect_import_aliases(tree: ast.AST) -> Tuple[Dict[str, str], Dict[str, Tuple[str, str]]]:
+    """Map module aliases (`import os as _o` -> `{'_o': 'os'}`) and direct symbol imports
+    (`from os import system as _s` -> `{'_s': ('os', 'system')}`)."""
+    mod_aliases: Dict[str, str] = {}
+    sym_aliases: Dict[str, Tuple[str, str]] = {}
+    for node in ast.walk(tree):
+        if isinstance(node, ast.Import):
+            for alias in node.names:
+                local = alias.asname or alias.name.split(".")[0]
+                mod_aliases[local] = alias.name
+        elif isinstance(node, ast.ImportFrom) and node.module:
+            for alias in node.names:
+                local = alias.asname or alias.name
+                sym_aliases[local] = (node.module, alias.name)
+    return mod_aliases, sym_aliases
 
 
-def test_allowlist_has_zero_live_entries():
-    data = _load_allowlist()
-    entries = data.get("entries", [])
-    assert isinstance(entries, list)
-    for entry in entries:
-        assert entry["status"] in ("gated", "dead"), f"Forbidden status in allowlist: {entry}"
-        assert entry["status"] != "live"
-        assert (REPO_ROOT / entry["path"]).is_file(), f"Stale allowlist path: {entry['path']}"
+def _is_truthy_shell_kw(node: ast.Call) -> bool:
+    for kw in node.keywords:
+        if kw.arg == "shell":
+            if isinstance(kw.value, ast.Constant):
+                if bool(kw.value.value):
+                    return True
+            else:
+                return True
+        elif kw.arg is None and isinstance(kw.value, ast.Dict):
+            for k_node, v_node in zip(kw.value.keys, kw.value.values):
+                if isinstance(k_node, ast.Constant) and k_node.value == "shell":
+                    if not isinstance(v_node, ast.Constant) or bool(v_node.value):
+                        return True
+    return False
 
 
-def test_no_unallowlisted_shell_true_or_os_system():
-    data = _load_allowlist()
-    allowed: Dict[Tuple[str, str], int] = {}
-    for entry in data["entries"]:
-        key = (entry["path"], entry["kind"])
-        allowed[key] = allowed.get(key, 0) + 1
-
-    hits = _scan_forbidden_calls()
-    seen_counts: Dict[Tuple[str, str], int] = {}
-    unexpected: List[Tuple[str, int, str]] = []
-    for rel, lineno, kind in hits:
-        key = (rel, kind)
-        seen_counts[key] = seen_counts.get(key, 0) + 1
-        if seen_counts[key] > allowed.get(key, 0):
-            unexpected.append((rel, lineno, kind))
-
-    assert not unexpected, f"Unallowlisted shell/exec calls found: {unexpected}"
+def _popen_positional_shell_true(node: ast.Call) -> bool:
+    # subprocess.Popen(args, bufsize, executable, stdin, stdout, stderr, preexec_fn, close_fds, shell)
+    if len(node.args) >= 9:
+        shell_arg = node.args[8]
+        if not isinstance(shell_arg, ast.Constant) or bool(shell_arg.value):
+            return True
+    return False
 
 
-@pytest.mark.parametrize("rel_path", KERNEL_OWNED_MODULES)
-def test_kernel_owned_modules_have_no_direct_subprocess_spawns(rel_path: str):
-    path = REPO_ROOT / rel_path
-    tree = ast.parse(path.read_text(encoding="utf-8"), filename=rel_path)
-    direct: List[Tuple[int, str]] = []
+def scan_source_for_shell_hazards(source: str, rel_path: str = "<mem>") -> List[Tuple[str, int, str]]:
+    """Scan Python source AST for shell=True, os.system/popen/exec*/spawn*,
+    asyncio.create_subprocess_shell, and dynamic getattr(os, 'system') escapes.
+    Fails closed on SyntaxError (never skips unparseable files)."""
+    try:
+        tree = ast.parse(source, filename=rel_path)
+    except SyntaxError as exc:
+        return [(rel_path, int(exc.lineno or 1), f"SyntaxError:{exc.msg}")]
+
+    mod_aliases, sym_aliases = _collect_import_aliases(tree)
+    findings: List[Tuple[str, int, str]] = []
+
     for node in ast.walk(tree):
         if not isinstance(node, ast.Call):
             continue
-        fn = _call_name(node.func)
-        if fn.startswith("subprocess.") and fn.split(".")[-1] in SUBPROCESS_SPAWN_ATTRS:
-            direct.append((node.lineno, fn))
-    assert not direct, f"{rel_path} still bypasses exec_kernel via direct subprocess spawns: {direct}"
+        lineno = getattr(node, "lineno", 0)
+        func = node.func
+
+        # Dynamic getattr(os, "system") / getattr(subprocess, ...)
+        if isinstance(func, ast.Name) and func.id == "getattr" and len(node.args) >= 2:
+            target_obj, attr_node = node.args[0], node.args[1]
+            if isinstance(target_obj, ast.Name) and isinstance(attr_node, ast.Constant) and isinstance(attr_node.value, str):
+                resolved_mod = mod_aliases.get(target_obj.id, target_obj.id)
+                if resolved_mod == "os" and attr_node.value in FORBIDDEN_OS_FUNCS:
+                    findings.append((rel_path, lineno, f"os.{attr_node.value}"))
+                elif resolved_mod == "asyncio" and attr_node.value == "create_subprocess_shell":
+                    findings.append((rel_path, lineno, "asyncio.create_subprocess_shell"))
+            continue
+
+        # Direct call via `from os import system` / `from subprocess import Popen` / `from asyncio import ...`
+        if isinstance(func, ast.Name) and func.id in sym_aliases:
+            orig_mod, orig_sym = sym_aliases[func.id]
+            if orig_mod == "os" and orig_sym in FORBIDDEN_OS_FUNCS:
+                findings.append((rel_path, lineno, f"os.{orig_sym}"))
+            elif orig_mod == "asyncio" and orig_sym == "create_subprocess_shell":
+                findings.append((rel_path, lineno, "asyncio.create_subprocess_shell"))
+            elif orig_mod == "subprocess" and orig_sym in SUBPROCESS_FUNCS:
+                if orig_sym in ("getoutput", "getstatusoutput"):
+                    findings.append((rel_path, lineno, f"subprocess.{orig_sym}"))
+                elif _is_truthy_shell_kw(node) or (orig_sym == "Popen" and _popen_positional_shell_true(node)):
+                    findings.append((rel_path, lineno, f"subprocess.{orig_sym}(shell=True)"))
+            continue
+
+        # Attribute call: mod.func(...)
+        if isinstance(func, ast.Attribute) and isinstance(func.value, ast.Name):
+            resolved_mod = mod_aliases.get(func.value.id, func.value.id)
+            attr = func.attr
+            if resolved_mod == "os" and attr in FORBIDDEN_OS_FUNCS:
+                findings.append((rel_path, lineno, f"os.{attr}"))
+            elif resolved_mod == "asyncio" and attr == "create_subprocess_shell":
+                findings.append((rel_path, lineno, "asyncio.create_subprocess_shell"))
+            elif resolved_mod == "subprocess" and attr in SUBPROCESS_FUNCS:
+                if attr in ("getoutput", "getstatusoutput"):
+                    findings.append((rel_path, lineno, f"subprocess.{attr}"))
+                elif _is_truthy_shell_kw(node) or (attr == "Popen" and _popen_positional_shell_true(node)):
+                    findings.append((rel_path, lineno, f"subprocess.{attr}(shell=True)"))
+            elif _is_truthy_shell_kw(node):
+                findings.append((rel_path, lineno, f"{resolved_mod}.{attr}(shell=True)"))
+
+    return findings
 
 
-def test_exec_kernel_classify_json_stdin_and_argv(tmp_path: Path):
-    env = dict(os.environ)
-    env["PYTHONPATH"] = str(REPO_ROOT)
+def scan_source_for_direct_subprocess(source: str, rel_path: str = "<mem>") -> List[Tuple[str, int, str]]:
+    """Detect ANY direct subprocess spawn (including aliased/from-imports) in kernel-owned modules."""
+    try:
+        tree = ast.parse(source, filename=rel_path)
+    except SyntaxError as exc:
+        return [(rel_path, int(exc.lineno or 1), f"SyntaxError:{exc.msg}")]
 
-    # 1. Claude Code PreToolUse stdin format (READ command)
-    payload = json.dumps({
-        "tool_name": "Bash",
-        "tool_input": {"command": "git status"},
-        "cwd": str(tmp_path),
-    })
-    proc = subprocess.run(
-        [sys.executable, "-m", "osiris_cli.exec_kernel", "--classify-json",
-         "--origin", "claude_code", "--root", str(tmp_path)],
-        input=payload,
-        capture_output=True,
-        text=True,
-        env=env,
-        timeout=15,
+    mod_aliases, sym_aliases = _collect_import_aliases(tree)
+    hits: List[Tuple[str, int, str]] = []
+    for node in ast.walk(tree):
+        if not isinstance(node, ast.Call):
+            continue
+        lineno = getattr(node, "lineno", 0)
+        func = node.func
+        if isinstance(func, ast.Name) and func.id in sym_aliases:
+            orig_mod, orig_sym = sym_aliases[func.id]
+            if orig_mod == "subprocess" and orig_sym in SUBPROCESS_FUNCS:
+                hits.append((rel_path, lineno, f"subprocess.{orig_sym}"))
+            elif orig_mod == "asyncio" and orig_sym in ("create_subprocess_exec", "create_subprocess_shell"):
+                hits.append((rel_path, lineno, f"asyncio.{orig_sym}"))
+        elif isinstance(func, ast.Attribute) and isinstance(func.value, ast.Name):
+            resolved_mod = mod_aliases.get(func.value.id, func.value.id)
+            if resolved_mod == "subprocess" and func.attr in SUBPROCESS_FUNCS:
+                hits.append((rel_path, lineno, f"subprocess.{func.attr}"))
+            elif resolved_mod == "asyncio" and func.attr in ("create_subprocess_exec", "create_subprocess_shell"):
+                hits.append((rel_path, lineno, f"asyncio.{func.attr}"))
+    return hits
+
+
+def test_allowlist_has_zero_live_entries() -> None:
+    data = json.loads(ALLOWLIST_PATH.read_text(encoding="utf-8"))
+    live = [e for e in data["entries"] if e.get("status") == "live"]
+    assert live == [], f"Live shell=True/os.system entries are forbidden: {live}"
+
+
+def test_repo_has_no_unapproved_shell_hazards_and_no_stale_allowlist() -> None:
+    data = json.loads(ALLOWLIST_PATH.read_text(encoding="utf-8"))
+    allowed: Counter[Tuple[str, str]] = Counter(
+        (e["path"], e["kind"]) for e in data["entries"]
     )
-    assert proc.returncode == 0, proc.stderr
-    out = json.loads(proc.stdout)
-    assert out["origin"] == "claude_code"
-    assert out["tier"] == "READ"
-    assert out["decision"] == "ALLOW"
-    assert isinstance(out["normalized_argv"], list) and out["normalized_argv"]
+    seen: Counter[Tuple[str, str]] = Counter()
+    all_findings: List[Tuple[str, int, str]] = []
 
-    # 2. Denied git push via stdin PreToolUse payload
-    deny_payload = json.dumps({
-        "tool_name": "Bash",
-        "tool_input": {"command": "git push origin main"},
-        "cwd": str(tmp_path),
-    })
-    proc_deny = subprocess.run(
-        [sys.executable, "-m", "osiris_cli.exec_kernel", "--classify-json",
-         "--origin", "claude_code", "--root", str(tmp_path)],
-        input=deny_payload,
-        capture_output=True,
-        text=True,
-        env=env,
-        timeout=15,
-    )
-    assert proc_deny.returncode == 0, proc_deny.stderr
-    out_deny = json.loads(proc_deny.stdout)
-    assert out_deny["decision"] == "DENY"
+    for py_file in _iter_repo_python_files():
+        rel = str(py_file.relative_to(REPO_ROOT)).replace("\\", "/")
+        src = py_file.read_text(encoding="utf-8", errors="replace")
+        file_hits = scan_source_for_shell_hazards(src, rel)
+        for path_s, lineno, kind in file_hits:
+            seen[(path_s, kind)] += 1
+            all_findings.append((path_s, lineno, kind))
 
-    # 3. Trailing -- argv fallback
-    proc_argv = subprocess.run(
-        [sys.executable, "-m", "osiris_cli.exec_kernel", "--classify-json",
-         "--origin", "model", "--cwd", str(tmp_path), "--root", str(tmp_path),
-         "--", "pytest", "-q"],
-        input="",
-        capture_output=True,
-        text=True,
-        env=env,
-        timeout=15,
-    )
-    assert proc_argv.returncode == 0, proc_argv.stderr
-    out_argv = json.loads(proc_argv.stdout)
-    assert out_argv["tier"] == "VERIFY"
-    assert out_argv["decision"] == "ASK"
+    unexpected = [
+        (p, ln, k) for p, ln, k in all_findings if seen[(p, k)] > allowed.get((p, k), 0)
+    ]
+    assert unexpected == [], f"Unexpected shell=True/os.system/SyntaxError findings: {unexpected}"
 
-    # 4. Malformed stdin fails closed (still emits JSON + exit 0)
-    bad = exec_kernel.classify_json_payload("{not-json", origin="claude_code", root=str(tmp_path))
-    assert bad["tier"] == "FORBIDDEN"
-    assert bad["decision"] == "DENY"
+    stale = [
+        (key, cnt, seen.get(key, 0))
+        for key, cnt in allowed.items()
+        if seen.get(key, 0) < cnt
+    ]
+    assert stale == [], f"Stale allowlist entries must be removed: {stale}"
+
+
+def test_kernel_owned_modules_have_no_direct_subprocess_spawns() -> None:
+    violations: List[Tuple[str, int, str]] = []
+    for rel in KERNEL_OWNED_MODULES:
+        p = REPO_ROOT / rel
+        assert p.is_file(), f"Expected kernel-owned module missing: {rel}"
+        src = p.read_text(encoding="utf-8")
+        violations.extend(scan_source_for_direct_subprocess(src, rel))
+    assert violations == [], f"Kernel-owned modules must route all spawns through exec_kernel: {violations}"
+
+
+# ── Meta-tests proving MED-06 AST gate catches every evasion pattern ─────────
+
+@pytest.mark.parametrize("snippet,expected_kind", [
+    ("from os import system\nsystem('id')\n", "os.system"),
+    ("import os as _o\n_o.system('id')\n", "os.system"),
+    ("import os\ngetattr(os, 'system')('id')\n", "os.system"),
+    ("import asyncio\nasyncio.create_subprocess_shell('id')\n", "asyncio.create_subprocess_shell"),
+    ("import subprocess\nsubprocess.run(['id'], **{'shell': True})\n", "subprocess.run(shell=True)"),
+    ("from subprocess import Popen\nPopen(['id'], -1, None, None, None, None, None, True, True)\n", "subprocess.Popen(shell=True)"),
+    ("def broken(:\n    pass\n", "SyntaxError:"),
+])
+def test_ast_gate_meta_catches_evasion_and_syntax_errors(snippet: str, expected_kind: str) -> None:
+    hits = scan_source_for_shell_hazards(snippet, "meta.py")
+    assert hits, f"AST gate missed hazard: {snippet!r}"
+    assert any(kind.startswith(expected_kind) for _, _, kind in hits), hits
+
+
+@pytest.mark.parametrize("snippet", [
+    "from subprocess import Popen\nPopen(['ls'])\n",
+    "import subprocess as _sp\n_sp.run(['ls'])\n",
+    "from asyncio import create_subprocess_exec\ncreate_subprocess_exec('ls')\n",
+])
+def test_ast_gate_meta_catches_aliased_direct_subprocess_spawns(snippet: str) -> None:
+    hits = scan_source_for_direct_subprocess(snippet, "meta.py")
+    assert hits, f"Direct-subprocess gate missed: {snippet!r}"

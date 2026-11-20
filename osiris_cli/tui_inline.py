@@ -32,8 +32,8 @@ import os
 import re
 import shlex
 import shutil
-import subprocess
 import sys
+import threading
 import time
 from dataclasses import dataclass
 from pathlib import Path
@@ -253,7 +253,7 @@ def collect_viewport_snapshot(
         log_path = getattr(living, "log_path", None)
         if log_path:
             tail = verify_chain_tail(log_path, tail_window=6)
-            if tail.status == "MISSING":
+            if not tail.exists or tail.status in ("MISSING", "EMPTY"):
                 ledger_head = "empty"
             elif not tail.intact:
                 ledger_head = "TAMPERED"
@@ -376,16 +376,26 @@ def stream_command_bounded(
     max_lines: int = DEFAULT_ROLLING_LINES,
     width: Optional[int] = None,
     cwd: Path | str | None = None,
+    root: Path | str | None = None,
     timeout: float = 120.0,
     confirm_fn: Optional[Callable[[str], bool]] = None,
     use_rich_live: Optional[bool] = None,
     out: Optional[Callable[[str], None]] = None,
+    exec_journal: Any = None,
+    exec_artifacts_dir: Path | str | None = None,
 ) -> CommandStreamResult:
-    """Execute a subprocess with bounded rolling output and canonical SHA-256 receipt.
+    """Execute a governed single-program command through ``osiris_cli.exec_kernel`` with
+    bounded rolling output, policy enforcement, scrubbed env, and canonical SHA-256 receipt.
 
-    Enforces EXEC_GATE: STRICT confirmation before launching any process when
-    `require_approval=True`, and blocks destructive shell patterns even in AUTO mode.
+    - In ``EXEC_GATE: STRICT`` mode: policy FORBIDDEN commands are refused immediately;
+      otherwise the operator confirms before ``exec_kernel.run(origin='human')`` executes.
+    - In ``EXEC_GATE: AUTO`` mode: runs under ``origin='model'`` with auto-confirm disabled,
+      so only policy ``READ / ALLOW`` commands run without prompting while shells, network,
+      destructive, git-write, and secret-read commands are blocked before spawn.
     """
+    from osiris_cli import exec_kernel, exec_policy
+    from osiris_cli.exec_policy import CommandRequest
+
     write = out or (lambda s: sys.stdout.write(s) and None)
     cmd_tuple = tuple(str(a) for a in argv if str(a))
     if not cmd_tuple:
@@ -413,12 +423,34 @@ def stream_command_bounded(
             reason="Destructive command pattern refused.",
         )
 
+    eff_cwd = os.path.realpath(str(cwd)) if cwd is not None else os.path.realpath(os.getcwd())
+    if root is not None:
+        eff_root = os.path.realpath(str(root))
+    elif cwd is not None:
+        eff_root = eff_cwd
+    else:
+        default_r = exec_policy.default_root()
+        eff_root = default_r if exec_policy._inside(eff_cwd, default_r) else eff_cwd
+
     gate_mode = normalize_exec_gate(exec_gate)
-    if require_approval and gate_mode == "STRICT":
-        asker = confirm_fn or default_confirm_prompt
-        approved = bool(asker(f"[EXEC_GATE: STRICT] Execute command `{joined_cmd}`?"))
-        if not approved:
-            write(f"[EXEC_GATE: STRICT] Declined command `{joined_cmd}` (not executed).\n")
+    journal = exec_journal if exec_journal is not None else exec_kernel.ExecJournal()
+
+    if gate_mode == "AUTO":
+        req_origin = "model"
+        pre_req = CommandRequest(
+            argv=cmd_tuple, cwd=eff_cwd, origin=req_origin, timeout_s=timeout, root=eff_root
+        )
+        pre_cls = exec_policy.classify(pre_req)
+        if pre_cls.decision != "ALLOW":
+            # Record DENY/ASK refusal via exec_kernel without spawning.
+            exec_kernel.run(
+                pre_req,
+                confirm=lambda _p, _c: False,
+                journal=journal,
+                artifacts_dir=exec_artifacts_dir,
+            )
+            reason = "; ".join(pre_cls.reasons) or f"{pre_cls.tier} requires explicit approval"
+            write(f"[EXEC_GATE: AUTO BLOCKED] {reason}: {joined_cmd}\n")
             return CommandStreamResult(
                 argv=cmd_tuple,
                 exit_code=126,
@@ -426,13 +458,57 @@ def stream_command_bounded(
                 tail_lines=(),
                 sha256=hashlib.sha256(b"").hexdigest(),
                 blocked=True,
-                reason="Operator declined EXEC_GATE: STRICT confirmation.",
+                reason=reason,
             )
+        kernel_confirm = lambda _p, _c: False  # noqa: E731
+    else:
+        req_origin = "human"
+        pre_req = CommandRequest(
+            argv=cmd_tuple, cwd=eff_cwd, origin=req_origin, timeout_s=timeout, root=eff_root
+        )
+        pre_cls = exec_policy.classify(pre_req)
+        if pre_cls.decision == "DENY":
+            exec_kernel.run(
+                pre_req,
+                confirm=lambda _p, _c: False,
+                journal=journal,
+                artifacts_dir=exec_artifacts_dir,
+            )
+            reason = "; ".join(pre_cls.reasons) or "policy denied"
+            write(f"[EXEC_GATE BLOCKED] {reason}: {joined_cmd}\n")
+            return CommandStreamResult(
+                argv=cmd_tuple,
+                exit_code=126,
+                output="",
+                tail_lines=(),
+                sha256=hashlib.sha256(b"").hexdigest(),
+                blocked=True,
+                reason=reason,
+            )
+        if require_approval:
+            asker = confirm_fn or default_confirm_prompt
+            approved = bool(asker(f"[EXEC_GATE: STRICT] [{pre_cls.tier}] Execute command `{joined_cmd}`?"))
+            if not approved:
+                write(f"[EXEC_GATE: STRICT] Declined command `{joined_cmd}` (not executed).\n")
+                return CommandStreamResult(
+                    argv=cmd_tuple,
+                    exit_code=126,
+                    output="",
+                    tail_lines=(),
+                    sha256=hashlib.sha256(b"").hexdigest(),
+                    blocked=True,
+                    reason="Operator declined EXEC_GATE: STRICT confirmation.",
+                )
+        kernel_confirm = lambda _p, _c: True  # noqa: E731
 
     max_w = resolve_viewport_width(width)
     window: collections.deque[str] = collections.deque(maxlen=max(1, int(max_lines)))
-    full_lines: List[str] = []
-    hasher = hashlib.sha256()
+    line_buf: List[str] = []
+    full_chunks: List[str] = []
+    captured_chars = 0
+    max_capture_chars = 262144
+    stream_lock = threading.Lock()
+    ansi_re = re.compile(r"\x1b\[[0-?]*[ -/]*[@-~]|\x1b\][^\x07\x1b]*(?:\x07|\x1b\\)")
 
     live_enabled = (
         HAS_RICH
@@ -440,72 +516,111 @@ def stream_command_bounded(
         and os.environ.get("OSIRIS_TUI", "").strip().lower() != "plain"
     )
 
-    try:
-        proc = subprocess.Popen(
-            list(cmd_tuple),
-            cwd=str(cwd) if cwd is not None else None,
-            stdout=subprocess.PIPE,
-            stderr=subprocess.STDOUT,
-            text=True,
-            encoding="utf-8",
-            errors="replace",
-            bufsize=1,
-        )
-    except OSError as exc:
-        err_text = f"Command failed to start: {exc}\n"
-        digest = hashlib.sha256(err_text.encode("utf-8")).hexdigest()
-        write(f"[CMD ERROR] {err_text}")
-        return CommandStreamResult(
-            argv=cmd_tuple,
-            exit_code=127,
-            output=err_text,
-            tail_lines=(err_text.strip(),),
-            sha256=digest,
-            blocked=False,
-            reason=str(exc),
-        )
-
-    deadline = time.monotonic() + max(1.0, float(timeout))
-    timed_out = False
-
     def _build_panel(status_label: str) -> Any:
-        body_text = "\n".join(_truncate_line(ln, max(10, max_w - 6)) for ln in window) or "(no output)"
+        with stream_lock:
+            body_text = "\n".join(_truncate_line(ln, max(10, max_w - 6)) for ln in window) or "(no output)"
         return RichPanel(
             RichText(body_text),
             title=_truncate_line(f"{joined_cmd} [{status_label}]", max(10, max_w - 6)),
             width=max_w,
         )
 
-    assert proc.stdout is not None
+    active_live: Any = None
+
+    def _on_chunk(_kind: str, text: str) -> None:
+        nonlocal captured_chars
+        clean_text = ansi_re.sub("", text)
+        with stream_lock:
+            if captured_chars < max_capture_chars:
+                take = clean_text[: max_capture_chars - captured_chars]
+                full_chunks.append(take)
+                captured_chars += len(take)
+            combined = "".join(line_buf) + clean_text
+            line_buf.clear()
+            parts = combined.splitlines(keepends=True)
+            for part in parts:
+                if part.endswith(("\n", "\r")):
+                    window.append(part.rstrip("\r\n"))
+                else:
+                    line_buf.append(part)
+        if active_live is not None:
+            active_live.update(_build_panel("RUNNING"))
+
+    req = CommandRequest(
+        argv=cmd_tuple,
+        cwd=eff_cwd,
+        origin=req_origin,
+        timeout_s=max(1.0, float(timeout)),
+        root=eff_root,
+    )
+
     if live_enabled and RichConsole is not None and RichLive is not None and RichPanel is not None:
         console = RichConsole(width=max_w)
         with RichLive(_build_panel("RUNNING"), console=console, refresh_per_second=8, transient=False) as live:
-            for raw_line in proc.stdout:
-                if time.monotonic() > deadline:
-                    proc.kill()
-                    timed_out = True
-                    break
-                hasher.update(raw_line.encode("utf-8", errors="replace"))
-                clean = raw_line.rstrip("\r\n")
-                full_lines.append(raw_line)
-                window.append(clean)
-                live.update(_build_panel("RUNNING"))
-            exit_code = -1 if timed_out else proc.wait(timeout=max(1.0, deadline - time.monotonic()))
-            digest = hasher.hexdigest()
+            active_live = live
+            res = exec_kernel.run(
+                req,
+                confirm=kernel_confirm,
+                journal=journal,
+                artifacts_dir=exec_artifacts_dir,
+                stream=_on_chunk,
+            )
+            active_live = None
+            with stream_lock:
+                if line_buf:
+                    window.append("".join(line_buf).rstrip("\r\n"))
+                    line_buf.clear()
+            output = "".join(full_chunks)
+            digest = res.combined_sha256 or hashlib.sha256(output.encode("utf-8")).hexdigest()
+            timed_out = bool(res.timed_out or res.decision == "TIMEOUT")
+            exit_code = -1 if timed_out else (int(res.exit_code) if res.exit_code is not None else 127)
             badge = "TIMEOUT" if timed_out else ("VERIFIED" if exit_code == 0 else f"EXIT {exit_code}")
             live.update(_build_panel(f"{badge} sha256:{digest[:12]}"))
     else:
-        for raw_line in proc.stdout:
-            if time.monotonic() > deadline:
-                proc.kill()
-                timed_out = True
-                break
-            hasher.update(raw_line.encode("utf-8", errors="replace"))
-            clean = raw_line.rstrip("\r\n")
-            full_lines.append(raw_line)
-            window.append(clean)
-        exit_code = -1 if timed_out else proc.wait(timeout=max(1.0, deadline - time.monotonic()))
-        digest = hasher.hexdigest()
+        res = exec_kernel.run(
+            req,
+            confirm=kernel_confirm,
+            journal=journal,
+            artifacts_dir=exec_artifacts_dir,
+            stream=_on_chunk,
+        )
+        with stream_lock:
+            if line_buf:
+                window.append("".join(line_buf).rstrip("\r\n"))
+                line_buf.clear()
+
+        if res.decision in ("DENY", "ASK_DECLINED"):
+            reason = "; ".join(res.reasons) or res.decision
+            write(f"[EXEC_GATE BLOCKED] {reason}: {joined_cmd}\n")
+            return CommandStreamResult(
+                argv=cmd_tuple,
+                exit_code=126,
+                output="",
+                tail_lines=(),
+                sha256=hashlib.sha256(b"").hexdigest(),
+                blocked=True,
+                reason=reason,
+            )
+
+        spawn_err = next((str(r) for r in res.reasons if str(r).startswith("spawn failed")), None)
+        if spawn_err is not None:
+            err_text = f"Command failed to start: {spawn_err}\n"
+            digest = hashlib.sha256(err_text.encode("utf-8")).hexdigest()
+            write(f"[CMD ERROR] {err_text}")
+            return CommandStreamResult(
+                argv=cmd_tuple,
+                exit_code=127,
+                output=err_text,
+                tail_lines=(err_text.strip(),),
+                sha256=digest,
+                blocked=False,
+                reason=spawn_err,
+            )
+
+        output = "".join(full_chunks)
+        digest = res.combined_sha256 or hashlib.sha256(output.encode("utf-8")).hexdigest()
+        timed_out = bool(res.timed_out or res.decision == "TIMEOUT")
+        exit_code = -1 if timed_out else (int(res.exit_code) if res.exit_code is not None else 127)
         badge = "TIMEOUT" if timed_out else ("VERIFIED" if exit_code == 0 else f"EXIT {exit_code}")
         frame = render_inline_frame(
             f"{joined_cmd} [{badge} sha256:{digest[:12]}]",
@@ -517,7 +632,7 @@ def stream_command_bounded(
     return CommandStreamResult(
         argv=cmd_tuple,
         exit_code=int(exit_code),
-        output="".join(full_lines),
+        output=output,
         tail_lines=tuple(window),
         sha256=digest,
         blocked=False,
@@ -929,18 +1044,19 @@ def run_bang_command(
             blocked=True,
             reason="Empty !command.",
         )
-    try:
-        argv = shlex.split(body)
-    except ValueError as exc:
-        write(f"\n[OSIRIS] Invalid command syntax: {exc}\n\n")
+    from osiris_cli import exec_kernel
+
+    argv, err = exec_kernel._split_shell_command(body)
+    if err is not None:
+        write(f"\n[OSIRIS] Command refused: {err}\n\n")
         return CommandStreamResult(
             argv=(),
-            exit_code=2,
+            exit_code=126,
             output="",
             tail_lines=(),
             sha256=hashlib.sha256(b"").hexdigest(),
             blocked=True,
-            reason=f"Invalid command syntax: {exc}",
+            reason=err,
         )
     gate_mode = normalize_exec_gate(getattr(state, "exec_gate", "STRICT"))
     return stream_command_bounded(

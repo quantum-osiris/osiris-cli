@@ -7,7 +7,7 @@
     "NETWORK":   {"human": "ASK",   "agent": "DENY"},
     "FORBIDDEN": {"human": "DENY",  "agent": "DENY"}
   },
-  "shell_operator_tokens": ["|", "||", "&", "&&", ";", ">", ">>", "<", "<<", "<>", "2>", "2>&1", "&>", "|&"],
+  "shell_operator_tokens": ["|", "||", "&", "&&", ";", ";;", ";;&", ";&", ">", ">>", ">|", ">&", "<", "<<", "<<<", "<>", "<&", "2>", "2>&1", "&>", "&>>", "|&"],
   "shell_substitution_markers": ["$(", "`", "<(", ">("],
   "shells": ["bash", "sh", "dash", "zsh", "fish", "ksh", "csh", "tcsh"],
   "opaque_builtins": ["eval", "source", "."],
@@ -90,7 +90,7 @@
               "CONDA_PREFIX", "PREFIX", "ANDROID_ROOT", "ANDROID_DATA", "CUDA_VISIBLE_DEVICES",
               "OMP_NUM_THREADS", "PYTHONPATH"],
     "allow_prefixes": ["LC_", "OSIRIS_"],
-    "deny_regex": "(?i)token|secret|passw|api[_-]?key|private[_-]?key|credential|cookie|session|dsn|_url$",
+    "deny_regex": "(?i)token|secret|passw|api[_-]?key|private[_-]?key|credential|cookie|session|dsn|_url$|auth|_pat$|^osiris_exec_",
     "deny_names": ["QISKIT_IBM_TOKEN", "GOOGLE_APPLICATION_CREDENTIALS", "HF_TOKEN", "GH_TOKEN",
                    "GITHUB_TOKEN", "ZENODO_TOKEN", "OSIRIS_PG_URL"],
     "deny_globs": ["IBM_*KEY*", "*_API_KEY", "AWS_*"]

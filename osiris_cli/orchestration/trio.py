@@ -70,16 +70,80 @@ def sandbox_limits(timeout: float):
     return sandbox.Limits(wall_s=timeout, cpu_s=int(timeout) + 5)
 
 
+_SHORT_SUMMARY_HDR_RE = re.compile(r"^=+\s*short test summary info\s*=+$", re.M)
+_FOOTER_SUMMARY_RE = re.compile(r"(?:^=+\s*)?([^\n=]+?\bin\s+[0-9.]+s[^\n=]*)(?:\s*=+)?$", re.M)
+
+
+def _parse_pytest_output(out: str) -> Tuple[Set[str], Set[str], int, int, int, int, int]:
+    """Parse pytest ``-q -rA`` results strictly from the final short-summary & footer sections.
+
+    Anchoring after the last ``short test summary info`` banner prevents test stdout
+    (printed under ``==== PASSES ====`` or ``Captured stdout``) from spoofing PASSED,
+    FAILED, ERROR, SKIPPED, XFAIL, or XPASS counts.
+    """
+    hdrs = list(_SHORT_SUMMARY_HDR_RE.finditer(out))
+    section = out[hdrs[-1].end():] if hdrs else ""
+    footer_line = ""
+    if section:
+        # Stop before the trailing summary footer line (e.g. "2 passed, 1 skipped in 0.10s").
+        lines = section.splitlines()
+        summary_lines: List[str] = []
+        for idx, line in enumerate(lines):
+            if idx == len(lines) - 1 or (re.search(r"\bin\s+[0-9.]+s\b", line) and not re.match(
+                r"^(PASSED|FAILED|ERROR|SKIPPED|XFAIL|XPASS)\b", line
+            )):
+                if re.search(r"\bin\s+[0-9.]+s\b", line):
+                    footer_line = line
+                    break
+            summary_lines.append(line)
+        summary_body = "\n".join(summary_lines)
+    else:
+        summary_body = ""
+        # Fallback for runs with no short-summary header (e.g. collection error or 0 collected).
+        tail_lines = [ln.strip() for ln in out.splitlines() if ln.strip()]
+        for ln in reversed(tail_lines[-5:]):
+            if re.search(r"\bin\s+[0-9.]+s\b", ln):
+                footer_line = ln
+                break
+
+    passed = set(re.findall(r"^PASSED (\S+)", summary_body, re.M))
+    failed = set(re.findall(r"^FAILED (\S+)", summary_body, re.M))
+    errors = len(re.findall(r"^ERROR ", summary_body, re.M))
+    skipped = sum(
+        int(m.group(1)) if m.group(1) else 1
+        for m in re.finditer(r"^SKIPPED (?:\[(\d+)\] )?", summary_body, re.M)
+    )
+    xfailed = len(re.findall(r"^XFAIL ", summary_body, re.M))
+    xpassed = len(re.findall(r"^XPASS ", summary_body, re.M))
+    deselected = 0
+
+    def _footer_count(label_pattern: str) -> int:
+        if not footer_line:
+            return 0
+        m = re.search(rf"\b(\d+)\s+{label_pattern}\b", footer_line)
+        return int(m.group(1)) if m else 0
+
+    if not hdrs and not errors:
+        errors = _footer_count(r"errors?")
+    skipped = max(skipped, _footer_count(r"skipped"))
+    xfailed = max(xfailed, _footer_count(r"xfailed"))
+    xpassed = max(xpassed, _footer_count(r"xpassed"))
+    deselected = _footer_count(r"deselected")
+    return passed, failed, errors, skipped, xfailed, xpassed, deselected
+
+
 def run_pytest(workdir: str, timeout: float = 60.0, sandboxed: bool = False
                ) -> Tuple[ExecutionEvidence, Set[str], Set[str]]:
     """Run pytest in workdir. Returns (evidence, passed test ids, failed test ids).
     sandboxed=True runs inside osiris_cli.sandbox (namespaces, no network, rlimits) and raises
     SandboxUnavailable instead of ever falling back to an unsandboxed run."""
     argv = (sys.executable, "-m", "pytest", "-q", "-rA", "-p", "no:cacheprovider", "--tb=short")
+    truncated = False
     if sandboxed:
         from osiris_cli import sandbox
         r = sandbox.run(argv, workdir, limits=sandbox_limits(timeout))
         out, rc = r.output + ("\n[TIMEOUT]" if r.timed_out else ""), r.returncode
+        truncated = bool(r.truncated)
     else:
         env = {"PATH": os.environ.get("PATH", "/usr/bin:/bin"), "HOME": workdir,
                "PYTHONDONTWRITEBYTECODE": "1", "PYTHONPATH": workdir, "PYTHONHASHSEED": "0"}
@@ -90,16 +154,12 @@ def run_pytest(workdir: str, timeout: float = 60.0, sandboxed: bool = False
         except subprocess.TimeoutExpired as e:
             out, rc = ((e.stdout or b"").decode("utf-8", "replace") if isinstance(e.stdout, bytes)
                        else (e.stdout or "")) + "\n[TIMEOUT]", 124
-    passed = set(re.findall(r"^PASSED (\S+)", out, re.M))
-    failed = set(re.findall(r"^FAILED (\S+)", out, re.M))
-    errors = len(re.findall(r"^ERROR ", out, re.M))
-    skipped = sum(
-        int(m.group(1)) if m.group(1) else 1
-        for m in re.finditer(r"^SKIPPED (?:\[(\d+)\] )?", out, re.M)
-    )
+    passed, failed, errors, skipped, xfailed, xpassed, deselected = _parse_pytest_output(out)
     return (ExecutionEvidence(argv, rc, len(passed), len(failed), errors,
                               hashlib.sha256(out.encode()).hexdigest(), out[-1500:],
-                              tree_digest(workdir), skipped=skipped), passed, failed)
+                              tree_digest(workdir), skipped=skipped, xfailed=xfailed,
+                              xpassed=xpassed, deselected=deselected, truncated=truncated),
+            passed, failed)
 
 
 # ── Research ─────────────────────────────────────────────────────────────────

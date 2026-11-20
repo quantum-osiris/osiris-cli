@@ -88,6 +88,10 @@ class VerificationReport:
     acceptance_test_pass: bool = False
     checks: List[VerificationResult] = field(default_factory=list)
     timestamp: float = field(default_factory=time.time)
+    # The CodeProposal.payload_digest() this report is about. A write is authorized only with a
+    # PASS report whose digest equals the proposal being written (REQ-AUTH-4).
+    proposal_digest: str = ""
+    tests_collected: int = 0
 
     @property
     def is_passing(self) -> bool:
@@ -96,6 +100,13 @@ class VerificationReport:
 
 @dataclass
 class ExecutionGrant:
+    """A record of an approval that already happened elsewhere. It is NOT an authority.
+
+    Anyone can construct this dataclass, so GovernanceController.authorize_execution refuses it
+    (REQ-AUTH-1). Writes are authorized only by a SignedGrant verified with grants.authorize;
+    commands only by the execution kernel's own grant.
+    """
+
     grant_id: str
     payload_digest: str  # Bound strictly to H_payload per SYS-021
     authorized_by: str
@@ -111,6 +122,21 @@ class ExecutionGrant:
         if time.time() > self.expires_at:
             return False
         return self.payload_digest == candidate_digest
+
+
+@dataclass(frozen=True)
+class SignedGrant:
+    """Where to find an owner-signed grant (grant.json + its ssh signature) for one write.
+
+    The owner signs ``GovernanceController.action_digest(proposal)`` under scope
+    ``GovernanceController.APPLY_SCOPE``; grants.authorize checks the signature against
+    allowed_signers, the clock window, revocation, and consumes the grant once.
+    """
+
+    grant_path: str
+    signature_path: Optional[str] = None
+    allowed_signers: Optional[str] = None
+    ledger_path: Optional[str] = None
 
 
 @dataclass

@@ -31,9 +31,7 @@ import platform
 import re
 import shlex
 import shutil
-import signal
 import stat
-import subprocess
 import time
 import uuid
 from dataclasses import dataclass, field
@@ -305,35 +303,6 @@ def _sha256_bytes(data: bytes) -> str:
     return hashlib.sha256(data).hexdigest()
 
 
-def _read_kernel_streams(res: Any) -> Tuple[str, str, str]:
-    """Read full stdout, stderr, and combined chronological output from an exec_kernel result."""
-    artifact_path = getattr(res, "artifact_path", None)
-    if artifact_path and os.path.isfile(artifact_path):
-        out_parts: List[str] = []
-        err_parts: List[str] = []
-        combined_parts: List[str] = []
-        try:
-            with open(artifact_path, "r", encoding="utf-8", errors="replace") as fh:
-                for line in fh:
-                    line = line.strip()
-                    if not line:
-                        continue
-                    row = json.loads(line)
-                    text = str(row.get("text", ""))
-                    stream = row.get("stream")
-                    combined_parts.append(text)
-                    if stream == "stderr":
-                        err_parts.append(text)
-                    else:
-                        out_parts.append(text)
-            return "".join(out_parts), "".join(err_parts), "".join(combined_parts)
-        except (OSError, ValueError):
-            pass
-    out_view = getattr(res, "stdout_view", "") or ""
-    err_view = getattr(res, "stderr_view", "") or ""
-    return out_view, err_view, out_view + err_view
-
-
 class CodeAgent:
     """One /code task. Collaborators are injectable so tests need no model or terminal."""
 
@@ -358,7 +327,7 @@ class CodeAgent:
         task_ledger: Optional[Any] = None,
         clock: Callable[[], float] = time.monotonic,
         exec_journal: Optional[Any] = None,
-        exec_artifacts_dir: Optional[str] = None,
+        exec_artifacts_dir: Optional[Any] = None,
     ):
         self.root = os.path.realpath(root or os.getcwd())
         # The task's run context (osiris_cli.task_context.TaskRunContext): which tools this run may
@@ -368,6 +337,9 @@ class CodeAgent:
         self._context = context
         self._task_ledger = task_ledger
         self._clock = clock
+        if isinstance(exec_journal, (str, os.PathLike)):
+            from osiris_cli.exec_kernel import ExecJournal
+            exec_journal = ExecJournal(exec_journal)
         self._exec_journal = exec_journal
         self._exec_artifacts_dir = exec_artifacts_dir
         self.meter: Optional[Any] = None
@@ -955,39 +927,139 @@ class CodeAgent:
         return "\n".join(rows) or "(empty)", {"path": p}
 
     def _get_exec_journal(self):
-        if self._exec_journal is None:
-            from osiris_cli.exec_kernel import ExecJournal
-            self._exec_journal = ExecJournal()
-        return self._exec_journal
+        if self._exec_journal is not None:
+            return self._exec_journal
+        from osiris_cli.exec_kernel import ExecJournal
+        return ExecJournal()
 
     def _grep(self, pattern, path=".", file_type=""):
-        from osiris_cli import exec_kernel
-
         p = self._confine(path)
-        argv = ["grep", "-rnE"]
-        if file_type:
-            argv.append(f"--include=*.{str(file_type).lstrip('.')}")
-        argv += ["--", str(pattern), p]
-        req = exec_kernel.CommandRequest(
-            argv=tuple(argv),
-            cwd=self.root,
-            origin="model",
-            timeout_s=30.0,
-            root=self.root,
+        try:
+            rx = re.compile(str(pattern))
+        except re.error as exc:
+            raise Denied(f"invalid grep regex: {exc}")
+        ext_filter = f".{str(file_type).lstrip('.')}" if file_type else ""
+        # Refuse secret paths directly and skip them during recursive walk so workspace
+        # credentials (.env, *.pem, *.key, service_account*.json, etc.) can never leak.
+        secret_name_re = re.compile(
+            r"(?i)(?:^\.env(?:\..+)?$|^.+\.env(?:\.txt)?$|\.(?:pem|key|p12|pfx)$"
+            r"|^\.netrc$|^\.git-credentials$|^id_(?:rsa|ed25519|ecdsa|dsa|xmss)(?:\.pub)?$"
+            r"|service[-_]account.*\.json$|ledger[^/]*\.(?:db|sqlite3?)$)"
         )
-        res = exec_kernel.run(
-            req,
-            confirm=None,
-            journal=self._get_exec_journal(),
-            artifacts_dir=self._exec_artifacts_dir,
-        )
-        if res.timed_out:
-            raise Denied("grep unavailable or timed out: timeout")
-        if res.decision in ("DENY", "ASK_DECLINED", "ERROR"):
-            raise Denied(f"grep refused by execution kernel: {'; '.join(res.reasons)}")
-        stdout, _, _ = _read_kernel_streams(res)
-        lines = [ln.replace(self.root + os.sep, "", 1) for ln in stdout.splitlines()[:120]]
-        return "\n".join(lines) or "(no matches)", {"path": p, "exec_receipt_id": res.receipt_id}
+        secret_dir_parts = {".ssh", ".gnupg", ".aws", "keyrings"}
+        secret_multi_seqs = ((".config", "gcloud"), (".config", "gh"))
+        skip_dirs = {".git", "__pycache__", "node_modules", ".venv", "venv"}
+
+        def _is_secret_rel(rel_posix: str) -> bool:
+            parts = [seg for seg in rel_posix.split("/") if seg]
+            lowered = [seg.lower() for seg in parts]
+            for seg in parts:
+                if seg.lower() in secret_dir_parts or secret_name_re.search(seg):
+                    return True
+            for seq in secret_multi_seqs:
+                n = len(seq)
+                for i in range(len(lowered) - n + 1):
+                    if tuple(lowered[i:i + n]) == seq:
+                        return True
+            return False
+
+        root_prefix = self.root.rstrip(os.sep) + os.sep
+        matches: List[str] = []
+
+        def _scan_file(abs_file: str) -> None:
+            if len(matches) >= 120:
+                return
+            try:
+                st = os.lstat(abs_file)
+            except OSError:
+                return
+            if stat.S_ISLNK(st.st_mode) or not stat.S_ISREG(st.st_mode):
+                return
+            if st.st_size > _MAX_READ_BYTES:
+                return
+            real_f = os.path.realpath(abs_file)
+            if not (real_f == self.root or real_f.startswith(root_prefix)):
+                return
+            rel = os.path.relpath(real_f, self.root).replace(os.sep, "/")
+            if _is_secret_rel(rel):
+                return
+            if ext_filter and not rel.endswith(ext_filter):
+                return
+            try:
+                with open(real_f, "rb") as fh:
+                    raw = fh.read(_MAX_READ_BYTES + 1)
+            except OSError:
+                return
+            if b"\x00" in raw or len(raw) > _MAX_READ_BYTES:
+                return
+            for lineno, line in enumerate(raw.decode("utf-8", errors="replace").splitlines(), 1):
+                if rx.search(line):
+                    matches.append(f"{rel}:{lineno}:{line}")
+                    if len(matches) >= 120:
+                        return
+
+        if os.path.isfile(p):
+            rel_single = os.path.relpath(p, self.root).replace(os.sep, "/")
+            if _is_secret_rel(rel_single):
+                raise Denied(f"refusing to search secret path '{path}'")
+            _scan_file(p)
+        elif os.path.isdir(p):
+            for dirpath, dirnames, filenames in os.walk(p, followlinks=False):
+                rel_dir = os.path.relpath(dirpath, self.root).replace(os.sep, "/")
+                if rel_dir != "." and _is_secret_rel(rel_dir):
+                    dirnames[:] = []
+                    continue
+                kept_dirs = []
+                for d in sorted(dirnames):
+                    if d in skip_dirs or d.lower() in secret_dir_parts:
+                        continue
+                    full_d = os.path.join(dirpath, d)
+                    try:
+                        if stat.S_ISLNK(os.lstat(full_d).st_mode):
+                            continue
+                    except OSError:
+                        continue
+                    sub_rel = f"{rel_dir}/{d}" if rel_dir != "." else d
+                    if _is_secret_rel(sub_rel):
+                        continue
+                    kept_dirs.append(d)
+                dirnames[:] = kept_dirs
+                for fname in sorted(filenames):
+                    _scan_file(os.path.join(dirpath, fname))
+                    if len(matches) >= 120:
+                        break
+                if len(matches) >= 120:
+                    break
+        else:
+            raise Denied(f"'{path}' is not a file or directory")
+
+        receipt_id = "exec-" + uuid.uuid4().hex[:12]
+        try:
+            from osiris_cli.exec_policy import load_policy as _load_exec_policy
+            _, policy_sha = _load_exec_policy()
+            self._get_exec_journal().append({
+                "kind": "exec-receipt",
+                "receipt_id": receipt_id,
+                "ts_ms": int(time.time() * 1000),
+                "origin": "model",
+                "skill": None,
+                "decision": "ALLOW",
+                "classified": "ALLOW",
+                "tier": "READ",
+                "reasons": ["in-process SafePathGuard grep (secret-filtered, no subprocess)"],
+                "argv": ["inprocess-grep", str(pattern), p],
+                "cwd": self.root,
+                "grant_id": None,
+                "policy_sha256": policy_sha,
+                "env_keys": [],
+                "exit_code": 0,
+                "timed_out": False,
+                "duration_ms": 0,
+                "artifact_sha256": None,
+            })
+        except Exception:
+            pass
+        return "\n".join(matches) or "(no matches)", {"path": p, "exec_receipt_id": receipt_id}
 
     def _write_file(self, path, content):
         abs_path = self._confine(path)  # refuse early with a reason the model can read
@@ -1087,6 +1159,22 @@ class CodeAgent:
                 f"execution flags (e.g. -c or -NoProfile -NonInteractive -Command)"
             )
 
+        from osiris_cli import exec_kernel
+        from osiris_cli.exec_policy import CommandRequest as _ExecRequest, classify as _exec_classify
+
+        pre_req = _ExecRequest(argv=tuple([resolved_bin, *argv[1:]]), cwd=work, origin="model", root=self.root)
+        pre_cls = _exec_classify(pre_req)
+        if pre_cls.decision == "DENY":
+            # Record the immutable DENY receipt via exec_kernel without prompting or minting a grant.
+            exec_kernel.run(
+                pre_req,
+                confirm=lambda _p, _c: False,
+                journal=self._get_exec_journal(),
+                artifacts_dir=self._exec_artifacts_dir,
+            )
+            reason_txt = "; ".join(pre_cls.reasons) or "policy denied"
+            raise Denied(f"execution policy refused this command ({pre_cls.tier}): {reason_txt}")
+
         digest = _digest(payload)
         cmd_scope = ["SUBPROCESS_EXEC", work]
         enclave = self._get_enclave()
@@ -1111,12 +1199,12 @@ class CodeAgent:
                 pqc_grant = enclave.request_approved_grant(
                     action="code.run_command",
                     scope=cmd_scope,
-                    summary=f"Run `{shlex.join(argv)}` in {work}",
+                    summary=f"[{pre_cls.tier}] Run `{shlex.join(argv)}` in {work}",
                     payload_sha256=digest,
                     operation_schema=payload,
                     confirm=self._confirm,
                     out=self._out,
-                    prompt=f"Run `{shlex.join(argv)}` in {work}? [y/N] ",
+                    prompt=f"[{pre_cls.tier}] Run `{shlex.join(argv)}` in {work}? [y/N] ",
                     ttl_seconds=60.0,
                 )
             except ApprovalDeniedError:
@@ -1148,50 +1236,46 @@ class CodeAgent:
             )
         if not ok_pqc or not grant.is_valid(recomputed_digest):
             raise Denied(f"execution grant verification failed: {why_pqc}")
-        from osiris_cli import exec_kernel
 
-        req = exec_kernel.CommandRequest(
-            argv=tuple([resolved_bin_now, *argv[1:]]),
-            cwd=work,
-            origin="human",
-            timeout_s=limit,
-            root=self.root,
-        )
+        # Execute strictly through exec_kernel under origin="model": policy DENY always blocks
+        # before Popen, while ASK is satisfied by the PQC grant verified above.
         res = exec_kernel.run(
-            req,
+            _ExecRequest(
+                argv=tuple([resolved_bin_now, *argv[1:]]),
+                cwd=work,
+                origin="model",
+                timeout_s=limit,
+                root=self.root,
+            ),
             confirm=lambda _prompt, _cls: True,
             journal=self._get_exec_journal(),
             artifacts_dir=self._exec_artifacts_dir,
         )
-        if res.decision == "DENY":
-            raise Denied(f"execution kernel refused command: {'; '.join(res.reasons)}")
-        if res.decision == "ERROR" and res.exit_code is None and not res.timed_out:
-            reason = "; ".join(res.reasons)
-            if "No such file or directory" in reason or "spawn failed" in reason:
-                raise Denied(f"program not found: {argv[0]}")
-            raise Denied(reason or "command execution failed")
-        if res.timed_out:
-            return f"TIMEOUT after {limit:.0f}s", {
-                "grant_id": grant.grant_id,
-                "key_fingerprint": pqc_grant["key_fingerprint"],
-                "approval_mode": pqc_grant.get("approval_mode"),
-                "digest": digest,
-                "timed_out": True,
-                "exec_receipt_id": res.receipt_id,
-            }
-        stdout, stderr, _ = _read_kernel_streams(res)
-        out = stdout + (f"\n[stderr]\n{stderr}" if stderr.strip() else "")
-        return (out or f"(exit code {res.exit_code}, no output)"), {
+        refused = _kernel_refused_before_spawn(res)
+        if refused is not None:
+            raise Denied(f"execution policy refused this command: {refused}")
+        failed = _kernel_spawn_failure(res)
+        if failed is not None:
+            raise Denied(f"program not found: {argv[0]} ({failed})")
+        meta: Dict[str, Any] = {
             "grant_id": grant.grant_id,
             "key_fingerprint": pqc_grant["key_fingerprint"],
             "approval_mode": pqc_grant.get("approval_mode"),
             "digest": digest,
-            "exit_code": res.exit_code,
-            "stdout_sha256": _sha256_bytes(stdout.encode("utf-8")),
-            "stderr_sha256": _sha256_bytes(stderr.encode("utf-8")),
             "exec_receipt_id": res.receipt_id,
-            "artifact_path": res.artifact_path,
         }
+        if res.timed_out or res.decision == "TIMEOUT":
+            meta["timed_out"] = True
+            return f"TIMEOUT after {limit:.0f}s", meta
+        stdout = res.stdout_view or ""
+        stderr = res.stderr_view or ""
+        out = stdout + (f"\n[stderr]\n{stderr}" if stderr.strip() else "")
+        meta["exit_code"] = res.exit_code
+        meta["stdout_sha256"] = res.stdout_sha256 or _sha256_bytes(stdout.encode("utf-8"))
+        meta["stderr_sha256"] = res.stderr_sha256 or _sha256_bytes(stderr.encode("utf-8"))
+        if res.truncated or res.artifact_truncated:
+            meta["output_truncated"] = True
+        return (out or f"(exit code {res.exit_code}, no output)"), meta
 
     def _get_enclave(self):
         # No throwaway self-trusting key: approvals are signed by the operator's local key and
@@ -1224,7 +1308,9 @@ class CodeAgent:
         applied = self._applied_writes()
         record = verify_applied(self.root, applied, command, require_change=require_change,
                                 timeout=timeout, gate=gate, run_id=self.run_id,
-                                unbacked=edit_claims(self.last_answer) if not applied else [])
+                                unbacked=edit_claims(self.last_answer) if not applied else [],
+                                exec_journal=self._exec_journal,
+                                exec_artifacts_dir=self._exec_artifacts_dir)
         self.decisions.append({k: v for k, v in record.items() if k != "output_tail"})
         self._log("CODE_VERIFY", {k: v for k, v in record.items() if k != "output_tail"})
         if self.receipts_path:
@@ -1275,46 +1361,82 @@ def atomic_write(target: str, data: bytes) -> None:
             pass
 
 
-def run_acceptance(root: str, command: str, timeout: float) -> Dict[str, Any]:
-    """Run one vetted acceptance command in ``root`` through exec_kernel (no shell,
-    credential-free env, process group killed on timeout). Raises Denied when refused."""
+def _kernel_refused_before_spawn(result: Any) -> Optional[str]:
+    """Why exec_kernel refused before a process existed, or None if it spawned."""
+    if result.timed_out or result.decision in ("ALLOW", "ASK_APPROVED", "TIMEOUT"):
+        return None
+    if result.decision == "ERROR" and result.exit_code is not None:
+        return None
+    if any(str(reason).startswith("spawn failed") for reason in result.reasons):
+        return None
+    if result.decision in ("DENY", "ASK_DECLINED", "ERROR"):
+        return "; ".join(str(reason) for reason in result.reasons) or result.decision
+    return None
+
+
+def _kernel_spawn_failure(result: Any) -> Optional[str]:
+    if result.timed_out or result.exit_code is not None:
+        return None
+    for reason in result.reasons:
+        text = str(reason)
+        if text.startswith("spawn failed"):
+            return text
+    return None
+
+
+def run_acceptance(
+    root: str,
+    command: str,
+    timeout: float,
+    *,
+    exec_journal: Optional[Any] = None,
+    exec_artifacts_dir: Optional[Any] = None,
+) -> Dict[str, Any]:
+    """Run one vetted acceptance command in ``root`` through ``exec_kernel.run`` under
+    ``origin='model'`` (no shell, credential-free env, process group killed on timeout,
+    policy DENY enforced before Popen). Raises Denied when the command is refused."""
     from osiris_cli import exec_kernel
+    from osiris_cli.exec_policy import CommandRequest as _ExecRequest
 
     argv = vet_argv(command)
     rec: Dict[str, Any] = {"argv": argv}
     started = time.time()
-    req = exec_kernel.CommandRequest(
-        argv=tuple(argv),
-        cwd=root,
-        origin="human",
-        timeout_s=timeout,
-        root=root,
-    )
+    journal = exec_journal if exec_journal is not None else exec_kernel.ExecJournal()
     res = exec_kernel.run(
-        req,
+        _ExecRequest(argv=tuple(argv), cwd=root, origin="model", timeout_s=timeout, root=root),
         confirm=lambda _prompt, _cls: True,
-        journal=exec_kernel.ExecJournal(),
+        journal=journal,
+        artifacts_dir=exec_artifacts_dir,
     )
-    rec["exec_receipt_id"] = res.receipt_id
-    if res.decision in ("ERROR", "DENY") and res.exit_code is None and not res.timed_out:
-        rec["start_error"] = "; ".join(res.reasons) or res.decision
+    refused = _kernel_refused_before_spawn(res)
+    if refused is not None:
+        raise Denied(f"execution policy refused acceptance command: {refused}")
+    failed = _kernel_spawn_failure(res)
+    if failed is not None:
+        rec["start_error"] = failed
         return rec
-    if res.timed_out:
+    rec["elapsed_s"] = round(time.time() - started, 3)
+    rec["exec_receipt_id"] = res.receipt_id
+    fallback_out = (res.stdout_view or "") + (res.stderr_view or "")
+    rec["output_sha256"] = res.combined_sha256 or _sha256_bytes(fallback_out.encode("utf-8"))
+    rec["output_bytes"] = res.combined_bytes if res.combined_sha256 is not None else len(fallback_out.encode("utf-8"))
+    tail_src = res.combined_tail if res.combined_sha256 is not None else fallback_out
+    rec["output_tail"] = tail_src[-_MAX_VERIFY_OUTPUT:]
+    if res.artifact_truncated:
+        rec["output_truncated"] = True
+    if res.timed_out or res.decision == "TIMEOUT":
         rec["exit_code"] = None
         rec["timed_out"] = True
     else:
         rec["exit_code"] = res.exit_code
-    _, _, output = _read_kernel_streams(res)
-    rec["elapsed_s"] = round(time.time() - started, 3)
-    rec["output_sha256"] = _sha256_bytes(output.encode("utf-8"))
-    rec["output_bytes"] = len(output.encode("utf-8"))
-    rec["output_tail"] = output[-_MAX_VERIFY_OUTPUT:]
     return rec
 
 
 def verify_applied(root: str, applied: List[Dict[str, Any]], command: str, *, require_change: bool = True,
                    timeout: float = 600.0, gate: Optional[List[Tuple[str, str]]] = None,
-                   run_id: str = "", unbacked: Optional[List[str]] = None) -> Dict[str, Any]:
+                   run_id: str = "", unbacked: Optional[List[str]] = None,
+                   exec_journal: Optional[Any] = None,
+                   exec_artifacts_dir: Optional[Any] = None) -> Dict[str, Any]:
     """Decide VERIFIED / FAILED / BLOCKED for writes already applied under ``root``.
 
     ``applied`` rows need ``path`` (relative) and ``after_sha256``. ``gate`` carries
@@ -1339,14 +1461,23 @@ def verify_applied(root: str, applied: List[Dict[str, Any]], command: str, *, re
         disposition = "BLOCKED"
         reasons.append(f"acceptance command refused: {exc}")
     if not reasons:  # run only when the outcome is still open
-        rec = run_acceptance(root, command, timeout)
-        record.update(rec)
-        if "start_error" in rec:
-            reasons.append(f"acceptance command could not start: {rec['start_error']}")
-        elif rec.get("timed_out"):
-            reasons.append(f"acceptance command timed out after {timeout:.0f}s (process group killed)")
-        elif rec["exit_code"] != 0:
-            reasons.append(f"acceptance command exited {rec['exit_code']}")
+        try:
+            rec = run_acceptance(
+                root, command, timeout,
+                exec_journal=exec_journal,
+                exec_artifacts_dir=exec_artifacts_dir,
+            )
+        except Denied as exc:
+            disposition = "BLOCKED"
+            reasons.append(f"acceptance command refused: {exc}")
+        else:
+            record.update(rec)
+            if "start_error" in rec:
+                reasons.append(f"acceptance command could not start: {rec['start_error']}")
+            elif rec.get("timed_out"):
+                reasons.append(f"acceptance command timed out after {timeout:.0f}s (process group killed)")
+            elif rec["exit_code"] != 0:
+                reasons.append(f"acceptance command exited {rec['exit_code']}")
     if reasons and disposition == "VERIFIED":
         disposition = "FAILED"
     record.update(decision=disposition, reasons=reasons)

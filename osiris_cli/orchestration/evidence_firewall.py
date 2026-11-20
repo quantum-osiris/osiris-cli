@@ -35,10 +35,20 @@ class ExecutionEvidence:
     stdout_tail: str
     workdir_digest: str = ""
     skipped: int = 0
+    xfailed: int = 0
+    xpassed: int = 0
+    deselected: int = 0
+    truncated: bool = False
 
     @property
     def green(self) -> bool:
-        return self.returncode == 0 and self.passed > 0 and self.failed == 0 and self.errors == 0
+        return (
+            self.returncode == 0
+            and self.passed > 0
+            and self.failed == 0
+            and self.errors == 0
+            and not self.truncated
+        )
 
 
 @dataclass(frozen=True)

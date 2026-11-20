@@ -311,3 +311,17 @@ def test_unwritable_artifacts_dir_ends_in_one_error_receipt_and_never_spawns(tmp
     assert json.loads(lines[0])["body"]["decision"] == "ERROR"
     ok, count, error = journal.verify()
     assert ok and count == 1 and error == ""
+
+
+def test_pytest_current_test_env_cannot_divert_default_journal_to_tmp(tmp_path, monkeypatch):
+    monkeypatch.delenv("OSIRIS_EXEC_JOURNAL", raising=False)
+    monkeypatch.delenv("OSIRIS_EXEC_ARTIFACTS_DIR", raising=False)
+    monkeypatch.delenv("OSIRIS_HOME", raising=False)
+    monkeypatch.setenv("HOME", str(tmp_path / "home"))
+    monkeypatch.setenv("PYTEST_CURRENT_TEST", "spoofed::test")
+    j_path = exec_kernel.default_journal_path()
+    a_dir = exec_kernel.default_artifacts_dir()
+    assert j_path == tmp_path / "home" / ".osiris" / "exec_journal.jsonl"
+    assert a_dir == tmp_path / "home" / ".osiris" / "runs"
+    assert "/tmp/osiris_pytest_exec" not in str(j_path)
+    assert "/tmp/osiris_pytest_exec" not in str(a_dir)

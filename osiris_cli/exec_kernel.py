@@ -21,13 +21,12 @@ import shlex
 import signal
 import subprocess
 import sys
-import tempfile
 import threading
 import time
 import uuid
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Callable, Iterator, List, Optional, Sequence, Tuple
+from typing import Any, Callable, Dict, Iterator, List, Optional, Sequence, Tuple
 
 from .exec_policy import (
     AGENT_ORIGINS,
@@ -53,7 +52,6 @@ __all__ = [
     "ExecJournal",
     "ExecutionGrant",
     "classify",
-    "classify_json_payload",
     "mint_grant",
     "reset_session_approvals",
     "run",
@@ -80,6 +78,12 @@ class CommandResult:
     decision: str  # ALLOW | ASK_APPROVED | ASK_DECLINED | DENY | TIMEOUT | ERROR
     reasons: Tuple[str, ...]
     provenance: str = "COMPUTED"
+    stdout_sha256: Optional[str] = None
+    stderr_sha256: Optional[str] = None
+    combined_sha256: Optional[str] = None
+    combined_bytes: int = 0
+    combined_tail: str = ""
+    artifact_truncated: bool = False
 
 
 @dataclass(frozen=True)
@@ -121,23 +125,21 @@ def _sha256_hex(data: bytes) -> str:
 # --------------------------------------------------------------------------- receipts journal
 
 def _default_state_home() -> Path:
-    env_home = os.environ.get("OSIRIS_HOME", "").strip()
-    if env_home:
-        return Path(env_home).expanduser()
-    if os.environ.get("PYTEST_CURRENT_TEST"):
-        return Path(tempfile.gettempdir()) / "osiris_pytest_exec"
+    osiris_home = os.environ.get("OSIRIS_HOME")
+    if osiris_home:
+        return Path(osiris_home).expanduser()
     return Path.home() / ".osiris"
 
 
 def default_journal_path() -> Path:
-    override = os.environ.get("OSIRIS_EXEC_JOURNAL", "").strip()
+    override = os.environ.get("OSIRIS_EXEC_JOURNAL")
     if override:
         return Path(override).expanduser()
     return _default_state_home() / "exec_journal.jsonl"
 
 
 def default_artifacts_dir() -> Path:
-    override = os.environ.get("OSIRIS_EXEC_ARTIFACTS_DIR", "").strip()
+    override = os.environ.get("OSIRIS_EXEC_ARTIFACTS_DIR")
     if override:
         return Path(override).expanduser()
     return _default_state_home() / "runs"
@@ -149,7 +151,9 @@ def _file_lock(path: Path) -> Iterator[None]:
         yield
         return
     path.parent.mkdir(parents=True, exist_ok=True)
-    with open(str(path) + ".lock", "a+") as lock_file:
+    lock_path = str(path) + ".lock"
+    fd = os.open(lock_path, os.O_RDWR | os.O_CREAT, 0o600)
+    with os.fdopen(fd, "a+") as lock_file:
         fcntl.flock(lock_file.fileno(), fcntl.LOCK_EX)
         try:
             yield
@@ -277,35 +281,51 @@ def verify_grant(grant: ExecutionGrant, argv: Sequence[str], cwd: str,
 # --------------------------------------------------------------------------- output capture
 
 class _Capture:
-    """Keeps the first HEAD and last TAIL characters of a stream, plus a total count."""
+    """Keeps the first HEAD and last TAIL characters of a stream, plus streaming SHA-256 & byte count."""
 
     def __init__(self, head_chars: int, tail_chars: int) -> None:
         self.head_chars = head_chars
         self.tail_chars = tail_chars
         self.total = 0
+        self.total_bytes = 0
         self._head = ""
         self._tail = ""
+        self._sha = hashlib.sha256()
+        self._lock = threading.Lock()
 
     def feed(self, text: str) -> None:
-        self.total += len(text)
-        if len(self._head) < self.head_chars:
-            self._head += text[: self.head_chars - len(self._head)]
-        self._tail = (self._tail + text)[-self.tail_chars:]
+        enc = text.encode("utf-8")
+        with self._lock:
+            self.total += len(text)
+            self.total_bytes += len(enc)
+            self._sha.update(enc)
+            if len(self._head) < self.head_chars:
+                self._head += text[: self.head_chars - len(self._head)]
+            self._tail = (self._tail + text)[-self.tail_chars:]
 
     @property
     def truncated(self) -> bool:
         return self.total > self.head_chars + self.tail_chars
 
+    def sha256_hex(self) -> str:
+        with self._lock:
+            return self._sha.hexdigest()
+
+    def tail_view(self) -> str:
+        with self._lock:
+            return _ANSI.sub("", self._tail)
+
     def view(self) -> str:
-        if not self.truncated:
-            if self.total <= self.head_chars:
-                whole = self._head
-            else:
-                whole = self._head + self._tail[len(self._tail) - (self.total - self.head_chars):]
-            return _ANSI.sub("", whole)
-        omitted = self.total - self.head_chars - self.tail_chars
-        marker = f"\n[... {omitted} characters truncated ...]\n"
-        return _ANSI.sub("", self._head) + marker + _ANSI.sub("", self._tail)
+        with self._lock:
+            if not self.truncated:
+                if self.total <= self.head_chars:
+                    whole = self._head
+                else:
+                    whole = self._head + self._tail[len(self._tail) - (self.total - self.head_chars):]
+                return _ANSI.sub("", whole)
+            omitted = self.total - self.head_chars - self.tail_chars
+            marker = f"\n[... {omitted} characters truncated ...]\n"
+            return _ANSI.sub("", self._head) + marker + _ANSI.sub("", self._tail)
 
 
 class _ArtifactWriter:
@@ -317,6 +337,7 @@ class _ArtifactWriter:
         self.max_bytes = max_bytes
         self._hash = hashlib.sha256()
         self._written = 0
+        self.truncated = False
         self._lock = threading.Lock()
         fd = os.open(path, os.O_WRONLY | os.O_CREAT | os.O_TRUNC, 0o600)
         self._handle = os.fdopen(fd, "wb")
@@ -325,6 +346,7 @@ class _ArtifactWriter:
         line = (json.dumps({"stream": kind, "text": text}, ensure_ascii=False) + "\n").encode("utf-8")
         with self._lock:
             if self._written + len(line) > self.max_bytes:
+                self.truncated = True
                 return
             self._handle.write(line)
             self._hash.update(line)
@@ -338,7 +360,8 @@ class _ArtifactWriter:
             return self._hash.hexdigest()
 
 
-def _pump(pipe, kind: str, capture: _Capture, writer: Optional[_ArtifactWriter],
+def _pump(pipe, kind: str, capture: _Capture, combined: Optional[_Capture],
+          writer: Optional[_ArtifactWriter],
           callback: Optional[Callable[[str, str], None]]) -> None:
     decoder = codecs.getincrementaldecoder("utf-8")(errors="replace")
     fd = pipe.fileno()
@@ -349,17 +372,20 @@ def _pump(pipe, kind: str, capture: _Capture, writer: Optional[_ArtifactWriter],
                 break
             text = decoder.decode(chunk)
             if text:
-                _deliver(kind, text, capture, writer, callback)
+                _deliver(kind, text, capture, combined, writer, callback)
         tail = decoder.decode(b"", final=True)
         if tail:
-            _deliver(kind, tail, capture, writer, callback)
+            _deliver(kind, tail, capture, combined, writer, callback)
     finally:
         pipe.close()
 
 
-def _deliver(kind: str, text: str, capture: _Capture, writer: Optional[_ArtifactWriter],
+def _deliver(kind: str, text: str, capture: _Capture, combined: Optional[_Capture],
+             writer: Optional[_ArtifactWriter],
              callback: Optional[Callable[[str, str], None]]) -> None:
     capture.feed(text)
+    if combined is not None:
+        combined.feed(text)
     if writer is not None:
         writer.write(kind, text)
     if callback is not None:
@@ -471,7 +497,10 @@ class _Attempt:
 
     def finish(self, outcome: str, *, exit_code: Optional[int] = None, timed_out: bool = False,
                stdout_view: str = "", stderr_view: str = "", truncated: bool = False,
-               artifact_path: Optional[str] = None, artifact_sha256: Optional[str] = None) -> CommandResult:
+               artifact_path: Optional[str] = None, artifact_sha256: Optional[str] = None,
+               stdout_sha256: Optional[str] = None, stderr_sha256: Optional[str] = None,
+               combined_sha256: Optional[str] = None, combined_bytes: int = 0,
+               combined_tail: str = "", artifact_truncated: bool = False) -> CommandResult:
         duration_ms = int((time.monotonic() - self.t0) * 1000)
         body = {
             "kind": "exec-receipt",
@@ -507,6 +536,12 @@ class _Attempt:
             receipt_id=self.receipt_id,
             decision=outcome,
             reasons=tuple(self.reasons),
+            stdout_sha256=stdout_sha256,
+            stderr_sha256=stderr_sha256,
+            combined_sha256=combined_sha256,
+            combined_bytes=combined_bytes,
+            combined_tail=combined_tail,
+            artifact_truncated=artifact_truncated,
         )
 
 
@@ -606,11 +641,12 @@ def run(req: CommandRequest,
     grace_s = float(pol["kill_grace_s"])
     cap_out = _Capture(head_chars, tail_chars)
     cap_err = _Capture(head_chars, tail_chars)
+    cap_all = _Capture(head_chars, tail_chars)
     callback = None if sensitive else stream
     threads = [
-        threading.Thread(target=_pump, args=(proc.stdout, "stdout", cap_out, writer, callback),
+        threading.Thread(target=_pump, args=(proc.stdout, "stdout", cap_out, cap_all, writer, callback),
                          daemon=True),
-        threading.Thread(target=_pump, args=(proc.stderr, "stderr", cap_err, writer, callback),
+        threading.Thread(target=_pump, args=(proc.stderr, "stderr", cap_err, cap_all, writer, callback),
                          daemon=True),
     ]
     for thread in threads:
@@ -630,6 +666,7 @@ def run(req: CommandRequest,
     stray_pipes = any(thread.is_alive() for thread in threads)
 
     artifact_sha = writer.close() if writer is not None else None
+    artifact_truncated = bool(writer.truncated) if writer is not None else False
     if survivors:
         att.reasons.append("processes survived SIGKILL in the process group")
     if stray_pipes:
@@ -638,9 +675,17 @@ def run(req: CommandRequest,
     if sensitive:
         out_view = err_view = "[output withheld: credential-bearing command]"
         truncated = False
+        stdout_sha = stderr_sha = combined_sha = None
+        combined_bytes = 0
+        combined_tail = "[output withheld: credential-bearing command]"
     else:
         out_view, err_view = cap_out.view(), cap_err.view()
         truncated = cap_out.truncated or cap_err.truncated
+        stdout_sha = cap_out.sha256_hex()
+        stderr_sha = cap_err.sha256_hex()
+        combined_sha = cap_all.sha256_hex()
+        combined_bytes = cap_all.total_bytes
+        combined_tail = cap_all.tail_view()
 
     outcome = "ERROR" if survivors else ("TIMEOUT" if timed_out else ("ASK_APPROVED" if approved else "ALLOW"))
     return att.finish(
@@ -652,111 +697,114 @@ def run(req: CommandRequest,
         truncated=truncated,
         artifact_path=str(artifact_path) if artifact_path is not None else None,
         artifact_sha256=artifact_sha,
+        stdout_sha256=stdout_sha,
+        stderr_sha256=stderr_sha,
+        combined_sha256=combined_sha,
+        combined_bytes=combined_bytes,
+        combined_tail=combined_tail,
+        artifact_truncated=artifact_truncated,
     )
 
 
 # --------------------------------------------------------------------------- CLI
 
 def _split_shell_command(command: str) -> Tuple[List[str], Optional[str]]:
-    """Split a shell command string with POSIX quoting while exposing unquoted operators as tokens."""
+    """Split a shell command string preserving shell operator tokens without spawning a shell.
+
+    Refuses multiline strings (newlines act as command separators in Bash) and NUL bytes.
+    """
     if not isinstance(command, str) or not command.strip():
         return [], "empty command string"
+    if "\x00" in command or "\n" in command or "\r" in command:
+        return [], "multiline command or control character refused"
     try:
         lexer = shlex.shlex(command, posix=True, punctuation_chars="|&;<>")
         lexer.whitespace_split = True
+        lexer.commenters = "#"
         tokens = list(lexer)
     except ValueError as exc:
-        return [], f"malformed command quoting: {exc}"
+        return [], f"malformed shell syntax: {exc}"
     if not tokens:
         return [], "empty command string"
     return tokens, None
 
 
 def classify_json_payload(
-    raw_stdin: str,
+    raw_json: str,
     *,
-    origin: str = "human",
+    origin: str = "claude_code",
     cwd: Optional[str] = None,
     root: Optional[str] = None,
-    fallback_argv: Optional[Sequence[str]] = None,
-) -> dict:
-    """Parse Claude Code PreToolUse JSON, direct argv JSON, or fallback argv and return a
-    deterministic classification dict. Always fails closed on malformed input."""
+) -> Dict[str, Any]:
+    """Classify a JSON hook payload without spawning any process.
+
+    Caller-supplied ``origin`` and ``root`` are strictly authoritative and CANNOT be
+    overridden by untrusted JSON stdin fields.
+    """
     try:
         _, policy_sha = load_policy()
-    except PolicyError as exc:
-        return {
-            "origin": origin,
-            "tier": "FORBIDDEN",
-            "decision": "DENY",
-            "reasons": [str(exc)],
-            "normalized_argv": [],
-            "policy_sha256": "",
-        }
+    except Exception:
+        policy_sha = ""
 
-    def deny(reason: str, req_origin: str = origin, norm: Sequence[str] = ()) -> dict:
+    def _fail_closed(reason: str, req_origin: str) -> Dict[str, Any]:
         return {
-            "origin": req_origin,
             "tier": "FORBIDDEN",
             "decision": "DENY",
             "reasons": [reason],
-            "normalized_argv": list(norm),
+            "normalized_argv": [],
             "policy_sha256": policy_sha,
+            "origin": req_origin,
         }
 
     req_origin = origin
     req_cwd = cwd or os.getcwd()
     req_root = root
-    argv_list: List[str] = []
-
-    text = (raw_stdin or "").strip()
-    if text:
-        try:
-            data = json.loads(text)
-        except ValueError as exc:
-            return deny(f"malformed JSON on stdin: {exc}")
-        if not isinstance(data, dict):
-            return deny("stdin JSON payload must be an object")
-        if isinstance(data.get("origin"), str) and data["origin"]:
-            req_origin = data["origin"]
-        if isinstance(data.get("cwd"), str) and data["cwd"]:
-            req_cwd = data["cwd"]
-        if isinstance(data.get("root"), str) and data["root"]:
-            req_root = data["root"]
-
-        tool_input = data.get("tool_input")
-        if isinstance(tool_input, dict) and "command" in tool_input:
-            argv_list, err = _split_shell_command(tool_input.get("command"))
-            if err:
-                return deny(err, req_origin)
-        elif "argv" in data:
-            raw_argv = data.get("argv")
-            if not isinstance(raw_argv, list) or not raw_argv or not all(isinstance(x, str) for x in raw_argv):
-                return deny("argv must be a non-empty list of strings", req_origin)
-            argv_list = list(raw_argv)
-        elif "command" in data:
-            argv_list, err = _split_shell_command(data.get("command"))
-            if err:
-                return deny(err, req_origin)
-        else:
-            return deny("stdin JSON must provide tool_input.command, command, or argv", req_origin)
-    elif fallback_argv:
-        argv_list = list(fallback_argv)
-    else:
-        return deny("no command provided via stdin JSON or -- argv", req_origin)
-
     try:
-        cls = classify(CommandRequest(argv=tuple(argv_list), cwd=req_cwd, origin=req_origin, root=req_root))
-    except PolicyError as exc:
-        return deny(str(exc), req_origin, argv_list)
+        data = json.loads(raw_json)
+    except Exception as exc:
+        return _fail_closed(f"malformed json payload: {exc}", req_origin)
+    if not isinstance(data, dict):
+        return _fail_closed("json payload must be an object", req_origin)
 
+    # Validate tool_name when present: this classifier governs Bash / command invocations only.
+    tool_name = data.get("tool_name")
+    if tool_name is not None and tool_name != "Bash":
+        return _fail_closed(f"unsupported tool_name {tool_name!r} for bash classifier", req_origin)
+
+    if isinstance(data.get("cwd"), str) and data["cwd"]:
+        req_cwd = data["cwd"]
+
+    tool_input = data.get("tool_input")
+    if isinstance(tool_input, dict) and isinstance(tool_input.get("cwd"), str) and tool_input["cwd"]:
+        req_cwd = tool_input["cwd"]
+
+    argv_list: Optional[List[str]] = None
+    if isinstance(data.get("argv"), list):
+        raw_argv = data["argv"]
+        if not raw_argv or not all(isinstance(x, str) for x in raw_argv) or not raw_argv[0].strip():
+            return _fail_closed("argv must be a non-empty list of strings with a non-empty program", req_origin)
+        argv_list = list(raw_argv)
+    else:
+        cmd_str: Optional[str] = None
+        if isinstance(tool_input, dict) and isinstance(tool_input.get("command"), str):
+            cmd_str = tool_input["command"]
+        elif isinstance(data.get("command"), str):
+            cmd_str = data["command"]
+        if cmd_str is None:
+            return _fail_closed("missing command or argv in json payload", req_origin)
+        tokens, err = _split_shell_command(cmd_str)
+        if err is not None:
+            return _fail_closed(err, req_origin)
+        argv_list = tokens
+
+    cls = classify(CommandRequest(argv=tuple(argv_list), cwd=req_cwd, origin=req_origin, root=req_root))
     return {
-        "origin": req_origin,
         "tier": cls.tier,
         "decision": cls.decision,
         "reasons": list(cls.reasons),
         "normalized_argv": list(cls.normalized_argv),
         "policy_sha256": cls.policy_sha256,
+        "origin": req_origin,
     }
 
 
@@ -777,26 +825,20 @@ def main(argv: Optional[List[str]] = None) -> int:
     mode.add_argument("--explain", action="store_true",
                       help="print the tier, decision and reasons; runs nothing")
     mode.add_argument("--classify-json", action="store_true",
-                      help="classify stdin PreToolUse/argv JSON or trailing -- argv and print JSON")
+                      help="read JSON hook payload from stdin and print machine-readable verdict; runs nothing")
     parser.add_argument("--origin", default="human", choices=ORIGINS)
     parser.add_argument("--cwd", default=None)
     parser.add_argument("--root", default=None)
     parser.add_argument("command", nargs=argparse.REMAINDER)
     args = parser.parse_args(argv)
+    if args.classify_json:
+        raw_in = sys.stdin.read()
+        verdict = classify_json_payload(raw_in, origin=args.origin, cwd=args.cwd, root=args.root)
+        print(json.dumps(verdict, sort_keys=True))
+        return 0 if verdict.get("decision") == "ALLOW" else 2
     command = list(args.command)
     if command and command[0] == "--":
         command = command[1:]
-    if args.classify_json:
-        raw_stdin = "" if sys.stdin.isatty() else sys.stdin.read()
-        result = classify_json_payload(
-            raw_stdin,
-            origin=args.origin,
-            cwd=args.cwd,
-            root=args.root,
-            fallback_argv=command or None,
-        )
-        print(json.dumps(result, sort_keys=True))
-        return 0
     if not command:
         parser.error("no command given after --")
     return _explain(command, args.origin, args.cwd, args.root)

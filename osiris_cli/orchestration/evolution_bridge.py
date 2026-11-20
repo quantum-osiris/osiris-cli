@@ -11,9 +11,10 @@ Hard rules, each enforced in code and covered by a test:
     pass + an authorizer that accepts this exact candidate digest. No authorizer -> at best
     VERIFIED_PENDING_AUTHORIZATION.
   * "Promoted" means a PROMOTED row in the lineage ledger. The patch is never applied to the repo.
-  * The only fitness is ``frozen_suite_pass_rate`` = passed / (passed + failed + errors + skipped)
-    as the runner measured it. It is a single deterministic measurement (re-run for reproducibility
-    by the Critic); no uncertainty is estimated and none is claimed.
+  * The only fitness is ``frozen_suite_pass_rate`` = passed / (passed + failed + errors + skipped +
+    xfailed + xpassed + deselected) as the runner measured it. It is a single deterministic
+    measurement (re-run for reproducibility by the Critic); no uncertainty is estimated and none is
+    claimed.
   * The lineage ledger path is explicit. Paths under ~/.osiris are refused unless allow_live=True.
 """
 
@@ -39,7 +40,15 @@ Authorizer = Callable[[str, str], Tuple[bool, str]]   # (candidate_digest, scope
 
 
 def pass_rate(ev: ExecutionEvidence) -> Optional[float]:
-    total = ev.passed + ev.failed + ev.errors + getattr(ev, "skipped", 0)
+    total = (
+        ev.passed
+        + ev.failed
+        + ev.errors
+        + getattr(ev, "skipped", 0)
+        + getattr(ev, "xfailed", 0)
+        + getattr(ev, "xpassed", 0)
+        + getattr(ev, "deselected", 0)
+    )
     return None if total == 0 else ev.passed / total
 
 
@@ -117,7 +126,8 @@ def _criticism(res: TrioResult) -> Dict[str, Any]:
 def evaluate_candidate(res: TrioResult, lineage_ledger: str, *,
                        authorizer: Optional[Authorizer] = None,
                        policy: Optional[PromotionPolicy] = None,
-                       allow_live: bool = False) -> CandidateDecision:
+                       allow_live: bool = False,
+                       allow_partial_skipped: bool = False) -> CandidateDecision:
     """Decide and record. Always appends exactly one lineage row, whatever the outcome."""
     _refuse_live(lineage_ledger, allow_live)
     import genome_ledger
@@ -144,6 +154,8 @@ def evaluate_candidate(res: TrioResult, lineage_ledger: str, *,
     else:
         base_rate, cand_rate = pass_rate(res.baseline), pass_rate(res.candidate)
         dec.baseline_fitness, dec.candidate_fitness = base_rate, cand_rate
+        base_skipped = getattr(res.baseline, "skipped", 0)
+        cand_skipped = getattr(res.candidate, "skipped", 0)
         common = dict(evaluator_id=EVALUATOR[0], evaluator_version=EVALUATOR[1], metric_name=METRIC,
                       uncertainty=0.0, parent_id=None)
         champ = EvaluationReceipt(
@@ -157,21 +169,30 @@ def evaluate_candidate(res: TrioResult, lineage_ledger: str, *,
             details={"role": "candidate", "uncertainty_estimated": False,
                      "reproduced_twice": True}, **{**common, "parent_id": champ.candidate_id})
         dec.receipts = {"baseline": champ.to_dict(), "candidate": cand.to_dict()}
-        ok, why = (policy or PromotionPolicy()).evaluate_promotion(cand, champ, cdigest)
-        why = why.replace("PROMOTED:", "PromotionPolicy passed:", 1) if ok else why
-        if not ok:
-            dec.status, kind, dec.reasons = "REJECTED", "CANDIDATE_REJECTED", [why]
-        elif authorizer is None:
-            dec.status, kind = "VERIFIED_PENDING_AUTHORIZATION", "CANDIDATE_VERIFIED_PENDING_AUTHORIZATION"
-            dec.reasons = [why, "no explicit authorization presented"]
+        if cand_skipped > base_skipped:
+            dec.status, kind = "REJECTED", "CANDIDATE_REJECTED"
+            dec.reasons = [f"candidate increased skipped test count ({base_skipped} -> {cand_skipped})"]
+        elif not allow_partial_skipped and cand_skipped > 0 and (cand_rate is None or cand_rate < 1.0):
+            dec.status, kind = "REJECTED", "CANDIDATE_REJECTED"
+            dec.reasons = [
+                f"candidate has {cand_skipped} skipped test(s) (frozen_suite_pass_rate={cand_rate:.4f} < 1.0)"
+            ]
         else:
-            allowed, detail = authorizer(cdigest, SCOPE)
-            if not allowed:
+            ok, why = (policy or PromotionPolicy()).evaluate_promotion(cand, champ, cdigest)
+            why = why.replace("PROMOTED:", "PromotionPolicy passed:", 1) if ok else why
+            if not ok:
+                dec.status, kind, dec.reasons = "REJECTED", "CANDIDATE_REJECTED", [why]
+            elif authorizer is None:
                 dec.status, kind = "VERIFIED_PENDING_AUTHORIZATION", "CANDIDATE_VERIFIED_PENDING_AUTHORIZATION"
-                dec.reasons = [why, f"authorization refused: {detail}"]
+                dec.reasons = [why, "no explicit authorization presented"]
             else:
-                dec.status, kind = "PROMOTED", "CANDIDATE_PROMOTED"
-                dec.reasons = [why, f"authorized: {detail}"]
+                allowed, detail = authorizer(cdigest, SCOPE)
+                if not allowed:
+                    dec.status, kind = "VERIFIED_PENDING_AUTHORIZATION", "CANDIDATE_VERIFIED_PENDING_AUTHORIZATION"
+                    dec.reasons = [why, f"authorization refused: {detail}"]
+                else:
+                    dec.status, kind = "PROMOTED", "CANDIDATE_PROMOTED"
+                    dec.reasons = [why, f"authorized: {detail}"]
 
     payload = {"candidate_id": cid, "candidate_digest": cdigest, "status": dec.status,
                "reasons": dec.reasons, "criticism": _criticism(res), "evidence_refs": refs,

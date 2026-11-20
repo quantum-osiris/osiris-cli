@@ -13,6 +13,7 @@ import json
 import os
 import platform
 import re
+import stat
 import subprocess
 from collections.abc import Sequence
 from dataclasses import dataclass
@@ -37,19 +38,45 @@ EXPERIMENT_RE = re.compile(
     re.I,
 )
 
-# Never read, whatever is asked: credentials and private keys.
+# Never read, whatever is asked: credentials, private keys, and ledger DBs.
 SECRET_RE = re.compile(
-    r"(^|/)(\.env[^/]*|[^/]*\.env|\.ssh|\.gnupg|\.aws|\.config/gcloud|\.netrc|"
-    r"[^/]*(token|secret|credential|passw|apikey|api_key)[^/]*|id_[a-z0-9]+|[^/]*\.pem|[^/]*\.key)$",
+    r"(^|/)(\.env(?:\.[^/]*)?|[^/]*\.env(?:\.txt)?|\.ssh|\.gnupg|\.aws|\.config/(?:gcloud|gh)|"
+    r"keyrings|\.netrc|\.npmrc|\.pypirc|\.git-credentials|authorized_keys|"
+    r"service[-_]account[^/]*\.json|apikey\.json|ledger[^/]*\.(?:db|sqlite3?)|"
+    r"id_(?:rsa|ed25519|ecdsa|dsa|xmss)(?:\.pub)?|[^/]*\.(?:pem|key|p12|pfx)|"
+    r"(?![^/]*\.(?:py|md|rst)$)[^/]*(?:token|secret|credential|passw|apikey|api_key)[^/]*)$",
     re.I,
 )
 
 FORBIDDEN_SECRET_RE = re.compile(
-    r"(^\.env($|\.)|\.env$|apikey\.json$|credentials|secret|token|passw|api_key|"
-    r"^id_rsa|^id_ed25519|\.pem$|\.key$|\.p12$|\.pfx$|"
-    r"^\.netrc$|^\.npmrc$|^\.pypirc$|^\.ssh$|^\.gnupg$|^authorized_keys$)",
+    r"(^\.env($|\.)|\.env(\.txt)?$|apikey\.json$|service[-_]account.*\.json$|"
+    r"ledger[^/]*\.(db|sqlite3?)$|"
+    r"^id_(?:rsa|ed25519|ecdsa|dsa|xmss)(?:\.pub)?$|\.pem$|\.key$|\.p12$|\.pfx$|"
+    r"^\.netrc$|^\.npmrc$|^\.pypirc$|^\.git-credentials$|^\.ssh$|^\.gnupg$|^\.aws$|^keyrings$|^authorized_keys$|"
+    r"(?!.*\.(?:py|md|rst)$)(?:credentials|secret|token|passw|api_key))",
     re.IGNORECASE,
 )
+
+FORBIDDEN_SECRET_PATH_SEQUENCES: tuple[tuple[str, ...], ...] = (
+    (".config", "gcloud"),
+    (".config", "gh"),
+)
+
+MAX_TAIL_READ_BYTES = 16 * 1024 * 1024  # 16 MiB safety cap; fail closed if a single tail line exceeds this
+
+
+def is_forbidden_secret_parts(parts: Sequence[str]) -> bool:
+    """True when any segment or multi-segment sequence matches a forbidden secret path."""
+    lowered = [str(seg).lower() for seg in parts if seg and seg != "."]
+    for seg in parts:
+        if seg and seg != "." and FORBIDDEN_SECRET_RE.search(str(seg)):
+            return True
+    for seq in FORBIDDEN_SECRET_PATH_SEQUENCES:
+        n = len(seq)
+        for i in range(len(lowered) - n + 1):
+            if tuple(lowered[i : i + n]) == seq:
+                return True
+    return False
 
 ALLOWED_PROBES = frozenset(
     {"git", "ledger", "trainer", "system", "evidence", "read_file", "sibling_repo"}
@@ -334,7 +361,7 @@ class SafePathGuard:
         return None
 
     def resolve(self, raw_path: str | Path) -> Path:
-        """Validate and canonicalize raw_path; raise PermissionError on any violation."""
+        """Validate and canonicalize raw_path hop-by-hop; raise PermissionError on any violation."""
         raw_str = str(raw_path).strip()
         if not raw_str or "\x00" in raw_str:
             raise PermissionError("Empty or null-byte path rejected by SafePathGuard")
@@ -344,11 +371,35 @@ class SafePathGuard:
             raise PermissionError(f"Non-relative path rejected by SafePathGuard: {raw_str!r}")
 
         rel_obj = Path(raw_str)
-        for part in rel_obj.parts:
+        parts = [p for p in rel_obj.parts if p != "."]
+        if not parts:
+            raise PermissionError(f"Empty relative path rejected by SafePathGuard: {raw_str!r}")
+        for part in parts:
             if part == "..":
                 raise PermissionError(f"Directory traversal blocked by SafePathGuard: {raw_str!r}")
-            if self.is_forbidden_segment(part):
-                raise PermissionError(f"Credential/secret path blocked by SafePathGuard: {raw_str!r}")
+        if is_forbidden_secret_parts(parts):
+            raise PermissionError(f"Credential/secret path blocked by SafePathGuard: {raw_str!r}")
+
+        # Walk every hop from workspace_root to block intermediate symlink escapes (including bounce-back).
+        cur = self.workspace_root
+        for part in parts:
+            cur = cur / part
+            try:
+                st = os.lstat(cur)
+            except FileNotFoundError:
+                continue
+            if stat.S_ISLNK(st.st_mode):
+                hop_resolved = cur.resolve(strict=False)
+                hop_root = self._find_containing_root(hop_resolved)
+                if hop_root is None:
+                    raise PermissionError(
+                        f"Symlink hop escapes workspace ({self.workspace_root}): {raw_str!r}"
+                    )
+                hop_rel = hop_resolved.relative_to(hop_root)
+                if is_forbidden_secret_parts(hop_rel.parts):
+                    raise PermissionError(
+                        f"Symlink hop resolves to forbidden secret: {raw_str!r}"
+                    )
 
         candidate = self.workspace_root / rel_obj
         resolved = candidate.resolve(strict=False)
@@ -360,11 +411,10 @@ class SafePathGuard:
             )
 
         rel_resolved = resolved.relative_to(containing_root)
-        for part in rel_resolved.parts:
-            if self.is_forbidden_segment(part):
-                raise PermissionError(
-                    f"Symlink target resolves to forbidden secret ({part}): {raw_str!r}"
-                )
+        if is_forbidden_secret_parts(rel_resolved.parts):
+            raise PermissionError(
+                f"Symlink target resolves to forbidden secret: {raw_str!r}"
+            )
 
         if not resolved.exists() or not resolved.is_file():
             raise FileNotFoundError(f"Workspace file not found: {raw_str}")
@@ -374,11 +424,38 @@ class SafePathGuard:
     def read_text_bounded(self, raw_path: str | Path) -> tuple[Path, str]:
         """Safely read up to max_read_bytes of UTF-8 text from a verified workspace file."""
         safe_file = self.resolve(raw_path)
-        with safe_file.open("rb") as fh:
-            chunk = fh.read(self.max_read_bytes)
-        if b"\x00" in chunk:
+        flags = os.O_RDONLY | getattr(os, "O_NOFOLLOW", 0)
+        try:
+            fd = os.open(str(safe_file), flags)
+        except OSError as exc:
+            raise PermissionError(f"Refused to open path safely ({exc}): {safe_file.name}") from exc
+        try:
+            st = os.fstat(fd)
+            if not stat.S_ISREG(st.st_mode):
+                raise PermissionError(f"Non-regular file blocked by SafePathGuard: {safe_file.name}")
+            with os.fdopen(fd, "rb") as fh:
+                fd = -1
+                raw = fh.read(self.max_read_bytes + 1)
+        finally:
+            if fd >= 0:
+                os.close(fd)
+        if b"\x00" in raw:
             raise PermissionError(f"Binary file read blocked by SafePathGuard: {safe_file.name}")
-        text = chunk.decode("utf-8", errors="replace")
+        truncated = len(raw) > self.max_read_bytes
+        chunk = raw[: self.max_read_bytes]
+        if truncated:
+            # Trim only an incomplete trailing UTF-8 sequence (at most 3 bytes) instead of emitting U+FFFD.
+            text = None
+            for trim in range(min(4, len(chunk) + 1)):
+                try:
+                    text = chunk[: len(chunk) - trim].decode("utf-8")
+                    break
+                except UnicodeDecodeError:
+                    continue
+            if text is None:
+                text = chunk.decode("utf-8", errors="replace")
+        else:
+            text = chunk.decode("utf-8", errors="replace")
         return safe_file, text
 
 
@@ -468,8 +545,10 @@ def _extract_entry_hashes(record: dict[str, object]) -> tuple[str | None, str | 
 
 
 def _verify_row_self_hash(row: dict[str, object], prev_h: str | None, curr_h: str) -> bool:
-    """Verify row self-digest across living.py, dnalang/genome_ledger, and canonical_v1 schemas."""
-    if row.get("hash_mode") == "canonical_v1" and prev_h is not None:
+    """Fail-closed self-digest verification across living.py, dnalang, exec-canon-1, and canonical_v1."""
+    if row.get("hash_mode") == "canonical_v1":
+        if prev_h is None:
+            return False
         return compute_chained_entry_hash(prev_h, row) == curr_h
     if "hash" in row and "prev" in row:
         # 1. living.py exchanges.jsonl formula: sha256(json.dumps(entry_without_hash, sort_keys=True))
@@ -483,29 +562,79 @@ def _verify_row_self_hash(row: dict[str, object], prev_h: str | None, curr_h: st
             compact = json.dumps(dnalang_body, sort_keys=True, separators=(",", ":"), ensure_ascii=False)
             if hashlib.sha256((prev_h + compact).encode("utf-8")).hexdigest() == curr_h:
                 return True
+            # 3. exec_kernel exec-canon-1 formula: sha256(prev + compact canonical json of body)
+            if isinstance(row.get("body"), dict):
+                exec_compact = json.dumps(row["body"], sort_keys=True, separators=(",", ":"), ensure_ascii=False)
+                if hashlib.sha256((prev_h + exec_compact).encode("utf-8")).hexdigest() == curr_h:
+                    return True
         return False
-    return True
+    if "entry_hash" in row and "prev_hash" in row and prev_h is not None:
+        if compute_chained_entry_hash(prev_h, row) == curr_h:
+            return True
+        no_eh = {k: v for k, v in row.items() if k != "entry_hash"}
+        body_nl = prev_h + "\n" + json.dumps(no_eh, sort_keys=True, separators=(",", ":"), ensure_ascii=False)
+        if hashlib.sha256(body_nl.encode("utf-8")).hexdigest() == curr_h:
+            return True
+        body_plain = json.dumps(no_eh, sort_keys=True, ensure_ascii=False)
+        if hashlib.sha256(body_plain.encode("utf-8")).hexdigest() == curr_h:
+            return True
+        return False
+    # Fail closed on unrecognized or unverified hash schemas.
+    return False
 
 
-def _read_tail_lines(path: Path, max_lines: int = 8, chunk_bytes: int = 65536) -> list[str]:
-    """Read last max_lines from a JSONL file in O(1) seek time."""
+def _read_tail_lines(
+    path: Path, max_lines: int = 8, chunk_bytes: int = 65536
+) -> tuple[list[str], bool]:
+    """Read last max_lines from a JSONL file using an expanding tail window up to 16 MiB.
+
+    Returns ``(lines, read_from_start)``. Strips any partial leading line in raw bytes BEFORE
+    UTF-8 decoding so multi-byte characters are never split, and fails closed if a single
+    trailing line exceeds ``MAX_TAIL_READ_BYTES``.
+    """
+    if max_lines <= 0:
+        raise ValueError(f"tail_lines must be >= 1, got {max_lines}")
     file_size = path.stat().st_size
     if file_size == 0:
-        return []
+        return [], True
 
     read_len = min(file_size, max(8192, chunk_bytes, max_lines * 8192))
-    with path.open("rb") as fh:
-        fh.seek(file_size - read_len, os.SEEK_SET)
-        raw = fh.read(read_len)
+    while True:
+        read_from_start = read_len >= file_size
+        with path.open("rb") as fh:
+            fh.seek(file_size - read_len, os.SEEK_SET)
+            raw = fh.read(read_len)
 
-    if b"\r" in raw:
-        raise ValueError(f"CRLF byte detected in ledger {path.name}")
+        if b"\r" in raw:
+            raise ValueError(f"CRLF byte detected in ledger {path.name}")
 
-    text = raw.decode("utf-8")
-    lines = [ln for ln in text.splitlines() if ln.strip()]
-    if file_size > read_len and len(lines) > 1:
-        lines = lines[1:]
-    return lines[-max_lines:]
+        work = raw
+        if not read_from_start:
+            nl_idx = work.find(b"\n")
+            if nl_idx == -1:
+                if read_len >= MAX_TAIL_READ_BYTES:
+                    raise ValueError(
+                        f"trailing ledger line exceeds {MAX_TAIL_READ_BYTES} byte tail read limit"
+                    )
+                read_len = min(file_size, min(read_len * 2, MAX_TAIL_READ_BYTES))
+                continue
+            work = work[nl_idx + 1 :]
+
+        complete_raw_lines = [ln for ln in work.split(b"\n") if ln.strip()]
+        if not complete_raw_lines and not read_from_start:
+            if read_len >= MAX_TAIL_READ_BYTES:
+                raise ValueError(
+                    f"trailing ledger line exceeds {MAX_TAIL_READ_BYTES} byte tail read limit"
+                )
+            read_len = min(file_size, min(read_len * 2, MAX_TAIL_READ_BYTES))
+            continue
+        if len(complete_raw_lines) < max_lines and not read_from_start and read_len < MAX_TAIL_READ_BYTES:
+            read_len = min(file_size, min(read_len * 2, MAX_TAIL_READ_BYTES))
+            continue
+
+        includes_file_start = read_from_start and len(complete_raw_lines) <= max_lines
+        text_lines = [ln.decode("utf-8") for ln in complete_raw_lines[-max_lines:]]
+        return text_lines, includes_file_start
 
 
 def verify_chain_tail(
@@ -518,14 +647,29 @@ def verify_chain_tail(
     """Fast O(1) reverse-seek verification of the last N entries of a JSONL ledger.
 
     Returns a ChainTailReport supporting both attribute access (.intact, .inspected_count,
-    .tail_hash, .crlf_detected, .orphan_runs, .tail_head) and legacy dict indexing
+    .tail_hash, .crlf_detected, .orphan_runs, .tail_head, .status) and legacy dict indexing
     (["intact"], ["tail_count"], ["head"], ["status"], ["crlf_detected"]).
     Compatible with living.py exchanges.jsonl ("prev"/"hash"), dnalang-core ledgers,
-    and canonical_v1 ("prev_hash"/"entry_hash") rows. Rejects CRLF bytes fail-closed.
+    exec-canon-1, and canonical_v1 ("prev_hash"/"entry_hash") rows. Rejects CRLF bytes
+    and oversized unparseable tail lines fail-closed; enforces genesis on full-file reads
+    and preserves compatibility with valid historical forks.
     """
     window = tail_window if tail_window is not None else tail_lines
     resolved = Path(ledger_path).expanduser().resolve()
     orphans = _count_orphan_runs(Path(osiris_home).expanduser().resolve())[0] if osiris_home is not None else 0
+    if int(window) <= 0:
+        return ChainTailReport(
+            ledger_path=str(resolved),
+            exists=resolved.exists(),
+            intact=False,
+            inspected_count=0,
+            tail_hash="INVALID",
+            detail=f"invalid tail_lines={window}; must be >= 1",
+            status="UNREADABLE",
+            crlf_detected=False,
+            orphan_runs=orphans,
+            error=f"invalid tail_lines={window}",
+        )
     if not resolved.exists():
         return ChainTailReport(
             ledger_path=str(resolved),
@@ -534,7 +678,7 @@ def verify_chain_tail(
             inspected_count=0,
             tail_hash="0" * 12,
             detail="not initialized yet",
-            status="EMPTY",
+            status="MISSING",
             crlf_detected=False,
             orphan_runs=orphans,
         )
@@ -553,7 +697,7 @@ def verify_chain_tail(
         )
 
     try:
-        lines = _read_tail_lines(resolved, max_lines=max(2, int(window)))
+        lines, read_from_start = _read_tail_lines(resolved, max_lines=int(window))
     except ValueError as exc:
         is_crlf = "CRLF" in str(exc)
         return ChainTailReport(
@@ -627,6 +771,8 @@ def verify_chain_tail(
             )
         parsed.append(obj)
 
+    genesis = "0" * 64
+    seen_hashes: set[str] = {genesis} if read_from_start else set()
     prev_seen_hash: str | None = None
     for idx, row in enumerate(parsed):
         prev_h, curr_h = _extract_entry_hashes(row)
@@ -658,8 +804,22 @@ def verify_chain_tail(
                 error=f"entry hash mismatch at tail offset {idx}",
             )
 
-        if idx > 0 and prev_seen_hash is not None:
-            if prev_h != prev_seen_hash:
+        if idx == 0 and read_from_start:
+            if prev_h != genesis:
+                return ChainTailReport(
+                    ledger_path=str(resolved),
+                    exists=True,
+                    intact=False,
+                    inspected_count=1,
+                    tail_hash=curr_h[:12],
+                    detail=f"forged or truncated genesis link: prev={str(prev_h)[:12]} != 000000000000",
+                    status="TAMPERED",
+                    crlf_detected=False,
+                    orphan_runs=orphans,
+                    error="genesis prev hash mismatch",
+                )
+        elif idx > 0 and prev_seen_hash is not None:
+            if prev_h != prev_seen_hash and prev_h not in seen_hashes:
                 return ChainTailReport(
                     ledger_path=str(resolved),
                     exists=True,
@@ -667,14 +827,15 @@ def verify_chain_tail(
                     inspected_count=idx + 1,
                     tail_hash=curr_h[:12],
                     detail=(
-                        f"chain fork/break at tail offset {idx}: "
+                        f"chain break at tail offset {idx}: "
                         f"prev={str(prev_h)[:12]} != {prev_seen_hash[:12]}"
                     ),
                     status="TAMPERED",
                     crlf_detected=False,
                     orphan_runs=orphans,
-                    error=f"chain fork/break at tail offset {idx}",
+                    error=f"chain break at tail offset {idx}",
                 )
+        seen_hashes.add(curr_h)
         prev_seen_hash = curr_h
 
     final_hash = prev_seen_hash or ("0" * 12)
@@ -711,9 +872,8 @@ def safe_path(raw: str, base: str = HOME) -> Optional[str]:
         return None
     rel = os.path.relpath(p, base_real)
     parts = rel.split(os.sep)
-    if any(
-        SECRET_RE.search("/".join(parts[: i + 1])) or FORBIDDEN_SECRET_RE.search(parts[i])
-        for i in range(len(parts))
+    if is_forbidden_secret_parts(parts) or any(
+        SECRET_RE.search("/".join(parts[: i + 1])) for i in range(len(parts))
     ):
         return None
     return p if os.path.isfile(p) else None
@@ -774,11 +934,15 @@ def probe_substrate(
     *,
     power_supply_dir: Path | str | None = None,
 ) -> SubstrateInfo:
-    """Detect Node Alpha (Termux ARM64) vs Node Beta (Workstation x86_64) deterministically."""
+    """Detect Node Alpha (Termux mobile edge) vs Node Beta (Workstation) deterministically.
+
+    Termux is detected via ``TERMUX_VERSION`` or ``com.termux`` in ``PREFIX``, never from
+    bare ``aarch64``/``arm64`` alone (which would misclassify ARM64 Linux/macOS workstations).
+    """
     eff_power = Path(power_supply_dir) if power_supply_dir is not None else Path(power_dir)
     arch = platform.machine().lower() or "unknown"
     prefix = os.environ.get("PREFIX", "")
-    is_termux = "com.termux" in prefix or arch in ("aarch64", "arm64")
+    is_termux = bool(os.environ.get("TERMUX_VERSION")) or ("com.termux" in prefix)
     node_id = "NODE_ALPHA_EDGE" if is_termux else "NODE_BETA_WORKSTATION"
     horizon_sec = 300 if is_termux else 1800
 
@@ -793,26 +957,41 @@ def probe_substrate(
     )
 
 
-def _count_orphan_runs(osiris_home: Path) -> tuple[int, list[str]]:
-    """Detect started run records lacking a terminal end/verdict marker."""
-    runs_dir = osiris_home / "runs"
-    if not runs_dir.is_dir():
-        return 0, []
+_TERMINAL_RUN_STATES = frozenset({
+    "completed", "passed", "failed", "aborted",
+    "succeeded", "blocked", "cancelled", "stopped_budget",
+})
 
+
+def _count_orphan_runs(osiris_home: Path) -> tuple[int, list[str]]:
+    """Detect started run records lacking a terminal end/verdict/state marker.
+
+    Inspects both ``$OSIRIS_HOME/code/runs/*.json`` (live ``code_runs.py`` layout) and
+    ``$OSIRIS_HOME/runs/*.json`` (legacy flat fixtures).
+    """
+    candidate_dirs = (osiris_home / "code" / "runs", osiris_home / "runs")
     orphans: list[str] = []
-    for item in sorted(runs_dir.glob("*.json")):
-        try:
-            data = json.loads(item.read_text(encoding="utf-8", errors="replace"))
-            if isinstance(data, dict):
-                has_end = any(
-                    data.get(k) is not None
-                    for k in ("ended_at", "end_ts", "verdict", "completed", "exit_code")
-                )
-                status = str(data.get("status", "")).lower()
-                if not has_end and status not in ("completed", "passed", "failed", "aborted"):
-                    orphans.append(item.name)
-        except (OSError, json.JSONDecodeError):
-            orphans.append(item.name)
+    seen_files: set[Path] = set()
+    for runs_dir in candidate_dirs:
+        if not runs_dir.is_dir():
+            continue
+        for item in sorted(runs_dir.glob("*.json")):
+            if item in seen_files:
+                continue
+            seen_files.add(item)
+            try:
+                data = json.loads(item.read_text(encoding="utf-8", errors="replace"))
+                if isinstance(data, dict):
+                    has_end = any(
+                        data.get(k) is not None
+                        for k in ("ended_at", "end_ts", "verdict", "completed", "exit_code")
+                    )
+                    status = str(data.get("status", "")).lower()
+                    state = str(data.get("state", "")).lower()
+                    if not has_end and status not in _TERMINAL_RUN_STATES and state not in _TERMINAL_RUN_STATES:
+                        orphans.append(item.name)
+            except (OSError, json.JSONDecodeError):
+                orphans.append(item.name)
 
     return len(orphans), orphans
 
@@ -1037,6 +1216,8 @@ def probe_sibling_repository(
 
 def extract_candidate_paths(user_msg: str, max_files: int = 5) -> tuple[str, ...]:
     """Deterministically extract candidate file/secret/traversal mentions from prompt text."""
+    if int(max_files) <= 0:
+        return ()
     scrubbed = re.sub(r"https?://\S+", " ", user_msg)
     scrubbed = re.sub(r"\bdoi\s*:\s*10\.\d{4,9}/\S+", " ", scrubbed, flags=re.I)
     seen: list[str] = []
@@ -1120,7 +1301,7 @@ def plan_and_run_probes(
                     blocked=True,
                 )
             )
-        except FileNotFoundError:
+        except (FileNotFoundError, OSError):
             continue
 
     return receipts

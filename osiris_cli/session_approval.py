@@ -108,12 +108,25 @@ def excluded_command_reason(argv: Sequence[str]) -> Optional[str]:
         if script not in _JS_SCRIPTS or (rest[:1] != ["run"] and rest[:1] != ["test"]):
             return f"only `{prog} test` or `{prog} run build|test|lint|typecheck` may be pre-approved"
     if prog.startswith("python") or prog in {"node", "deno", "ruby", "perl", "php"}:
-        if any(a in _INTERPRETER_EVAL_FLAGS for a in rest):
-            return f"`{prog}` with an inline-code flag runs arbitrary code"
-        if prog.startswith("python") and "-m" in rest:
-            mod = rest[rest.index("-m") + 1] if rest.index("-m") + 1 < len(rest) else ""
-            if mod.split(".")[0] in {"pip", "http", "venv", "ensurepip", "twine", "webbrowser", "smtplib"}:
-                return f"`python -m {mod}` installs, serves or reaches the network"
+        for idx, a in enumerate(rest):
+            if a == "--":
+                break
+            if a in _INTERPRETER_EVAL_FLAGS or a.startswith(("--eval=", "--print=")):
+                return f"`{prog}` with an inline-code flag runs arbitrary code"
+            if a.startswith("-") and not a.startswith("--") and len(a) > 1:
+                flags = a[1:]
+                if prog.startswith("python"):
+                    if "c" in flags:
+                        return f"`{prog}` with an inline-code flag runs arbitrary code"
+                    if "m" in flags:
+                        m_pos = flags.index("m")
+                        mod = flags[m_pos + 1:] if m_pos + 1 < len(flags) else (rest[idx + 1] if idx + 1 < len(rest) else "")
+                        if mod.split(".")[0] in {"pip", "http", "venv", "ensurepip", "twine", "webbrowser", "smtplib"}:
+                            return f"`python -m {mod}` installs, serves or reaches the network"
+                elif prog == "php" and "r" in flags:
+                    return f"`{prog}` with an inline-code flag runs arbitrary code"
+                elif prog in {"node", "ruby", "perl"} and any(ch in flags for ch in ("e", "E", "p")):
+                    return f"`{prog}` with an inline-code flag runs arbitrary code"
     return None
 
 

@@ -120,15 +120,17 @@ def test_write_outside_is_refused_before_proposing(ws):
 # ── commands: one program, approved per call, granted and verified ─────────────
 
 def test_command_needs_approval(ws):
-    a = agent(ws, call("run_command", command=f"{sys.executable} -c \"open('RAN','w')\""))
+    (ws / "touch_ran.py").write_text("open('RAN', 'w').write('x')\n", encoding="utf-8")
+    a = agent(ws, call("run_command", command=f"{sys.executable} touch_ran.py"))
     a.run("run it")
     assert "did not approve" in tool_results(a)[0]
     assert not (ws / "RAN").exists()
 
 
 def test_approved_command_runs_under_a_grant(ws):
+    (ws / "say_ok.py").write_text("print('GOVERNED_OK')\n", encoding="utf-8")
     prompts = []
-    a = agent(ws, call("run_command", command=f"{sys.executable} -c \"print('GOVERNED_OK')\""),
+    a = agent(ws, call("run_command", command=f"{sys.executable} say_ok.py"),
               confirm=lambda p: prompts.append(p) or True)
     a.run("run it")
     assert "GOVERNED_OK" in tool_results(a)[0]
@@ -154,7 +156,8 @@ def test_command_cwd_outside_is_refused_without_asking(ws):
 
 def test_command_obeys_the_interactive_horizon(ws, monkeypatch):
     monkeypatch.setenv("OSIRIS_INTERACTIVE_TIMEOUT_S", "1")
-    a = agent(ws, call("run_command", command=f"{sys.executable} -c \"import time; time.sleep(5)\""),
+    (ws / "slow_cmd.py").write_text("import time\ntime.sleep(5)\n", encoding="utf-8")
+    a = agent(ws, call("run_command", command=f"{sys.executable} slow_cmd.py"),
               confirm=lambda p: True)
     a.run("slow")
     assert tool_results(a)[0] == "TIMEOUT after 1s"

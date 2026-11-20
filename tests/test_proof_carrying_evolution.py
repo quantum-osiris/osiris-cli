@@ -21,7 +21,8 @@ from osiris_cli.dnalang import (
     PromotionPolicy,
 )
 from osiris_cli.orchestration.engine import GovernedAgentEngine
-from osiris_cli.orchestration.schemas import ExecutionGrant
+from osiris_cli.providers import GemmaProvider
+from tests.signing_support import make_owner, needs_ssh_keygen, real_code_responder, signed_grant, synced_clock
 from osiris.compiler.dna_ir import QuantumCircuitIR
 
 FIXTURE_LEDGER = os.path.join(os.path.dirname(os.path.abspath(__file__)), "fixtures", "dnalang_ledger_v0_2_0.py")
@@ -213,6 +214,7 @@ def test_parent_derived_mutation_and_hash_chained_ledger(tmp_path):
     assert b2["prev_ledger_hash"] == b1["block_hash"]
 
 
+@needs_ssh_keygen
 def test_governed_engine_application_on_authorization(tmp_path, monkeypatch):
     """
     Verify GovernedAgentEngine applies changes to disk IF AND ONLY IF authorized.
@@ -224,7 +226,10 @@ def test_governed_engine_application_on_authorization(tmp_path, monkeypatch):
         monkeypatch.setattr(gl, "LEDGER_SRC", FIXTURE_LEDGER)
         monkeypatch.setattr(gl, "_ledger_mod", None)
     # A ledger of its own: the default is the canonical ~/.osiris/genome_ledger.jsonl.
-    engine = GovernedAgentEngine(ledger_file=str(tmp_path / "genome_ledger.jsonl"), allowed_paths=[str(tmp_path)])
+    engine = GovernedAgentEngine(ledger_file=str(tmp_path / "genome_ledger.jsonl"), allowed_paths=[str(tmp_path)],
+                                 provider=GemmaProvider(model="gemma-3-1b", mode="mock",
+                                                        mock_responder=real_code_responder),
+                                 grant_clock=synced_clock)
     target = str(tmp_path / "sample_module.py")
 
     # 1. Run step without grant -> authorized=False, applied=False, file does not exist
@@ -237,17 +242,10 @@ def test_governed_engine_application_on_authorization(tmp_path, monkeypatch):
     assert res_unauth["applied"] is False
     assert not os.path.exists(target)
 
-    # 2. Mint valid grant matching synthesized proposal
+    # 2. The owner signs the action digest of the verified proposal
     proposal = res_unauth["proposal"]
-    import time
-    now = time.time()
-    valid_grant = ExecutionGrant(
-        grant_id="grant_test_001",
-        payload_digest=proposal.payload_digest(),
-        authorized_by="Devin Phillip Davis",
-        authorized_at=now,
-        expires_at=now + 300.0,
-    )
+    assert res_unauth["verification"].is_passing
+    valid_grant = signed_grant(make_owner(tmp_path), res_unauth["action_digest"])
 
     # 3. Run step with valid grant -> authorized=True, applied=True, file exists on disk
     res_auth = engine.run_sprint_step(

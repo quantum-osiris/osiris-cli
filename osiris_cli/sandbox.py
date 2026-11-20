@@ -86,9 +86,9 @@ def _interpreter_prefixes() -> List[str]:
     out = []
     for p in (os.path.dirname(os.path.dirname(os.path.realpath(sys.executable))),
               os.path.dirname(os.path.dirname(sys.executable)), sys.prefix, sys.base_prefix):
-        rp = os.path.realpath(p)
-        if rp not in out and rp not in ("/", "/usr") and os.path.isdir(rp):
-            out.append(rp)
+        for cand in (p, os.path.realpath(p)):
+            if cand and cand not in out and cand not in ("/", "/usr") and os.path.isdir(cand):
+                out.append(cand)
     return out
 
 
@@ -109,9 +109,16 @@ def _argv_bwrap(argv: Sequence[str], workdir: str, ro_extra: Sequence[str]) -> L
         f = "/etc/" + n
         if os.path.exists(f):
             cmd += ["--ro-bind", os.path.realpath(f), f]
+    seen_binds = set()
     for p in list(_interpreter_prefixes()) + [os.path.realpath(x) for x in ro_extra]:
-        if p.startswith(home + os.sep) or not p.startswith(("/usr", "/lib", "/opt")):
-            cmd += ["--ro-bind", p, p]          # e.g. a venv under the home directory: that path only
+        if p in seen_binds:
+            continue
+        if p.startswith(home + os.sep) or not p.startswith(("/usr", "/lib")):
+            if os.path.islink(p):
+                cmd += ["--symlink", os.readlink(p), p]
+            else:
+                cmd += ["--ro-bind", p, p]      # e.g. venv under home or /opt/uv/python/...
+            seen_binds.add(p)
     cmd += ["--bind", wd, wd, "--chdir", wd]
     env = {"HOME": wd, "TMPDIR": "/tmp", "PYTHONDONTWRITEBYTECODE": "1", "PYTHONPATH": wd,
            "PYTHONHASHSEED": "0", "PATH": "/usr/bin:/bin"}

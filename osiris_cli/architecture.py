@@ -75,6 +75,12 @@ LAYERS = (
     Layer("L5", "Verify", (
         ("sandboxed test run after a static AST check", "osiris_termux_console._run_sandboxed_test · /why"),
         ("placeholder gate rejects stub code", "payload_gate.py"),
+        ("one deny-by-default AST firewall for every verifier (exec*, spawn*, subprocess, aliases)",
+         "osiris_cli/orchestration/ast_firewall.py"),
+        ("proposal tests really run in a temp workspace through the execution kernel; 0 collected, "
+         "assert-True-only or never-imports-the-target fails", "orchestration/agents.VerificationAgent"),
+        ("a governed write needs an owner-signed grant for its exact digest and a PASS test run",
+         "orchestration/controller.authorize_execution · grants.authorize"),
         ("AST contract extractor + independent L5 critic (isolated from candidate code)",
          "osiris_cli/production_synth.py"),
         ("physics checks: bounds and unit sanity", "osiris_cli/physics_checks.py · /physics"),

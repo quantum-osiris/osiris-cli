@@ -320,8 +320,8 @@ def test_existing_trust_list_without_keys_is_not_paired_with_new_keys(tmp_path):
 
 
 def test_code_agent_has_no_throwaway_self_trusting_signer(repo, tmp_path, monkeypatch):
-    monkeypatch.delenv("OSIRIS_ENCLAVE_DIR", raising=False)
     monkeypatch.setenv("HOME", str(tmp_path / "home"))
+    monkeypatch.delenv("OSIRIS_ENCLAVE_DIR", raising=False)
     # Isolate from any real operator keys on this machine and from keys another
     # test may have enrolled: with no enclave available this must fail closed.
     import osiris_cli.pqc_enclave as pqc
@@ -380,3 +380,17 @@ def test_no_private_key_material_in_session_records(repo, keys, tmp_path):
     for name in ("operator_ed25519.key", "operator_mldsa65.key"):
         assert (keys / name).read_bytes().hex() not in blob
     assert os.stat(keys / "operator_ed25519.key").st_mode & 0o077 == 0
+
+
+@pytest.mark.parametrize("argv", [
+    ["python3", "-uc", "print(1)"],
+    ["python3", "-Ic", "print(1)"],
+    ["python3", "-cprint(1)"],
+    ["python3", "-um", "pip", "install", "evil"],
+    ["python3", "-mpip", "install", "evil"],
+    ["node", "--eval=console.log(1)"],
+    ["perl", "-pe", "system('id')"],
+])
+def test_combined_interpreter_eval_and_installer_flags_excluded(argv):
+    reason = sa.excluded_command_reason(argv)
+    assert reason is not None, f"expected exclusion for {argv}"
