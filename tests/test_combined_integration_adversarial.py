@@ -317,7 +317,10 @@ def test_reconciled_console_wp2_paths_sprint_orphans_guard_and_bench_pins(
     # 5f. runner_sha256 preserved & suite_sha256 matches PR #55 rotated WP3 suite on origin/main
     import osiris_bench
     assert osiris_bench.runner_sha256() == "af49b2bd7707c36ff94cc0f87d307846294afefb5a35cb808f8524d41e53264c"
-    assert osiris_bench.suite_sha256().startswith("125a27de6d2fe733")
+    h = osiris_bench.suite_sha256()
+    # Registered suite versions, never directly comparable: v1 09037df63614... (restored on
+    # main by PR #58) and v2 125a27de6d2fe733... (benchmark-suite-v2-candidate).
+    assert h.startswith("09037df63614") or h.startswith("125a27de6d2fe733"), h
 
 
 # ── 6. Whole-candidate Python 3.9 AST, UTF-8 LF & SYS-025 zero-stub gate ────
