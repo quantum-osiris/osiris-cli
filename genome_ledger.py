@@ -38,26 +38,81 @@ from osiris_cli import chain_lock
 
 HOME_DIR =os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # Same convention as genome.json and the backlog (~/.osiris); the dnalang
-# source below is located from this file instead.
+# source is located by ledger_src_candidates() below.
 DEFAULT_PATH = os.path.join(os.path.expanduser("~"), ".osiris", "genome_ledger.jsonl")
 
 
-def _find_ledger_src():
-    """dnalang-core's ledger.py: $OSIRIS_DNALANG_LEDGER if set, then the source
-    checkouts OSIRIS has always looked in, then an installed `dnalang` package
-    (located without importing it)."""
-    candidates = [os.environ["OSIRIS_DNALANG_LEDGER"]] if os.environ.get("OSIRIS_DNALANG_LEDGER") else []
-    candidates += [
-        os.path.join(HOME_DIR, ".osiris", "src", "dnalang-core", "dnalang", "ledger.py"),
-        os.path.join(os.path.expanduser("~"), "dnalang-core", "dnalang", "ledger.py"),
-    ]
+def _installed_dnalang_dirs():
+    """Where an installed `dnalang` package lives, found without importing it."""
     try:
         spec = importlib.util.find_spec("dnalang")
     except (ImportError, ValueError):
         spec = None
-    if spec is not None and spec.submodule_search_locations:
-        candidates += [os.path.join(p, "ledger.py") for p in spec.submodule_search_locations]
+    return list(spec.submodule_search_locations) if spec is not None and spec.submodule_search_locations else []
+
+
+def ledger_src_candidates(environ=None, user_home=None, checkout_parent=None, package_dirs=None):
+    """Every place dnalang-core's ledger.py is looked for, in order.
+
+    Explicit settings first:
+      1. $OSIRIS_DNALANG_LEDGER -- the file itself;
+      2. $OSIRIS_HOME/src/dnalang-core -- when OSIRIS_HOME names the state dir.
+    Then the places OSIRIS has always looked, unchanged and in their old order,
+    so a machine that already resolved a ledger.py resolves the same one:
+      3. <parent of this checkout>/.osiris/src/dnalang-core;
+      4. ~/dnalang-core;
+      5. an installed `dnalang` package.
+    Then the places it should also have looked:
+      6. ~/.osiris/src/dnalang-core -- the state dir, wherever this checkout is;
+      7. <parent of this checkout>/dnalang-core -- the sibling checkout;
+      8. ~/osiris-repos/dnalang-core -- where /update keeps the sibling repos.
+
+    On Termux this checkout is ~/osiris-repos/osiris-cli, so (3) pointed at
+    ~/osiris-repos/.osiris/..., which never exists; with only (3)-(5) a mentor
+    round could not be recorded while dnalang-core sat at (7)/(8).
+    Reads no disk unless package_dirs is None, so the order is testable."""
+    environ = os.environ if environ is None else environ
+    user_home = os.path.expanduser("~") if user_home is None else user_home
+    checkout_parent = HOME_DIR if checkout_parent is None else checkout_parent
+    package_dirs = _installed_dnalang_dirs() if package_dirs is None else package_dirs
+    tail = os.path.join("dnalang-core", "dnalang", "ledger.py")
+    candidates = []
+    if environ.get("OSIRIS_DNALANG_LEDGER"):
+        candidates.append(environ["OSIRIS_DNALANG_LEDGER"])
+    if environ.get("OSIRIS_HOME"):
+        candidates.append(os.path.join(environ["OSIRIS_HOME"], "src", tail))
+    candidates += [
+        os.path.join(checkout_parent, ".osiris", "src", tail),
+        os.path.join(user_home, tail),
+    ]
+    candidates += [os.path.join(p, "ledger.py") for p in package_dirs]
+    candidates += [
+        os.path.join(user_home, ".osiris", "src", tail),
+        os.path.join(checkout_parent, tail),
+        os.path.join(user_home, "osiris-repos", tail),
+    ]
+    ordered = []
+    for c in candidates:
+        if c not in ordered:
+            ordered.append(c)
+    return ordered
+
+
+def _find_ledger_src(environ=None, user_home=None, checkout_parent=None, package_dirs=None):
+    """dnalang-core's ledger.py: the first of ledger_src_candidates() that
+    exists. When none exists, the first candidate, so an error names a path."""
+    candidates = ledger_src_candidates(environ, user_home, checkout_parent, package_dirs)
     return next((c for c in candidates if os.path.exists(c)), candidates[0])
+
+
+def ledger_src_problem():
+    """None when dnalang-core's ledger.py is where LEDGER_SRC says; otherwise
+    one line naming every place that was looked in and how to point at it."""
+    if os.path.exists(LEDGER_SRC):
+        return None
+    return (f"dnalang-core ledger not found at {LEDGER_SRC} (also looked in: "
+            f"{', '.join(c for c in ledger_src_candidates() if c != LEDGER_SRC)}). "
+            f"Clone dnalang-core to one of those, or set OSIRIS_DNALANG_LEDGER to its dnalang/ledger.py.")
 
 
 LEDGER_SRC = _find_ledger_src()

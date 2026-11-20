@@ -3308,6 +3308,49 @@ class _RoundView:
         self.drawn = card.count("\n") + 1
 
 
+def _bench_blocker(backend, model):
+    """(title, text) when a mentor or trial round must not start, else None.
+
+    The one gate every way of starting a round goes through -- G, N, /bench,
+    the preflight card's [1], '/bench ... now', and /trial -- so no path can
+    reach _bench_run past a check another path makes:
+      - backend ollama: the daemon answers and `model` is installed (a missing
+        model returns HTTP 404 on every call, which reads as a round of failures);
+      - any backend: dnalang-core's ledger.py is found, because the round is
+        recorded with it and a round that cannot be recorded must not start.
+    Reads only; writes nothing."""
+    if backend == "ollama":
+        installed = _ollama_models()
+        if installed is None:
+            return ("BACKEND UNREACHABLE",
+                    "Cannot start benchmark: Ollama daemon is offline (http://localhost:11434 unreachable).\n"
+                    "Start Ollama before benchmarking, or benchmark gemini with: /bench gemini\n"
+                    "Refusing to execute to prevent evidence ledger contamination.")
+        if not model or not (model in installed or f"{model}:latest" in installed):
+            names = sorted(m for m in installed if m)
+            hint = f"/bench {names[0]}" if names else f"ollama pull {model}"
+            return ("MODEL NOT INSTALLED",
+                    f"Cannot start benchmark: Ollama model '{model}' is not installed (HTTP 404 prevention).\n"
+                    f"Installed Ollama models: {', '.join(names) or 'none'}\n"
+                    f"Try '{hint}' or 'ollama pull {model}'.\n"
+                    "Refusing to execute to prevent evidence ledger contamination.")
+    problem = genome_ledger.ledger_src_problem()
+    if problem:
+        return ("RECORDER UNAVAILABLE",
+                f"Cannot start benchmark: {problem}\n"
+                "A round that cannot be recorded is not started. Nothing was run or written.")
+    return None
+
+
+def _bench_refused(backend, model, ui):
+    """Prints the blocker card and returns True when a round must not start."""
+    blocker = _bench_blocker(backend, model)
+    if blocker is None:
+        return False
+    print("\n" + osiris_ui.notice(ui, "blocked", blocker[0], blocker[1]))
+    return True
+
+
 def _bench_preflight(command, argv, label, ui):
     """One card before a round: what runs, for how long (from the last round's
     real task times), what it is compared with, and what it will not do.
@@ -3317,24 +3360,8 @@ def _bench_preflight(command, argv, label, ui):
     k = int(argv[argv.index("--k") + 1])
     mentor = f"{argv[3]}/{argv[argv.index('--model') + 1]}" if "--model" in argv else argv[3]
 
-    if argv[3] == "ollama":
-        installed = _ollama_models()
-        if installed is None:
-            print("\n" + osiris_ui.notice(ui, "blocked", "BACKEND UNREACHABLE",
-                                         f"Cannot start benchmark: Ollama daemon is offline (http://localhost:11434 unreachable).\n"
-                                         "Start Ollama before benchmarking, or benchmark gemini with: /bench gemini\n"
-                                         "Refusing to execute to prevent evidence ledger contamination."))
-            return
-        target_model = argv[argv.index("--model") + 1] if "--model" in argv else BENCH_DEFAULT_MODEL
-        if target_model and not (target_model in installed or f"{target_model}:latest" in installed):
-            avail = ", ".join(sorted(m for m in installed if m)) or "none"
-            hint = f"/bench {sorted(m for m in installed if m)[0]}" if installed else "ollama pull " + target_model
-            print("\n" + osiris_ui.notice(ui, "blocked", "MODEL NOT INSTALLED",
-                                         f"Cannot start benchmark: Ollama model '{target_model}' is not installed (HTTP 404 prevention).\n"
-                                         f"Installed Ollama models: {avail}\n"
-                                         f"Try '{hint}' or 'ollama pull {target_model}'.\n"
-                                         "Refusing to execute to prevent evidence ledger contamination."))
-            return
+    if _bench_refused(argv[3], argv[argv.index("--model") + 1] if "--model" in argv else BENCH_DEFAULT_MODEL, ui):
+        return
 
     est, base = "a few minutes per task on a phone", "no earlier round to compare with"
     entries, problem = protege.load_ledger()
@@ -3393,6 +3420,10 @@ def _trial(command: str = "/trial"):
     words = [w for w in words if w != "now"]
     strategy = next((w for w in words if w in prompt_strategies.STRATEGIES), "invariant-first-v1")
     model = next((w for w in words if w not in prompt_strategies.STRATEGIES), BENCH_DEFAULT_MODEL)
+    # The same gate as /bench: a trial round is a mentor round, so it starts only
+    # when the model is installed and the round can be recorded.
+    if _bench_refused("ollama", model, ui):
+        return
     tasks, k = sorted(BENCH_QUICK_TASKS), 1
     entries, problem = protege.load_ledger()
     key = ("ollama", model, k, tuple(tasks), protege.current_suite(), protege.current_runner())
@@ -3573,24 +3604,8 @@ def _bench(command: str = "/bench"):
     if argv is None:
         print("\n" + osiris_ui.notice(ui, "review", "BENCH", label) + "\n")
         return
-    if argv[3] == "ollama":
-        installed = _ollama_models()
-        if installed is None:
-            print("\n" + osiris_ui.notice(ui, "blocked", "BACKEND UNREACHABLE",
-                                         f"Cannot start benchmark: Ollama daemon is offline (http://localhost:11434 unreachable).\n"
-                                         "Start Ollama before benchmarking, or benchmark gemini with: /bench gemini\n"
-                                         "Refusing to execute to prevent evidence ledger contamination."))
-            return
-        target_model = argv[argv.index("--model") + 1] if "--model" in argv else BENCH_DEFAULT_MODEL
-        if target_model and not (target_model in installed or f"{target_model}:latest" in installed):
-            avail = ", ".join(sorted(m for m in installed if m)) or "none"
-            hint = f"/bench {sorted(m for m in installed if m)[0]}" if installed else "ollama pull " + target_model
-            print("\n" + osiris_ui.notice(ui, "blocked", "MODEL NOT INSTALLED",
-                                         f"Cannot start benchmark: Ollama model '{target_model}' is not installed (HTTP 404 prevention).\n"
-                                         f"Installed Ollama models: {avail}\n"
-                                         f"Try '{hint}' or 'ollama pull {target_model}'.\n"
-                                         "Refusing to execute to prevent evidence ledger contamination."))
-            return
+    if _bench_refused(argv[3], argv[argv.index("--model") + 1] if "--model" in argv else BENCH_DEFAULT_MODEL, ui):
+        return
     if "now" not in command.lower().split()[1:]:
         _bench_preflight(command, argv, label, ui)
         return
