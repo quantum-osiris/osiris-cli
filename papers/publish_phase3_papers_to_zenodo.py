@@ -202,6 +202,48 @@ PAPERS = {
                          "IBM Heron r2", "ibm_marrakesh", "TESSERACT-MAP-03"],
         },
     },
+    "tmap03": {
+        "dir": ROOT / "papers" / "tmap03_readout_attribution_marrakesh",
+        "related": [{"identifier": "10.5281/zenodo.24406496", "relation": "isSupplementTo", "scheme": "doi"},
+                    {"identifier": "10.5281/zenodo.24406426", "relation": "continues", "scheme": "doi"}],
+        "files": [
+            ("papers/tmap03_readout_attribution_marrakesh/tmap03_readout_attribution_marrakesh.pdf", None),
+            ("papers/tmap03_readout_attribution_marrakesh/tmap03_readout_attribution_marrakesh.tex", None),
+            ("papers/tmap03_readout_attribution_marrakesh/generated.tex", None),
+            ("papers/tmap03_readout_attribution_marrakesh/generate_tables.py", None),
+            ("phase3/TESSERACT_MAP_03_PREREGISTRATION.md", None),
+            ("docs/phase3/tesseract_map_03_live_prereg_lock.json", None),
+            ("docs/phase3/tesseract_map_03_live_pubs.qpy", None),
+            ("docs/phase3/tesseract_map_03_prelock_calibration.json", None),
+            ("docs/phase3/tesseract_map_03_dryrun.json", None),
+            ("docs/phase3/tesseract_map_03_submission_receipt.json", None),
+            ("docs/phase3/tesseract_map_03_live_raw_counts.json", None),
+            ("docs/phase3/tesseract_map_03_live_analysis.json", None),
+            ("phase3/tesseract_map_03.py", None),
+        ],
+        "meta": {
+            "title": ("Four days later, the best qubits were the worst: a preregistered replication on ibm_marrakesh "
+                      "in which readout faults invisible to the published calibration reversed a 10 pp layout effect "
+                      "(TESSERACT-MAP-03)"),
+            "description": (
+                "<p>Preregistered follow-up (doi:10.5281/zenodo.24406496, published before submission) to "
+                "TESSERACT-MAP-02 (doi:10.5281/zenodo.24406426). Job <code>dc0ajv5s2omc738915k0</code> on "
+                "<code>ibm_marrakesh</code>, 80 PUBs, 47 s QPU, same physical qubits as MAP-02 four days later.</p><ul>"
+                "<li>The 10.5 pp best-vs-median path gap did not replicate: it reversed to &minus;4.29 pp "
+                "(95% CI [&minus;5.24, &minus;3.33], Holm p = 6.4e-6).</li>"
+                "<li>Cause: qubit 46 on the best path read |0&gt; as 1 in 54% of shots while IBM's calibration "
+                "listed ~1.1% readout error; q31 and q37 also degraded.</li>"
+                "<li>After tensored readout mitigation the best path leads again by +17.0 pp.</li>"
+                "<li>The path effect is not additive across chain and routed star (interaction &minus;5.64 pp).</li>"
+                "<li>Today's stock level-3 layout beat the MAP-02 best path by 1.75 pp.</li></ul>"
+                "<p>Layout rankings built on published calibration can be overturned within days by single-qubit "
+                "readout faults; a per-job union readout check catches them. Record contains the paper, source, "
+                "preregistration, lock, QPY, calibrations, raw counts, analysis and code.</p>"
+            ),
+            "keywords": ["quantum compilation", "qubit layout", "readout error", "replication", "calibration drift",
+                         "IBM Heron r2", "ibm_marrakesh", "preregistration", "TESSERACT-MAP-03"],
+        },
+    },
 }
 
 
