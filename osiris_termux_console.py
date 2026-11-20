@@ -2035,7 +2035,6 @@ def _resolve_installed_ollama_tag(model: str, installed):
         if f"{canonical}:latest" in installed:
             return f"{canonical}:latest"
     return None
-BENCH_LOCAL_MENTORS = ("gemma3:1b", "gemma-3-270m", "gemma-2-2b", "qwen2.5-coder:7b", "deepseek-coder", "llama3.2:1b")
 
 
 def _ollama_models():
@@ -3585,19 +3584,6 @@ def _bench_blocker(backend, model):
     return None
 
 
-def _mentor_model_guard(argv, ui):
-    """Unified preflight guard shared by _bench, _bench_preflight, and hotkeys G/N.
-    Delegates to _bench_blocker so Ollama reachability, installed tags (with canonical
-    alias normalization), and dnalang-core recorder availability are all checked before
-    any preflight card or ledger write."""
-    backend = argv[3] if len(argv) > 3 else "ollama"
-    target_model = argv[argv.index("--model") + 1] if "--model" in argv else BENCH_DEFAULT_MODEL
-    blocker = _bench_blocker(backend, target_model)
-    if blocker is None:
-        return None
-    return osiris_ui.notice(ui, "blocked", blocker[0], blocker[1])
-
-
 def _bench_refused(backend, model, ui):
     """Prints the blocker card and returns True when a round must not start."""
     blocker = _bench_blocker(backend, model)
@@ -3616,9 +3602,7 @@ def _bench_preflight(command, argv, label, ui):
     k = int(argv[argv.index("--k") + 1])
     mentor = f"{argv[3]}/{argv[argv.index('--model') + 1]}" if "--model" in argv else argv[3]
 
-    refusal = _mentor_model_guard(argv, ui)
-    if refusal is not None:
-        print("\n" + refusal)
+    if _bench_refused(argv[3], argv[argv.index("--model") + 1] if "--model" in argv else BENCH_DEFAULT_MODEL, ui):
         return
 
     est, base = "a few minutes per task on a phone", "no earlier round to compare with"
@@ -3862,9 +3846,7 @@ def _bench(command: str = "/bench"):
     if argv is None:
         print("\n" + osiris_ui.notice(ui, "review", "BENCH", label) + "\n")
         return
-    refusal = _mentor_model_guard(argv, ui)
-    if refusal is not None:
-        print("\n" + refusal)
+    if _bench_refused(argv[3], argv[argv.index("--model") + 1] if "--model" in argv else BENCH_DEFAULT_MODEL, ui):
         return
     if "now" not in command.lower().split()[1:]:
         _bench_preflight(command, argv, label, ui)

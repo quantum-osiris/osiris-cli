@@ -268,13 +268,17 @@ def test_reconciled_probes_crlf_fail_closed_orphans_and_compat(tmp_path: Path) -
 def test_reconciled_console_wp2_paths_sprint_orphans_guard_and_bench_pins(
     tmp_path: Path, monkeypatch: pytest.MonkeyPatch, capsys: pytest.CaptureFixture[str]
 ) -> None:
-    # 5a. paths._resolve_osiris_home and _resolve_dnalang_ledger (Node Alpha layout)
+    # 5a. Single canonical ledger resolver in genome_ledger (no competing resolver in paths.py per PR #55)
+    import genome_ledger
     home = tmp_path / "home"
     alpha_ledger = home / "osiris-repos" / "dnalang-core" / "dnalang" / "ledger.py"
     alpha_ledger.parent.mkdir(parents=True)
     alpha_ledger.write_text("# ledger\n", encoding="utf-8")
-    assert paths._resolve_osiris_home(environ={"OSIRIS_HOME": str(tmp_path / "oh")}) == tmp_path / "oh"
-    assert paths._resolve_dnalang_ledger(tmp_path / "oh", repo_root=tmp_path / "repo", environ={}, home=home) == alpha_ledger
+    assert genome_ledger._find_ledger_src(
+        environ={}, user_home=str(home), checkout_parent=str(tmp_path / "repo"), package_dirs=[]
+    ) == str(alpha_ledger)
+    paths_src = inspect.getsource(paths)
+    assert "_resolve_dnalang_ledger" not in paths_src and "_resolve_osiris_home" not in paths_src
 
     # 5b. Canonical gemma3:1b defaults & zero legacy gemma-3-1b literal in console source
     assert otc is not None
@@ -295,11 +299,11 @@ def test_reconciled_console_wp2_paths_sprint_orphans_guard_and_bench_pins(
     assert called == ["sprint_usage", "runs_orphans", "runs_orphans"]
     assert "/runs --orphans" in otc.READ_ONLY_COMMANDS
 
-    # 5d. Unified _mentor_model_guard delegates to _bench_blocker (checks daemon, model, and recorder)
+    # 5d. Single canonical _bench_blocker gate (no leftover _mentor_model_guard per PR #55)
+    assert not hasattr(otc, "_mentor_model_guard")
     monkeypatch.setattr(otc, "_ollama_models", lambda: None)
-    argv = ["osiris_bench.py", "--events", "--backend", "ollama", "--model", "qwen2.5-coder:7b", "--k", "1"]
-    refusal = otc._mentor_model_guard(argv, otc.osiris_ui.Canvas())
-    assert refusal is not None and "BACKEND UNREACHABLE" in refusal
+    blocker = otc._bench_blocker("ollama", "qwen2.5-coder:7b")
+    assert blocker is not None and blocker[0] == "BACKEND UNREACHABLE"
 
     # 5e. RTX 5050 harness refuses non-Beta substrate
     spec = importlib.util.spec_from_file_location("bench_rtx5050", ROOT / "scripts" / "bench_rtx5050_multimentor.py")
@@ -310,10 +314,10 @@ def test_reconciled_console_wp2_paths_sprint_orphans_guard_and_bench_pins(
     assert mod.preflight() == 2
     assert "Refusing" in capsys.readouterr().out
 
-    # 5f. Both benchmark comparability hashes (runner_sha256 AND suite_sha256) preserved intact
+    # 5f. runner_sha256 preserved & suite_sha256 matches PR #55 rotated WP3 suite on origin/main
     import osiris_bench
     assert osiris_bench.runner_sha256() == "af49b2bd7707c36ff94cc0f87d307846294afefb5a35cb808f8524d41e53264c"
-    assert osiris_bench.suite_sha256().startswith("09037df63614")
+    assert osiris_bench.suite_sha256().startswith("125a27de6d2fe733")
 
 
 # ── 6. Whole-candidate Python 3.9 AST, UTF-8 LF & SYS-025 zero-stub gate ────
