@@ -45,6 +45,9 @@ def env(tmp_path, monkeypatch):
     runs = home / ".osiris" / "code" / "runs"
     receipts = home / ".osiris" / "code" / "receipts.jsonl"
     store = RunStore(str(runs))
+    # Keys are no longer created on first use (session approval); set them up as an operator would.
+    from osiris_cli.pqc_enclave import setup_local_keys
+    setup_local_keys(str(runs / "_enclave"), confirm=lambda prompt: True)
 
     def make(*steps, **kw):
         kw.setdefault("accept", ACCEPT)
