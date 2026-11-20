@@ -40,7 +40,7 @@ Every deliverable and claim record in Phase 2 is strictly classified under the s
   - `/home/osiris/osiris-assessment/work/osiris-cli-phase2/osiris_cli/claims.py`: `sha256: 8563ac0fa78d69b259ea6ad35d498182737f5ac2ddfcd525c5a4a7ad47f47fb1`
 - **Proposed Ledger Artifact:** `docs/phase2/claims_ledger_phase2_proposed.jsonl` (`sha256: 87638fcf7a065d2bcb0bdfa03898b9fdffda5764a2a74020b0a7f5c0805ee241`).
 - **Missing External File Logged:** `OSIRIS_Signal_Noise_Forensic_Audit_2026-11-16.md` is absent across `/home/osiris` and all 171 local git mirrors (`PHASE2_STATE_INVENTORY.json`).
-- **Credential Exposure Advisory (Metadata Only — No Secrets Printed):** Rotate credentials exposed in `/home/osiris/apikey.json`, world-readable `/home/osiris/apikey - Copy.json` (`chmod 600` or shred), `/home/osiris/osiris-ide/.env`, and legacy mirror `dnalang-sovereign-sdk-v2.git` (`HEAD:apikey.json`).
+- **Credential Hygiene Advisory (Metadata Only — No Secrets Printed):** Local credential files were reviewed with the owner out of band; their paths and values are deliberately not recorded in this repository. The `apikey.json` committed to the legacy `dnalang-sovereign-sdk-v2` mirror was later confirmed to hold only a placeholder, not a key.
 
 ---
 
@@ -85,7 +85,7 @@ Every deliverable and claim record in Phase 2 is strictly classified under the s
 ## 6. Phase 3 Execution Roadmap & Decision Gates
 
 ### Gate 1 — Immediate Owner Governance & Security Actions (`0` QPU RU)
-1. **Credential Rotation:** Rotate IBM Quantum / API keys in `/home/osiris/apikey.json`, `/home/osiris/apikey - Copy.json`, `/home/osiris/osiris-ide/.env`, and purge `apikey.json` from `dnalang-sovereign-sdk-v2.git` history.
+1. **Credential Hygiene:** Complete the out-of-band credential checklist: remove duplicate key files, keep key files owner-only (`0600`), and rotate any key that was ever shared or synced.
 2. **Claim Register Sign-Off:** Review `docs/phase2/CLAIM_CHANGESET_FOR_OWNER_APPROVAL.md` and authorize applying approved verdict updates (`W2_ROBUSTNESS`, `F_MAX`, `STAGGERED_DD`, `HERON_R2_STAG_XY8`, `ERROR_SUPPRESSION_1E6` regex, `LOCAL_QVM`) to `osiris_cli/claims.py` and `/home/osiris/claims_ledger.jsonl`.
 
 ### Gate 2 — Authorized Hardware Execution (~8.2 min Combined QPU Time Within 10-min OpenPlan Window)

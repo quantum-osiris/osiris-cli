@@ -1,0 +1,514 @@
+{
+  "experiment_id": "CORRELATED-NOISE-01-STAGE1",
+  "status": "Hardware-observed",
+  "job_id": "dbtp67dav06s73cfbsm0",
+  "backend": "ibm_marrakesh",
+  "n_blocks": 5,
+  "shots_per_pub": 2048,
+  "total_circuit_shots": 499712,
+  "total_multiplexed_coupler_shots": 4997120,
+  "prereg_lock_sha256": "38ebfe7f7c007633281039bca551af963e8335db54e6e6915a1e3f5be4a64fd8",
+  "qpy_sha256": "158de03260c429c8170cd3e3b296ade8045881e385370f1774619344e57b9da1",
+  "live_aa_sentinel_rms_pp_raw": 1.1538,
+  "live_aa_sentinel_rms_pp_mitigated": 1.3189,
+  "gls_model_selection_on_training_cohort": {
+    "selected_model": "H3",
+    "raw_min_bic_model": "H3",
+    "delta_bic_over_h0": 10262.849,
+    "fits": {
+      "H0": {
+        "params": [
+          5.68456427604653e-05,
+          5.688124356949184e-05,
+          10541.842205255045,
+          49408.21057182227,
+          0.9906918009013089
+        ],
+        "k_params": 5,
+        "chi2": 10420.897063014647,
+        "aic": 10430.897063014647,
+        "aicc": 10434.426474779353,
+        "bic": 10436.574534094292,
+        "loglik": -5078.612371301467,
+        "rmse": 0.029873888434889237
+      },
+      "H1": {
+        "params": [
+          0.0004999999999999993,
+          8.736030160596697e-05,
+          11835.89974991706,
+          59999.99999999999,
+          0.9820170986083282,
+          13084.827707818666
+        ],
+        "k_params": 6,
+        "chi2": 2482.6169228639437,
+        "aic": 2494.6169228639437,
+        "aicc": 2499.8669228639437,
+        "bic": 2501.4298881595187,
+        "loglik": -1109.472301226115,
+        "rmse": 0.01355392149123999
+      },
+      "H2": {
+        "params": [
+          9.906544714555272e-05,
+          3.524875086645205e-05,
+          14232.873156603642,
+          43105.651508102674,
+          0.9909885322651234,
+          -0.0437556406114286,
+          1.8
+        ],
+        "k_params": 7,
+        "chi2": 10361.46331227945,
+        "aic": 10375.46331227945,
+        "aicc": 10382.929978946117,
+        "bic": 10383.411771790954,
+        "loglik": -5048.895495933868,
+        "rmse": 0.030087011443988655
+      },
+      "H3": {
+        "params": [
+          6.612151018246513e-05,
+          3.0000108150936107e-05,
+          817.7839703806579,
+          32864.12376209348,
+          65039.96389899584,
+          2.2527719109319268e-05,
+          -0.41999999999999993,
+          0.9762920203604758
+        ],
+        "k_params": 8,
+        "chi2": 148.64178499468744,
+        "aic": 164.64178499468744,
+        "aicc": 174.92749928040172,
+        "bic": 173.72573872212064,
+        "loglik": 57.51526770851319,
+        "rmse": 0.003399471743757149
+      },
+      "Apparatus": {
+        "params": [
+          6.095800560584283e-05,
+          5.6350295668969804e-05,
+          11190.742159841973,
+          49471.98505596,
+          0.9908919873644217,
+          0.00048118139726135463
+        ],
+        "k_params": 6,
+        "chi2": 10402.564248890008,
+        "aic": 10414.564248890008,
+        "aicc": 10419.814248890008,
+        "bic": 10421.377214185582,
+        "loglik": -5069.4459642391475,
+        "rmse": 0.029844003778593177
+      }
+    }
+  },
+  "mechanistic_contrasts_10couplers_holm": {
+    "C_DFS_asymmetry": {
+      "mean": 0.00432,
+      "se_across_couplers": 0.0025,
+      "t_stat_df9": 1.727,
+      "p_two_sided": 0.11824603457341534,
+      "p_holm_adjusted": 0.472984,
+      "significant_holm_0_05": false
+    },
+    "C_spectator_activation": {
+      "mean": -0.00198,
+      "se_across_couplers": 0.00135,
+      "t_stat_df9": -1.466,
+      "p_two_sided": 0.17658116580416913,
+      "p_holm_adjusted": 0.529743,
+      "significant_holm_0_05": false
+    },
+    "C_stagger_phi_256_minus_0": {
+      "mean": 0.00203,
+      "se_across_couplers": 0.00186,
+      "t_stat_df9": 1.09,
+      "p_two_sided": 0.30384507343988637,
+      "p_holm_adjusted": 0.60769,
+      "significant_holm_0_05": false
+    },
+    "C_memory_dd32_minus_echo1_16us": {
+      "mean": -0.00139,
+      "se_across_couplers": 0.00932,
+      "t_stat_df9": -0.149,
+      "p_two_sided": 0.8850061409350628,
+      "p_holm_adjusted": 0.885006,
+      "significant_holm_0_05": false
+    }
+  },
+  "step_fraction_s48": 0.6154,
+  "held_out_6coupler_cluster_validation_df5": {
+    "n_held_out_couplers": 6,
+    "mean_rmse_h0": 0.13023,
+    "mean_rmse_h3": 0.14329,
+    "per_coupler_rmse_h0": [
+      0.12001,
+      0.16119,
+      0.01145,
+      0.16045,
+      0.32156,
+      0.00673
+    ],
+    "per_coupler_rmse_h3": [
+      0.11686,
+      0.21049,
+      0.18817,
+      0.22035,
+      0.09045,
+      0.03342
+    ],
+    "t_stat_h0_minus_h3_df5": -0.238,
+    "p_two_sided_df5": 0.8213650385921593,
+    "transfer_beats_h0_p_0_05": false
+  },
+  "training_mean_curve_23conds": {
+    "ramsey_2us": 0.96245,
+    "echo1_2us": 0.97578,
+    "ramsey_4us": 0.94092,
+    "echo1_4us": 0.96057,
+    "ramsey_8us": 0.88865,
+    "echo1_8us": 0.93389,
+    "ramsey_16us": 0.76704,
+    "echo1_16us": 0.89612,
+    "echo_dd8_8us": 0.94155,
+    "echo_dd16_8us": 0.94731,
+    "echo_dd32_8us": 0.95051,
+    "echo_dd32_16us": 0.91667,
+    "phi_dd16_d0ns": 0.71276,
+    "phi_dd16_d16ns": 0.71471,
+    "phi_dd16_d32ns": 0.71757,
+    "phi_dd16_d48ns": 0.71742,
+    "phi_dd16_d80ns": 0.71575,
+    "phi_dd16_d160ns": 0.71451,
+    "phi_dd16_d256ns": 0.71669,
+    "psi_dd16_d0ns": 0.71503,
+    "psi_dd16_d256ns": 0.7137,
+    "phi_spec_plus_d0ns": 0.7105,
+    "phi_spec_plus_d256ns": 0.71208
+  },
+  "per_coupler_profiles": [
+    {
+      "slot_idx": 0,
+      "role": "train",
+      "coupler": [
+        135,
+        139
+      ],
+      "spectator": 134,
+      "twoq_error": 0.00088,
+      "readout_assignment_diag_mean": 0.96399,
+      "phi_offset_curve_raw": {
+        "0ns": 0.80088,
+        "16ns": 0.80762,
+        "32ns": 0.81172,
+        "48ns": 0.80869,
+        "80ns": 0.8106,
+        "160ns": 0.81304,
+        "256ns": 0.80845
+      },
+      "phi_offset_curve_mitigated": {
+        "0ns": 0.84524,
+        "16ns": 0.85239,
+        "32ns": 0.85703,
+        "48ns": 0.85355,
+        "80ns": 0.85583,
+        "160ns": 0.85833,
+        "256ns": 0.85328
+      },
+      "stagger_256_minus_0_pp_raw": 0.757,
+      "dfs_asymmetry_pp_raw": 0.723,
+      "memory_16us_dd32_minus_echo1_pp_raw": 2.646
+    },
+    {
+      "slot_idx": 1,
+      "role": "train",
+      "coupler": [
+        149,
+        150
+      ],
+      "spectator": 148,
+      "twoq_error": 0.00106,
+      "readout_assignment_diag_mean": 0.96375,
+      "phi_offset_curve_raw": {
+        "0ns": 0.6813,
+        "16ns": 0.69106,
+        "32ns": 0.68892,
+        "48ns": 0.69106,
+        "80ns": 0.68403,
+        "160ns": 0.68462,
+        "256ns": 0.68677
+      },
+      "phi_offset_curve_mitigated": {
+        "0ns": 0.71401,
+        "16ns": 0.72448,
+        "32ns": 0.72223,
+        "48ns": 0.72453,
+        "80ns": 0.71695,
+        "160ns": 0.71756,
+        "256ns": 0.71989
+      },
+      "stagger_256_minus_0_pp_raw": 0.547,
+      "dfs_asymmetry_pp_raw": 1.182,
+      "memory_16us_dd32_minus_echo1_pp_raw": 2.178
+    },
+    {
+      "slot_idx": 2,
+      "role": "train",
+      "coupler": [
+        1,
+        2
+      ],
+      "spectator": 0,
+      "twoq_error": 0.00111,
+      "readout_assignment_diag_mean": 0.8905,
+      "phi_offset_curve_raw": {
+        "0ns": 0.53979,
+        "16ns": 0.54004,
+        "32ns": 0.54077,
+        "48ns": 0.54517,
+        "80ns": 0.54072,
+        "160ns": 0.53677,
+        "256ns": 0.54424
+      },
+      "phi_offset_curve_mitigated": {
+        "0ns": 0.61716,
+        "16ns": 0.61908,
+        "32ns": 0.62004,
+        "48ns": 0.62242,
+        "80ns": 0.61842,
+        "160ns": 0.61577,
+        "256ns": 0.62505
+      },
+      "stagger_256_minus_0_pp_raw": 0.444,
+      "dfs_asymmetry_pp_raw": 0.83,
+      "memory_16us_dd32_minus_echo1_pp_raw": 1.992
+    },
+    {
+      "slot_idx": 3,
+      "role": "train",
+      "coupler": [
+        13,
+        14
+      ],
+      "spectator": 15,
+      "twoq_error": 0.00118,
+      "readout_assignment_diag_mean": 0.94824,
+      "phi_offset_curve_raw": {
+        "0ns": 0.82905,
+        "16ns": 0.82012,
+        "32ns": 0.82886,
+        "48ns": 0.82476,
+        "80ns": 0.82764,
+        "160ns": 0.82363,
+        "256ns": 0.82729
+      },
+      "phi_offset_curve_mitigated": {
+        "0ns": 0.89514,
+        "16ns": 0.88615,
+        "32ns": 0.89621,
+        "48ns": 0.8913,
+        "80ns": 0.89424,
+        "160ns": 0.88979,
+        "256ns": 0.89412
+      },
+      "stagger_256_minus_0_pp_raw": -0.176,
+      "dfs_asymmetry_pp_raw": -0.63,
+      "memory_16us_dd32_minus_echo1_pp_raw": 1.406
+    },
+    {
+      "slot_idx": 4,
+      "role": "held_out",
+      "coupler": [
+        53,
+        54
+      ],
+      "spectator": 55,
+      "twoq_error": 0.00125,
+      "readout_assignment_diag_mean": 0.97864,
+      "phi_offset_curve_raw": {
+        "0ns": 0.7499,
+        "16ns": 0.75078,
+        "32ns": 0.74209,
+        "48ns": 0.75005,
+        "80ns": 0.74565,
+        "160ns": 0.74399,
+        "256ns": 0.75146
+      },
+      "phi_offset_curve_mitigated": {
+        "0ns": 0.77058,
+        "16ns": 0.77152,
+        "32ns": 0.7625,
+        "48ns": 0.77084,
+        "80ns": 0.76607,
+        "160ns": 0.76437,
+        "256ns": 0.77224
+      },
+      "stagger_256_minus_0_pp_raw": 0.156,
+      "dfs_asymmetry_pp_raw": -0.068,
+      "memory_16us_dd32_minus_echo1_pp_raw": -7.471
+    },
+    {
+      "slot_idx": 5,
+      "role": "held_out",
+      "coupler": [
+        91,
+        98
+      ],
+      "spectator": 92,
+      "twoq_error": 0.00133,
+      "readout_assignment_diag_mean": 0.96912,
+      "phi_offset_curve_raw": {
+        "0ns": 0.66802,
+        "16ns": 0.67148,
+        "32ns": 0.67734,
+        "48ns": 0.67373,
+        "80ns": 0.67446,
+        "160ns": 0.67622,
+        "256ns": 0.67944
+      },
+      "phi_offset_curve_mitigated": {
+        "0ns": 0.69541,
+        "16ns": 0.69909,
+        "32ns": 0.70536,
+        "48ns": 0.70149,
+        "80ns": 0.70222,
+        "160ns": 0.7042,
+        "256ns": 0.70755
+      },
+      "stagger_256_minus_0_pp_raw": 1.143,
+      "dfs_asymmetry_pp_raw": 1.274,
+      "memory_16us_dd32_minus_echo1_pp_raw": -0.176
+    },
+    {
+      "slot_idx": 6,
+      "role": "held_out",
+      "coupler": [
+        47,
+        57
+      ],
+      "spectator": 46,
+      "twoq_error": 0.0015,
+      "readout_assignment_diag_mean": 0.96191,
+      "phi_offset_curve_raw": {
+        "0ns": 0.72598,
+        "16ns": 0.7272,
+        "32ns": 0.72642,
+        "48ns": 0.72559,
+        "80ns": 0.72319,
+        "160ns": 0.73262,
+        "256ns": 0.72427
+      },
+      "phi_offset_curve_mitigated": {
+        "0ns": 0.76465,
+        "16ns": 0.76544,
+        "32ns": 0.76453,
+        "48ns": 0.76367,
+        "80ns": 0.76088,
+        "160ns": 0.77143,
+        "256ns": 0.76261
+      },
+      "stagger_256_minus_0_pp_raw": -0.171,
+      "dfs_asymmetry_pp_raw": -0.073,
+      "memory_16us_dd32_minus_echo1_pp_raw": -2.012
+    },
+    {
+      "slot_idx": 7,
+      "role": "held_out",
+      "coupler": [
+        7,
+        17
+      ],
+      "spectator": 6,
+      "twoq_error": 0.00166,
+      "readout_assignment_diag_mean": 0.95764,
+      "phi_offset_curve_raw": {
+        "0ns": 0.68755,
+        "16ns": 0.68589,
+        "32ns": 0.69355,
+        "48ns": 0.68921,
+        "80ns": 0.68164,
+        "160ns": 0.69316,
+        "256ns": 0.69019
+      },
+      "phi_offset_curve_mitigated": {
+        "0ns": 0.7292,
+        "16ns": 0.72737,
+        "32ns": 0.73568,
+        "48ns": 0.73091,
+        "80ns": 0.72259,
+        "160ns": 0.73512,
+        "256ns": 0.73191
+      },
+      "stagger_256_minus_0_pp_raw": 0.264,
+      "dfs_asymmetry_pp_raw": 1.26,
+      "memory_16us_dd32_minus_echo1_pp_raw": -0.654
+    },
+    {
+      "slot_idx": 8,
+      "role": "held_out",
+      "coupler": [
+        104,
+        105
+      ],
+      "spectator": 106,
+      "twoq_error": 0.00174,
+      "readout_assignment_diag_mean": 0.97791,
+      "phi_offset_curve_raw": {
+        "0ns": 0.79746,
+        "16ns": 0.7896,
+        "32ns": 0.79023,
+        "48ns": 0.78984,
+        "80ns": 0.79458,
+        "160ns": 0.79146,
+        "256ns": 0.78745
+      },
+      "phi_offset_curve_mitigated": {
+        "0ns": 0.82404,
+        "16ns": 0.81571,
+        "32ns": 0.81627,
+        "48ns": 0.81595,
+        "80ns": 0.82101,
+        "160ns": 0.8178,
+        "256ns": 0.81345
+      },
+      "stagger_256_minus_0_pp_raw": -1.001,
+      "dfs_asymmetry_pp_raw": -0.879,
+      "memory_16us_dd32_minus_echo1_pp_raw": 0.596
+    },
+    {
+      "slot_idx": 9,
+      "role": "held_out",
+      "coupler": [
+        142,
+        143
+      ],
+      "spectator": 136,
+      "twoq_error": 0.00175,
+      "readout_assignment_diag_mean": 0.9668,
+      "phi_offset_curve_raw": {
+        "0ns": 0.73643,
+        "16ns": 0.73618,
+        "32ns": 0.74092,
+        "48ns": 0.73076,
+        "80ns": 0.73853,
+        "160ns": 0.73335,
+        "256ns": 0.73711
+      },
+      "phi_offset_curve_mitigated": {
+        "0ns": 0.76928,
+        "16ns": 0.76939,
+        "32ns": 0.77442,
+        "48ns": 0.76284,
+        "80ns": 0.77172,
+        "160ns": 0.76599,
+        "256ns": 0.77025
+      },
+      "stagger_256_minus_0_pp_raw": 0.068,
+      "dfs_asymmetry_pp_raw": 0.698,
+      "memory_16us_dd32_minus_echo1_pp_raw": 0.107
+    }
+  ]
+}

@@ -154,24 +154,11 @@ def build_state_inventory() -> Dict[str, Any]:
         "all_dispositions_proposed": True,
         "credential_exposures_flagged_without_values": [
             {
-                "path": "/home/osiris/apikey.json",
-                "type": "IBM Quantum JSON API key file on local disk (162 B)",
-                "action": "Never read or committed; excluded from all archives; recommend rotation if previously synced.",
-            },
-            {
-                "path": "/home/osiris/apikey - Copy.json",
-                "type": "Duplicate IBM Quantum JSON API key file on local disk (162 B, world-readable 0644)",
-                "action": "Recommend deleting duplicate and restrictingapikey.json to chmod 0600 + key rotation.",
-            },
-            {
-                "path": "/home/osiris/osiris-ide/.env",
-                "type": "Local environment credential file (350 B)",
-                "action": "Keep untracked; never copy into evidence bundles.",
-            },
-            {
-                "path": "/home/osiris/osiris-assessment/legacy-mirrors/ENKI-420/dnalang-sovereign-sdk-v2.git (HEAD:apikey.json)",
-                "type": "Committed JSON API key in legacy bare git mirror",
-                "action": "CRITICAL: Rotate that historical IBM Quantum API key immediately if not already revoked.",
+                "scope": "local workstation credential files",
+                "action": (
+                    "Reviewed with the owner out of band; paths and values are deliberately not "
+                    "recorded in this repository."
+                ),
             },
         ],
         "artifacts": items,

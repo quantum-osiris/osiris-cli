@@ -23,30 +23,54 @@ class TestGitHubBridge(unittest.TestCase):
         self.bridge = GitHubBridge()
 
     def test_auth_status_inspection(self):
-        """Verify GitHub auth check parses status without crashing."""
-        auth = self.bridge.check_auth()
-        self.assertIn("installed", auth)
-        self.assertIn("authenticated", auth)
-        if auth["installed"] and auth["authenticated"]:
-            # Whoever is logged in to gh here; the account changed on 2026-11-09 and may again.
-            self.assertTrue(auth.get("account"))
-            self.assertIn("repo", auth.get("scopes", []))
+        """Verify GitHub auth check parses status deterministically and redacts tokens."""
+        class _Completed:
+            returncode = 0
+            stdout = "Logged in to github.com account quantum-osiris (keyring)\nToken scopes: 'repo', 'read:org'\nToken: ghp_1234567890abcdef"
+            stderr = ""
+        with patch.object(self.bridge, "is_installed", return_value=True), \
+                patch("osiris_cli.github_bridge.subprocess.run", return_value=_Completed()):
+            auth = self.bridge.check_auth()
+        self.assertTrue(auth["installed"])
+        self.assertTrue(auth["authenticated"])
+        self.assertEqual(auth["account"], "quantum-osiris")
+        self.assertIn("repo", auth["scopes"])
+        self.assertNotIn("ghp_1234567890abcdef", auth["raw"])
 
     def test_read_only_pr_listing(self):
-        """Verify list_prs returns structured response."""
-        res = self.bridge.list_prs(limit=5)
-        self.assertIn(res["status"], ("SUCCESS", "ERROR"))
-        if res["status"] == "SUCCESS":
-            self.assertIsInstance(res.get("prs"), list)
+        """Verify list_prs returns structured response from stubbed gh and fails closed on error."""
+        stub_ok = {
+            "ok": True,
+            "stdout": '[{"number": 25, "title": "consolidate unmerged branches", "state": "MERGED", "headRefName": "claude/notebook"}]',
+            "stderr": "",
+            "kind": None,
+        }
+        with patch.object(self.bridge, "run_gh", return_value=stub_ok):
+            res = self.bridge.list_prs(limit=5)
+        self.assertEqual(res["status"], "SUCCESS")
+        self.assertEqual(res["prs"][0]["number"], 25)
 
     def test_read_only_pr_view(self):
-        """Verify view_pr extracts details for existing PR."""
-        res = self.bridge.view_pr(27)
-        self.assertIn(res["status"], ("SUCCESS", "ERROR"))
-        if res["status"] == "SUCCESS":
-            pr = res.get("pr", {})
-            self.assertEqual(pr.get("number"), 27)
-            self.assertEqual(pr.get("headRefName"), "feat/gemma-substrate-governed-agents")
+        """Verify view_pr extracts details deterministically and redacts credentials on failure."""
+        stub_ok = {
+            "ok": True,
+            "stdout": '{"number": 27, "title": "Governed agents", "state": "OPEN", "headRefName": "feat/agent-council", "baseRefName": "main"}',
+            "stderr": "",
+            "kind": None,
+        }
+        with patch.object(self.bridge, "run_gh", return_value=stub_ok):
+            res = self.bridge.view_pr(27)
+        self.assertEqual(res["status"], "SUCCESS")
+        self.assertEqual(res["pr"]["number"], 27)
+        self.assertEqual(res["pr"]["headRefName"], "feat/agent-council")
+
+        # Failure path: malformed JSON or gh error fails closed and redacts tokens
+        stub_bad_json = {"ok": True, "stdout": "{bad_json ghp_1234567890abcdef", "stderr": "", "kind": None}
+        with patch.object(self.bridge, "run_gh", return_value=stub_bad_json):
+            err_res = self.bridge.view_pr(27)
+        self.assertEqual(err_res["status"], "ERROR")
+        self.assertEqual(err_res["kind"], "BAD_RESPONSE")
+        self.assertNotIn("ghp_1234567890abcdef", err_res["reason"])
 
     def test_mutating_merge_fails_closed_without_grant(self):
         """Verify SYS-021: merge without payload-bound grant is strictly blocked."""
@@ -101,6 +125,9 @@ class TestDualNodeSyncBridge(unittest.TestCase):
         self.assertIn("Cross-node transfer is a data operation, not an authorization operation.", runbook)
         self.assertIn("Android Wireless Debugging", runbook)
         self.assertIn("Bluetooth PAN", runbook)
+        self.assertIn("--dry-run", runbook)
+        self.assertNotIn("rsync -avz --delete", runbook)
+        self.assertIn("new, empty staging directory", runbook)
         self.assertIn("8022", runbook)
         self.assertIn("Scoped Storage", runbook)
 

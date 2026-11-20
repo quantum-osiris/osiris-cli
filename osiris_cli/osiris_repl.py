@@ -580,14 +580,17 @@ def print_banner():
         return
 
     cols = get_terminal_width()
+    hp = getattr(SESSION, "hardware_profile", None)
+    is_termux = bool(getattr(hp, "is_termux", False))
     print("\033[96m" + BANNER.strip() + "\033[0m\n")
     if cols >= 100:
         print("\033[90m  Mode: desktop wide (≥100 cols)\033[0m")
-    else:
+    elif is_termux:
         print("\033[90m  Mode: MOBILE COMPACT / TERMUX (<100 cols) | Adaptive View Enabled\033[0m")
+    else:
+        print("\033[90m  Mode: compact narrow (<100 cols) | Adaptive View Enabled\033[0m")
     
     # Dynamic Hardware Mesh Substrate Evaluation
-    hp = getattr(SESSION, "hardware_profile", None)
     if hp:
         print(f"\033[92m  [SUBSTRATE MESH] {substrate_label(hp)}\033[0m")
         print(f"\033[90m  [RESOURCE LIMITS] Horizon: {hp.execution_timeout_s:.0f}s (Extended={hp.allow_extended_horizons}) | Coherence Floor: {hp.coherence_floor}\033[0m\n")
@@ -710,8 +713,8 @@ def execute_learn(state: Optional[OsirisReplState] = None, generations: int = 5)
     return {"status": "UNMEASURED", "generations": 0, "reason": "No active simulation subject; synthetic evidence emission blocked per SYS-022"}
 
 
-def execute_dna(state: Optional[OsirisReplState] = None, intent: str = "Synthesize error repair gene for K8 tau-sweep") -> Dict[str, Any]:
-    """Synthesize .dna genome with L0 AST Firewall verification."""
+def execute_dna(state: Optional[OsirisReplState] = None, intent: str = "Synthesize XY4 decoupling gene for 2-qubit Bell pair") -> Dict[str, Any]:
+    """Synthesize a dnalang v0.4.0 organism and verify it through the real AST, semantic, and IR lowering pipeline."""
     if state is None:
         state = SESSION
 
@@ -721,38 +724,101 @@ def execute_dna(state: Optional[OsirisReplState] = None, intent: str = "Synthesi
     print(f"  ├─ Policy Digest: SHA-256 {intent_hash[:16]}")
     print(f"  └─ Coherence Threshold: Γ_floor = {state.coherence_floor:.4f} [Configured Policy Threshold]")
 
-    print("\n\033[1;36m[AST FIREWALL] Parsing generated dna::}{lang genome...\033[0m")
-    print("  ├─ System Call Leak Check:         \033[1;32mPASS\033[0m")
-    print("  ├─ Substitution Invariant Check:    \033[1;32mPASS\033[0m")
-    print(f"  ├─ Policy Floor Check (Γ ≤ {state.coherence_floor:.3f}): \033[1;32mPASS\033[0m")
-
-    gene_slug = re.sub(r'[^a-zA-Z0-9_]+', '_', intent.lower().strip())[:32].strip('_') or 'sovereign_intent'
+    gene_slug = re.sub(r"[^a-zA-Z0-9_]+", "_", intent.lower().strip())[:28].strip("_") or "sovereign_intent"
+    if gene_slug[0].isdigit():
+        gene_slug = f"g_{gene_slug}"
+    org_name = "Org_" + "".join(part.capitalize() for part in gene_slug.split("_") if part)[:28]
     gene_id = f"gene_{gene_slug}"
-    tau_us = 46.9787
-    loci = [
-        f"locus 0x01: dynamical_decoupling(sequence='XY4', tau_us={tau_us:.4f});",
-        f"locus 0x02: policy_constraint(coherence_floor={state.coherence_floor:.4f}, type='configured_threshold');",
-        f"locus 0x03: bind_intent(intent_hash=\"{intent_hash[:16]}\");"
-    ]
-    loci_str = "\n    ".join(loci)
 
-    dna_code = f"""```dna
-// OSIRIS Synthesized Genome: {intent}
-gene {gene_id} {{
-    {loci_str}
-    
-    express {{
-        enforce_floor(coherence_floor <= {state.coherence_floor:.4f});
-        yield coherence_gain;
-    }}
-}}
-```"""
+    raw_dna = (
+        f"// OSIRIS Synthesized Genome: {intent}\n"
+        f"organism {org_name} {{\n"
+        f"  meta {{\n"
+        f"    intent_sha256: \"{intent_hash[:16]}\",\n"
+        f"    coherence_floor: {state.coherence_floor:.4f},\n"
+        f"    threshold_kind: \"configured_policy\"\n"
+        f"  }}\n"
+        f"  gene {gene_id}(tau: duration) on a, b {{\n"
+        f"    h a;\n"
+        f"    cx a, b;\n"
+        f"    wait(tau / 2) a, b;\n"
+        f"    echo(X) a, b;\n"
+        f"    wait(tau) a, b;\n"
+        f"    echo(Y) a, b;\n"
+        f"    wait(tau) a, b;\n"
+        f"    echo(X) a, b;\n"
+        f"    wait(tau) a, b;\n"
+        f"    echo(Y) a, b;\n"
+        f"    wait(tau / 2) a, b;\n"
+        f"    cleave a -> c0;\n"
+        f"    cleave b -> c1;\n"
+        f"  }}\n"
+        f"  genome {{\n"
+        f"    {gene_id}(1us) @ [0, 1];\n"
+        f"  }}\n"
+        f"}}"
+    )
+
+    print("\n\033[1;36m[AST FIREWALL] Compiling generated dna::}{::lang organism...\033[0m")
+    verified = False
+    compiler_name = "unavailable"
+    op_count = 0
+    errors: List[str] = []
+    warnings_list: List[str] = []
+    try:
+        import dnalang as _dnalang
+        compiler_name = f"dnalang-{getattr(_dnalang, '__version__', '0.4.0')}"
+        try:
+            org_ast = _dnalang.parse(raw_dna)
+            diags = _dnalang.check(org_ast)
+            errors = list(diags.errors)
+            warnings_list = list(diags.warnings)
+            if diags.ok():
+                circuit = _dnalang.lower(org_ast)
+                op_count = len(circuit.ops)
+                verified = True
+        except Exception as exc:
+            errors.append(str(exc))
+    except ImportError:
+        compiler_name = "uninstalled"
+
+    if compiler_name == "uninstalled":
+        print("  ├─ dnalang Compiler Check:         \033[1;33mUNVERIFIED (dnalang package not in PYTHONPATH)\033[0m")
+    elif verified:
+        print(f"  ├─ Parser ({compiler_name}):          \033[1;32mPASS\033[0m")
+        parity_status = "PASS (even X/Y echo parity)" if not warnings_list else f"WARN ({'; '.join(warnings_list)})"
+        print(f"  ├─ Semantic & DD-Parity Check:     \033[1;32m{parity_status}\033[0m")
+        print(f"  └─ QC-IR Lowering ({op_count} ops):        \033[1;32mPASS\033[0m")
+    else:
+        print(f"  └─ Compiler Verification ({compiler_name}): \033[1;31mFAIL\033[0m ({'; '.join(errors)})")
+        h = state.log_event("GENE_SYNTHESIS_REJECTED", {"intent": intent, "gene": gene_id, "errors": errors})
+        return {"status": "REJECTED", "event_hash": h, "gene": gene_id, "verified": False, "errors": errors}
+
+    dna_code = f"```dna\n{raw_dna}\n```"
     print("\n\033[1;37m[GENOME EMITTED]\033[0m")
     print(dna_code)
-    print(f"\033[1;32m[SYNTHESIS] Gene '{gene_id}' validated against AST firewall.\033[0m\n")
+    if verified:
+        print(f"\033[1;32m[SYNTHESIS] Organism '{org_name}' ('{gene_id}') verified by {compiler_name}.\033[0m\n")
+    else:
+        print(f"\033[1;33m[SYNTHESIS] Organism '{org_name}' emitted without compiler verification ({compiler_name}).\033[0m\n")
 
-    h = state.log_event("GENE_SYNTHESIS", {"intent": intent, "locus_count": len(loci), "gene": gene_id})
-    return {"status": "SUCCESS", "event_hash": h, "gene": gene_id}
+    h = state.log_event("GENE_SYNTHESIS", {
+        "intent": intent,
+        "organism": org_name,
+        "gene": gene_id,
+        "verified": verified,
+        "compiler": compiler_name,
+        "op_count": op_count,
+    })
+    return {
+        "status": "SUCCESS" if verified else "UNVERIFIED",
+        "event_hash": h,
+        "organism": org_name,
+        "gene": gene_id,
+        "dna_source": raw_dna,
+        "verified": verified,
+        "op_count": op_count,
+    }
 
 
 def execute_ledger(state: Optional[OsirisReplState] = None) -> Dict[str, Any]:
@@ -805,14 +871,15 @@ def execute_ledger(state: Optional[OsirisReplState] = None) -> Dict[str, Any]:
 # ═══════════════════════════════════════════════════════════════════════════════
 
 def execute_swarm(state: Optional[OsirisReplState] = None, steps: int = 10) -> Dict[str, Any]:
-    """Boots NCLM ALife Organism & Dynamical Decoupling Bridge with live hash-chained telemetry."""
+    """Run the local Aer-backed DD simulation with hash-chained telemetry."""
     if state is None:
         state = SESSION
 
     if not state.ignited:
-        execute_ignite(state)
+        print("[OSIRIS::SWARM] blocked: run /ignite explicitly before starting the local simulation.")
+        return {"status": "BLOCKED", "reason": "explicit ignition required"}
 
-    print(f"\n\033[1;35m[OSIRIS::SWARM] Booting NCLM Organismic Swarm (steps={steps})...\033[0m")
+    print(f"\n\033[1;35m[OSIRIS::SWARM] [LOCAL SIMULATION] Aer-backed DD search (steps={steps})...\033[0m")
     try:
         from bridge.quantum_fitness import DDController, QuantumFitness
         ledger_dir = results_dir("swarm_runs")
@@ -834,7 +901,7 @@ def execute_swarm(state: Optional[OsirisReplState] = None, steps: int = 10) -> D
         print(f"  ├─ Ledger File:    {ledger_path.name}")
         print("  └─ Streaming Hash-Chained Telemetry:")
         print("     " + "-" * 72)
-        print(f"     {'STEP':<5} | {'EDIT':<10} | {'SCORE (F)':<10} | {'BEST (F)':<10} | {'NOISE':<8} | {'AUDIT HEAD':<16}")
+        print(f"     {'STEP':<5} | {'EDIT':<10} | {'SIM SCORE':<10} | {'SIM BEST':<10} | {'NOISE':<8} | {'AUDIT HEAD':<16}")
         print("     " + "-" * 72)
 
         for step_i in range(1, steps + 1):
@@ -845,17 +912,18 @@ def execute_swarm(state: Optional[OsirisReplState] = None, steps: int = 10) -> D
             time.sleep(0.04)
 
         print("     " + "-" * 72)
-        print(f"\033[1;32m[OSIRIS::SWARM] Completed {steps} evolutionary cycles.\033[0m")
-        print(f"  ├─ Best DD Score : {controller.best_score:.6f}")
+        print(f"\033[1;32m[OSIRIS::SWARM] Completed {steps} local simulation cycles.\033[0m")
+        print(f"  ├─ Best Simulated DD Score : {controller.best_score:.6f}")
         print(f"  ├─ Final Genome   : {controller.space.key(controller.genome)}")
         print(f"  └─ Cryptographic Audit Head: {controller.agent.organism.chain.head}\n")
         
         state.log_event("SWARM_EVOLUTION", {
             "steps": steps,
+            "execution_kind": "SIMULATION",
             "best_score": controller.best_score,
             "audit_head": controller.agent.organism.chain.head
         })
-        return {"status": "SUCCESS", "best_score": controller.best_score}
+        return {"status": "SUCCESS", "execution_kind": "SIMULATION", "best_score": controller.best_score}
     except Exception as e:
         print(f"[OSIRIS::ERROR] Swarm execution error: {e}")
         return {"status": "ERROR", "error": str(e)}
@@ -1385,13 +1453,44 @@ def get_living():
     return _LIVING
 
 
+def _resolve_input_transport(prompt: str) -> str:
+    pasted_attr = getattr(prompt, "pasted", None)
+    if pasted_attr is not None:
+        return "bracketed_paste" if bool(pasted_attr) else "typed"
+    if otc is not None and isinstance(getattr(otc, "_last_input", None), dict) and "pasted" in otc._last_input:
+        return "bracketed_paste" if bool(otc._last_input.get("pasted")) else "typed"
+    return "unknown"
+
+
 def handle_livlm_prompt(state: OsirisReplState, prompt: str) -> None:
-    """Plain text is conversation with OSIRIS.
-    Records every exchange; learns only from eligible material you explicitly approve."""
+    """Plain text is conversation with OSIRIS, except explicit operator code-authoring
+    directives ('write the code for ...', 'implement the code for ...') which route to the
+    governed /code tool loop. Multi-line bracketed pastes never auto-execute /code: pasted
+    documents are passive data quarantined in `last_paste` until explicitly invoked."""
+    from osiris_cli import living as living_mod
+
+    input_transport = _resolve_input_transport(prompt)
+    is_multiline_paste = (input_transport == "bracketed_paste") and ("\n" in prompt.strip())
+
+    code_task = None if is_multiline_paste else living_mod.extract_code_request(prompt)
+    if code_task is not None:
+        try:
+            from osiris_cli import claims as claims_mod
+            hits = claims_mod.match(prompt)
+            if hits:
+                print("\n" + claims_mod.console_block(hits))
+        except Exception:  # noqa: BLE001 - claims lookup must not block /code routing
+            pass
+        print("\n[OSIRIS::L1] Explicit code-authoring directive detected -> routing to governed /code loop")
+        from osiris_cli import code_agent
+        try:
+            code_task = living_mod.attach_referenced_paste_context(code_task, get_living())
+        except Exception:  # noqa: BLE001
+            pass
+        code_agent.run_code_command(state, code_task)
+        return
+
     tier, _reason = state.firewall.classify(prompt)
-    input_transport = "unknown"
-    if otc is not None and hasattr(otc, "_last_input") and "pasted" in otc._last_input:
-        input_transport = "bracketed_paste" if bool(otc._last_input.get("pasted")) else "typed"
 
     # If true transport metadata is unavailable or bracketed paste was used,
     # conservatively require review before any training promotion.
@@ -1614,8 +1713,30 @@ def execute_sync(args: Optional[List[str]] = None) -> None:
         print("\n" + DualNodeSyncBridge.format_status_card() + "\n")
     elif sub in ("plan", "runbook", "guide"):
         print(DualNodeSyncBridge.format_runbook())
+    elif sub in ("provision", "x3", "gamma"):
+        execute_provision(args[1:])
     else:
-        print(f"[SYNC] Unknown subcommand '{sub}'. Usage: /sync [status|plan]")
+        print(f"[SYNC] Unknown subcommand '{sub}'. Usage: /sync [status|plan|provision]")
+
+def execute_provision(args: Optional[List[str]] = None) -> int:
+    """`/sync provision` and the legacy provision names, routed to edge_provisioner.run_provision_command.
+
+    Legacy names from the agent-council provisioner keep working: status/discover/check show the
+    Elite x3 dashboard, build/deploy/run/ppkg rebuild, flash/ffu flash, and a bare verify checks
+    the workstation artifacts (``verify <bundle_dir>`` verifies a staged bundle)."""
+    from osiris_cli import edge_provisioner
+    args = list(args or [])
+    sub = args[0].lower() if args else "status"
+    legacy = {"status": "x3", "discover": "x3", "check": "x3",
+              "build": "build", "deploy": "build", "run": "build", "ppkg": "build",
+              "flash": "flash", "ffu": "flash"}
+    if sub == "verify" and len(args) == 1:
+        argv = ["artifacts"]
+    elif sub in legacy:
+        argv = [legacy[sub]] + args[1:]
+    else:
+        argv = args
+    return edge_provisioner.run_provision_command(argv)
 
 
 # ═══════════════════════════════════════════════════════════════════════════════
@@ -1764,30 +1885,62 @@ def update_checkout(repo: str, run: Callable = subprocess.run) -> bool:
     def git(*args):
         return run(["git", "-C", repo, *args], capture_output=True, text=True)
 
-    dirty = git("status", "--porcelain", "--untracked-files=no").stdout.strip()
-    if dirty:
-        changed = ", ".join(ln[3:].strip() for ln in dirty.splitlines()[:5])
-        more = f" (+{len(dirty.splitlines()) - 5} more)" if len(dirty.splitlines()) > 5 else ""
+    branch = git("branch", "--show-current")
+    if branch.returncode:
+        print(f"[OSIRIS::ERROR] could not determine checkout branch: {(branch.stderr or '').strip()[:200]}")
+        return False
+    branch_name = branch.stdout.strip()
+    if branch_name != "main":
+        name = branch_name or "detached HEAD"
+        print(f"[OSIRIS::SYNC] not updated: automatic updates are limited to main (current: {name})")
+        return False
+
+    status = git("status", "--porcelain=v1", "-z", "--untracked-files=all")
+    if status.returncode:
+        print(f"[OSIRIS::ERROR] git status failed: {(status.stderr or '').strip()[:200]}")
+        return False
+    dirty_entries = [entry for entry in status.stdout.split("\0") if entry]
+    dirty_paths = []
+    i = 0
+    while i < len(dirty_entries):
+        entry = dirty_entries[i]
+        status_code, path = entry[:2], entry[3:]
+        if status_code.strip() in ("R", "C") and i + 1 < len(dirty_entries):
+            path = f"{dirty_entries[i + 1]} -> {path}"
+            i += 1
+        dirty_paths.append(path)
+        i += 1
+    if dirty_paths:
+        changed = ", ".join(dirty_paths[:5])
+        more = f" (+{len(dirty_paths) - 5} more)" if len(dirty_paths) > 5 else ""
         print(f"[OSIRIS::SYNC] not updated: {repo} has uncommitted changes ({changed}{more})")
         return False
+
     fetched = git("fetch", "origin")
     if fetched.returncode:
         print(f"[OSIRIS::ERROR] git fetch failed: {(fetched.stderr or '').strip()[:200]}")
         return False
-    ahead, behind = (int(n) for n in git("rev-list", "--left-right", "--count", "HEAD...origin/main").stdout.split())
-    branch = git("branch", "--show-current").stdout.strip() or "HEAD"
+    counts = git("rev-list", "--left-right", "--count", "HEAD...origin/main")
+    if counts.returncode:
+        print(f"[OSIRIS::ERROR] could not compare with origin/main: {(counts.stderr or '').strip()[:200]}")
+        return False
+    try:
+        ahead, behind = (int(n) for n in counts.stdout.split())
+    except ValueError:
+        print("[OSIRIS::ERROR] git returned an invalid ahead/behind count for origin/main")
+        return False
     if not behind:
-        print(f"[OSIRIS::SYNC] {branch} already has everything on origin/main")
+        print("[OSIRIS::SYNC] main already has everything on origin/main")
         return False
     if ahead:
-        print(f"[OSIRIS::SYNC] not updated: {branch} has {ahead} commit(s) that origin/main does not, and is "
+        print(f"[OSIRIS::SYNC] not updated: main has {ahead} commit(s) that origin/main does not, and is "
               f"{behind} behind. Merge to combine them: git -C {repo} merge origin/main")
         return False
     merged = git("merge", "--ff-only", "origin/main")
     if merged.returncode:
         print(f"[OSIRIS::ERROR] fast-forward failed: {(merged.stderr or '').strip()[:200]}")
         return False
-    print(f"[OSIRIS::SYNC] {branch} fast-forwarded by {behind} commit(s) to origin/main")
+    print(f"[OSIRIS::SYNC] main fast-forwarded by {behind} commit(s) to origin/main")
     return True
 
 
@@ -1796,6 +1949,7 @@ def display_help() -> None:
     print("\n\033[1;37mAvailable OSIRIS Apex Commands:\033[0m")
     print("  \033[1;36mConversation\033[0m")
     print("    <any text>           Talk to OSIRIS (commands need a leading /)")
+    print("    /review              Review the last paste by section (local loopback Ollama only; coverage reported)")
     print("    /osiris              OSIRIS's core: step, held-out score, speaking gate")
     print("    /self <text>         Hear the core's own raw voice, even before it has earned it")
     print("    /mentor [model]      Choose which local Ollama model speaks while the core learns")
@@ -1913,10 +2067,10 @@ def execute_trio(rest: str) -> None:
 # keeps the set in step with the source.
 REPL_COMMANDS = {
     "/apply", "/architecture", "/benchmark", "/bridges", "/chat", "/check", "/clean", "/closure",
-    "/code", "/core", "/digest", "/discard", "/dna", "/experiment", "/fast", "/firewall", "/forge",
+    "/code", "/core", "/digest", "/discard", "/dna", "/edge", "/eval-audit", "/experiment", "/fast", "/firewall", "/forge",
     "/forget", "/gemini", "/help", "/ignite", "/ingest", "/intent", "/introspect", "/learn",
     "/ledger", "/legit", "/mentor", "/mesh", "/mutate", "/nclm", "/ollama", "/osiris", "/physics",
-    "/power", "/pr", "/publish", "/q", "/remember", "/retrieval", "/run", "/self", "/sim",
+    "/power", "/pr", "/provision", "/publish", "/q", "/remember", "/review", "/retrieval", "/run", "/self", "/sim",
     "/status", "/swarm", "/sync", "/tetra1d", "/tournament", "/train", "/trio", "/unlearn",
     "/update", "/validate", "/voice", "/welcome",
 }
@@ -1928,6 +2082,7 @@ READ_ONLY_COMMANDS = {
 }
 # Commands that need words after them to do anything.
 NEEDS_ARGUMENT = {"/code": "/code explain osiris_cli/living.py", "/legit": "/legit list",
+                  "/eval-audit": "/eval-audit qkernel <run_dir>",
                   "/remember": "/remember <fact>", "/forget": "/forget <words>",
                   "/self": "/self <text>", "/chat": "/chat <message>", "/dna": '/dna "<intent>"',
                   "/gemini": "/gemini <question>", "/physics": "/physics chsh"}
@@ -2006,17 +2161,30 @@ def dispatch_held(state: OsirisReplState, line: str) -> None:
     run a command and drop the rest. Typed lines and one-line pastes dispatch as usual."""
     if getattr(line, "pasted", False) and "\n" in line.strip():
         try:
-            handle_livlm_prompt(state, line.strip())
+            from osiris_cli.living import Held
+            handle_livlm_prompt(state, Held(line.strip(), pasted=True))
         except Exception as exc:  # noqa: BLE001 - as safe_dispatch: the session continues
             print(f"\n[!] the held paste failed: {type(exc).__name__}: {str(exc)[:200]}\n")
         return
     safe_dispatch(state, line)
 
 
+_MULTILINE_COMMAND_ALLOWLIST = {"/code", "/learn", "learn", "/swarm", "swarm", "/evolve", "evolve"}
+
+
 def dispatch_command(state: OsirisReplState, line: str) -> None:
     line_clean = line.strip()
     if not line_clean:
         return
+
+    # 0. Multi-line bracketed pastes starting with slash commands (e.g. `/apply\n...` from a
+    # pasted terminal transcript) are passive content, never automatic slash-command execution.
+    if _resolve_input_transport(line) == "bracketed_paste" and "\n" in line_clean:
+        first_tok = line_clean.split()[0].lower()
+        if first_tok not in _MULTILINE_COMMAND_ALLOWLIST:
+            from osiris_cli.living import Held
+            handle_livlm_prompt(state, Held(line_clean, pasted=True))
+            return
 
     # 1. Menu keys. A key on the menu on screen runs its command; a lettered tool
     # works from any screen; any other bare number or letter is not a message
@@ -2057,11 +2225,15 @@ def dispatch_command(state: OsirisReplState, line: str) -> None:
                     print("\n[!] /apply: nothing pending.\n")
                 else:
                     otc._apply_pending_write()
+                    from osiris_cli import code_agent
+                    code_agent.after_console_apply()
             elif cmd == "/discard":
                 if otc._pending_write["path"] is None:
                     print("\n[!] /discard: nothing pending.\n")
                 else:
                     otc._discard_pending_write()
+                    from osiris_cli import code_agent
+                    code_agent.discard_repl_acceptance()
             elif cmd in ("/digest", "/ingest") and (len(parts) > 1 or cmd == "/ingest"):
                 execute_digest(state, line_clean[len(parts[0]):].strip().strip('\'\"'))
             elif cmd in ("/run", "/runs") and parts[1:2] != ["show"]:
@@ -2158,9 +2330,44 @@ def dispatch_command(state: OsirisReplState, line: str) -> None:
         elif sub == "status":
             st = paste_learning.get_learning_status(living_obj.home)
             print("\n" + paste_learning.format_learning_status(st) + "\n")
-        else:
-            steps = int(parts[1]) if len(parts) > 1 and parts[1].isdigit() else 5
+        elif not sub or (len(parts) == 2 and parts[1].isdigit()):
+            steps = int(parts[1]) if len(parts) == 2 and parts[1].isdigit() else 5
             execute_learn(state, generations=steps)
+        else:
+            trailing = line_clean[len(parts[0]):].strip()
+            if len(trailing) >= 2 and trailing[0] == trailing[-1] and trailing[0] in ('"', "'"):
+                trailing = trailing[1:-1].strip()
+            if not trailing:
+                execute_learn(state, generations=5)
+            else:
+                idx = living_obj.stats.get("exchanges", 0)
+                living_obj.stats["exchanges"] = idx + 1
+                reply_note = "[Captured via /learn for governed review; nothing promoted until confirmed.]"
+                rec_data = {
+                    "t": time.strftime("%Y-%m-%dT%H:%M:%S"),
+                    "voice": "code",
+                    "heldout": False,
+                    "learnable": False,
+                    "user": trailing,
+                    "reply": reply_note,
+                    "index": idx,
+                    "input_transport": "bracketed_paste",
+                    "is_multiline": "\n" in trailing,
+                    "char_count": len(trailing),
+                    "line_count": len(trailing.splitlines()),
+                    "source_type": "bracketed_paste",
+                    "pasted": True,
+                }
+                key = living_obj._record(rec_data)
+                living_obj.last_paste = dict(rec_data, hash=key)
+                living_obj._save_stats()
+                if otc is not None and isinstance(getattr(otc, "_intent_state", None), dict):
+                    otc._intent_state.update(text=trailing, cls="engineering", pasted=True)
+                candidate = paste_learning.get_last_paste_candidate(living_obj.home)
+                if candidate is not None:
+                    print("\n" + paste_learning.format_review_card(candidate) + "\n")
+                else:
+                    print("\n[OSIRIS] Captured input in ledger; run '/learn last' to review.\n")
     elif cmd in ("/unlearn", "unlearn"):
         from osiris_cli import paste_learning
         target_id = parts[1] if len(parts) > 1 else ""
@@ -2224,6 +2431,20 @@ def dispatch_command(state: OsirisReplState, line: str) -> None:
         msg = line_clean[len(parts[0]):].strip()
         if msg:
             handle_livlm_prompt(state, msg)
+    elif cmd == "/review":
+        if len(parts) == 1:
+            get_living().review_last_paste()
+        else:
+            args_rest = parts[1:]
+            resume_flag = "--resume" in args_rest or "resume" in args_rest
+            spec_tokens = [tok for tok in args_rest if tok not in ("--resume", "resume")]
+            if len(spec_tokens) > 1 or (spec_tokens and not re.match(r"^\d+(?:-\d+)?$", spec_tokens[0])):
+                print("\n[OSIRIS] Usage: /review [N | N-M | --resume] (reviews the most recent pasted document)\n")
+            else:
+                get_living().review_last_paste(
+                    section_spec=spec_tokens[0] if spec_tokens else None,
+                    resume=resume_flag,
+                )
     elif cmd == "/osiris":
         trailing = line_clean[len(parts[0]):].strip()
         if trailing:
@@ -2340,14 +2561,22 @@ def dispatch_command(state: OsirisReplState, line: str) -> None:
         needle = line_clean[len(parts[0]):].strip()
         print("[OSIRIS] " + (get_living().forget(needle) if needle else "use /forget <words in the fact>"))
     elif cmd == "/code":
-        from osiris_cli import code_agent
-        code_agent.run_code_command(state, line_clean[len(parts[0]):].strip())
+        from osiris_cli import code_agent, living as living_mod
+        raw_rest = line_clean[len(parts[0]):].strip()
+        try:
+            raw_rest = living_mod.attach_referenced_paste_context(raw_rest, get_living())
+        except Exception:  # noqa: BLE001
+            pass
+        code_agent.run_code_command(state, raw_rest)
     elif cmd == "/gemini":
         from osiris_cli import gemini_gateway
         print("\n" + gemini_gateway.run_command(line_clean[len(parts[0]):].strip()) + "\n")
     elif cmd == "/legit":
         from osiris_cli import claims
         print("\n" + claims.command(line_clean[len(parts[0]):]) + "\n")
+    elif cmd == "/eval-audit":
+        from osiris_cli import reproducible_eval
+        print("\n" + reproducible_eval.run_command(line_clean[len(parts[0]):].strip()) + "\n")
     elif cmd == "/physics":
         from osiris_cli import physics_checks
         print("\n" + physics_checks.run_command(line_clean[len(parts[0]):].strip()) + "\n")
@@ -2386,6 +2615,15 @@ def dispatch_command(state: OsirisReplState, line: str) -> None:
         execute_pr(parts[1:])
     elif cmd in ("/sync", "sync"):
         execute_sync(parts[1:])
+    elif cmd in ("/provision", "provision", "/edge", "edge"):
+        from osiris_cli import edge_provisioner
+        import shlex as _shlex
+        raw_tail = line_clean[len(parts[0]):].strip()
+        try:
+            sub_argv = _shlex.split(raw_tail) if raw_tail else ["status"]
+        except ValueError:
+            sub_argv = raw_tail.split() if raw_tail else ["status"]
+        edge_provisioner.run_provision_command(sub_argv)
     elif cmd in ("/update", "update"):
         execute_update()
     elif cmd in ("/help", "help", "?"):
@@ -2442,7 +2680,10 @@ def boot_repl() -> None:
             else:
                 line = input(prompt)
             line = line.strip()
-        except (EOFError, KeyboardInterrupt):
+        except KeyboardInterrupt:
+            print("^C")
+            continue
+        except EOFError:
             print("\n[OSIRIS] Session closed.")
             break
 
@@ -2479,6 +2720,9 @@ def main(argv: Optional[List[str]] = None) -> None:
     if argv and argv[0] in ("retrieval", "/retrieval"):
         from osiris_cli import retrieval
         sys.exit(retrieval.main(argv[1:]))
+    if argv and argv[0] in ("provision", "/provision", "edge", "/edge"):
+        from osiris_cli import edge_provisioner
+        sys.exit(edge_provisioner.run_provision_command(argv[1:]))
     if argv and argv[0] in ("check", "/check"):
         # E-24: `osiris check [ledger|...] [--home DIR]` names the data home it read and exits non-zero when the
         # exchange log is tampered with or unreadable. --home reads another home (Termux's, from PRoot).
@@ -2507,7 +2751,7 @@ def main(argv: Optional[List[str]] = None) -> None:
         "action",
         nargs="?",
         default=None,
-        choices=["update", "ignite", "swarm", "mesh", "benchmark", "status", "power", "repl", "pr", "sync", "tetra1d", "closure", "mutate", "sim", "interactive"],
+        choices=["update", "ignite", "swarm", "mesh", "benchmark", "status", "power", "repl", "pr", "sync", "provision", "tetra1d", "closure", "mutate", "sim", "interactive"],
         help="Direct command to execute (default: launch REPL)"
     )
     parser.add_argument(
@@ -2571,6 +2815,8 @@ def main(argv: Optional[List[str]] = None) -> None:
         execute_pr(args.subargs)
     elif args.action == "sync":
         execute_sync(args.subargs)
+    elif args.action == "provision":
+        execute_provision(args.subargs)
     elif args.action == "tetra1d":
         execute_tetra1d(SESSION)
     elif args.action == "closure":

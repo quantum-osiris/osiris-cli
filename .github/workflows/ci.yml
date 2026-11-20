@@ -29,7 +29,7 @@ jobs:
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install numpy scipy requests PyYAML rich networkx
+          pip install numpy scipy requests PyYAML rich networkx cryptography
           pip install pytest pytest-cov
           python -c 'import subprocess, sys; sys.version_info >= (3, 10) and subprocess.check_call([sys.executable, "-m", "pip", "install", "qiskit"])'
 

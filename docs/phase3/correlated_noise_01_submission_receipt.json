@@ -1,0 +1,8 @@
+{
+  "experiment_id": "CORRELATED-NOISE-01-STAGE1",
+  "job_id": "dbtp67dav06s73cfbsm0",
+  "backend": "ibm_marrakesh",
+  "submitted_utc": "2026-11-16T23:34:53.498311+00:00",
+  "prereg_lock_sha256": "38ebfe7f7c007633281039bca551af963e8335db54e6e6915a1e3f5be4a64fd8",
+  "qpy_sha256": "158de03260c429c8170cd3e3b296ade8045881e385370f1774619344e57b9da1"
+}

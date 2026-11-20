@@ -15,14 +15,20 @@ and calibration properties, and runs the complete pre-registered statistical ana
      >=5-hop disjoint couplers (4 training + 6 held-out), intra-block A/A sentinel
      drift RMS, structured block-covariance GLS 5-model fitting (`H0, H1, H2, H3,
      Apparatus`), and cluster-level zero-retraining held-out coupler validation (`df = 5`).
+     The primary CN01 analysis is amendment A-3 (`phase3/cn01_amendment_a3.py`), which shares the
+     counts-to-fidelities step (`cn01_fidelity_arrays_from_counts`); the analysis below, as locked,
+     is reported as secondary.
 """
 
 from __future__ import annotations
 
+import argparse
+from datetime import datetime, timezone
 import hashlib
 import json
 import math
-from datetime import datetime, timezone
+from pathlib import Path
+import time
 from typing import Any, Dict, List, Mapping, Sequence, Tuple
 
 import numpy as np
@@ -31,9 +37,11 @@ from qiskit_ibm_runtime import SamplerV2
 from scipy import stats
 
 from phase2.correlated_noise_01.correlated_noise_models import (
-    MARRAKESH_PULSE_WIDTH_S,
     H0IndependentLocalModel,
+    H1StaticSpectatorZZModel,
+    H2CorrelatedMarkovianModel,
     H3NonMarkovianMemoryModel,
+    MARRAKESH_PULSE_WIDTH_S,
     ProbeCondition,
 )
 from phase2.correlated_noise_01.simulate_correlated_noise import (
@@ -48,12 +56,15 @@ from phase2.tesseract_map_02.tesseract_map_02 import (
     analyze_paired_blocks,
     score_tesseract_counts,
 )
+from phase3.cn01_amendment_a3 import a3_inference
 from phase3.live_hardware_runner import (
     OUT_DIR,
+    REPO_ROOT,
     connect_service,
     extract_counts_from_pub_result,
     snapshot_backend_calibration,
 )
+
 
 # ---------------------------------------------------------------------------
 # 1. TESSERACT-MAP-02 Raw Hardware Analysis
@@ -201,12 +212,17 @@ def _build_cn01_stage1_probe_conditions() -> List[ProbeCondition]:
     return conds
 
 
-def analyze_correlated_noise_01_live_counts(
+def cn01_fidelity_arrays_from_counts(
     lock_manifest: Mapping[str, Any],
     pub_counts: Sequence[Mapping[str, int]],
-    cal_snapshot: Mapping[str, Any],
-    job_id: str,
 ) -> Dict[str, Any]:
+    """Per-coupler readout matrices and per-block fidelities from the CN01 Stage-1 counts.
+
+    Returns `suite` (the 23 probe conditions), `m_mats` (one 4x4 assignment matrix per coupler),
+    `f_raw_arr` / `f_mit_arr` (raw and readout-mitigated fidelities, shape `(n_slots, n_blocks, 23)`)
+    and `aa_diffs_raw` / `aa_diffs_mit` (A/A sentinel minus reference, per coupler and block).
+    Shared by the locked analysis and amendment A-3 (`phase3/cn01_amendment_a3.py`).
+    """
     cohort = lock_manifest["coupler_cohort"]
     n_slots = len(cohort)
     n_blocks = int(lock_manifest["n_blocks"])
@@ -301,12 +317,37 @@ def analyze_correlated_noise_01_live_counts(
 
     f_raw_arr, aa_diffs_raw = _assemble_fidelities(basis_vals_raw)
     f_mit_arr, aa_diffs_mit = _assemble_fidelities(basis_vals_mit)
+    return {
+        "suite": suite,
+        "m_mats": m_mats,
+        "f_raw_arr": f_raw_arr,
+        "f_mit_arr": f_mit_arr,
+        "aa_diffs_raw": aa_diffs_raw,
+        "aa_diffs_mit": aa_diffs_mit,
+    }
+
+
+def analyze_correlated_noise_01_live_counts(
+    lock_manifest: Mapping[str, Any],
+    pub_counts: Sequence[Mapping[str, int]],
+    cal_snapshot: Mapping[str, Any],
+    job_id: str,
+) -> Dict[str, Any]:
+    cohort = lock_manifest["coupler_cohort"]
+    n_blocks = int(lock_manifest["n_blocks"])
+    arrays = cn01_fidelity_arrays_from_counts(lock_manifest, pub_counts)
+    suite: List[ProbeCondition] = arrays["suite"]
+    cond_ids = [c.condition_id for c in suite]
+    m_mats = arrays["m_mats"]
+    f_raw_arr, aa_diffs_raw = arrays["f_raw_arr"], arrays["aa_diffs_raw"]
+    f_mit_arr, aa_diffs_mit = arrays["f_mit_arr"], arrays["aa_diffs_mit"]
 
     aa_rms_raw = float(math.sqrt(np.mean(np.square(aa_diffs_raw))))
     aa_rms_mit = float(math.sqrt(np.mean(np.square(aa_diffs_mit))))
 
     # Empirical block-averaged training curve (slots 0..3) and empirical block covariance
     train_slots = [c["slot_idx"] for c in cohort if c["role"] == "train"]
+    heldout_slots = [c["slot_idx"] for c in cohort if c["role"] == "held_out"]
 
     # Block-level training averages: shape (n_blocks, n_conds)
     train_block_curves = np.mean(f_raw_arr[train_slots, :, :], axis=0)
@@ -414,6 +455,7 @@ def analyze_correlated_noise_01_live_counts(
 
         if c_info["role"] == "held_out":
             obs_curve = coupler_means_raw[s_idx, offset_indices]
+            h0_tr: H0IndependentLocalModel = inferred_objs["H0"]
             h3_tr: H3NonMarkovianMemoryModel = inferred_objs["H3"]
 
             pred_h0 = H0IndependentLocalModel(
@@ -503,123 +545,222 @@ def analyze_correlated_noise_01_live_counts(
 # 3. Sequential Live Submission & Collection Driver
 # ---------------------------------------------------------------------------
 
-def run_live_campaigns() -> None:
-    svc = connect_service()
-    u0 = svc.usage()
-    print(f"[Start] OpenPlan remaining: {u0.get('usage_remaining_seconds')}s", flush=True)
-    backend = svc.backend("ibm_marrakesh")
+QUOTA_SAFETY_FACTOR = 1.3  # HP-001 on ibm_fez used 12 s against a 10.1 s estimate (1.19x)
 
-    # --- Campaign 1: TESSERACT-MAP-02 ---
-    t_raw_path = OUT_DIR / "tesseract_map_02_live_raw_counts.json"
-    t_lock = json.loads((OUT_DIR / "tesseract_map_02_live_prereg_lock.json").read_text())
-    t_lock["lock_sha256"] = hashlib.sha256(
-        (OUT_DIR / "tesseract_map_02_live_prereg_lock.json").read_bytes()
-    ).hexdigest()
 
-    if not t_raw_path.exists():
-        with (OUT_DIR / "tesseract_map_02_live_pubs.qpy").open("rb") as f:
-            t_pubs = qpy.load(f)
-        sampler = SamplerV2(mode=backend)
-        t_job = sampler.run(t_pubs, shots=int(t_lock["shots_per_pub"]))
-        t_jid = t_job.job_id()
-        (OUT_DIR / "tesseract_map_02_submission_receipt.json").write_text(
+def _remaining_seconds(svc: Any) -> float:
+    return float(svc.usage().get("usage_remaining_seconds", 0) or 0)
+
+
+_PUBLIC_USAGE_FIELDS = (
+    "usage_consumed_seconds",
+    "usage_consumed_ru",
+    "usage_limit_seconds",
+    "usage_limit_ru",
+    "usage_remaining_seconds",
+    "usage_remaining_ru",
+    "usage_limit_reached",
+    "usage_period",
+)
+
+
+def _public_usage(usage: Mapping[str, Any]) -> Dict[str, Any]:
+    """Account usage without the instance CRN and plan ID, which identify the IBM Cloud account."""
+    return {k: usage[k] for k in _PUBLIC_USAGE_FIELDS if k in usage}
+
+
+def _job_usage_seconds(job: Any, wait_s: float = 180.0, poll_s: float = 5.0) -> float | None:
+    """QPU seconds IBM charged for a finished job.
+
+    IBM finalises a job's usage shortly after its result is available, and until then `job.usage()`
+    reads 0 (TESSERACT-MAP-02's raw counts recorded 0.0 for a job later charged 53 s). Poll the job's
+    metrics until their usage status is "complete", or give up after `wait_s`.
+    """
+    deadline = time.monotonic() + wait_s
+    last: float | None = None
+    while True:
+        try:
+            usage = job.metrics().get("usage") or {}
+            value = usage.get("qpu_charge_time_seconds", usage.get("quantum_seconds"))
+            if value is not None:
+                last = float(value)
+                if usage.get("status") == "complete":
+                    return last
+        except Exception:
+            pass
+        try:
+            reported = float(job.usage())
+            if reported > 0.0:
+                return reported
+        except Exception:
+            pass
+        if time.monotonic() >= deadline:
+            return last
+        time.sleep(poll_s)
+
+
+def _run_or_resume(
+    svc: Any,
+    backend: Any,
+    experiment_id: str,
+    stem: str,
+    remaining_s: float,
+    receipt_extra: Mapping[str, Any] | None = None,
+) -> Tuple[Dict[str, Any], Dict[str, Any], float]:
+    """Submit one locked campaign once, or resume it, and return (lock, raw payload, QPU s used now).
+
+    - Raw counts on disk: nothing is submitted; they are re-analyzed.
+    - Submission receipt on disk: the job is retrieved by its ID, never resubmitted.
+    - Otherwise: the QPY must match its lock's SHA-256 and the remaining quota must cover
+      QUOTA_SAFETY_FACTOR x the lock's estimate, or nothing is submitted.
+    """
+    lock_path = OUT_DIR / f"{stem}_live_prereg_lock.json"
+    qpy_path = OUT_DIR / f"{stem}_live_pubs.qpy"
+    receipt_path = OUT_DIR / f"{stem}_submission_receipt.json"
+    raw_path = OUT_DIR / f"{stem}_live_raw_counts.json"
+    lock = json.loads(lock_path.read_text())
+    lock["lock_sha256"] = hashlib.sha256(lock_path.read_bytes()).hexdigest()
+
+    if raw_path.exists():
+        return lock, json.loads(raw_path.read_text()), 0.0
+
+    if receipt_path.exists():
+        jid = json.loads(receipt_path.read_text())["job_id"]
+        print(f"[{experiment_id}] Resuming job_id={jid} from its receipt (no resubmission).", flush=True)
+        job = svc.job(jid)
+        n_pubs = int(lock["total_pubs"])
+    else:
+        if hashlib.sha256(qpy_path.read_bytes()).hexdigest() != lock["qpy_sha256"]:
+            raise RuntimeError(f"{experiment_id}: QPY does not match its prereg lock; not submitting")
+        need = QUOTA_SAFETY_FACTOR * float(lock["estimated_qpu_seconds"])
+        if remaining_s < need:
+            raise RuntimeError(
+                f"{experiment_id}: {remaining_s:.0f} s of quota left, need {need:.0f} s "
+                f"({QUOTA_SAFETY_FACTOR}x the {lock['estimated_qpu_seconds']} s estimate); not submitting"
+            )
+        with qpy_path.open("rb") as f:
+            pubs = qpy.load(f)
+        job = SamplerV2(mode=backend).run(pubs, shots=int(lock["shots_per_pub"]))
+        jid = job.job_id()
+        receipt_path.write_text(
             json.dumps(
                 {
-                    "experiment_id": "TESSERACT-MAP-02",
-                    "job_id": t_jid,
+                    "experiment_id": experiment_id,
+                    "job_id": jid,
                     "backend": backend.name,
                     "submitted_utc": datetime.now(timezone.utc).isoformat(),
-                    "prereg_lock_sha256": t_lock["lock_sha256"],
-                    "qpy_sha256": t_lock["qpy_sha256"],
+                    "prereg_lock_sha256": lock["lock_sha256"],
+                    "qpy_sha256": lock["qpy_sha256"],
+                    "quota_remaining_before_s": remaining_s,
+                    **(receipt_extra or {}),
                 },
                 indent=2,
             )
             + "\n"
         )
-        print(f"[TESSERACT-MAP-02] Submitted job_id={t_jid} ({len(t_pubs)} PUBs). Waiting for result...", flush=True)
-        t_res = t_job.result()
-        t_counts = [extract_counts_from_pub_result(t_res[i]) for i in range(len(t_pubs))]
-        t_exec_cal = snapshot_backend_calibration(backend)
-        t_raw_payload = {
-            "job_id": t_jid,
-            "completed_utc": datetime.now(timezone.utc).isoformat(),
-            "post_job_usage": svc.usage(),
-            "execution_time_calibration": t_exec_cal,
-            "pub_counts": t_counts,
-        }
-        t_raw_path.write_text(json.dumps(t_raw_payload) + "\n")
-        print(f"[TESSERACT-MAP-02] Completed job_id={t_jid}! Saved raw counts.", flush=True)
-    else:
-        t_raw_payload = json.loads(t_raw_path.read_text())
-        t_jid = t_raw_payload["job_id"]
-        t_counts = t_raw_payload["pub_counts"]
+        n_pubs = len(pubs)
+        print(f"[{experiment_id}] Submitted job_id={jid} ({n_pubs} PUBs). Waiting for result...", flush=True)
 
-    t_analysis = analyze_tesseract_live_counts(t_lock, t_counts, t_jid)
-    (OUT_DIR / "tesseract_map_02_live_analysis.json").write_text(json.dumps(t_analysis, indent=2) + "\n")
-    print("[TESSERACT-MAP-02] Analysis complete!", flush=True)
-
-    # Check exact remaining quota before submitting CORRELATED-NOISE-01 Stage 1
-    u1 = svc.usage()
-    rem1 = float(u1.get("usage_remaining_seconds", 0))
-    print(f"[Midpoint] OpenPlan remaining after TESSERACT-MAP-02: {rem1}s", flush=True)
-
-    # --- Campaign 2: CORRELATED-NOISE-01 Stage 1 ---
-    c_raw_path = OUT_DIR / "correlated_noise_01_live_raw_counts.json"
-    c_lock = json.loads((OUT_DIR / "correlated_noise_01_live_prereg_lock.json").read_text())
-    c_lock["lock_sha256"] = hashlib.sha256(
-        (OUT_DIR / "correlated_noise_01_live_prereg_lock.json").read_bytes()
-    ).hexdigest()
-
-    if not c_raw_path.exists():
-        with (OUT_DIR / "correlated_noise_01_live_pubs.qpy").open("rb") as f:
-            c_pubs = qpy.load(f)
-        if rem1 < 120.0:
-            raise RuntimeError(f"Remaining OpenPlan seconds ({rem1}s) too low to submit CORRELATED-NOISE-01 safely")
-        sampler = SamplerV2(mode=backend)
-        c_job = sampler.run(c_pubs, shots=int(c_lock["shots_per_pub"]))
-        c_jid = c_job.job_id()
-        (OUT_DIR / "correlated_noise_01_submission_receipt.json").write_text(
-            json.dumps(
-                {
-                    "experiment_id": "CORRELATED-NOISE-01-STAGE1",
-                    "job_id": c_jid,
-                    "backend": backend.name,
-                    "submitted_utc": datetime.now(timezone.utc).isoformat(),
-                    "prereg_lock_sha256": c_lock["lock_sha256"],
-                    "qpy_sha256": c_lock["qpy_sha256"],
-                },
-                indent=2,
-            )
-            + "\n"
-        )
-        print(f"[CORRELATED-NOISE-01] Submitted job_id={c_jid} ({len(c_pubs)} PUBs). Waiting for result...", flush=True)
-        c_res = c_job.result()
-        c_counts = [extract_counts_from_pub_result(c_res[i]) for i in range(len(c_pubs))]
-        c_exec_cal = snapshot_backend_calibration(backend)
-        c_raw_payload = {
-            "job_id": c_jid,
-            "completed_utc": datetime.now(timezone.utc).isoformat(),
-            "post_job_usage": svc.usage(),
-            "execution_time_calibration": c_exec_cal,
-            "pub_counts": c_counts,
-        }
-        c_raw_path.write_text(json.dumps(c_raw_payload) + "\n")
-        print(f"[CORRELATED-NOISE-01] Completed job_id={c_jid}! Saved raw counts.", flush=True)
-    else:
-        c_raw_payload = json.loads(c_raw_path.read_text())
-        c_jid = c_raw_payload["job_id"]
-        c_counts = c_raw_payload["pub_counts"]
-        c_exec_cal = c_raw_payload["execution_time_calibration"]
-
-    c_analysis = analyze_correlated_noise_01_live_counts(c_lock, c_counts, c_exec_cal, c_jid)
-    (OUT_DIR / "correlated_noise_01_live_analysis.json").write_text(json.dumps(c_analysis, indent=2) + "\n")
-    u_end = svc.usage()
+    res = job.result()
+    usage_s = _job_usage_seconds(job)
+    raw = {
+        "job_id": jid,
+        "completed_utc": datetime.now(timezone.utc).isoformat(),
+        "job_usage_seconds": usage_s,
+        "estimated_qpu_seconds": lock["estimated_qpu_seconds"],
+        "post_job_usage": _public_usage(svc.usage()),
+        "execution_time_calibration": snapshot_backend_calibration(backend),
+        "pub_counts": [extract_counts_from_pub_result(res[i]) for i in range(n_pubs)],
+    }
+    raw_path.write_text(json.dumps(raw) + "\n")
     print(
-        f"[Done] Both QPU campaigns completed and analyzed! Final OpenPlan remaining: "
-        f"{u_end.get('usage_remaining_seconds')}s (RU remaining: {u_end.get('usage_remaining_ru')})",
+        f"[{experiment_id}] Completed job_id={jid}: {usage_s} s used "
+        f"(estimate {lock['estimated_qpu_seconds']} s). Raw counts saved.",
         flush=True,
     )
+    return lock, raw, float(usage_s or 0.0)
+
+
+CN01_AMENDMENT_PATH = OUT_DIR / "correlated_noise_01_A3_amendment.json"
+
+
+def verify_cn01_amendment() -> Dict[str, Any]:
+    """Load CN01 analysis amendment A-3 and check it against the lock and the analysis code on disk."""
+    if not CN01_AMENDMENT_PATH.exists():
+        raise RuntimeError(f"CN01 needs analysis amendment A-3 ({CN01_AMENDMENT_PATH.name}); not running it")
+    amendment = json.loads(CN01_AMENDMENT_PATH.read_text())
+    lock_path = OUT_DIR / "correlated_noise_01_live_prereg_lock.json"
+    lock = json.loads(lock_path.read_text())
+    if amendment["base_lock_sha256"] != hashlib.sha256(lock_path.read_bytes()).hexdigest():
+        raise RuntimeError("Amendment A-3 was recorded against a different CN01 prereg lock")
+    if amendment["qpy_sha256"] != lock["qpy_sha256"]:
+        raise RuntimeError("Amendment A-3 was recorded against a different CN01 QPY")
+    for rel, sha in amendment["analysis_files_sha256"].items():
+        if hashlib.sha256((REPO_ROOT / rel).read_bytes()).hexdigest() != sha:
+            raise RuntimeError(f"{rel} has changed since amendment A-3 was recorded")
+    amendment["amendment_sha256"] = hashlib.sha256(CN01_AMENDMENT_PATH.read_bytes()).hexdigest()
+    return amendment
+
+
+def run_live_campaigns(campaigns: Sequence[str]) -> None:
+    svc = connect_service()
+    remaining = _remaining_seconds(svc)
+    print(f"[Start] OpenPlan remaining: {remaining:.0f} s", flush=True)
+    backend = svc.backend("ibm_marrakesh")
+
+    if "tmap02" in campaigns:
+        t_lock, t_raw, t_used = _run_or_resume(svc, backend, "TESSERACT-MAP-02", "tesseract_map_02", remaining)
+        t_analysis = analyze_tesseract_live_counts(t_lock, t_raw["pub_counts"], t_raw["job_id"])
+        (OUT_DIR / "tesseract_map_02_live_analysis.json").write_text(json.dumps(t_analysis, indent=2) + "\n")
+        print("[TESSERACT-MAP-02] Analysis complete.", flush=True)
+        # The usage endpoint can lag a job that just finished, so also subtract what the job reported.
+        remaining = min(_remaining_seconds(svc), remaining - t_used)
+
+    if "cn01" in campaigns:
+        amendment = verify_cn01_amendment()
+        c_lock, c_raw, _ = _run_or_resume(
+            svc, backend, "CORRELATED-NOISE-01-STAGE1", "correlated_noise_01", remaining,
+            receipt_extra={
+                "analysis_amendment": amendment["amendment_id"],
+                "analysis_amendment_sha256": amendment["amendment_sha256"],
+            },
+        )
+        cal = c_raw["execution_time_calibration"]
+        # Primary: amendment A-3. Secondary: the analysis as locked, reported for comparison.
+        primary = a3_inference(
+            cn01_fidelity_arrays_from_counts(c_lock, c_raw["pub_counts"]), c_lock["coupler_cohort"],
+            amendment["train_slots"], cal,
+        )
+        primary = {
+            "experiment_id": "CORRELATED-NOISE-01-STAGE1",
+            "status": "Hardware-observed (primary analysis: amendment A-3)",
+            "job_id": c_raw["job_id"],
+            "backend": c_lock["backend_name"],
+            "prereg_lock_sha256": c_lock["lock_sha256"],
+            "qpy_sha256": c_lock["qpy_sha256"],
+            "analysis_amendment_sha256": amendment["amendment_sha256"],
+            **primary,
+        }
+        (OUT_DIR / "correlated_noise_01_live_analysis_A3.json").write_text(json.dumps(primary, indent=2) + "\n")
+        secondary = analyze_correlated_noise_01_live_counts(c_lock, c_raw["pub_counts"], cal, c_raw["job_id"])
+        secondary["status"] = "Hardware-observed (secondary: the analysis as locked, superseded as primary by A-3)"
+        (OUT_DIR / "correlated_noise_01_live_analysis_locked.json").write_text(json.dumps(secondary, indent=2) + "\n")
+        print(f"[CORRELATED-NOISE-01] A-3 decisions: {primary['decisions']}", flush=True)
+
+    print(f"[Done] OpenPlan remaining: {_remaining_seconds(svc):.0f} s", flush=True)
+
+
+def main() -> None:
+    parser = argparse.ArgumentParser(description="Submit or resume the locked Phase 3 campaigns, then analyze.")
+    parser.add_argument(
+        "--campaign",
+        choices=["tmap02", "cn01", "both"],
+        required=True,
+        help="Which locked campaign(s) to run. Each is submitted at most once; reruns resume or re-analyze.",
+    )
+    args = parser.parse_args()
+    run_live_campaigns(("tmap02", "cn01") if args.campaign == "both" else (args.campaign,))
 
 
 if __name__ == "__main__":
-    run_live_campaigns()
+    main()

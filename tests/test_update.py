@@ -65,6 +65,38 @@ def test_uncommitted_changes_stop_the_update(repos, capsys):
     assert git(local, "rev-parse", "HEAD") == before and "uncommitted changes" in capsys.readouterr().out
 
 
+def test_untracked_files_stop_the_update(repos, capsys):
+    local, other = repos
+    upstream_commit(other)
+    (local / "not tracked.txt").write_text("keep me\n")
+    before = git(local, "rev-parse", "HEAD")
+    assert update_checkout(str(local)) is False
+    output = capsys.readouterr().out
+    assert "uncommitted changes" in output and "not tracked.txt" in output
+    assert git(local, "rev-parse", "HEAD") == before
+
+
+def test_newline_in_untracked_path_does_not_hide_dirty_state(repos, capsys):
+    local, other = repos
+    upstream_commit(other)
+    odd_name = local / "untracked\nname.txt"
+    odd_name.write_text("keep me\n")
+    before = git(local, "rev-parse", "HEAD")
+    assert update_checkout(str(local)) is False
+    assert "untracked\nname.txt" in capsys.readouterr().out
+    assert git(local, "rev-parse", "HEAD") == before
+
+
+def test_non_main_branch_is_never_fast_forwarded(repos, capsys):
+    local, other = repos
+    upstream_commit(other)
+    git(local, "checkout", "-qb", "feature")
+    before = git(local, "rev-parse", "HEAD")
+    assert update_checkout(str(local)) is False
+    assert "limited to main" in capsys.readouterr().out
+    assert git(local, "rev-parse", "HEAD") == before
+
+
 def test_an_up_to_date_checkout_does_not_restart(repos, capsys):
     local, _ = repos
     assert update_checkout(str(local)) is False

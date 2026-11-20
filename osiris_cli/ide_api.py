@@ -18,6 +18,7 @@ Exposure rules, all enforced here:
 from __future__ import annotations
 
 import argparse
+import re
 import hmac
 import ipaddress
 import json
@@ -31,7 +32,7 @@ from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from typing import Any, Callable, Dict, Optional, Tuple
 from urllib.parse import urlparse
 
-API_VERSION = "1.4.0"
+API_VERSION = "1.6.0"
 MAX_BODY = 256 * 1024
 TOKEN_HEADER = "X-OSIRIS-Token"
 TOKEN_PLACEHOLDER = "__OSIRIS_SESSION_TOKEN__"
@@ -78,7 +79,11 @@ class Backend:
                  agent_receipts: Optional[str] = None, agent_model_fn: Optional[Callable[..., Any]] = None,
                  store_factory: Optional[Callable[[], Any]] = None,
                  editor_store_factory: Optional[Callable[[], Any]] = None,
-                 assist_route_fn: Optional[Callable[..., Any]] = None):
+                 assist_route_fn: Optional[Callable[..., Any]] = None,
+                 code_runs_dir: Optional[str] = None, code_receipts: Optional[str] = None):
+        from osiris_cli import code_runs as _code_runs, code_task as _code_task
+        self.code_runs_dir = code_runs_dir or _code_runs.DEFAULT_DIR
+        self.code_receipts = code_receipts or _code_task.DEFAULT_RECEIPTS
         self._editor_store_factory = editor_store_factory
         self._assist_route_fn = assist_route_fn
         self._gateway_factory = gateway_factory
@@ -280,6 +285,115 @@ class Backend:
                 result = {**result, "saved_disposition": saved}
             return result
 
+    # ── governed /code runs (read-only; written by python -m osiris_cli.code_task) ──
+    @staticmethod
+    def _home_label(path: Optional[str]) -> Optional[str]:
+        if not path:
+            return None
+        home = os.path.expanduser("~")
+        real = os.path.realpath(path)
+        return "~" + real[len(home):] if real == home or real.startswith(home + os.sep) else os.path.basename(real)
+
+    def _code_store(self):
+        from osiris_cli.code_runs import RunStore
+        if not os.path.isdir(self.code_runs_dir):
+            return None
+        return RunStore(self.code_runs_dir)
+
+    def code_runs(self) -> Dict[str, Any]:
+        """Newest-first list of code-task runs. Never includes file contents, diffs or command output."""
+        from osiris_cli.code_runs import RunError
+        store = self._code_store()
+        if store is None:
+            return {"available": True, "count": 0, "runs": [], "runs_dir": self._home_label(self.code_runs_dir)}
+        rows = []
+        for name in os.listdir(store.dir):
+            if not name.endswith(".json"):
+                continue
+            try:
+                run = store.load(name[:-5])
+            except (RunError, ValueError, OSError):
+                continue
+            v = run.get("verification") or {}
+            hist = run.get("history") or []
+            rows.append({
+                "run_id": run["run_id"], "state": run["state"],
+                "created_at": run.get("created_at"), "updated_at": hist[-1]["ts"] if hist else run.get("created_at"),
+                "root": self._home_label(run.get("root")),
+                "task_excerpt": (run.get("task") or "")[:200],
+                "model": (run.get("model") or {}).get("resolved"),
+                "critic": (run.get("critic") or {}).get("verdict"),
+                "verification": v.get("decision"), "exit_code": v.get("exit_code"),
+                "files_changed": [a["path"] for a in run.get("applied", []) if a.get("decision") == "GRANTED"],
+                "last_reason": hist[-1].get("reason", "")[:300] if hist else "",
+            })
+        rows.sort(key=lambda r: (r["updated_at"] or "", r["run_id"]), reverse=True)
+        return {"available": True, "count": len(rows), "runs": rows[:200],
+                "runs_dir": self._home_label(self.code_runs_dir)}
+
+    def _receipts_allowed(self, path: Optional[str]) -> bool:
+        if not path:
+            return False
+        real = os.path.realpath(path)
+        allowed = {os.path.realpath(self.code_receipts)}
+        osiris_home = os.path.realpath(os.path.join(os.path.expanduser("~"), ".osiris"))
+        return real in allowed or real.startswith(osiris_home + os.sep)
+
+    def code_run(self, body: Dict[str, Any]) -> Dict[str, Any]:
+        """One run: lifecycle, critic, diffs (capped), verification and its receipts with a chain check."""
+        from osiris_cli.code_runs import RunError
+        from osiris_cli.code_task import summarize
+        from osiris_cli.trio_authz import Receipts
+        run_id = body.get("run_id")
+        if not isinstance(run_id, str) or not re.fullmatch(r"code-[0-9a-f]{12}", run_id):
+            raise ApiError(400, "BAD_RUN_ID", "run_id must look like code-<12 hex>")
+        store = self._code_store()
+        if store is None:
+            raise ApiError(404, "NO_RUN", f"no run {run_id}")
+        try:
+            run = store.load(run_id)
+        except RunError:
+            raise ApiError(404, "NO_RUN", f"no run {run_id}")
+        s = summarize(run)
+        s["root"] = self._home_label(run.get("root"))
+        s.pop("source", None)
+        s["source"] = {k: (run.get("source") or {}).get(k) for k in ("git_head", "git_dirty")}
+        budget = 20_000
+        diffs = []
+        for p in run.get("proposals") or []:
+            d = p.get("diff") or ""
+            diffs.append({"path": p["rel_path"], "diff": d[:budget], "truncated": len(d) > budget,
+                          "before_sha256": p.get("before_sha256"), "after_sha256": p.get("after_sha256")})
+            budget = max(0, budget - len(d))
+        s["diffs"] = diffs
+        if isinstance(s.get("verification"), dict):
+            home = os.path.expanduser("~")
+            v = {k: x for k, x in s["verification"].items() if k != "argv"}
+            for k in ("command", "output_tail"):
+                if isinstance(v.get(k), str):
+                    v[k] = v[k].replace(home + os.sep, "~" + os.sep)
+            s["verification"] = v
+        rpath = run.get("receipts_path")
+        receipts: Dict[str, Any] = {"available": False, "chain_valid": None, "rows": []}
+        if self._receipts_allowed(rpath) and os.path.isfile(rpath):
+            rows = []
+            with open(rpath, encoding="utf-8") as fh:
+                for ln in fh:
+                    if not ln.strip():
+                        continue
+                    try:
+                        r = json.loads(ln)
+                    except ValueError:
+                        continue
+                    if (r.get("payload") or {}).get("run_id") == run_id:
+                        rows.append({k: r.get(k) for k in ("kind", "hash", "prev", "ts")})
+            receipts = {"available": True, "chain_valid": Receipts.verify(rpath), "rows": rows,
+                        "path": self._home_label(rpath)}
+        elif rpath:
+            receipts["reason"] = "receipt file is outside the configured locations"
+        s["receipts"] = receipts
+        return s
+
     def agent_tasks(self) -> Dict[str, Any]:
         from osiris_cli.orchestration import council
         return council.task_receipts(self.agent_receipts)
@@ -411,6 +525,10 @@ class Backend:
         return self._editor_call(lambda s: s.save_file(body.get("user_token"), body.get("file_id"),
                                                        body.get("base_revision"), body.get("content")))
 
+    def files_rename(self, body: Dict[str, Any]) -> Dict[str, Any]:
+        return self._editor_call(lambda s: s.rename_file(body.get("user_token"), body.get("file_id"),
+                                                         body.get("base_revision"), body.get("path")))
+
     def files_delete(self, body: Dict[str, Any]) -> Dict[str, Any]:
         return self._editor_call(lambda s: s.delete_file(body.get("user_token"), body.get("file_id")))
 
@@ -529,6 +647,8 @@ ROUTES = {
     ("GET", "/api/v1/research/experiments"): "experiments",
     ("POST", "/api/v1/agents/task"): "agent_task",
     ("GET", "/api/v1/agents/tasks"): "agent_tasks",
+    ("GET", "/api/v1/code/runs"): "code_runs",
+    ("POST", "/api/v1/code/run"): "code_run",
     ("GET", "/api/v1/store/status"): "store_status",
     ("GET", "/api/v1/store/projects"): "store_projects",
     ("POST", "/api/v1/store/projects"): "store_create_project",
@@ -546,6 +666,7 @@ ROUTES = {
     ("POST", "/api/v1/files/create"): "files_create",
     ("POST", "/api/v1/files/save"): "files_save",
     ("POST", "/api/v1/files/delete"): "files_delete",
+    ("POST", "/api/v1/files/rename"): "files_rename",
     ("POST", "/api/v1/files/run"): "files_run",
     ("POST", "/api/v1/files/runs"): "files_runs",
     ("POST", "/api/v1/notebook/run"): "notebook_run",
@@ -718,7 +839,8 @@ def serve(backend: Backend, *, host: str = "127.0.0.1", port: int = 8765, consol
 
 def default_backend(examples_dir: Optional[str] = None, workspace_dirs: Tuple[str, ...] = (),
                     slice_receipts: Optional[str] = None, github_receipts: Optional[str] = None,
-                    agent_receipts: Optional[str] = None) -> Backend:
+                    agent_receipts: Optional[str] = None, code_runs_dir: Optional[str] = None,
+                    code_receipts: Optional[str] = None) -> Backend:
     from osiris_cli.github_gateway import DEFAULT_RECEIPTS_PATH, GitHubGateway
     from osiris_cli.vertical_slice import DEFAULT_RECEIPTS_PATH as SLICE_DEFAULT
     if examples_dir is None:
@@ -729,7 +851,8 @@ def default_backend(examples_dir: Optional[str] = None, workspace_dirs: Tuple[st
             examples_dir = ""
     return Backend(gateway_factory=lambda: GitHubGateway(receipts_path=github_receipts or DEFAULT_RECEIPTS_PATH),
                    slice_receipts=slice_receipts or SLICE_DEFAULT, examples_dir=examples_dir,
-                   workspace_dirs=workspace_dirs, agent_receipts=agent_receipts)
+                   workspace_dirs=workspace_dirs, agent_receipts=agent_receipts,
+                   code_runs_dir=code_runs_dir, code_receipts=code_receipts)
 
 
 def main(argv=None) -> int:
@@ -742,10 +865,12 @@ def main(argv=None) -> int:
     ap.add_argument("--slice-receipts")
     ap.add_argument("--github-receipts")
     ap.add_argument("--agent-receipts", help="receipt chain for AURA/AIDEN/IRIS tasks (default: beside --slice-receipts)")
+    ap.add_argument("--code-runs-dir", help="governed /code run records (default ~/.osiris/code/runs)")
+    ap.add_argument("--code-receipts", help="receipt chain for /code runs (default ~/.osiris/code/receipts.jsonl)")
     ap.add_argument("--token-file", default=os.path.join(os.path.expanduser("~"), ".osiris", "ide_session.token"))
     a = ap.parse_args(argv)
     backend = default_backend(a.examples_dir, tuple(a.workspace), a.slice_receipts, a.github_receipts,
-                              a.agent_receipts)
+                              a.agent_receipts, a.code_runs_dir, a.code_receipts)
     httpd, _ = serve(backend, host=a.host, port=a.port, console_dir=a.console_dir, token_file=a.token_file)
     print(f"OSIRIS IDE API v{API_VERSION} on http://{a.host}:{httpd.server_address[1]}/  "
           f"(session token in {a.token_file})", flush=True)
