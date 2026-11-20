@@ -48,28 +48,28 @@ class TestTaskSpecContracts:
         spec = self._spec("backlog")
         if self._suite_version() == "v2":
             assert "idempotent" in spec
+            assert "EXISTING story's id" in spec
+            assert "must not store a duplicate" in spec
         else:
             assert "clutters the backlog" in spec  # v1 original
-        assert "EXISTING story's id" in spec
-        assert "must not store a duplicate" in spec
 
     def test_claims_spec_states_whole_number_and_cycle_safe_resolution(self):
         spec = self._spec("claims")
         if self._suite_version() == "v2":
             assert "WHOLE number" in spec
+            assert "3 inside 13" in spec
+            assert "non-recursive" in spec and "cyclic" in spec
         else:
             assert "Catch those" in spec  # v1 original
-        assert "3 inside 13" in spec
-        assert "non-recursive" in spec and "cyclic" in spec
 
     def test_gaps_spec_states_no_length_limit(self):
         spec = self._spec("gaps")
         if self._suite_version() == "v2":
             assert "NO length limit" in spec
+            assert "never truncated" in spec
+            assert "decimal point" in spec
         else:
             assert "comes out whole" in spec  # v1 original
-        assert "never truncated" in spec
-        assert "decimal point" in spec
 
     def test_hidden_acceptance_tests_untouched(self):
         # The audit may tighten prompts only; acceptance/reference/known_bad
