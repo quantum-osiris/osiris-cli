@@ -64,14 +64,15 @@ class TestTaskSpecContracts:
         acc = (TASKS / "gaps" / "acceptance.py").read_text(encoding="utf-8")
         assert "a long gap must come out whole" in acc
 
-    def test_suite_hash_changed_and_recorded(self):
-        # Tightening task.json necessarily changes suite_sha256; the new hash
-        # is what future runs must register (old 09037df63614... runs are not
-        # comparable to the tightened suite).
+    def test_suite_hash_is_a_registered_version(self):
+        # Two registered suite versions exist and are NEVER directly comparable:
+        # v1 = 09037df636145b1e... (pre-#55 specs; restored on main by
+        # fix/benchmark-suite-hash-restore) and v2 = 125a27de6d2fe733... (tightened
+        # specs, preserved on benchmark-suite-v2-candidate). Whichever is on disk
+        # must be one of the two; results must be attributed to that version.
         import osiris_bench
-        assert osiris_bench.suite_sha256() != "09037df636145b1e" + "0" * 0 or True  # full hash below
         full = osiris_bench.suite_sha256()
-        assert full.startswith("125a27de6d2fe733"), full
+        assert full.startswith("09037df636145b1e") or full.startswith("125a27de6d2fe733"), full
 
 
 # ── RTX 5050 harness ─────────────────────────────────────────────────────────
