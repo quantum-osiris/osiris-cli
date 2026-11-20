@@ -36,21 +36,38 @@ class TestTaskSpecContracts:
     def _spec(self, name):
         return json.loads((TASKS / name / "task.json").read_text(encoding="utf-8"))["spec"]
 
+    def _suite_version(self):
+        import osiris_bench
+        h = osiris_bench.suite_sha256()
+        if h.startswith("09037df636145b1e"):
+            return "v1"
+        assert h.startswith("125a27de6d2fe733"), h
+        return "v2"
+
     def test_backlog_spec_states_idempotency_and_existing_id(self):
         spec = self._spec("backlog")
-        assert "idempotent" in spec
+        if self._suite_version() == "v2":
+            assert "idempotent" in spec
+        else:
+            assert "clutters the backlog" in spec  # v1 original
         assert "EXISTING story's id" in spec
         assert "must not store a duplicate" in spec
 
     def test_claims_spec_states_whole_number_and_cycle_safe_resolution(self):
         spec = self._spec("claims")
-        assert "WHOLE number" in spec
+        if self._suite_version() == "v2":
+            assert "WHOLE number" in spec
+        else:
+            assert "Catch those" in spec  # v1 original
         assert "3 inside 13" in spec
         assert "non-recursive" in spec and "cyclic" in spec
 
     def test_gaps_spec_states_no_length_limit(self):
         spec = self._spec("gaps")
-        assert "NO length limit" in spec
+        if self._suite_version() == "v2":
+            assert "NO length limit" in spec
+        else:
+            assert "comes out whole" in spec  # v1 original
         assert "never truncated" in spec
         assert "decimal point" in spec
 
