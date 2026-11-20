@@ -1,0 +1,7 @@
+{
+  "job_id": "dc0apq2nj2vs73ddo74g",
+  "backend": "ibm_marrakesh",
+  "submitted_utc": "2026-11-20T20:26:19.416592+00:00",
+  "quota_remaining_before_s": 598.0,
+  "stage": "probe"
+}

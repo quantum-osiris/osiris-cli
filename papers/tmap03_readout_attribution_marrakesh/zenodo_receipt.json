@@ -1,7 +1,7 @@
 {
   "paper": "tmap03",
   "deposition_id": 24406525,
-  "state": "draft",
+  "state": "published",
   "files": {
     "tmap03_readout_attribution_marrakesh.pdf": "975187d87c83f66f2bf6abee3bc02d85fe891e797a1cd4d9a575674c5bb1bd79",
     "tmap03_readout_attribution_marrakesh.tex": "918e596ba1869ec05b520b486760c2ae83e70979b84b1b9727c1076be7181c8d",
@@ -36,5 +36,8 @@
   },
   "draft_html": "https://zenodo.org/deposit/24406525",
   "prereserved_doi": "10.5281/zenodo.24406525",
-  "drafted_utc": "2026-11-20T20:16:57.017060+00:00"
+  "drafted_utc": "2026-11-20T20:16:57.017060+00:00",
+  "doi": "10.5281/zenodo.24406525",
+  "record_url": "https://zenodo.org/record/24406525",
+  "published_utc": "2026-11-20T20:23:53.635698+00:00"
 }

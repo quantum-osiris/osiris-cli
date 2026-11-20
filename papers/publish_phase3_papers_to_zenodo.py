@@ -244,6 +244,90 @@ PAPERS = {
                          "IBM Heron r2", "ibm_marrakesh", "preregistration", "TESSERACT-MAP-03"],
         },
     },
+    "tmap04pre": {
+        "dir": ROOT / "papers" / "tmap04_prereg",
+        "related": [{"identifier": "10.5281/zenodo.24406525", "relation": "continues", "scheme": "doi"}],
+        "files": [
+            ("phase3/TESSERACT_MAP_04_PREREGISTRATION.md", None),
+            ("phase3/tesseract_map_04.py", None),
+            ("phase3/tesseract_map_03.py", None),
+            ("phase2/tesseract_map_02/tesseract_map_02.py", None),
+        ],
+        "meta": {
+            "title": ("Preregistration: TESSERACT-MAP-04, does a per-job readout probe choose better qubits than "
+                      "published calibration? Three IBM Heron r2 processors"),
+            "description": (
+                "<p>Published before any MAP-04 job. Follows TESSERACT-MAP-03 (doi:10.5281/zenodo.24406525), where "
+                "a qubit on the calibration-ranked best path read |0&gt; as 1 in 54% of shots while IBM listed ~1%. "
+                "Per backend (ibm_marrakesh primary; ibm_fez, ibm_kingston replications): a 6-PUB all-0/all-1 readout "
+                "probe on every qubit, then a 60-PUB main job comparing a 40-qubit chain on the probe-ranked best path, "
+                "the calibration-ranked best path (MAP-02 rule), Qiskit's stock level-3 layout, and the probe-ranked "
+                "median path. Contrasts L1&ndash;L4 (Holm), decision rules, and the exact selection/analysis code are "
+                "included.</p>"
+            ),
+            "keywords": ["preregistration", "qubit layout", "readout error", "calibration drift", "IBM Heron r2",
+                         "ibm_marrakesh", "ibm_fez", "ibm_kingston", "TESSERACT-MAP-04"],
+        },
+    },
+    "tmap04": {
+        "dir": ROOT / "papers" / "tmap04_probe_guided_layout",
+        "related": [{"identifier": "10.5281/zenodo.24406640", "relation": "isSupplementTo", "scheme": "doi"},
+                    {"identifier": "10.5281/zenodo.24406525", "relation": "continues", "scheme": "doi"}],
+        "files": [
+            ("papers/tmap04_probe_guided_layout/tmap04_probe_guided_layout.pdf", None),
+            ("papers/tmap04_probe_guided_layout/tmap04_probe_guided_layout.tex", None),
+            ("papers/tmap04_probe_guided_layout/generated.tex", None),
+            ("papers/tmap04_probe_guided_layout/generate_tables.py", None),
+            ("phase3/TESSERACT_MAP_04_PREREGISTRATION.md", None),
+            ("phase3/tesseract_map_04.py", None),
+            ("docs/phase4/tesseract_map_04_ibm_fez_live_analysis.json", None),
+            ("docs/phase4/tesseract_map_04_ibm_fez_live_prereg_lock.json", None),
+            ("docs/phase4/tesseract_map_04_ibm_fez_live_pubs.qpy", None),
+            ("docs/phase4/tesseract_map_04_ibm_fez_live_raw_counts.json", None),
+            ("docs/phase4/tesseract_map_04_ibm_fez_probe_raw_counts.json", None),
+            ("docs/phase4/tesseract_map_04_ibm_fez_probe_readout.json", None),
+            ("docs/phase4/tesseract_map_04_ibm_fez_probe_receipt.json", None),
+            ("docs/phase4/tesseract_map_04_ibm_fez_probe_time_calibration.json", None),
+            ("docs/phase4/tesseract_map_04_ibm_fez_submission_receipt.json", None),
+            ("docs/phase4/tesseract_map_04_ibm_kingston_live_analysis.json", None),
+            ("docs/phase4/tesseract_map_04_ibm_kingston_live_prereg_lock.json", None),
+            ("docs/phase4/tesseract_map_04_ibm_kingston_live_pubs.qpy", None),
+            ("docs/phase4/tesseract_map_04_ibm_kingston_live_raw_counts.json", None),
+            ("docs/phase4/tesseract_map_04_ibm_kingston_probe_raw_counts.json", None),
+            ("docs/phase4/tesseract_map_04_ibm_kingston_probe_readout.json", None),
+            ("docs/phase4/tesseract_map_04_ibm_kingston_probe_receipt.json", None),
+            ("docs/phase4/tesseract_map_04_ibm_kingston_probe_time_calibration.json", None),
+            ("docs/phase4/tesseract_map_04_ibm_kingston_submission_receipt.json", None),
+            ("docs/phase4/tesseract_map_04_ibm_marrakesh_live_analysis.json", None),
+            ("docs/phase4/tesseract_map_04_ibm_marrakesh_live_prereg_lock.json", None),
+            ("docs/phase4/tesseract_map_04_ibm_marrakesh_live_pubs.qpy", None),
+            ("docs/phase4/tesseract_map_04_ibm_marrakesh_live_raw_counts.json", None),
+            ("docs/phase4/tesseract_map_04_ibm_marrakesh_probe_raw_counts.json", None),
+            ("docs/phase4/tesseract_map_04_ibm_marrakesh_probe_readout.json", None),
+            ("docs/phase4/tesseract_map_04_ibm_marrakesh_probe_receipt.json", None),
+            ("docs/phase4/tesseract_map_04_ibm_marrakesh_probe_time_calibration.json", None),
+            ("docs/phase4/tesseract_map_04_ibm_marrakesh_submission_receipt.json", None),
+        ],
+        "meta": {
+            "title": ("A per-job readout probe rescues qubit selection on one IBM Heron r2 processor and hurts it on "
+                      "another: a preregistered three-device test (TESSERACT-MAP-04)"),
+            "description": (
+                "<p>Preregistered (doi:10.5281/zenodo.24406640) test on ibm_marrakesh, ibm_fez and ibm_kingston "
+                "(6 jobs, 121 s QPU) of ranking 40-qubit paths with a few-second all-qubit readout probe instead of "
+                "IBM's published readout errors.</p><ul>"
+                "<li>ibm_marrakesh: probe path won by +25.0 pp (F_cl 0.313 vs 0.063); the calibration path again used "
+                "qubit 46 (probe 34% readout error, listed 1.1%).</li>"
+                "<li>ibm_fez: probe path lost by 3.6 pp; Qiskit's stock layout was best.</li>"
+                "<li>ibm_kingston: no difference, despite a 20% readout qubit listed at 1.0% on the calibration path.</li>"
+                "<li>After readout mitigation the calibration-ranked path was better on all three devices.</li></ul>"
+                "<p>Verdict by the preregistered rule: helps on 1 of 3 devices; does not generalise. Undisclosed "
+                "readout faults were present on 2 of 3 processors. Record contains paper, source, probe and main-job "
+                "counts, calibrations, locks, QPYs, analyses and code.</p>"
+            ),
+            "keywords": ["qubit layout", "readout error", "calibration drift", "IBM Heron r2", "ibm_marrakesh",
+                         "ibm_fez", "ibm_kingston", "preregistration", "TESSERACT-MAP-04"],
+        },
+    },
 }
 
 
