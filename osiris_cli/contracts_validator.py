@@ -94,14 +94,26 @@ def _json_type_matches(val: Any, expected: str) -> bool:
 
 def _validate_node(val: Any, schema: Mapping[str, Any], path: str, violations: List[Dict[str, str]]) -> None:
     expected_type = schema.get("type")
-    if isinstance(expected_type, str) and not _json_type_matches(val, expected_type):
-        violations.append({"field": path or "$", "issue": f"Expected type '{expected_type}'"})
-        return
+    if isinstance(expected_type, str):
+        if not _json_type_matches(val, expected_type):
+            violations.append({"field": path or "$", "issue": f"Expected type '{expected_type}'"})
+            return
+    elif isinstance(expected_type, list):
+        if not any(isinstance(t, str) and _json_type_matches(val, t) for t in expected_type):
+            violations.append({"field": path or "$", "issue": f"Expected one of types {expected_type!r}"})
+            return
 
     if "const" in schema and val != schema["const"]:
         violations.append({"field": path or "$", "issue": f"Must equal constant {schema['const']!r}"})
     if "enum" in schema and val not in schema["enum"]:
         violations.append({"field": path or "$", "issue": f"Value {val!r} not in allowed enum {schema['enum']}"})
+
+    not_schema = schema.get("not")
+    if isinstance(not_schema, Mapping):
+        sub_violations: List[Dict[str, str]] = []
+        _validate_node(val, not_schema, path, sub_violations)
+        if not sub_violations:
+            violations.append({"field": path or "$", "issue": "Value matched prohibited 'not' schema"})
 
     if isinstance(val, str):
         if "minLength" in schema and len(val) < int(schema["minLength"]):
