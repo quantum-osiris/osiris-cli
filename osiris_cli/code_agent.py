@@ -153,6 +153,59 @@ class Denied(Exception):
     """A tool call refused by policy; its message goes back to the model verbatim."""
 
 
+#: Environment names that look like credentials. They are removed from every child
+#: process the loop starts, so an approved `env`/`printenv` cannot hand a key to the model.
+_SECRET_ENV_NAME = re.compile(r"KEY|TOKEN|SECRET|PASSW|CREDENTIAL|PRIVATE|AUTH|COOKIE|SESSION|_PAT$", re.I)
+
+
+def child_env(base: Optional[Dict[str, str]] = None) -> Dict[str, str]:
+    """A copy of the environment without credential-shaped variables."""
+    src = os.environ if base is None else base
+    return {k: v for k, v in src.items() if not _SECRET_ENV_NAME.search(k)}
+
+
+#: A final answer that says a file was changed. Checked against apply_write receipts.
+_EDIT_CLAIM = re.compile(
+    r"\b(?:I(?:'ve|\s+have)?|(?:has|have)\s+been|was|were|is\s+now|successfully)\s+"
+    r"(?:\w+\s+){0,2}?(?:edited|updated|modified|written|wrote|created|fixed|applied|changed|"
+    r"patched|saved|replaced|rewrote|rewritten)\b",
+    re.IGNORECASE,
+)
+
+
+def edit_claims(answer: str) -> List[str]:
+    """Sentences in `answer` that assert a file change (lossless, at most 10, 200 chars each)."""
+    out: List[str] = []
+    for sentence in re.split(r"(?<=[.!?])\s+|\n+", answer or ""):
+        if _EDIT_CLAIM.search(sentence) and not re.search(r"\b(?:not|never|no)\b", sentence, re.I):
+            out.append(sentence.strip()[:200])
+            if len(out) >= 10:
+                break
+    return out
+
+
+def vet_argv(command: str) -> List[str]:
+    """Parse one command (no shell) and refuse shell syntax, destructive and account programs."""
+    try:
+        argv = shlex.split(str(command))
+    except ValueError as exc:
+        raise Denied(f"cannot parse command: {exc}")
+    if not argv:
+        raise Denied("empty command")
+    shell_bits = [t for t in argv if t in _SHELL_ONLY_TOKENS or t.startswith("$(")]
+    if shell_bits:
+        raise Denied(f"shell syntax {shell_bits} is not supported: one program, no shell")
+    if any(rx.search(os.path.basename(argv[0])) for rx in _DANGEROUS):
+        raise Denied(f"'{argv[0]}' is not allowed from the tool loop")
+    account = _account_action(argv)
+    if account:
+        raise Denied(f"{account}; the tool loop never runs these. If you mean it, run it yourself in a terminal.")
+    return argv
+
+
+_MAX_VERIFY_OUTPUT = 4000
+
+
 # ── Text tool calls ──────────────────────────────────────────────────────────
 
 _FENCE = re.compile(r"```(?:json)?[ \t]*\n(.*?)```", re.DOTALL | re.IGNORECASE)
@@ -231,6 +284,8 @@ class CodeResult:
     resolved_model: Optional[str] = None
     resolved_digest: Optional[str] = None
     receipt_hash: Optional[str] = None
+    #: Sentences in the answer that claim a file change no apply_write receipt backs.
+    unbacked_claims: List[str] = field(default_factory=list)
 
 
 def _digest(payload: Dict[str, Any]) -> str:
@@ -258,8 +313,11 @@ class CodeAgent:
         max_writes: int = 1,
         installed_fn: Optional[Callable[[], Dict[str, str]]] = None,
         receipts_path: Optional[str] = None,
+        write_nudges: int = 0,
+        enclave: Optional[Any] = None,
     ):
         self.root = os.path.realpath(root or os.getcwd())
+        self._enclave = enclave
         env_model = os.environ.get("OSIRIS_CODE_MODEL", "").strip() or None
         self._pinned_model: Optional[str] = model or env_model
         self.model = self._pinned_model or DEFAULT_MODEL
@@ -274,11 +332,17 @@ class CodeAgent:
         self.max_writes = max(1, int(max_writes))
         self._installed_fn = installed_fn
         self.receipts_path = receipts_path
+        #: Times the runner may tell a model that answered without write_file that nothing
+        #: changed (bounded, recorded as a RETRY decision). 0 for the REPL.
+        self.write_nudges = max(0, int(write_nudges))
         self.decisions: List[Dict[str, Any]] = []
         self._wrote = False
         self._pending_proposal: Optional[Dict[str, Any]] = None
         self._pending_proposals: Dict[str, Dict[str, Any]] = {}
         self.resolved_digest: Optional[str] = None
+        self.run_id: str = ""
+        self.last_status: str = ""
+        self.last_answer: str = ""
 
     # ── model ────────────────────────────────────────────────────────────────
     def _preflight_live_model(self) -> Optional[Tuple[str, str]]:
@@ -333,7 +397,8 @@ class CodeAgent:
             return {"error": resp.error}
         return {"content": resp.content, "tool_calls": resp.tool_calls or []}
 
-    def _record_receipt(self, run_id: str, task: str, status: str, error: str = "") -> Optional[str]:
+    def _record_receipt(self, run_id: str, task: str, status: str, error: str = "",
+                        unbacked: Optional[List[str]] = None) -> Optional[str]:
         if not self.receipts_path:
             return None
         from osiris_cli.trio_authz import Receipts
@@ -349,13 +414,20 @@ class CodeAgent:
             "status": status,
             "error": error[:400] if error else "",
             "decisions": list(self.decisions),
+            "unbacked_claims": list(unbacked or []),
         })
         return row["hash"]
 
+    def _applied_writes(self) -> List[Dict[str, Any]]:
+        return [d for d in self.decisions if d.get("tool") == "apply_write" and d.get("decision") == "GRANTED"]
+
     def _finish(self, run_id: str, task: str, answer: str, status: str, error: str = "") -> CodeResult:
-        r_hash = self._record_receipt(run_id, task, status, error)
+        unbacked = edit_claims(answer) if status == "SUCCESS" and not self._applied_writes() else []
+        self.run_id, self.last_status, self.last_answer = run_id, status, answer
+        r_hash = self._record_receipt(run_id, task, status, error, unbacked)
         resolved = self.model if status not in ("UNAVAILABLE", "MODEL_UNAVAILABLE") else None
         return CodeResult(
+            unbacked_claims=unbacked,
             answer=answer,
             status=status,
             decisions=self.decisions,
@@ -379,12 +451,40 @@ class CodeAgent:
         if existed_now != prop["existed_at_proposal"] or current_sha != prop["before_sha256"]:
             self._pending_proposal = None
             raise Denied("target file changed on disk since the proposal was generated; refusing stale apply")
-        if not approve(prop):
+        enclave = self._get_enclave()
+        write_schema = {
+            "action": "code.apply_writes",
+            "files": [{"rel_path": prop["rel_path"], "before_sha256": prop["before_sha256"], "after_sha256": prop["after_sha256"]}],
+            "root": self.root,
+        }
+        write_digest = _digest(write_schema)
+        write_scope = ["code.apply_writes", self.root, prop["rel_path"]]
+        from osiris_cli.pqc_enclave import ApprovalDeniedError
+        try:
+            pqc_grant = enclave.request_approved_grant(
+                action="code.apply_writes",
+                scope=write_scope,
+                summary=f"Apply {prop['rel_path']} ({(prop['before_sha256'] or 'new')[:10]}->{prop['after_sha256'][:10]})",
+                payload_sha256=write_digest,
+                operation_schema=write_schema,
+                confirm=lambda _prompt: bool(approve(prop)),
+                out=self._out,
+            )
+        except ApprovalDeniedError:
             rec = {"tool": "apply_write", "decision": "DENIED", "path": prop["rel_path"],
                    "after_sha256": prop["after_sha256"], "reason": "operator declined patch"}
             self.decisions.append(rec)
             self._log("CODE_TOOL", rec)
             return rec
+        ok_g, why_g = enclave.verify_grant_integrity(
+            pqc_grant,
+            expected_payload_sha256=write_digest,
+            expected_scope=write_scope,
+            expected_event_type="code.apply_writes",
+            consume=True,
+        )
+        if not ok_g:
+            raise Denied(f"grant verification failed: {why_g}")
         os.makedirs(os.path.dirname(target), exist_ok=True)
         tmp = f"{target}.osiris-tmp-{uuid.uuid4().hex[:8]}"
         data = prop["content"].encode("utf-8")
@@ -402,6 +502,8 @@ class CodeAgent:
             "path": prop["rel_path"],
             "before_sha256": prop["before_sha256"],
             "after_sha256": _sha256_bytes(open(target, "rb").read()),
+            "grant_id": pqc_grant["grant_id"],
+            "key_fingerprint": pqc_grant["key_fingerprint"],
         }
         self.decisions.append(rec)
         self._log("CODE_TOOL", rec)
@@ -426,7 +528,27 @@ class CodeAgent:
                 self._pending_proposal = None
                 self._wrote = False
                 raise Denied(f"target file '{prop['rel_path']}' changed on disk since proposal; refusing stale batch apply")
-        if not approve(proposals):
+        enclave = self._get_enclave()
+        ordered = sorted(proposals, key=lambda p: str(p["rel_path"]))
+        batch_schema = {
+            "action": "code.apply_writes",
+            "files": [{"rel_path": p["rel_path"], "before_sha256": p["before_sha256"], "after_sha256": p["after_sha256"]} for p in ordered],
+            "root": self.root,
+        }
+        batch_digest = _digest(batch_schema)
+        batch_scope = ["code.apply_writes", self.root, *[p["rel_path"] for p in ordered]]
+        from osiris_cli.pqc_enclave import ApprovalDeniedError
+        try:
+            pqc_grant = enclave.request_approved_grant(
+                action="code.apply_writes",
+                scope=batch_scope,
+                summary=f"Apply {len(ordered)} staged file(s): " + ", ".join(p["rel_path"] for p in ordered),
+                payload_sha256=batch_digest,
+                operation_schema=batch_schema,
+                confirm=lambda _prompt: bool(approve(proposals)),
+                out=self._out,
+            )
+        except ApprovalDeniedError:
             records = []
             for prop in proposals:
                 rec = {"tool": "apply_write", "decision": "DENIED", "path": prop["rel_path"],
@@ -435,6 +557,16 @@ class CodeAgent:
                 self._log("CODE_TOOL", rec)
                 records.append(rec)
             return records
+
+        ok_g, why_g = enclave.verify_grant_integrity(
+            pqc_grant,
+            expected_payload_sha256=batch_digest,
+            expected_scope=batch_scope,
+            expected_event_type="code.apply_writes",
+            consume=True,
+        )
+        if not ok_g:
+            raise Denied(f"grant verification failed: {why_g}")
 
         records = []
         for prop in proposals:
@@ -453,6 +585,8 @@ class CodeAgent:
                 "path": prop["rel_path"],
                 "before_sha256": prop["before_sha256"],
                 "after_sha256": _sha256_bytes(open(target, "rb").read()),
+                "grant_id": pqc_grant["grant_id"],
+                "key_fingerprint": pqc_grant["key_fingerprint"],
             }
             self.decisions.append(rec)
             self._log("CODE_TOOL", rec)
@@ -467,8 +601,8 @@ class CodeAgent:
         self._wrote = False
         return records
 
-    def run(self, task: str) -> CodeResult:
-        run_id = f"code-{uuid.uuid4().hex[:12]}"
+    def run(self, task: str, run_id: Optional[str] = None) -> CodeResult:
+        run_id = run_id or f"code-{uuid.uuid4().hex[:12]}"
         if self._live_ollama:
             fail = self._preflight_live_model()
             if fail is not None:
@@ -492,6 +626,18 @@ class CodeAgent:
             origin = "native"
             if not calls and text_tool_calls_enabled(self.model):
                 calls, origin = parse_text_tool_calls(content), "text"
+            if not calls and self.write_nudges and not self._pending_proposals and not self._applied_writes():
+                self.write_nudges -= 1
+                retry = {"tool": "runner", "decision": "RETRY",
+                         "reason": "answer without a write_file call while a change is required"}
+                self.decisions.append(retry)
+                self._log("CODE_TOOL", retry)
+                self._out("\033[33m  ↻ no write_file call: nothing changed; asking the model once more\033[0m")
+                messages.append({"role": "assistant", "content": content})
+                messages.append({"role": "user", "content": (
+                    "RUNNER: no file was changed. A diff or code block in your reply is not a change. "
+                    "Call the write_file tool now with the path and the complete new file content.")})
+                continue
             if not calls:
                 return self._finish(run_id, task, content or "(no answer)", "SUCCESS")
             messages.append({"role": "assistant", "content": content, "tool_calls": calls})
@@ -684,20 +830,7 @@ class CodeAgent:
         from osiris.substrate import interactive_timeout_s
         from osiris_cli.orchestration.schemas import ExecutionGrant
 
-        try:
-            argv = shlex.split(str(command))
-        except ValueError as exc:
-            raise Denied(f"cannot parse command: {exc}")
-        if not argv:
-            raise Denied("empty command")
-        shell_bits = [t for t in argv if t in _SHELL_ONLY_TOKENS or t.startswith("$(")]
-        if shell_bits:
-            raise Denied(f"shell syntax {shell_bits} is not supported: one program, no shell")
-        if any(rx.search(os.path.basename(argv[0])) for rx in _DANGEROUS):
-            raise Denied(f"'{argv[0]}' is not allowed from the tool loop")
-        account = _account_action(argv)
-        if account:
-            raise Denied(f"{account}; the tool loop never runs these. If you mean it, run it yourself in a terminal.")
+        argv = vet_argv(command)
         work = self._confine(cwd)
 
         resolved_bin = self._resolve_command_binary(argv[0], work)
@@ -721,25 +854,48 @@ class CodeAgent:
 
         payload = {"argv": argv, "cwd": work}
         digest = _digest(payload)
-        if not self._confirm(f"Run `{shlex.join(argv)}` in {work}? [y/N] "):
+        cmd_scope = ["SUBPROCESS_EXEC", work]
+        enclave = self._get_enclave()
+        from osiris_cli.pqc_enclave import ApprovalDeniedError
+        try:
+            pqc_grant = enclave.request_approved_grant(
+                action="code.run_command",
+                scope=cmd_scope,
+                summary=f"Run `{shlex.join(argv)}` in {work}",
+                payload_sha256=digest,
+                operation_schema=payload,
+                confirm=self._confirm,
+                out=self._out,
+                prompt=f"Run `{shlex.join(argv)}` in {work}? [y/N] ",
+                ttl_seconds=60.0,
+            )
+        except ApprovalDeniedError:
             raise Denied("the user did not approve this command")
         now = time.time()
-        grant = ExecutionGrant(grant_id=f"grant-{uuid.uuid4().hex[:12]}", payload_digest=digest,
+        grant = ExecutionGrant(grant_id=pqc_grant["grant_id"], payload_digest=digest,
                                authorized_by="operator", authorized_at=now, expires_at=now + 60,
-                               scope=["SUBPROCESS_EXEC", work])
+                               scope=cmd_scope)
         horizon = interactive_timeout_s()
         try:
             limit = min(float(timeout), horizon) if timeout else horizon
         except (TypeError, ValueError):
             limit = horizon
-        # Verified against the exact argv/cwd about to run, not what was asked about.
-        if not grant.is_valid(_digest({"argv": argv, "cwd": work})):
-            raise Denied("execution grant no longer matches the command")
+        # Verified cryptographically against the exact argv/cwd about to run, and consumed once.
+        recomputed_digest = _digest({"argv": argv, "cwd": work})
+        ok_pqc, why_pqc = enclave.verify_grant_integrity(
+            pqc_grant,
+            expected_payload_sha256=recomputed_digest,
+            expected_scope=cmd_scope,
+            expected_event_type="code.run_command",
+            consume=True,
+        )
+        if not ok_pqc or not grant.is_valid(recomputed_digest):
+            raise Denied(f"execution grant verification failed: {why_pqc}")
         try:
             proc = subprocess.Popen(
                 argv, shell=False, cwd=work, stdin=subprocess.DEVNULL,
                 stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True,
-                start_new_session=True,
+                start_new_session=True, env=child_env(),
             )
         except FileNotFoundError:
             raise Denied(f"program not found: {argv[0]}")
@@ -751,16 +907,153 @@ class CodeAgent:
             except OSError:
                 proc.kill()
             proc.communicate()
-            return f"TIMEOUT after {limit:.0f}s", {"grant_id": grant.grant_id, "digest": digest, "timed_out": True}
+            return f"TIMEOUT after {limit:.0f}s", {
+                "grant_id": grant.grant_id,
+                "key_fingerprint": pqc_grant["key_fingerprint"],
+                "digest": digest,
+                "timed_out": True,
+            }
         out = stdout + (f"\n[stderr]\n{stderr}" if stderr.strip() else "")
         return (out or f"(exit code {proc.returncode}, no output)"), {
             "grant_id": grant.grant_id,
+            "key_fingerprint": pqc_grant["key_fingerprint"],
             "digest": digest,
             "exit_code": proc.returncode,
             "stdout_sha256": _sha256_bytes(stdout.encode("utf-8")),
             "stderr_sha256": _sha256_bytes(stderr.encode("utf-8")),
         }
 
+    def _get_enclave(self):
+        if self._enclave is None:
+            from osiris_cli.pqc_enclave import PQCEnclaveGate
+            self._enclave = PQCEnclaveGate()
+        return self._enclave
+
+
+    # ── acceptance gate ──────────────────────────────────────────────────────
+    def verify(self, command: str, *, require_change: bool = True,
+               timeout: float = 600.0) -> Dict[str, Any]:
+        """Run the operator's acceptance command and decide the task's disposition.
+
+        The model never calls this and its answer never counts as evidence. VERIFIED needs
+        all of: the run ended SUCCESS; no proposal is still unapplied; at least one applied
+        write when ``require_change``; every applied file still has the hash recorded at
+        apply time; and the acceptance command exits 0 within ``timeout``. Anything else is
+        FAILED or BLOCKED with the reasons listed. The result is receipted when receipts are on.
+        """
+        gate: List[Tuple[str, str]] = []
+        if self.last_status != "SUCCESS":
+            gate.append(("BLOCKED", f"run ended {self.last_status or 'NOT_RUN'}, not SUCCESS"))
+        if self._pending_proposals:
+            gate.append(("BLOCKED", f"{len(self._pending_proposals)} proposed write(s) not applied"))
+        applied = self._applied_writes()
+        record = verify_applied(self.root, applied, command, require_change=require_change,
+                                timeout=timeout, gate=gate, run_id=self.run_id,
+                                unbacked=edit_claims(self.last_answer) if not applied else [])
+        self.decisions.append({k: v for k, v in record.items() if k != "output_tail"})
+        self._log("CODE_VERIFY", {k: v for k, v in record.items() if k != "output_tail"})
+        if self.receipts_path:
+            record["receipt_hash"] = append_receipt(
+                self.receipts_path, "code.agent.verify", {k: v for k, v in record.items() if k != "output_tail"})
+        return record
+
+
+# ── verification (shared by CodeAgent.verify and resumed headless runs) ───────
+
+def append_receipt(path: str, kind: str, payload: Dict[str, Any]) -> str:
+    from osiris_cli.trio_authz import Receipts
+
+    os.makedirs(os.path.dirname(os.path.abspath(path)), exist_ok=True)
+    return Receipts(path).append(kind, payload)["hash"]
+
+
+def file_sha256(path: str) -> Optional[str]:
+    return _sha256_bytes(open(path, "rb").read()) if os.path.isfile(path) else None
+
+
+def atomic_write(target: str, data: bytes) -> None:
+    os.makedirs(os.path.dirname(target) or ".", exist_ok=True)
+    tmp = f"{target}.osiris-tmp-{uuid.uuid4().hex[:8]}"
+    with open(tmp, "wb") as f:
+        f.write(data)
+        f.flush()
+        os.fsync(f.fileno())
+    os.replace(tmp, target)
+
+
+def run_acceptance(root: str, command: str, timeout: float) -> Dict[str, Any]:
+    """Run one vetted acceptance command in ``root`` (no shell, credential-free env,
+    process group killed on timeout). Raises Denied when the command is refused."""
+    argv = vet_argv(command)
+    rec: Dict[str, Any] = {"argv": argv}
+    started = time.time()
+    try:
+        proc = subprocess.Popen(argv, shell=False, cwd=root, stdin=subprocess.DEVNULL,
+                                stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True,
+                                errors="replace", start_new_session=True, env=child_env())
+    except OSError as exc:
+        rec["start_error"] = f"{type(exc).__name__}: {exc}"
+        return rec
+    try:
+        output, _ = proc.communicate(timeout=timeout)
+        rec["exit_code"] = proc.returncode
+    except BaseException as exc:  # timeout, or Ctrl-C: never leave the test tree running
+        try:
+            os.killpg(proc.pid, signal.SIGKILL)
+        except OSError:
+            proc.kill()
+        output, _ = proc.communicate()
+        if not isinstance(exc, subprocess.TimeoutExpired):
+            raise
+        rec["exit_code"] = None
+        rec["timed_out"] = True
+    output = output or ""
+    rec["elapsed_s"] = round(time.time() - started, 3)
+    rec["output_sha256"] = _sha256_bytes(output.encode("utf-8"))
+    rec["output_bytes"] = len(output.encode("utf-8"))
+    rec["output_tail"] = output[-_MAX_VERIFY_OUTPUT:]
+    return rec
+
+
+def verify_applied(root: str, applied: List[Dict[str, Any]], command: str, *, require_change: bool = True,
+                   timeout: float = 600.0, gate: Optional[List[Tuple[str, str]]] = None,
+                   run_id: str = "", unbacked: Optional[List[str]] = None) -> Dict[str, Any]:
+    """Decide VERIFIED / FAILED / BLOCKED for writes already applied under ``root``.
+
+    ``applied`` rows need ``path`` (relative) and ``after_sha256``. ``gate`` carries
+    (disposition, reason) pairs the caller already knows; the command runs only when no
+    reason has been found yet.
+    """
+    reasons = [r for _, r in (gate or [])]
+    disposition = "BLOCKED" if any(d == "BLOCKED" for d, _ in (gate or [])) else "VERIFIED"
+    files = []
+    for d in applied:
+        now = file_sha256(os.path.join(root, d["path"]))
+        files.append({"path": d["path"], "applied_sha256": d["after_sha256"], "disk_sha256": now})
+        if now != d["after_sha256"]:
+            reasons.append(f"{d['path']} changed after it was applied")
+    if require_change and not applied:
+        reasons.append("no applied change (a proposed or claimed edit is not a change)")
+    record: Dict[str, Any] = {"tool": "verify", "run_id": run_id, "command": command, "files": files,
+                              "unbacked_claims": list(unbacked or [])}
+    try:
+        vet_argv(command)
+    except Denied as exc:
+        disposition = "BLOCKED"
+        reasons.append(f"acceptance command refused: {exc}")
+    if not reasons:  # run only when the outcome is still open
+        rec = run_acceptance(root, command, timeout)
+        record.update(rec)
+        if "start_error" in rec:
+            reasons.append(f"acceptance command could not start: {rec['start_error']}")
+        elif rec.get("timed_out"):
+            reasons.append(f"acceptance command timed out after {timeout:.0f}s (process group killed)")
+        elif rec["exit_code"] != 0:
+            reasons.append(f"acceptance command exited {rec['exit_code']}")
+    if reasons and disposition == "VERIFIED":
+        disposition = "FAILED"
+    record.update(decision=disposition, reasons=reasons)
+    return record
 
 # ── REPL bindings ────────────────────────────────────────────────────────────
 
@@ -809,11 +1102,73 @@ def normalize_code_task(task: str) -> str:
     return raw
 
 
+#: /code --accept: the agent whose proposal waits for the console's /apply, and the command.
+_repl_acceptance: Optional[Dict[str, Any]] = None
+REPL_RECEIPTS = os.path.join(os.path.expanduser("~"), ".osiris", "code", "receipts.jsonl")
+
+
+def _print_verification(v: Dict[str, Any]) -> None:
+    colour = "32" if v["decision"] == "VERIFIED" else "33"
+    print(f"\n\033[1;{colour}m[/code {v['decision']}]\033[0m acceptance `{v['command']}`"
+          + (f" exited {v.get('exit_code')} in {v.get('elapsed_s')}s" if "exit_code" in v else ""))
+    for r in v["reasons"]:
+        print(f"\033[33m    - {r}\033[0m")
+    if v.get("output_tail"):
+        print("\033[2m" + "\n".join(v["output_tail"].splitlines()[-8:]) + "\033[0m")
+    if v.get("receipt_hash"):
+        print(f"\033[2m  receipt {v['receipt_hash'][:16]}\033[0m")
+    print()
+
+
+def after_console_apply() -> Optional[Dict[str, Any]]:
+    """Called by the REPL after the console's /apply. Runs the pending acceptance command
+    only if every proposal is on disk exactly as proposed (the console's own apply, with its
+    backup and genome-ledger record, did the write)."""
+    global _repl_acceptance
+    pending, _repl_acceptance = _repl_acceptance, None
+    if not pending:
+        return None
+    agent: CodeAgent = pending["agent"]
+    for prop in list(agent._pending_proposals.values()):
+        disk = file_sha256(prop["abs_path"])
+        if disk != prop["after_sha256"]:
+            print(f"\n\033[33m[/code]\033[0m {prop['rel_path']} is not on disk as proposed "
+                  f"(/apply refused or the file changed); acceptance not run.\n")
+            return None
+        rec = {"tool": "apply_write", "decision": "GRANTED", "path": prop["rel_path"],
+               "before_sha256": prop["before_sha256"], "after_sha256": disk,
+               "approved_via": "/apply (console; genome ledger)", "run_id": agent.run_id}
+        agent.decisions.append(rec)
+        if agent.receipts_path:
+            rec["receipt_hash"] = append_receipt(agent.receipts_path, "code.agent.apply_write", rec)
+    agent._pending_proposals.clear()
+    agent._pending_proposal = None
+    agent._wrote = False
+    v = agent.verify(pending["command"])
+    _print_verification(v)
+    return v
+
+
+def discard_repl_acceptance() -> None:
+    global _repl_acceptance
+    _repl_acceptance = None
+
+
+_ACCEPT_OPT = re.compile(r"""^\s*--accept\s+(?:"([^"]+)"|'([^']+)')(?:\s+(.*))?$""", re.DOTALL)
+
+
 def run_code_command(state: Any, rest: str) -> CodeResult:
-    """`/code [--multi] [--model NAME] <task>` from the REPL."""
+    """`/code [--multi] [--model NAME] [--accept "CMD"] <task>` from the REPL."""
+    global _repl_acceptance
     model = None
     max_writes = 1
+    accept: Optional[str] = None
     while True:
+        m_accept = _ACCEPT_OPT.match(rest)
+        if m_accept:
+            accept = m_accept.group(1) or m_accept.group(2)
+            rest = m_accept.group(3) or ""
+            continue
         m_multi = re.match(r"^\s*--multi(?:\s+(.*))?$", rest, re.DOTALL)
         if m_multi:
             max_writes = 4
@@ -827,19 +1182,39 @@ def run_code_command(state: Any, rest: str) -> CodeResult:
         break
     task = normalize_code_task(rest)
     if not task:
-        print("Usage: /code [--multi] [--model NAME] <task>   -- tools: read/list/grep, proposed writes "
-              "(/apply), approved commands")
+        print("Usage: /code [--multi] [--model NAME] [--accept \"CMD\"] <task>   -- tools: read/list/grep, "
+              "proposed writes (/apply), approved commands; --accept runs CMD after /apply")
         return CodeResult("", "ERROR", [], "no task")
+    if accept and max_writes > 1:
+        print("[/code] --accept works with one proposed write; drop --multi or use "
+              "`python -m osiris_cli.code_task --multi`.")
+        return CodeResult("", "ERROR", [], "--accept with --multi")
+    _repl_acceptance = None
     log = getattr(state, "log_event", None)
-    agent = CodeAgent(model=model, max_writes=max_writes, log=(lambda e, d: log(e, d)) if log else None)
+    from osiris_cli.pqc_enclave import PQCEnclaveGate
+    repl_enclave = PQCEnclaveGate.load_or_init_local()
+    agent = CodeAgent(model=model, max_writes=max_writes, log=(lambda e, d: log(e, d)) if log else None,
+                      receipts_path=REPL_RECEIPTS if accept else None, write_nudges=1 if accept else 0,
+                      enclave=repl_enclave)
     print(f"\n\033[1;36m[/code]\033[0m {agent.model} · working directory {agent.root}")
     result = agent.run(task)
     granted = sum(1 for d in result.decisions if d["decision"] == "GRANTED")
     denied = len(result.decisions) - granted
     if result.status == "SUCCESS":
         print(f"\n{result.answer}\n")
+        if result.unbacked_claims:
+            print("\033[33m  [/code] the answer claims a file change, but no change was applied "
+                  "(no apply_write receipt):\033[0m")
+            for claim in result.unbacked_claims:
+                print(f"\033[33m    - {claim}\033[0m")
     else:
         print(f"\n\033[33m[/code {result.status}]\033[0m {result.error}\n")
     print(f"\033[2m  tools: {granted} granted · {denied} denied/failed"
           f"{' · a write is pending: /apply to confirm' if agent._wrote else ''}\033[0m\n")
+    if accept and result.status == "SUCCESS":
+        if agent._pending_proposals:
+            _repl_acceptance = {"agent": agent, "command": accept}
+            print(f"\033[2m  after /apply the runner runs: {accept}\033[0m\n")
+        else:
+            _print_verification(agent.verify(accept))
     return result
