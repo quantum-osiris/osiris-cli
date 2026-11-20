@@ -60,7 +60,9 @@ BOOT_SEQUENCE = [
 
 def print_boot_screen():
     """Print the epic boot screen with animated init sequence."""
-    os.system('clear' if os.name != 'nt' else 'cls')
+    if sys.stdout.isatty():
+        sys.stdout.write("\x1b[2J\x1b[H")
+        sys.stdout.flush()
     print(BOOT_LOGO)
 
     for msg, delay in BOOT_SEQUENCE:
@@ -678,32 +680,55 @@ SHELL_PASSTHROUGH = {"ollama", "pip", "pip3", "git", "docker", "kubectl",
 
 
 def _exec_shell(cmd: str) -> str:
-    """Execute a system command with live streaming output."""
-    import subprocess
+    """Execute a system command through osiris_cli.exec_kernel (no shell=True) with live streaming."""
+    import shlex
+    from osiris_cli import exec_kernel
+
     print(f"  [90m⚛ Running: {cmd}[0m")
-    # Use Popen for streaming — critical for long-running commands like ollama pull
     try:
-        proc = subprocess.Popen(
-            cmd, shell=True,
-            stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
-            text=True, bufsize=1
-        )
-        lines = []
-        for line in proc.stdout:
+        argv = shlex.split(cmd, posix=True)
+    except ValueError as exc:
+        return f"Shell syntax error: {exc}"
+    if not argv:
+        return "(empty command)"
+
+    chunks = []
+
+    def _stream(_kind: str, text: str) -> None:
+        for line in text.splitlines(keepends=True):
             print(f"  {line}", end="", flush=True)
-            lines.append(line)
-        proc.wait(timeout=300)
-        out = "".join(lines).strip()
-        if proc.returncode != 0 and not out:
-            return f"(exit code {proc.returncode})"
-        return out if out else "(command completed)"
-    except subprocess.TimeoutExpired:
-        proc.kill()
+        chunks.append(text)
+
+    def _confirm(prompt: str, _cls) -> bool:
+        if not sys.stdin.isatty():
+            return False
+        try:
+            ans = input(f"  {prompt}").strip().lower()
+        except (EOFError, KeyboardInterrupt):
+            return False
+        return ans in ("y", "yes")
+
+    cwd = os.getcwd()
+    req = exec_kernel.CommandRequest(
+        argv=tuple(argv),
+        cwd=cwd,
+        origin="human",
+        timeout_s=300.0,
+        root=cwd,
+    )
+    res = exec_kernel.run(req, confirm=_confirm, journal=exec_kernel.ExecJournal(), stream=_stream)
+    if res.decision == "DENY":
+        return f"Denied by execution policy: {'; '.join(res.reasons)}"
+    if res.decision == "ASK_DECLINED":
+        return "Command cancelled by operator."
+    if res.timed_out:
         return "Command timed out after 300 s."
-    except FileNotFoundError:
-        return f"Command not found: {cmd.split()[0]}"
-    except Exception as e:
-        return f"Shell error: {e}"
+    if res.decision == "ERROR" and res.exit_code is None:
+        return f"Shell error: {'; '.join(res.reasons)}"
+    out = "".join(chunks).strip() or (res.stdout_view + ("\n" + res.stderr_view if res.stderr_view else "")).strip()
+    if res.exit_code not in (0, None) and not out:
+        return f"(exit code {res.exit_code})"
+    return out if out else "(command completed)"
 
 
 # ═══════════════════════════════════════════════════════════════════════════

@@ -30,9 +30,11 @@ from __future__ import annotations
 import fnmatch
 import hashlib
 import json
+import math
 import os
 import posixpath
 import shlex
+import stat
 import time
 from dataclasses import dataclass, field
 from typing import Any, Callable, Dict, List, Optional, Sequence, Tuple
@@ -46,7 +48,7 @@ CHILD_TTL_S = 120.0
 
 # Paths that a session never covers, whatever glob the operator gives.
 EXCLUDED_PATH_PATTERNS = (
-    ".git", ".git/*", "*/.git/*", ".env", ".env.*", "*/.env", "*/.env.*",
+    ".git", ".git/*", "*/.git", "*/.git/*", ".env", ".env.*", "*.env", "*/.env", "*/.env.*",
     "*.pem", "*.key", "*id_rsa*", "*id_ed25519*", ".osiris/*", "*/.osiris/*",
     ".github/workflows/*", "*.p12", "*.pfx", "*credentials*", "*secret*",
 )
@@ -116,7 +118,8 @@ def excluded_command_reason(argv: Sequence[str]) -> Optional[str]:
 
 
 def _path_excluded(rel: str) -> bool:
-    return any(fnmatch.fnmatchcase(rel, pat) for pat in EXCLUDED_PATH_PATTERNS)
+    low = rel.lower()
+    return any(fnmatch.fnmatchcase(low, pat) for pat in EXCLUDED_PATH_PATTERNS)
 
 
 def _clean_rel(rel: str) -> Optional[str]:
@@ -218,6 +221,14 @@ def covers_paths(scope: SessionScope, root: str, rel_paths: Sequence[str]) -> Tu
             return False, f"{rel} is outside the workspace"
         if _path_excluded(clean):
             return False, f"{rel} is a protected file; sessions never cover it"
+        cur = scope.root
+        for part in clean.split("/"):
+            cur = os.path.join(cur, part)
+            try:
+                if stat.S_ISLNK(os.lstat(cur).st_mode):
+                    return False, f"{rel} traverses a symlink; sessions never cover symlinks"
+            except FileNotFoundError:
+                break
         if not any(fnmatch.fnmatchcase(clean, g) for g in scope.edit_globs):
             return False, f"{rel} is not in the session's edit list"
     return True, "covered"
@@ -347,9 +358,29 @@ def verify_child_link(gate: Any, child: Dict[str, Any], session_grant: Optional[
         return False, "session grant names a different parent approval"
     if link.get("session_scope_sha256") != session_grant.get("payload_sha256"):
         return False, "session grant's scope digest does not match its parent"
-    ok, why, _scope = verify_session_grant(gate, session_grant, now=now)
-    if not ok:
+    ok, why, sscope = verify_session_grant(gate, session_grant, now=now)
+    if not ok or sscope is None:
         return False, why
-    if float(child.get("expires_at", 0)) > float(session_grant["expires_at"]) + 1e-6:
+    if child.get("key_fingerprint") != session_grant.get("key_fingerprint"):
+        return False, "session grant signer fingerprint does not match its parent approval"
+    try:
+        child_exp = float(child.get("expires_at", 0))
+        parent_exp = float(session_grant["expires_at"])
+    except (TypeError, ValueError):
+        return False, "session grant has invalid expiry timestamp"
+    if not (math.isfinite(child_exp) and math.isfinite(parent_exp)):
+        return False, "session grant has non-finite expiry timestamp"
+    if child_exp > parent_exp + 1e-6:
         return False, "session grant outlives its parent approval"
+    op = child.get("operation_schema") if isinstance(child.get("operation_schema"), dict) else {}
+    ev = child.get("event_type")
+    if ev == "code.apply_writes" and isinstance(op.get("files"), list) and isinstance(op.get("root"), str):
+        rel_paths = [str(f.get("rel_path", "")) for f in op["files"] if isinstance(f, dict)]
+        cov_ok, cov_why = covers_paths(sscope, op["root"], rel_paths)
+        if not cov_ok:
+            return False, f"session grant child write is not covered: {cov_why}"
+    elif ev == "code.run_command" and isinstance(op.get("argv"), list) and isinstance(op.get("cwd"), str):
+        cov_ok, cov_why = covers_command(sscope, op["argv"], op["cwd"])
+        if not cov_ok:
+            return False, f"session grant child command is not covered: {cov_why}"
     return True, "session link verified"

@@ -171,18 +171,105 @@ def build_evidence_bundle():
     print(f"  [PASS] {TAR_PATH.name} created ({TAR_PATH.stat().st_size:,} bytes | SHA-256: {sha256_file(TAR_PATH)})")
 
 
+RELEASE_EVENT_TYPE = "SYS021_V600_ZENODO_AND_GITHUB_RELEASE_GRANT"
+RELEASE_SCOPE = ["zenodo.v600.release", "github.v600.release"]
+
+
+def _tty_confirm_release(prompt: str) -> bool:
+    if not sys.stdin.isatty():
+        return False
+    return input(prompt).strip().lower() in ("y", "yes")
+
+
+def authorize_v600_release(
+    zip_path: Path,
+    tar_path: Path,
+    *,
+    enclave_dir=None,
+    trusted_keys_path=None,
+    sequence_index: int = 29,
+    prev_block_hash: str = "0" * 64,
+    confirm=None,
+    out=print,
+) -> dict:
+    """Require explicit operator approval, sign with enrolled local enclave keys, and verify+consume
+    via a pure verifier BEFORE any external Zenodo or GitHub publishing call executes."""
+    from osiris_cli.pqc_enclave import GrantVerificationError, PQCEnclaveGate
+
+    payload_sha = sha256_file(zip_path)
+    tar_sha = sha256_file(tar_path)
+    op_schema = {
+        "event": "SYS021_V600_ZENODO_AND_GITHUB_RELEASE",
+        "tag": "v6.0.0",
+        "evidence_zip_name": zip_path.name,
+        "evidence_zip_sha256": payload_sha,
+        "evidence_tar_name": tar_path.name,
+        "evidence_tar_sha256": tar_sha,
+        "pillars": [
+            "Pillar 1 (NCLM Gate)",
+            "Pillar 2 (QLDPC Neural)",
+            "Pillar 3 (MAXQ Compiler)",
+            "Pillar 4 (PQC Enclave)",
+        ],
+    }
+    signer = PQCEnclaveGate.load_or_init_local(enclave_dir, allow_init=False)
+    grant = signer.request_approved_grant(
+        action=RELEASE_EVENT_TYPE,
+        scope=RELEASE_SCOPE,
+        summary=f"Publish OSIRIS v6.0.0 release ({zip_path.name}, sha256={payload_sha[:16]}…) to Zenodo and GitHub",
+        payload_sha256=payload_sha,
+        operation_schema=op_schema,
+        confirm=confirm or _tty_confirm_release,
+        out=out,
+        prompt="Authorize irreversible Zenodo DOI publication & GitHub release v6.0.0? [y/N] ",
+        sequence_index=sequence_index,
+        prev_block_hash=prev_block_hash,
+    )
+    verifier = PQCEnclaveGate.verifier_from_enclave_dir(
+        enclave_dir, trusted_keys_path=trusted_keys_path, operator_id=signer.operator_id
+    )
+    ok, reason = verifier.verify_grant_integrity(
+        grant,
+        expected_payload_sha256=payload_sha,
+        expected_scope=RELEASE_SCOPE,
+        expected_event_type=RELEASE_EVENT_TYPE,
+        consume=True,
+    )
+    if not ok:
+        raise GrantVerificationError(f"Release grant verification failed: {reason}")
+    return grant
+
+
 def main():
     print("===================================================================")
     print("  OSIRIS 6.0 PRODUCTION RELEASE & ZENODO DEPOSITION ORCHESTRATOR  ")
     print("===================================================================")
 
+    # Step 1: Build Bundle (local-only)
+    build_evidence_bundle()
+
+    # Step 2: Obtain explicit operator-approved, pinned-key verified, single-use PQC grant
+    # BEFORE reading tokens or contacting Zenodo/GitHub.
+    conn = sqlite3.connect(EVIDENCE_DB)
+    cur = conn.cursor()
+    latest = cur.execute("SELECT block_hash, sequence_index FROM ledger_blocks ORDER BY sequence_index DESC LIMIT 1").fetchone()
+    prev_hash = latest[0]
+    next_seq = latest[1] + 1
+    assert next_seq == 29, f"Expected sequence 29, got {next_seq}"
+
+    grant = authorize_v600_release(
+        ZIP_PATH,
+        TAR_PATH,
+        sequence_index=next_seq,
+        prev_block_hash=prev_hash,
+    )
+    payload_sha = grant["payload_sha256"]
+    ts = grant["issued_at"]
+
     token = load_zenodo_token()
     headers = {"Authorization": f"Bearer {token}", "Content-Type": "application/json"}
 
-    # Step 1: Build Bundle
-    build_evidence_bundle()
-
-    # Step 2: Create Zenodo Deposition
+    # Step 3: Create Zenodo Deposition
     print("\n1. Creating Zenodo Deposition...")
     metadata_body = json.loads(METADATA_PATH.read_text(encoding="utf-8"))
     create_url = "https://zenodo.org/api/deposit/depositions"
@@ -191,7 +278,7 @@ def main():
     bucket_url = deposition["links"]["bucket"]
     print(f"  [PASS] Deposition Created: ID {dep_id} (Bucket: {bucket_url})")
 
-    # Step 3: Upload Evidence Files
+    # Step 4: Upload Evidence Files
     print("\n2. Uploading Artifacts to Zenodo Bucket...")
     artifacts = [
         ZIP_PATH,
@@ -210,7 +297,7 @@ def main():
         else:
             print(f"    [SKIP] Optional artifact {p.name} not found")
 
-    # Step 4: Publish Deposition
+    # Step 5: Publish Deposition
     print(f"\n3. Publishing Deposition {dep_id} to Mint Permanent DOI...")
     publish_url = f"https://zenodo.org/api/deposit/depositions/{dep_id}/actions/publish"
     pub_res = zenodo_api_request(publish_url, method="POST", headers=headers)
@@ -219,49 +306,8 @@ def main():
     print(f"  [SUCCESS] Deposition Published! Permanent DOI: {doi}")
     print(f"  Record URL: {record_url}")
 
-    # Step 5: Record Cryptographic Grant in evidence_ledger.db (Block #29)
+    # Step 6: Record the verified pre-publication Cryptographic Grant in evidence_ledger.db (Block #29)
     print("\n4. Recording Cryptographic Release Receipt in evidence_ledger.db...")
-    sys.path.insert(0, str(CLI_ROOT))
-    from osiris_cli.pqc_enclave import PQCEnclaveGate
-
-    gate = PQCEnclaveGate(operator_id="Devin Phillip Davis / Enki")
-    conn = sqlite3.connect(EVIDENCE_DB)
-    cur = conn.cursor()
-
-    latest = cur.execute("SELECT block_hash, sequence_index FROM ledger_blocks ORDER BY sequence_index DESC LIMIT 1").fetchone()
-    prev_hash = latest[0]
-    next_seq = latest[1] + 1
-    assert next_seq == 29, f"Expected sequence 29, got {next_seq}"
-
-    ts = time.time()
-    nonce = f"OSIRIS-V600-RELEASE-{int(ts * 1000)}"
-    payload_sha = sha256_file(ZIP_PATH)
-
-    op_schema = {
-        "event": "SYS021_V600_ZENODO_AND_GITHUB_RELEASE",
-        "tag": "v6.0.0",
-        "zenodo_deposition_id": dep_id,
-        "zenodo_doi": doi,
-        "evidence_zip_sha256": payload_sha,
-        "evidence_tar_sha256": sha256_file(TAR_PATH),
-        "file_count": len(artifacts),
-        "pillars": ["Pillar 1 (NCLM Gate)", "Pillar 2 (QLDPC Neural)", "Pillar 3 (MAXQ Compiler)", "Pillar 4 (PQC Enclave)"]
-    }
-    op_schema_sha256 = hashlib.sha256(json.dumps(op_schema, sort_keys=True).encode()).hexdigest()
-
-    # Generate hybrid PQC grant signed by local enclave keys (no manual signature hex)
-    grant = gate.generate_hybrid_grant(
-        sequence_index=next_seq,
-        prev_block_hash=prev_hash,
-        event_type="SYS021_V600_ZENODO_AND_GITHUB_RELEASE_GRANT",
-        payload_sha256=payload_sha,
-        operation_schema=op_schema,
-        scope="zenodo.v600.release",
-    )
-
-    valid, reason = gate.verify_grant_integrity(grant)
-    assert valid is True, f"Grant integrity verification failed: {reason}"
-
     raw_grant_json = json.dumps(grant, sort_keys=True)
     block_hash = hashlib.sha256(raw_grant_json.encode("utf-8")).hexdigest()
 
@@ -282,7 +328,7 @@ def main():
             grant["operator_id"],
             grant["payload_sha256"],
             grant["operation_schema_sha256"],
-            nonce,
+            grant["nonce"],
             raw_grant_json,
         ),
     )

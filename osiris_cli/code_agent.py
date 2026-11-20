@@ -32,6 +32,7 @@ import re
 import shlex
 import shutil
 import signal
+import stat
 import subprocess
 import time
 import uuid
@@ -304,6 +305,35 @@ def _sha256_bytes(data: bytes) -> str:
     return hashlib.sha256(data).hexdigest()
 
 
+def _read_kernel_streams(res: Any) -> Tuple[str, str, str]:
+    """Read full stdout, stderr, and combined chronological output from an exec_kernel result."""
+    artifact_path = getattr(res, "artifact_path", None)
+    if artifact_path and os.path.isfile(artifact_path):
+        out_parts: List[str] = []
+        err_parts: List[str] = []
+        combined_parts: List[str] = []
+        try:
+            with open(artifact_path, "r", encoding="utf-8", errors="replace") as fh:
+                for line in fh:
+                    line = line.strip()
+                    if not line:
+                        continue
+                    row = json.loads(line)
+                    text = str(row.get("text", ""))
+                    stream = row.get("stream")
+                    combined_parts.append(text)
+                    if stream == "stderr":
+                        err_parts.append(text)
+                    else:
+                        out_parts.append(text)
+            return "".join(out_parts), "".join(err_parts), "".join(combined_parts)
+        except (OSError, ValueError):
+            pass
+    out_view = getattr(res, "stdout_view", "") or ""
+    err_view = getattr(res, "stderr_view", "") or ""
+    return out_view, err_view, out_view + err_view
+
+
 class CodeAgent:
     """One /code task. Collaborators are injectable so tests need no model or terminal."""
 
@@ -327,6 +357,8 @@ class CodeAgent:
         context: Optional[Any] = None,
         task_ledger: Optional[Any] = None,
         clock: Callable[[], float] = time.monotonic,
+        exec_journal: Optional[Any] = None,
+        exec_artifacts_dir: Optional[str] = None,
     ):
         self.root = os.path.realpath(root or os.getcwd())
         # The task's run context (osiris_cli.task_context.TaskRunContext): which tools this run may
@@ -336,6 +368,8 @@ class CodeAgent:
         self._context = context
         self._task_ledger = task_ledger
         self._clock = clock
+        self._exec_journal = exec_journal
+        self._exec_artifacts_dir = exec_artifacts_dir
         self.meter: Optional[Any] = None
         self._stop: Optional[Any] = None
         self._ledger_opened = False
@@ -518,18 +552,63 @@ class CodeAgent:
             context_sha256=self._context.context_sha256 if self._context is not None else None,
         )
 
+    def _check_confined_regular_target(self, rel_path: str) -> str:
+        if not isinstance(rel_path, str) or not rel_path or "\x00" in rel_path:
+            raise Denied(f"invalid target path {rel_path!r}")
+        norm_slash = rel_path.replace("\\", "/")
+        if norm_slash.startswith("/") or (len(norm_slash) > 1 and norm_slash[1] == ":"):
+            raise Denied(f"target path {rel_path!r} must be workspace-relative")
+        parts = [seg for seg in norm_slash.split("/") if seg]
+        if not parts or any(seg in (".", "..") for seg in parts):
+            raise Denied(f"target path {rel_path!r} escapes workspace root")
+        cur = self.root
+        for idx, part in enumerate(parts):
+            cur = os.path.join(cur, part)
+            is_last = idx == len(parts) - 1
+            try:
+                st = os.lstat(cur)
+            except FileNotFoundError:
+                continue
+            if stat.S_ISLNK(st.st_mode):
+                raise Denied(f"target path '{rel_path}' traverses or points to a symlink; refusing write")
+            if is_last and not stat.S_ISREG(st.st_mode):
+                raise Denied(f"target path '{rel_path}' is not a regular file; refusing write")
+            if not is_last and not stat.S_ISDIR(st.st_mode):
+                raise Denied(f"parent of '{rel_path}' is not a directory; refusing write")
+        candidate = os.path.normpath(os.path.join(self.root, *parts))
+        if not candidate.startswith(self.root.rstrip(os.sep) + os.sep):
+            raise Denied(f"target path '{rel_path}' resolves outside working directory ({self.root})")
+        return candidate
+
+    def _validate_proposal_target_and_content(self, prop: Dict[str, Any]) -> Tuple[str, bytes]:
+        target = self._check_confined_regular_target(prop["rel_path"])
+        data = prop["content"].encode("utf-8")
+        if _sha256_bytes(data) != prop["after_sha256"]:
+            raise Denied(f"proposal content SHA-256 mismatch for '{prop['rel_path']}'; refusing apply")
+        try:
+            st = os.lstat(target)
+            existed_now = True
+            if stat.S_ISLNK(st.st_mode) or not stat.S_ISREG(st.st_mode):
+                raise Denied(f"target '{prop['rel_path']}' is a symlink or non-regular file; refusing apply")
+            current_sha = _sha256_bytes(open(target, "rb").read())
+        except FileNotFoundError:
+            existed_now = False
+            current_sha = None
+        if existed_now != prop["existed_at_proposal"] or current_sha != prop["before_sha256"]:
+            raise Denied(f"target file '{prop['rel_path']}' changed on disk since the proposal was generated; refusing stale apply")
+        return target, data
+
     def apply_pending_write(self, approve: Callable[[Dict[str, Any]], bool]) -> Dict[str, Any]:
-        """Verify unchanged target, check explicit operator approval, atomically apply proposed write,
-        and record a receipted decision."""
+        """Verify unchanged confined target before and after explicit operator approval, apply via
+        per-file atomic replacement, and record a receipted decision."""
         if not self._pending_proposal:
             raise Denied("no pending write proposal to apply")
         prop = dict(self._pending_proposal)
-        target = prop["abs_path"]
-        existed_now = os.path.exists(target)
-        current_sha = _sha256_bytes(open(target, "rb").read()) if existed_now else None
-        if existed_now != prop["existed_at_proposal"] or current_sha != prop["before_sha256"]:
+        try:
+            self._validate_proposal_target_and_content(prop)
+        except Denied:
             self._pending_proposal = None
-            raise Denied("target file changed on disk since the proposal was generated; refusing stale apply")
+            raise
         enclave = self._get_enclave()
         write_schema = {
             "action": "code.apply_writes",
@@ -555,7 +634,14 @@ class CodeAgent:
             self.decisions.append(rec)
             self._log("CODE_TOOL", rec)
             return rec
-        ok_g, why_g = enclave.verify_grant_integrity(
+        # Re-verify confinement, non-symlink status, content hash, and unchanged disk state AFTER approval.
+        try:
+            target, data = self._validate_proposal_target_and_content(prop)
+        except Denied:
+            self._pending_proposal = None
+            raise
+        verifier = enclave.as_verifier()
+        ok_g, why_g = verifier.verify_grant_integrity(
             pqc_grant,
             expected_payload_sha256=write_digest,
             expected_scope=write_scope,
@@ -564,14 +650,7 @@ class CodeAgent:
         )
         if not ok_g:
             raise Denied(f"grant verification failed: {why_g}")
-        os.makedirs(os.path.dirname(target), exist_ok=True)
-        tmp = f"{target}.osiris-tmp-{uuid.uuid4().hex[:8]}"
-        data = prop["content"].encode("utf-8")
-        with open(tmp, "wb") as f:
-            f.write(data)
-            f.flush()
-            os.fsync(f.fileno())
-        os.replace(tmp, target)
+        atomic_write(target, data)
         self._pending_proposal = None
         self._pending_proposals.pop(prop["rel_path"], None)
         self._wrote = bool(self._pending_proposals)
@@ -594,19 +673,19 @@ class CodeAgent:
         return rec
 
     def apply_all_pending_writes(self, approve: Callable[[List[Dict[str, Any]]], bool]) -> List[Dict[str, Any]]:
-        """Atomically validate and apply all staged multi-file proposals after explicit operator approval."""
+        """Validate and sequentially apply staged multi-file proposals via per-file atomic replacement
+        (not an atomic multi-file transaction) after explicit operator approval."""
         if not self._pending_proposals:
             raise Denied("no pending write proposals to apply")
         proposals = [dict(p) for p in self._pending_proposals.values()]
         for prop in proposals:
-            target = prop["abs_path"]
-            existed_now = os.path.exists(target)
-            current_sha = _sha256_bytes(open(target, "rb").read()) if existed_now else None
-            if existed_now != prop["existed_at_proposal"] or current_sha != prop["before_sha256"]:
+            try:
+                self._validate_proposal_target_and_content(prop)
+            except Denied:
                 self._pending_proposals.clear()
                 self._pending_proposal = None
                 self._wrote = False
-                raise Denied(f"target file '{prop['rel_path']}' changed on disk since proposal; refusing stale batch apply")
+                raise
         enclave = self._get_enclave()
         ordered = sorted(proposals, key=lambda p: str(p["rel_path"]))
         batch_schema = {
@@ -637,7 +716,20 @@ class CodeAgent:
                 records.append(rec)
             return records
 
-        ok_g, why_g = enclave.verify_grant_integrity(
+        # Re-verify every target AFTER approval before consuming the grant or writing any file.
+        validated_batch: List[Tuple[Dict[str, Any], str, bytes]] = []
+        for prop in ordered:
+            try:
+                target, data = self._validate_proposal_target_and_content(prop)
+            except Denied:
+                self._pending_proposals.clear()
+                self._pending_proposal = None
+                self._wrote = False
+                raise
+            validated_batch.append((prop, target, data))
+
+        verifier = enclave.as_verifier()
+        ok_g, why_g = verifier.verify_grant_integrity(
             pqc_grant,
             expected_payload_sha256=batch_digest,
             expected_scope=batch_scope,
@@ -648,16 +740,9 @@ class CodeAgent:
             raise Denied(f"grant verification failed: {why_g}")
 
         records = []
-        for prop in proposals:
-            target = prop["abs_path"]
-            os.makedirs(os.path.dirname(target), exist_ok=True)
-            tmp = f"{target}.osiris-tmp-{uuid.uuid4().hex[:8]}"
-            data = prop["content"].encode("utf-8")
-            with open(tmp, "wb") as f:
-                f.write(data)
-                f.flush()
-                os.fsync(f.fileno())
-            os.replace(tmp, target)
+        for prop, _target, _data in validated_batch:
+            target, data = self._validate_proposal_target_and_content(prop)
+            atomic_write(target, data)
             rec = {
                 "tool": "apply_write",
                 "decision": "GRANTED",
@@ -869,19 +954,40 @@ class CodeAgent:
                 break
         return "\n".join(rows) or "(empty)", {"path": p}
 
+    def _get_exec_journal(self):
+        if self._exec_journal is None:
+            from osiris_cli.exec_kernel import ExecJournal
+            self._exec_journal = ExecJournal()
+        return self._exec_journal
+
     def _grep(self, pattern, path=".", file_type=""):
+        from osiris_cli import exec_kernel
+
         p = self._confine(path)
         argv = ["grep", "-rnE"]
         if file_type:
             argv.append(f"--include=*.{str(file_type).lstrip('.')}")
         argv += ["--", str(pattern), p]
-        try:
-            r = subprocess.run(argv, shell=False, capture_output=True, text=True, timeout=30,
-                               stdin=subprocess.DEVNULL)
-        except (OSError, subprocess.TimeoutExpired) as exc:
-            raise Denied(f"grep unavailable or timed out: {exc}")
-        lines = [ln.replace(self.root + os.sep, "", 1) for ln in r.stdout.splitlines()[:120]]
-        return "\n".join(lines) or "(no matches)", {"path": p}
+        req = exec_kernel.CommandRequest(
+            argv=tuple(argv),
+            cwd=self.root,
+            origin="model",
+            timeout_s=30.0,
+            root=self.root,
+        )
+        res = exec_kernel.run(
+            req,
+            confirm=None,
+            journal=self._get_exec_journal(),
+            artifacts_dir=self._exec_artifacts_dir,
+        )
+        if res.timed_out:
+            raise Denied("grep unavailable or timed out: timeout")
+        if res.decision in ("DENY", "ASK_DECLINED", "ERROR"):
+            raise Denied(f"grep refused by execution kernel: {'; '.join(res.reasons)}")
+        stdout, _, _ = _read_kernel_streams(res)
+        lines = [ln.replace(self.root + os.sep, "", 1) for ln in stdout.splitlines()[:120]]
+        return "\n".join(lines) or "(no matches)", {"path": p, "exec_receipt_id": res.receipt_id}
 
     def _write_file(self, path, content):
         abs_path = self._confine(path)  # refuse early with a reason the model can read
@@ -930,6 +1036,31 @@ class CodeAgent:
             return cand if (os.path.isfile(cand) and os.access(cand, os.X_OK)) else None
         return shutil.which(prog)
 
+    def _command_binding_payload(self, argv: List[str], work: str) -> Tuple[Optional[str], Dict[str, Any]]:
+        resolved_bin = self._resolve_command_binary(argv[0], work)
+        bin_sha = file_sha256(resolved_bin) if resolved_bin else None
+        bound_files: Dict[str, str] = {}
+        root_prefix = self.root.rstrip(os.sep) + os.sep
+        for arg in argv[1:]:
+            if not arg or arg.startswith("-") or "\x00" in arg:
+                continue
+            cand_raw = os.path.join(work, arg)
+            try:
+                cand_real = os.path.realpath(cand_raw)
+            except OSError:
+                continue
+            if (cand_real == self.root or cand_real.startswith(root_prefix)) and os.path.isfile(cand_real):
+                digest = file_sha256(cand_real)
+                if digest is not None:
+                    bound_files[os.path.relpath(cand_real, self.root)] = digest
+        return resolved_bin, {
+            "argv": argv,
+            "cwd": work,
+            "resolved_bin": resolved_bin,
+            "resolved_bin_sha256": bin_sha,
+            "bound_files": bound_files,
+        }
+
     def _run_command(self, command, cwd=".", timeout=None):
         from osiris.substrate import interactive_timeout_s
         from osiris_cli.orchestration.schemas import ExecutionGrant
@@ -937,7 +1068,7 @@ class CodeAgent:
         argv = vet_argv(command)
         work = self._confine(cwd)
 
-        resolved_bin = self._resolve_command_binary(argv[0], work)
+        resolved_bin, payload = self._command_binding_payload(argv, work)
         if resolved_bin is None:
             exe_name = argv[0] + ".exe" if not argv[0].lower().endswith(".exe") else argv[0]
             wsl_ps = "/mnt/c/Windows/System32/WindowsPowerShell/v1.0/powershell.exe"
@@ -956,7 +1087,6 @@ class CodeAgent:
                 f"execution flags (e.g. -c or -NoProfile -NonInteractive -Command)"
             )
 
-        payload = {"argv": argv, "cwd": work}
         digest = _digest(payload)
         cmd_scope = ["SUBPROCESS_EXEC", work]
         enclave = self._get_enclave()
@@ -1000,51 +1130,67 @@ class CodeAgent:
             limit = min(float(timeout), horizon) if timeout else horizon
         except (TypeError, ValueError):
             limit = horizon
-        # Verified cryptographically against the exact argv/cwd about to run, and consumed once.
-        recomputed_digest = _digest({"argv": argv, "cwd": work})
-        ok_pqc, why_pqc = enclave.verify_grant_integrity(
-            pqc_grant,
-            expected_payload_sha256=recomputed_digest,
-            expected_scope=cmd_scope,
-            expected_event_type="code.run_command",
-            consume=True,
-        )
+        # Re-bind resolved executable and workspace-local script hashes immediately before launch,
+        # verify child-session link first (no spend on invalid link), then verify & consume via pure verifier.
+        resolved_bin_now, recomputed_payload = self._command_binding_payload(argv, work)
+        if resolved_bin_now is None:
+            raise Denied(f"program not found: {argv[0]}")
+        recomputed_digest = _digest(recomputed_payload)
+        verifier = enclave.as_verifier()
+        ok_pqc, why_pqc = sa.verify_child_link(verifier, pqc_grant, self._session_grant)
         if ok_pqc:
-            ok_pqc, why_pqc = sa.verify_child_link(enclave, pqc_grant, self._session_grant)
+            ok_pqc, why_pqc = verifier.verify_grant_integrity(
+                pqc_grant,
+                expected_payload_sha256=recomputed_digest,
+                expected_scope=cmd_scope,
+                expected_event_type="code.run_command",
+                consume=True,
+            )
         if not ok_pqc or not grant.is_valid(recomputed_digest):
             raise Denied(f"execution grant verification failed: {why_pqc}")
-        try:
-            proc = subprocess.Popen(
-                argv, shell=False, cwd=work, stdin=subprocess.DEVNULL,
-                stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True,
-                start_new_session=True, env=child_env(),
-            )
-        except FileNotFoundError:
-            raise Denied(f"program not found: {argv[0]}")
-        try:
-            stdout, stderr = proc.communicate(timeout=limit)
-        except subprocess.TimeoutExpired:
-            try:
-                os.killpg(proc.pid, signal.SIGKILL)
-            except OSError:
-                proc.kill()
-            proc.communicate()
+        from osiris_cli import exec_kernel
+
+        req = exec_kernel.CommandRequest(
+            argv=tuple([resolved_bin_now, *argv[1:]]),
+            cwd=work,
+            origin="human",
+            timeout_s=limit,
+            root=self.root,
+        )
+        res = exec_kernel.run(
+            req,
+            confirm=lambda _prompt, _cls: True,
+            journal=self._get_exec_journal(),
+            artifacts_dir=self._exec_artifacts_dir,
+        )
+        if res.decision == "DENY":
+            raise Denied(f"execution kernel refused command: {'; '.join(res.reasons)}")
+        if res.decision == "ERROR" and res.exit_code is None and not res.timed_out:
+            reason = "; ".join(res.reasons)
+            if "No such file or directory" in reason or "spawn failed" in reason:
+                raise Denied(f"program not found: {argv[0]}")
+            raise Denied(reason or "command execution failed")
+        if res.timed_out:
             return f"TIMEOUT after {limit:.0f}s", {
                 "grant_id": grant.grant_id,
                 "key_fingerprint": pqc_grant["key_fingerprint"],
                 "approval_mode": pqc_grant.get("approval_mode"),
                 "digest": digest,
                 "timed_out": True,
+                "exec_receipt_id": res.receipt_id,
             }
+        stdout, stderr, _ = _read_kernel_streams(res)
         out = stdout + (f"\n[stderr]\n{stderr}" if stderr.strip() else "")
-        return (out or f"(exit code {proc.returncode}, no output)"), {
+        return (out or f"(exit code {res.exit_code}, no output)"), {
             "grant_id": grant.grant_id,
             "key_fingerprint": pqc_grant["key_fingerprint"],
             "approval_mode": pqc_grant.get("approval_mode"),
             "digest": digest,
-            "exit_code": proc.returncode,
+            "exit_code": res.exit_code,
             "stdout_sha256": _sha256_bytes(stdout.encode("utf-8")),
             "stderr_sha256": _sha256_bytes(stderr.encode("utf-8")),
+            "exec_receipt_id": res.receipt_id,
+            "artifact_path": res.artifact_path,
         }
 
     def _get_enclave(self):
@@ -1101,42 +1247,64 @@ def file_sha256(path: str) -> Optional[str]:
 
 
 def atomic_write(target: str, data: bytes) -> None:
-    os.makedirs(os.path.dirname(target) or ".", exist_ok=True)
+    parent = os.path.dirname(target) or "."
+    os.makedirs(parent, exist_ok=True)
     tmp = f"{target}.osiris-tmp-{uuid.uuid4().hex[:8]}"
-    with open(tmp, "wb") as f:
-        f.write(data)
-        f.flush()
-        os.fsync(f.fileno())
-    os.replace(tmp, target)
+    flags = os.O_WRONLY | os.O_CREAT | os.O_EXCL | getattr(os, "O_NOFOLLOW", 0)
+    fd = os.open(tmp, flags, 0o600)
+    try:
+        with os.fdopen(fd, "wb") as f:
+            f.write(data)
+            f.flush()
+            os.fsync(f.fileno())
+        os.replace(tmp, target)
+    except BaseException:
+        try:
+            os.unlink(tmp)
+        except OSError:
+            pass
+        raise
+    if os.name == "posix":
+        try:
+            dir_fd = os.open(parent, os.O_RDONLY)
+            try:
+                os.fsync(dir_fd)
+            finally:
+                os.close(dir_fd)
+        except OSError:
+            pass
 
 
 def run_acceptance(root: str, command: str, timeout: float) -> Dict[str, Any]:
-    """Run one vetted acceptance command in ``root`` (no shell, credential-free env,
-    process group killed on timeout). Raises Denied when the command is refused."""
+    """Run one vetted acceptance command in ``root`` through exec_kernel (no shell,
+    credential-free env, process group killed on timeout). Raises Denied when refused."""
+    from osiris_cli import exec_kernel
+
     argv = vet_argv(command)
     rec: Dict[str, Any] = {"argv": argv}
     started = time.time()
-    try:
-        proc = subprocess.Popen(argv, shell=False, cwd=root, stdin=subprocess.DEVNULL,
-                                stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True,
-                                errors="replace", start_new_session=True, env=child_env())
-    except OSError as exc:
-        rec["start_error"] = f"{type(exc).__name__}: {exc}"
+    req = exec_kernel.CommandRequest(
+        argv=tuple(argv),
+        cwd=root,
+        origin="human",
+        timeout_s=timeout,
+        root=root,
+    )
+    res = exec_kernel.run(
+        req,
+        confirm=lambda _prompt, _cls: True,
+        journal=exec_kernel.ExecJournal(),
+    )
+    rec["exec_receipt_id"] = res.receipt_id
+    if res.decision in ("ERROR", "DENY") and res.exit_code is None and not res.timed_out:
+        rec["start_error"] = "; ".join(res.reasons) or res.decision
         return rec
-    try:
-        output, _ = proc.communicate(timeout=timeout)
-        rec["exit_code"] = proc.returncode
-    except BaseException as exc:  # timeout, or Ctrl-C: never leave the test tree running
-        try:
-            os.killpg(proc.pid, signal.SIGKILL)
-        except OSError:
-            proc.kill()
-        output, _ = proc.communicate()
-        if not isinstance(exc, subprocess.TimeoutExpired):
-            raise
+    if res.timed_out:
         rec["exit_code"] = None
         rec["timed_out"] = True
-    output = output or ""
+    else:
+        rec["exit_code"] = res.exit_code
+    _, _, output = _read_kernel_streams(res)
     rec["elapsed_s"] = round(time.time() - started, 3)
     rec["output_sha256"] = _sha256_bytes(output.encode("utf-8"))
     rec["output_bytes"] = len(output.encode("utf-8"))
