@@ -39,6 +39,7 @@ dependencies = [
     "PyYAML>=6.0",
     "rich>=13.0.0",
     "networkx>=2.6.3",
+    "cryptography>=47.0",
 ]
 
 [project.optional-dependencies]

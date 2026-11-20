@@ -16,6 +16,8 @@ from dataclasses import dataclass, field
 from enum import Enum
 from typing import Any, Dict, FrozenSet, List, Mapping, Optional, Sequence, Tuple
 
+from osiris_cli.node_ids import NODE_ALPHA, NODE_BETA, canonical_node, canonical_set
+
 
 class GapKind(str, Enum):
     INTENT_AMBIGUITY = "INTENT_AMBIGUITY"
@@ -69,7 +71,7 @@ class CapabilitySpec:
     capability_id: str
     required_inputs: Tuple[str, ...] = ()
     context_requirements: Tuple[ContextRequirement, ...] = ()
-    supported_targets: Tuple[str, ...] = ("NODE_ALPHA_EDGE", "NODE_BETA_WORKSTATION")
+    supported_targets: Tuple[str, ...] = (NODE_ALPHA, NODE_BETA)
     required_verifiers: Tuple[str, ...] = ()
     enabled: bool = True
 
@@ -244,8 +246,9 @@ class CapabilityGapAnalyzer:
 
             # 6. Execution Target Availability
             if (
-                step.target_node not in cap_spec.supported_targets
-                or step.target_node not in inp.available_targets
+                canonical_node(step.target_node) is None
+                or canonical_node(step.target_node) not in canonical_set(cap_spec.supported_targets)
+                or canonical_node(step.target_node) not in canonical_set(inp.available_targets)
             ):
                 gaps.append(
                     Gap(
