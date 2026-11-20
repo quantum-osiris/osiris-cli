@@ -12,7 +12,11 @@ Lifecycle::
 
     CREATED -> CONTEXT_READY -> RUNNING -> AWAITING_APPROVAL -> VERIFYING -> SUCCEEDED
                                        \\-> VERIFYING (no proposals)     \\-> FAILED | BLOCKED
-    any non-terminal -> FAILED | BLOCKED | CANCELLED | UNAVAILABLE
+    any non-terminal -> FAILED | BLOCKED | CANCELLED | UNAVAILABLE | STOPPED_BUDGET
+
+``STOPPED_BUDGET`` is its own terminal state, not a kind of FAILED or BLOCKED: the tool loop
+reached a cap of the run's task context (``osiris_cli.task_context``: steps, tool calls, tokens,
+wall clock, or failures in a row) before it answered. Nothing it staged is applied.
 
 ``RETRYING`` is recorded as a history event (the runner's bounded write nudge), not a
 resting state. There is no separate planner yet, so there is no PLANNED state.
@@ -30,8 +34,8 @@ from contextlib import contextmanager
 from typing import Any, Dict, Iterator, List, Optional
 
 SCHEMA = "osiris.code_run/1"
-TERMINAL = frozenset({"SUCCEEDED", "FAILED", "BLOCKED", "CANCELLED", "UNAVAILABLE"})
-_END = {"FAILED", "BLOCKED", "CANCELLED", "UNAVAILABLE"}
+TERMINAL = frozenset({"SUCCEEDED", "FAILED", "BLOCKED", "CANCELLED", "UNAVAILABLE", "STOPPED_BUDGET"})
+_END = {"FAILED", "BLOCKED", "CANCELLED", "UNAVAILABLE", "STOPPED_BUDGET"}
 ALLOWED: Dict[str, frozenset] = {
     "CREATED": frozenset({"CONTEXT_READY"} | _END),
     "CONTEXT_READY": frozenset({"RUNNING"} | _END),

@@ -252,13 +252,17 @@ ACCEPTANCE_RE = re.compile(r"(?<![\w-])(so that|should|must|returns?|pass(es|ing
 
 
 def intent_card(canvas: Canvas, facts: dict, architect: str, synthesizer: str, cls: str = None,
-                cues: dict = None, source: str = None) -> str:
+                cues: dict = None, source: str = None, risk=None) -> str:
     c = Canvas(canvas.mode, canvas.cols - 4)  # rows are laid out for the panel's inside
     lw = 7  # widest label ("Context"), shared so every block lines up
     rows = [("current", "Goal", facts["goal"])]
     if cls:
         why = ", ".join((cues or {}).get(cls, [])) or "no specific cue"
         rows.append(("current", "Intent", f"{cls} (from: {why}) -- W if that is wrong"))
+    if risk is not None:
+        # intent_router.assess: the cost of a wrong answer, from fixed rules over the same words.
+        kind = {"HIGH": "review", "CRITICAL": "blocked"}.get(risk.tier, "current")
+        rows.append((kind, "Risk", risk.line().removeprefix("risk ")))
     if source:
         rows.append(("review", "Source", source))
     if facts["lines"] > 1:

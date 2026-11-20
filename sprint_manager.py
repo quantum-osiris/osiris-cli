@@ -29,6 +29,14 @@ SPRINT_BACKLOG_PATH = os.path.join(os.path.expanduser("~"), ".osiris", "sprint_b
 # "vision" (a model's screenshot digest) and "suggest" (model output) are
 # untrusted reference material: they stay visible but never become work.
 PLANNABLE_SOURCES = {"ignite", "manual"}
+# Every status a story can have. backlog -> active -> proposed -> done | failed, and two ways a
+# story's run is ended by its task context (osiris_cli/task_context.py) rather than by its tests:
+#   stopped_budget -- the run reached a cap (candidates, wall clock, the same failure repeating);
+#   blocked        -- the run was not permitted to start (context invalid, or it could not be
+#                     recorded).
+# Neither is 'failed': no verdict on the story was reached. '/sprint execute #N' runs such a
+# story again, under a new task run.
+STATUSES = ("backlog", "active", "proposed", "done", "failed", "stopped_budget", "blocked")
 STORY_RE = re.compile(r"STORY:\s*(.+?)\s*\|\s*COMPLEXITY:\s*([123])\b", re.IGNORECASE)
 
 
@@ -59,7 +67,7 @@ def add_story(text, complexity, source):
         "id": backlog["next_id"],
         "text": text.strip(),
         "complexity": int(complexity),
-        "status": "backlog",  # backlog -> active -> proposed -> done | failed
+        "status": "backlog",  # one of STATUSES
         "source": source,     # "vision" | "suggest" | "manual" | "ignite"
         "created_at": time.strftime("%Y-%m-%dT%H:%M:%S"),
     }
@@ -96,11 +104,21 @@ def get_backlog():
     return _load_backlog()
 
 
-def set_status(story_id, status):
+def set_status(story_id, status, reason=None, run_id=None):
+    """Set a story's status. An unknown status is refused (ValueError) and nothing is saved.
+    `reason` and `run_id` record why and under which task run; a later change without them
+    clears both, so a story never carries a stale stop reason."""
+    if status not in STATUSES:
+        raise ValueError(f"unknown story status {status!r}; one of: {', '.join(STATUSES)}")
     backlog = _load_backlog()
     for s in backlog["stories"]:
         if s["id"] == story_id:
             s["status"] = status
+            for key, value in (("status_reason", reason), ("task_run_id", run_id)):
+                if value:
+                    s[key] = str(value)[:300]
+                else:
+                    s.pop(key, None)
     _save_backlog(backlog)
 
 

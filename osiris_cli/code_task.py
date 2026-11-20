@@ -16,8 +16,12 @@ Stages, each a state in the durable run record (``osiris_cli.code_runs``) and re
    verifies that grant against explicitly trusted operator public keys before any write;
 5. VERIFYING: the runner, not the model, runs the ``--accept`` command and checks hashes.
 
+Every run is issued a task context (``osiris_cli.task_context``) before the tool loop starts:
+its run ID, the risk tier and cost class of the task's words, which tools the loop may use, and
+its budget. The loop is stopped at any cap (STOPPED_BUDGET) and nothing it staged is applied.
+
 Exit codes: 0 SUCCEEDED (VERIFIED); 1 FAILED, BLOCKED or CANCELLED; 2 model or daemon
-unavailable; 3 no acceptance command (UNVERIFIED: nothing proves the work).
+unavailable; 3 no acceptance command (UNVERIFIED: nothing proves the work); 4 STOPPED_BUDGET.
 """
 
 from __future__ import annotations
@@ -30,7 +34,7 @@ import sys
 import uuid
 from typing import Any, Callable, Dict, List, Optional, Sequence, Tuple
 
-from osiris_cli import code_critic, session_approval
+from osiris_cli import code_critic, session_approval, task_context
 from osiris_cli.code_agent import CodeAgent, append_receipt, atomic_write, edit_claims, file_sha256, verify_applied
 from osiris_cli.code_runs import DEFAULT_DIR, TERMINAL, RunError, RunStore, source_snapshot
 from osiris_cli.pqc_enclave import (
@@ -58,6 +62,16 @@ def _err(s: str) -> None:
 
 class StaleTarget(Exception):
     pass
+
+
+def _task_ledger_for_store(store: RunStore, explicit: Optional[str] = None) -> str:
+    """The task ledger beside the run store: the shared one for the default store, a private one
+    for any other (so a test or a second store never writes ~/.osiris/tasks)."""
+    if explicit:
+        return os.path.abspath(os.path.expanduser(explicit))
+    if os.path.realpath(store.dir) == os.path.realpath(DEFAULT_DIR):
+        return task_context.DEFAULT_LEDGER
+    return os.path.join(store.dir, "_tasks", "task_runs.jsonl")
 
 
 def _enclave_dir_for_store(store: RunStore, explicit_dir: Optional[str] = None) -> str:
@@ -366,6 +380,7 @@ def summarize(run: Dict[str, Any]) -> Dict[str, Any]:
         "verification": v,
         "source": run.get("source"),
         "history": run["history"],
+        "task_run": run.get("task_run"),
     }
 
 
@@ -394,8 +409,16 @@ def run_task(
     enclave_dir: Optional[str] = None,
     trusted_keys_path: Optional[str] = None,
     session: Optional[session_approval.SessionScope] = None,
+    context: Optional[task_context.TaskRunContext] = None,
+    task_ledger: Optional[str] = None,
+    clock: Optional[Callable[[], float]] = None,
 ) -> Dict[str, Any]:
     """Run one task through every stage and return its summary.
+
+    ``context`` is the run's task context. When none is given one is minted here, by code, from
+    the task's words (risk tier, cost class) and the operator's flags (what the loop may do); it
+    is never read from the model. The run takes the context's run ID. ``task_ledger`` is the
+    path the run is opened and closed in; by default the ledger beside the run store.
 
     ``session`` is an operator-approved scope (see ``osiris_cli.session_approval``): the
     operator approves it once at the start, and writes and commands inside it then need no
@@ -412,6 +435,13 @@ def run_task(
     if session is not None:
         # The one approval for the whole session. Declining it raises ApprovalDeniedError.
         session_grant = session_approval.request_session_grant(cmd_enclave, session, confirm=confirm, out=out)
+    max_writes = 4 if multi else 1
+    if context is None:
+        context = task_context.new_context(
+            task, kind="code", run_id=f"code-{uuid.uuid4().hex[:12]}", max_writes=max_writes,
+            perms=task_context.permissions(propose_writes=True, run_commands=allow_commands))
+    run_id = context.run_id
+    ledger_path = _task_ledger_for_store(store, task_ledger)
     agent = CodeAgent(
         root=root,
         model=model,
@@ -420,13 +450,15 @@ def run_task(
         propose_write=lambda path, content: True,  # staged in the agent; nothing is written here
         has_pending_write=lambda: False,
         out=out,
-        max_writes=4 if multi else 1,
+        max_writes=max_writes,
         receipts_path=receipts,
         write_nudges=1 if require_change else 0,
         enclave=cmd_enclave,
         session_grant=session_grant if allow_commands else None,
+        context=context,
+        task_ledger=task_context.TaskLedger(ledger_path),
+        **({"clock": clock} if clock is not None else {}),
     )
-    run_id = f"code-{uuid.uuid4().hex[:12]}"
     run = store.create(
         run_id,
         task=task,
@@ -448,7 +480,9 @@ def run_task(
     )
     if session_grant is not None:
         run["session_grant"] = session_grant
-        store.save(run)
+    run["task_run"] = {"context": context.to_dict(), "ledger": ledger_path, "stop_reason": None, "usage": {}}
+    store.save(run)
+    out(f"  task run {context.summary()}")
     with store.locked(run_id):
         run["source"] = source_snapshot(agent.root)
         store.transition(run, "CONTEXT_READY", f"git HEAD {run['source']['git_head']}")
@@ -479,9 +513,16 @@ def run_task(
                 for d in result.decisions
             ],
         )
+        run["task_run"].update(stop_reason=result.stop_reason, usage=result.usage)
         for d in result.decisions:
             if d.get("decision") == "RETRY":
                 store.event(run, "RETRYING", d.get("reason", ""))
+        if result.status == task_context.STOPPED_BUDGET:
+            store.transition(run, "STOPPED_BUDGET", f"{result.error}; nothing written")
+            return summarize(run)
+        if result.status == task_context.BLOCKED:
+            store.transition(run, "BLOCKED", f"{result.error}; nothing written")
+            return summarize(run)
         if result.status in ("UNAVAILABLE", "MODEL_UNAVAILABLE"):
             store.transition(run, "UNAVAILABLE", result.error)
             return summarize(run)
@@ -585,7 +626,7 @@ def resume(
 
 
 def exit_code(summary: Dict[str, Any]) -> int:
-    return {"VERIFIED": 0, "UNAVAILABLE": 2, "UNVERIFIED": 3}.get(summary["disposition"], 1)
+    return {"VERIFIED": 0, "UNAVAILABLE": 2, "UNVERIFIED": 3, "STOPPED_BUDGET": 4}.get(summary["disposition"], 1)
 
 
 def main(argv: Optional[List[str]] = None) -> int:
