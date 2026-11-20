@@ -217,6 +217,8 @@ def test_e0_bench_trial_l5_verifier_mode_scores_against_hidden_acceptance_and_pr
         return next(seq)
 
     monkeypatch.setattr(osiris_mod, "_synthesize", fake_synth)
+    # bench_trial.main() now enforces Ollama preflight before ledger writes; mock it for offline CI.
+    monkeypatch.setattr(osiris_bench, "ollama_preflight", lambda model, fetch=None: None)
     rc = bench_trial.main([
         "--strategy", "contract-critic-v2",
         "--verifier", "l5",
