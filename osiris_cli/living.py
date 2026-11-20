@@ -31,7 +31,8 @@ import time
 import urllib.error
 import urllib.request
 from collections import Counter
-from typing import Any, Callable, Dict, Iterator, List, Optional
+from dataclasses import dataclass
+from typing import Any, Callable, Dict, Iterator, List, Optional, Sequence, Set, Tuple
 from urllib.parse import urlsplit
 
 LIVING_HOME = os.path.join(os.path.expanduser("~"), ".osiris", "living")
@@ -440,6 +441,132 @@ def invented_labels(reply: str, sent: str) -> List[str]:
     flag that the model introduced status names of its own."""
     known = set(re.findall(r"[A-Za-z0-9_]+", sent))
     return sorted({m.group(0) for m in LABEL.finditer(reply)} - known)
+
+
+CITE_FILE_RE = re.compile(
+    r"\[source:\s*([A-Za-z0-9_./-]+\.[A-Za-z0-9]{1,8})\]"
+    r"|`([A-Za-z0-9_./-]+\.(?:py|md|json|jsonl|dna|toml|yaml|yml|txt|tex|sh|qasm))`"
+)
+PRECISION_METRIC_RE = re.compile(
+    r"\b(\d+\.\d{2,6})\s*(?:bits/byte|bpb|nDCG@10|fidelity|p-value|z-score)\b"
+    r"|\b(?:p-value|z-score|nDCG@10|fidelity)\s*(?:=|:|of)\s*(\d+\.\d{2,6})\b",
+    re.IGNORECASE,
+)
+
+
+@dataclass(frozen=True)
+class GroundingAudit:
+    passed: bool
+    phantom_files: Tuple[str, ...]
+    unverified_numbers: Tuple[str, ...]
+    contradictions: Tuple[str, ...] = ()
+
+    def to_dict(self) -> Dict[str, Any]:
+        return {
+            "passed": self.passed,
+            "phantom_files": list(self.phantom_files),
+            "unverified_numbers": list(self.unverified_numbers),
+            "contradictions": list(self.contradictions),
+        }
+
+    def warning_banner(self) -> str:
+        parts: List[str] = []
+        if self.phantom_files:
+            parts.append(f"phantom citations not in retrieved context: {', '.join(self.phantom_files)}")
+        if self.unverified_numbers:
+            parts.append(f"unbacked precision metrics (histogram rule): {', '.join(self.unverified_numbers)}")
+        if self.contradictions:
+            parts.append(f"contradicts on-record verdict(s): {', '.join(self.contradictions)}")
+        if not parts:
+            return ""
+        return "[GOVERNANCE WARNING] " + "; ".join(parts) + " (distill_eligible=False)\n"
+
+
+def _normalize_cited_file(raw: str) -> str:
+    return raw.strip().lstrip("./")
+
+
+def _file_matches_retrieved(cited: str, allowed_paths: Set[str], corpus: str) -> bool:
+    norm = _normalize_cited_file(cited)
+    if not norm:
+        return True
+    for ref in allowed_paths:
+        ref_norm = _normalize_cited_file(ref)
+        if not ref_norm:
+            continue
+        if norm == ref_norm or ref_norm.endswith("/" + norm) or norm.endswith("/" + ref_norm):
+            return True
+    if norm in corpus:
+        return True
+    return False
+
+
+def _detect_scorecard_contradictions(reply: str, on_record: Sequence[str]) -> List[str]:
+    contradictions: List[str] = []
+    if not on_record or not reply:
+        return contradictions
+    reply_low = reply.lower()
+    for row in on_record:
+        head, _, tail = row.partition(":")
+        exp_name = head.strip()
+        if not exp_name:
+            continue
+        verdict_match = re.search(r"\b(PASS|FAIL)\b", tail)
+        if not verdict_match:
+            continue
+        recorded = verdict_match.group(1)
+        pat_name = re.escape(exp_name.lower()).replace(r"\ ", r"[\s_-]+").replace(r"\-", r"[\s_-]+")
+        if recorded == "PASS":
+            if re.search(rf"\b{pat_name}\b[^.\n]{{0,50}}\b(?:fail|failed|refuted)\b", reply_low):
+                contradictions.append(f"{exp_name}: recorded PASS, reply claimed FAIL")
+        elif recorded == "FAIL":
+            if re.search(rf"\b{pat_name}\b[^.\n]{{0,50}}\b(?:pass|passed|succeeded|confirmed)\b", reply_low):
+                contradictions.append(f"{exp_name}: recorded FAIL, reply claimed PASS")
+    return contradictions
+
+
+def audit_mentor_reply(
+    reply: str,
+    retrieved_files: Sequence[str] | Set[str],
+    context_corpus_text: str,
+    on_record: Sequence[str] = (),
+) -> GroundingAudit:
+    """Deterministically audit a mentor reply against retrieved files, context artifacts, and scorecard verdicts.
+
+    Checks:
+      1. Citation fidelity: cited files ([source: ...] or backticked filenames) exist in retrieved_files or context.
+      2. Histogram procedural rule: precision metrics (bits/byte, bpb, nDCG@10, fidelity, p-value, z-score)
+         appear verbatim in retrieved artifacts, pre-model claims, or probe receipts.
+      3. Scorecard consistency: reply does not flip PASS/FAIL verdicts explicitly stated in `on_record`.
+    """
+    allowed = {_normalize_cited_file(str(p)) for p in retrieved_files if p}
+    corpus = context_corpus_text or ""
+
+    cited_files: List[str] = []
+    for m in CITE_FILE_RE.finditer(reply or ""):
+        path = (m.group(1) or m.group(2) or "").strip()
+        if not path or path.startswith(("http://", "https://")):
+            continue
+        if path not in cited_files:
+            cited_files.append(path)
+
+    phantom = tuple(sorted(f for f in cited_files if not _file_matches_retrieved(f, allowed, corpus)))
+
+    unverified: List[str] = []
+    for m in PRECISION_METRIC_RE.finditer(reply or ""):
+        num_str = m.group(1) or m.group(2)
+        full_phrase = m.group(0).strip()
+        if num_str and num_str not in corpus and full_phrase not in unverified:
+            unverified.append(full_phrase)
+
+    contradictions = tuple(_detect_scorecard_contradictions(reply or "", on_record))
+    passed = (not phantom) and (not unverified) and (not contradictions)
+    return GroundingAudit(
+        passed=passed,
+        phantom_files=phantom,
+        unverified_numbers=tuple(unverified),
+        contradictions=contradictions,
+    )
 
 
 def drain_input(read: Callable[[], bytes], ready: Callable[[float], bool], clock: Callable[[], float] = time.time,
@@ -1071,12 +1198,17 @@ class Osiris:
     def __init__(self, core=None, mentor=None, home: str = LIVING_HOME,
                  out: Callable[[str], None] = None, background: bool = True,
                  knowledge=None, tty: Optional[bool] = None, probes=None, claims_register: bool = True,
-                 small_talk: Optional[Callable[[str], bool]] = None):
+                 small_talk: Optional[Callable[[str], bool]] = None, router=None):
         self.core = core
         self.small_talk = small_talk   # True for a message that is only a greeting or thanks
         self.claims_register = claims_register
+        self.router = router
         self._claims_hit: list = []
         self._on_record: List[str] = []
+        self._last_probe_receipts: List[Dict[str, Any]] = []
+        self._last_retrieved_files: Set[str] = set()
+        self._last_grounding_audit: Optional[GroundingAudit] = None
+        self._last_route_decision: Any = None
         self.mentor = mentor or OllamaMentor()
         self.home = home
         self.out = out or (lambda s: print(s, end="", flush=True))
@@ -1523,6 +1655,12 @@ class Osiris:
         incomplete = ""
         looped = False
         flagged_claims: list = []
+        grounding_audit = GroundingAudit(passed=True, phantom_files=(), unverified_numbers=(), contradictions=())
+        self._last_probe_receipts = []
+        self._last_retrieved_files = set()
+        self._last_grounding_audit = None
+        self._last_route_decision = None
+        route_decision = None
         force_core = getattr(self, "force_core_voice", None)
         use_core_voice = bool(force_core) if force_core is not None else (os.environ.get("OSIRIS_CORE_VOICE", "1") != "0")
         if gate["open"] and self.core is not None and use_core_voice:
@@ -1539,11 +1677,28 @@ class Osiris:
 
         if voice is None:
             model = self.mentor.model()
+            if self.router is not None:
+                from osiris_cli.knowledge import estimate_tokens
+                pinned = getattr(self.mentor, "_model", None)
+                multi_hop = bool(len(text) > LONG_MESSAGE or re.search(r"\b(?:compare|audit|analyze|synthesiz|refactor|trade-?off)\b", text, re.I))
+                route_decision = self.router.route(
+                    exchange_idx=self.stats["exchanges"],
+                    prompt_tokens=estimate_tokens(text),
+                    requires_multi_hop=multi_hop,
+                    manual_override=pinned,
+                )
+                self._last_route_decision = route_decision
+                model = route_decision.mentor_id
             if model is None:
                 base_info = getattr(self.mentor, "base", "configured provider")
+                unavail_detail = (
+                    route_decision.unavailable_reason
+                    if route_decision is not None and route_decision.unavailable_reason
+                    else f"no mentor model is reachable at {base_info}. Configure Gemma or start Ollama (`ollama serve`)."
+                )
                 offline_note = (
-                    "I can't answer yet: my core hasn't earned its own voice and no "
-                    f"mentor model is reachable at {base_info}. Configure Gemma or start Ollama (`ollama serve`)."
+                    "I can't answer yet: my core hasn't earned its own voice and "
+                    f"{unavail_detail}"
                 )
                 self.out(f"\nOSIRIS › {offline_note}\n")
                 self.history.pop()
@@ -1569,8 +1724,8 @@ class Osiris:
                 return ""
             fast = getattr(self.mentor, "fast_model", lambda: None)()
             fast = fast if fast != model else None
-            why = ""
-            if fast and len(text) > LONG_MESSAGE:
+            why = route_decision.reason if (route_decision is not None and route_decision.degraded_fallback) else ""
+            if fast and len(text) > LONG_MESSAGE and route_decision is None:
                 model, fast, why = fast, None, "fast voice: long message"
             self._mark_chat()
             messages, sources = self.build_messages(gate, text, internal_review=(resolved_transport == 'internal_review' or source_type == 'internal_review'))
@@ -1630,6 +1785,16 @@ class Osiris:
                     flagged_claims = []
                 if flagged_claims:
                     self.out(claims_mod.reply_block(flagged_claims))
+                context_corpus = "\n".join(m["content"] for m in messages if m["role"] != "assistant")
+                grounding_audit = audit_mentor_reply(
+                    reply,
+                    retrieved_files=self._last_retrieved_files,
+                    context_corpus_text=context_corpus,
+                    on_record=self._on_record,
+                )
+                self._last_grounding_audit = grounding_audit
+                if not grounding_audit.passed:
+                    self.out(grounding_audit.warning_banner())
             idx = self.stats["exchanges"]
             if interrupted:
                 note = "not learned: interrupted"
@@ -1637,6 +1802,8 @@ class Osiris:
                 note = "not learned: incomplete reply"
             elif flagged_claims:
                 note = "not learned: the reply brings up claims the register marks not legit"
+            elif not grounding_audit.passed:
+                note = "not learned: failed grounding audit (phantom citation, unbacked metric, or contradiction)"
             elif effective_learnable and self.core is None:
                 note = "recorded; no core is loaded, so nothing is learned"
             elif effective_learnable and idx % HELDOUT_EVERY == 0:
@@ -1680,11 +1847,48 @@ class Osiris:
             self.stats["core_spoke"] += 1
         heldout = idx % HELDOUT_EVERY == 0
         lesson = f"User: {text}\nOSIRIS: {reply}\n"
+        router_allows_distill = True if route_decision is None else bool(route_decision.allow_distillation)
+        distill_eligible = (
+            effective_learnable
+            and not interrupted
+            and not incomplete
+            and not flagged_claims
+            and grounding_audit.passed
+            and router_allows_distill
+            and voice != "core"
+            and not heldout
+        )
+        routing_meta = (
+            route_decision.to_ledger_dict()
+            if route_decision is not None
+            else {
+                "mentor_id": voice.split(":", 1)[1] if voice and voice.startswith("mentor:") else voice,
+                "provider": "core" if voice == "core" else "mentor",
+                "reason": "core_voice" if voice == "core" else "active_mentor",
+                "distill_eligible": distill_eligible,
+                "held_out": heldout,
+                "degraded_fallback": False,
+            }
+        )
+        routing_meta["distill_eligible"] = distill_eligible
+        routing_meta["held_out"] = heldout
+
+        base_learnable = (
+            effective_learnable
+            and not interrupted
+            and not incomplete
+            and not flagged_claims
+            and grounding_audit.passed
+            and (heldout or router_allows_distill)
+        )
         rec_data = {
             "t": time.strftime("%Y-%m-%dT%H:%M:%S"),
             "voice": voice,
             "heldout": heldout,
-            "learnable": effective_learnable and not interrupted and not incomplete and not flagged_claims,
+            "learnable": base_learnable,
+            "distill_eligible": distill_eligible,
+            "routing": routing_meta,
+            "grounding_audit": grounding_audit.to_dict(),
             "flagged_claims": [c.id for c in flagged_claims] or None,
             "incomplete": incomplete or None,
             "user": text,
@@ -1698,14 +1902,15 @@ class Osiris:
             "source_type": resolved_transport,
             "pasted": (resolved_transport == "bracketed_paste"),
         }
+        if self._last_probe_receipts:
+            rec_data["probe_receipts"] = list(self._last_probe_receipts)
         key = self._record(rec_data)
         if (resolved_transport in ("bracketed_paste", "unknown")) or not effective_learnable:
             self.last_paste = dict(rec_data, hash=key)
             self.last_review = None
         self._save_stats()
-        if effective_learnable and not interrupted and not incomplete and not flagged_claims \
-                and voice != "core" and self.core is not None:
-            self._after(lesson, reply, heldout, key, idx)
+        if base_learnable and voice != "core" and self.core is not None:
+            self._after(lesson, reply, heldout, key, idx, train_allowed=distill_eligible)
         return reply
 
     def _small_talk_reply(self, text: str, gate: dict) -> str:
@@ -1769,6 +1974,11 @@ class Osiris:
         if self.probes is not None and not long_message and not internal_review:
             checks = self.probes.run(text)
             if checks:
+                from osiris_cli.probes import receipts_from_legacy_results
+                self._last_probe_receipts = receipts_from_legacy_results(checks)
+                for rec in self._last_probe_receipts:
+                    if rec.get("probe") == "read_file" and not rec.get("blocked"):
+                        self._last_retrieved_files.add(str(rec.get("target", "")))
                 context += ("\n\n[Checked just now -- read-only, run by OSIRIS's code]\n"
                             + self.probes.format(checks))
         if self._claims_hit:
@@ -1778,6 +1988,10 @@ class Osiris:
             context += ("\n\n[On record for this message -- the scorecard's own verdicts, already shown to "
                         "Devin; state them exactly, do not re-describe them]\n" + "\n".join(self._on_record))
         if hits:
+            for h in hits:
+                src = str(h.get("source", ""))
+                if src:
+                    self._last_retrieved_files.add(src)
             context += ("\n\n[Notes looked up for this message -- Devin's files; cite the file if "
                         "you use one]\n" + self.knowledge.format_notes(hits))
         if self.last_paste and len(self.last_paste.get("user", "")) > MESSAGE_BUDGET \
@@ -1924,13 +2138,14 @@ class Osiris:
                           "windows of a reply); they are not counted until rescored.")
         return who + "\nYour core has not been scored on held-out conversation yet."
 
-    def _after(self, lesson: str, reply: str, heldout: bool, key: str, idx: int) -> None:
+    def _after(self, lesson: str, reply: str, heldout: bool, key: str, idx: int,
+               train_allowed: bool = True) -> None:
         def work():
             try:
                 core_bpb = self.core.bits_per_byte(reply)
                 uni_bpb = self.heldout_unigram(reply)
                 trained = False
-                if not heldout:
+                if not heldout and train_allowed:
                     trained = self.core.learn(lesson, TRAIN_STEPS_PER_EXCHANGE) is not None
                 with self._lock:
                     if heldout and core_bpb is not None:

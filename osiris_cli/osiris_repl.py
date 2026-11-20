@@ -502,6 +502,9 @@ class OsirisReplState:
         self.last_benchmark: Optional[Dict[str, Any]] = None
         self.telemetry_history: List[Dict[str, Any]] = []
         self.evidence_ledger: List[Dict[str, Any]] = []
+        # EXEC_GATE (STRICT | AUTO): governs workspace mutations, !cmd, and /skill confirmation.
+        # Strictly separate from SYS-026 Speaking Gate (living.py), which can never be toggled.
+        self.exec_gate: str = "STRICT"
 
         # Dual-Substrate Hardware Mesh auto-detection
         try:
@@ -2020,6 +2023,10 @@ def display_help() -> None:
     print("    /suggest             Show next best actions and hotkey mapping")
     print("    /ui [mode]           Set console interface mode (rich, plain, access)")
     print("    /check               Verify ledger, runs, and bench suite integrity")
+    print("    /skills [list|audit] List or audit unified ./.agents/skills and ~/.agents/skills")
+    print("    /skill <name> [task] Hydrate and run a verified skill under EXEC_GATE + SYS-024")
+    print("    /gate [strict|auto]  Inspect or toggle EXEC_GATE (never alters SYS-026 Speaking Gate)")
+    print("    !<cmd> [args]        Run a bounded subprocess gated by EXEC_GATE with SHA-256 receipt")
     print()
     print("  \033[1;36mGitHub & Dual-Node Device Sync\033[0m")
     print("    /pr [status|list|view <id>]  Inspect pull requests and GitHub repos (Read-only)")
@@ -2068,24 +2075,25 @@ def execute_trio(rest: str) -> None:
 REPL_COMMANDS = {
     "/apply", "/architecture", "/benchmark", "/bridges", "/chat", "/check", "/clean", "/closure",
     "/code", "/core", "/digest", "/discard", "/dna", "/edge", "/eval-audit", "/experiment", "/fast", "/firewall", "/forge",
-    "/forget", "/gemini", "/help", "/ignite", "/ingest", "/intent", "/introspect", "/learn",
+    "/forget", "/gate", "/gemini", "/help", "/ignite", "/ingest", "/intent", "/introspect", "/learn",
     "/ledger", "/legit", "/mentor", "/mesh", "/mutate", "/nclm", "/ollama", "/osiris", "/physics",
     "/power", "/pr", "/provision", "/publish", "/q", "/remember", "/review", "/retrieval", "/run", "/self", "/sim",
-    "/status", "/swarm", "/sync", "/tetra1d", "/tournament", "/train", "/trio", "/unlearn",
+    "/skill", "/skills", "/status", "/swarm", "/sync", "/tetra1d", "/tournament", "/train", "/trio", "/unlearn",
     "/update", "/validate", "/voice", "/welcome",
 }
 # Safe to offer as a one-key [1]: they only read and print.
 READ_ONLY_COMMANDS = {
     "/help", "/status", "/home", "/check", "/osiris", "/mentors", "/why", "/ledger",
     "/architecture", "/lab", "/sources", "/hypotheses", "/gaps", "/runs", "/suggest", "/welcome",
-    "/power", "/firewall", "/ollama", "/facts", "/nclm", "/intent",
+    "/power", "/firewall", "/ollama", "/facts", "/nclm", "/intent", "/skills",
 }
 # Commands that need words after them to do anything.
 NEEDS_ARGUMENT = {"/code": "/code explain osiris_cli/living.py", "/legit": "/legit list",
                   "/eval-audit": "/eval-audit qkernel <run_dir>",
                   "/remember": "/remember <fact>", "/forget": "/forget <words>",
                   "/self": "/self <text>", "/chat": "/chat <message>", "/dna": '/dna "<intent>"',
-                  "/gemini": "/gemini <question>", "/physics": "/physics chsh"}
+                  "/gemini": "/gemini <question>", "/physics": "/physics chsh",
+                  "/skill": "/skill osiris-preflight-check"}
 
 
 def bare_command(word: str) -> Optional[str]:
@@ -2256,6 +2264,17 @@ def dispatch_command(state: OsirisReplState, line: str) -> None:
         except Exception as e:
             print(f"\033[1;31m[!] Console command error ({cmd}): {e}\033[0m\n")
         return
+    # 2b. Single-line typed !command runs a bounded subprocess governed by EXEC_GATE.
+    if (
+        line_clean.startswith("!")
+        and len(line_clean) > 1
+        and "\n" not in line_clean
+        and _resolve_input_transport(line) != "bracketed_paste"
+    ):
+        from osiris_cli import tui_inline
+        tui_inline.run_bang_command(line_clean, state=state)
+        return
+
     # 3a. A lone word that is exactly a command name ("code", "status") is that command typed
     # without its "/". It is not sent to the model: one word gives a small voice nothing to
     # answer, and on 2026-11-09 "code" alone got a looping, invented description of OSIRIS.
@@ -2593,6 +2612,26 @@ def dispatch_command(state: OsirisReplState, line: str) -> None:
         print()
         print(living.probes.format(living.probes.run(rest, names)) if living.probes else "[OSIRIS] checks unavailable")
         print()
+    elif cmd == "/skills":
+        from osiris_cli import tui_inline
+        sub = parts[1].lower() if len(parts) > 1 else "list"
+        tui_inline.execute_skills_command(sub)
+    elif cmd == "/skill":
+        from osiris_cli import tui_inline
+        raw_tail = line_clean[len(parts[0]):].strip()
+        tui_inline.execute_skill_command(raw_tail, state=state, living=get_living())
+    elif cmd == "/gate":
+        from osiris_cli import tui_inline
+        arg = parts[1].strip().lower() if len(parts) > 1 else ""
+        if arg in ("strict", "auto"):
+            mode = tui_inline.set_exec_gate(state, arg)
+            print(f"\n[OSIRIS] EXEC_GATE set to {mode} (SYS-026 Speaking Gate is unchanged).\n")
+        elif arg == "toggle":
+            mode = tui_inline.toggle_exec_gate(state)
+            print(f"\n[OSIRIS] EXEC_GATE toggled to {mode} (SYS-026 Speaking Gate is unchanged).\n")
+        else:
+            mode = tui_inline.normalize_exec_gate(getattr(state, "exec_gate", "STRICT"))
+            print(f"\n[OSIRIS] EXEC_GATE is {mode} (use /gate strict | /gate auto | /gate toggle; SYS-026 Speaking Gate is separate and cannot be toggled).\n")
     elif cmd == "/mentor":
         living = get_living()
         target = parts[1] if len(parts) > 1 else None
@@ -2662,6 +2701,17 @@ def boot_repl() -> None:
                   f"(OSIRIS_PREWARM=0 skips this)\033[0m\n")
 
     prompt = "osiris::}{> "
+    viewport = None
+    try:
+        from osiris_cli import tui_inline
+        if tui_inline.should_use_inline_tui():
+            viewport = tui_inline.InlineViewport(
+                state=SESSION,
+                living_getter=get_living,
+                prompt_text=prompt,
+            )
+    except Exception:  # noqa: BLE001 - inline TUI must always degrade to line REPL
+        viewport = None
 
     while True:
         if _LIVING is not None and _LIVING.held:
@@ -2676,7 +2726,9 @@ def boot_repl() -> None:
             dispatch_held(SESSION, line)
             continue
         try:
-            if otc is not None:
+            if viewport is not None:
+                line = viewport.read_input()
+            elif otc is not None:
                 print(prompt, end="", flush=True)
                 line = otc.collect_multiline_input()
             else:
