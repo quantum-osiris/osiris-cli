@@ -2,6 +2,6 @@
   "id": "gaps",
   "module": "gaps",
   "title": "vague story: gaps chopped off or run on (modify existing)",
-  "spec": "The gaps we pull out of prompts keep getting chopped off partway through, or run on into whatever comes next. Fix it so each gap comes out whole.",
+  "spec": "The gaps we pull out of prompts keep getting chopped off partway through, or run on into whatever comes next. Fix it so each gap comes out whole: there is NO length limit -- a gap of any length (hundreds of characters) must be extracted intact, never truncated. A gap still stops at the end of its own sentence or line; a decimal point (0.97) is not a sentence end.",
   "kind": "modify"
 }
