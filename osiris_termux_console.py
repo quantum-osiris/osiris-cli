@@ -2035,6 +2035,7 @@ def _resolve_installed_ollama_tag(model: str, installed):
         if f"{canonical}:latest" in installed:
             return f"{canonical}:latest"
     return None
+BENCH_LOCAL_MENTORS = ("gemma3:1b", "gemma-3-270m", "gemma-2-2b", "qwen2.5-coder:7b", "deepseek-coder", "llama3.2:1b")
 
 
 def _ollama_models():
@@ -3370,6 +3371,7 @@ def _ui(command: str = ""):
 HELP_SECTIONS = (
     ("Look (read-only)", ["/home  the menu", "/status  every fact on one screen", "/check  ledger, runs, bench",
                           "/run show [id] [n]  a run's candidates", "/runs stats  verified run history",
+                          "/runs --orphans  run dirs no ledger entry vouches for (read-only)",
                           "/why  last sandbox log", "/intent status  Engine 1", "/organism status  Engine 3",
                           "/mentors  which model the hidden tests favor (protege.py)",
                           "/bench [model|gemini] [all|task,task] [k=N]  score a mentor (G) · /bench log",
@@ -3394,7 +3396,7 @@ HELP_SECTIONS = (
     ("Plan and build", [
                         "/gap [outcome]  guided capability-gap draft (H)",
                         "/gaps  review and activate drafts (I)", "/ignite  active gaps -> backlog stories",
-                        "/sprint plan · /sprint execute [#id] · /sprint review",
+                        "/sprint  status & usage · /sprint plan · /sprint execute [#id] · /sprint review",
                         "/auto-enhance · /research · /consensus · /dd ..."]),
     ("Decide", ["/apply  write the pending proposal (typed, never a menu key)"]),
     ("Interface", ["/tap  menu as Android buttons", "/ui  appearance", "exit  quit"]),
