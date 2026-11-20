@@ -212,10 +212,13 @@ def load_frozen_corpus(path: str):
 def chat_lessons(log_path: str) -> Dict[str, List[str]]:
     """Train and held-out lesson texts from the conversation log.
 
-    A learnable exchange whose reply brings up a claim the register marks not legit (and the user's
-    message did not) is left out of training and listed under "flagged" -- the same check the live
-    console applies since 2026-11-09, so rows recorded before it are filtered too. Held-out rows are
-    not filtered: they are the gate's fixed measurement, and changing them would change the gate."""
+    Excludes:
+      - unlearnable rows and core self-outputs
+      - rows marked `distill_eligible == False` (e.g. degraded low-RAM fallbacks or failed
+        grounding audits); legacy rows lacking `distill_eligible` default to eligible
+      - rows with `grounding_audit.passed == False`
+      - rows whose reply brings up a claim the register marks not legit (listed under "flagged")
+    Held-out rows (`heldout == True`) are isolated strictly in `heldout` and never trained on."""
     train, held, flagged = [], [], []
     try:
         from osiris_cli import claims as claims_mod
@@ -231,11 +234,19 @@ def chat_lessons(log_path: str) -> Dict[str, List[str]]:
                 if not r.get("learnable") or r.get("voice") == "core":
                     continue
                 lesson = f"User: {r['user']}\nOSIRIS: {r['reply']}\n"
-                if not r.get("heldout") and claims_mod is not None and claims_mod.flagged_in_reply(
+                if r.get("heldout"):
+                    held.append(lesson)
+                    continue
+                if r.get("distill_eligible") is False:
+                    continue
+                audit = r.get("grounding_audit")
+                if isinstance(audit, dict) and audit.get("passed") is False:
+                    continue
+                if claims_mod is not None and claims_mod.flagged_in_reply(
                         r["reply"], claims_mod.match(r["user"])):
                     flagged.append(r.get("hash", ""))
                     continue
-                (held if r.get("heldout") else train).append(lesson)
+                train.append(lesson)
     except OSError:
         pass
     return {"train": train, "heldout": held, "flagged": flagged}

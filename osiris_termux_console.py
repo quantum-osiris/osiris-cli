@@ -347,6 +347,18 @@ def _suggest(command: str = ""):
     + telemetry activity and asks Engine 1 to PICK 1-2 action IDs from
     SUGGEST_ACTIONS. Only a listed ID gets a number, and the number runs that
     ID's fixed command; any other model text is shown unnumbered."""
+    installed = _ollama_models()
+    if installed is None:
+        print("\n[!] /suggest unavailable: Ollama daemon is offline (start `ollama serve` first).\n")
+        return
+    suggest_model = _resolve_installed_ollama_tag(CHAT_MODEL, installed)
+    if suggest_model is None:
+        names = sorted(m for m in installed if m)
+        if not names:
+            print("\n[!] /suggest unavailable: no Ollama models are installed (run `ollama pull gemma3:1b`).\n")
+            return
+        suggest_model = _pick_preferred_model(names, ARCHITECT_PREFERENCES, [], set(), prefer_ranked_first=False)
+
     recent_prompts = []
     try:
         if os.path.exists(PROMPT_LIBRARY_PATH):
@@ -383,8 +395,8 @@ Output EXACTLY in this format and nothing else:
 SUGGESTION 1: <ID> -- <one short reason>
 SUGGESTION 2: <ID> -- <one short reason, or omit this line>
 """
-    print("\n[*] Thinking of suggestions based on recent activity (Engine 1)...")
-    raw = query_model(prompt, CHAT_MODEL, stream=False, timeout=420)
+    print(f"\n[*] Thinking of suggestions based on recent activity (Engine 1 · {suggest_model})...")
+    raw = query_model(prompt, suggest_model, stream=False, timeout=420)
     _pending_suggestions.clear()
     found = re.findall(r"^SUGGESTION\s+(\d+):\s*(.+)$", raw, re.MULTILINE)
     if not found:
@@ -1963,11 +1975,22 @@ def _next_best():
         pass
     try:
         import protege
-        if protege.load_ledger()[1] and _ollama_models() is not None:
-            return dict(label=f"Benchmark {BENCH_DEFAULT_MODEL} on 3 tasks", cmd="/bench",
-                        why="no model has been measured yet, so no model advice is possible",
-                        will="3 local tasks, 1 attempt each, scored by hidden tests (minutes on a phone)",
-                        wont="change code, use cloud quota, or change which model OSIRIS calls")
+        installed = _ollama_models()
+        if protege.load_ledger()[1] and installed is not None and genome_ledger.ledger_src_problem() is None:
+            chosen = _resolve_installed_ollama_tag(BENCH_DEFAULT_MODEL, installed)
+            if chosen is None:
+                for cand in BENCH_LOCAL_MENTORS:
+                    chosen = _resolve_installed_ollama_tag(cand, installed)
+                    if chosen is not None:
+                        break
+            if chosen is None and installed:
+                chosen = sorted(m for m in installed if m)[0]
+            if chosen is not None:
+                cmd = "/bench" if chosen == BENCH_DEFAULT_MODEL else f"/bench {chosen}"
+                return dict(label=f"Benchmark {chosen} on 3 tasks", cmd=cmd,
+                            why="no model has been measured yet, so no model advice is possible",
+                            will="3 local tasks, 1 attempt each, scored by hidden tests (minutes on a phone)",
+                            wont="change code, use cloud quota, or change which model OSIRIS calls")
         nb = _next_mentor_round(protege)
         if nb:
             return nb
@@ -1978,6 +2001,40 @@ def _next_best():
                 wont="start any work until you activate the draft")
 
 
+BENCH_LOCAL_MENTORS = (
+    "gemma3:1b", "gemma2:2b", "gemma3:4b",
+    "gemma-3-270m", "gemma-2-2b",
+    "qwen2.5-coder:7b", "deepseek-coder", "llama3.2:1b",
+)
+
+
+def canonicalize_ollama_tag(model: str) -> str:
+    """Map legacy hyphenated model names to canonical Ollama tags (via providers.router)."""
+    if not model:
+        return ""
+    try:
+        from osiris_cli.providers.router import normalize_ollama_tag
+        return normalize_ollama_tag(model)
+    except Exception:
+        return model.strip()
+
+
+def _resolve_installed_ollama_tag(model: str, installed):
+    """Return the exact installed Ollama tag matching `model`, its `:latest` alias, or its
+    canonical legacy alias (never prefix-matching bare family names like `gemma3`)."""
+    if not model or not installed:
+        return None
+    if model in installed:
+        return model
+    if f"{model}:latest" in installed:
+        return f"{model}:latest"
+    canonical = canonicalize_ollama_tag(model)
+    if canonical != model:
+        if canonical in installed:
+            return canonical
+        if f"{canonical}:latest" in installed:
+            return f"{canonical}:latest"
+    return None
 BENCH_LOCAL_MENTORS = ("gemma3:1b", "gemma-3-270m", "gemma-2-2b", "qwen2.5-coder:7b", "deepseek-coder", "llama3.2:1b")
 
 
@@ -1999,8 +2056,8 @@ def _next_mentor_round(protege):
     if problem:
         return None
     installed = _ollama_models()
-    if installed is None:
-        # Ollama daemon is offline: cannot benchmark local Ollama mentors
+    if installed is None or genome_ledger.ledger_src_problem() is not None:
+        # Ollama daemon is offline or bench recorder unavailable: cannot benchmark local mentors
         return None
     card = protege.scorecard(protege.candidates(entries, protege.current_suite(), protege.current_runner())[0])
     have = lambda m: m in installed or f"{m}:latest" in installed
@@ -3511,7 +3568,8 @@ def _bench_blocker(backend, model):
                     "Cannot start benchmark: Ollama daemon is offline (http://localhost:11434 unreachable).\n"
                     "Start Ollama before benchmarking, or benchmark gemini with: /bench gemini\n"
                     "Refusing to execute to prevent evidence ledger contamination.")
-        if not model or not (model in installed or f"{model}:latest" in installed):
+        resolved = _resolve_installed_ollama_tag(model, installed)
+        if not model or resolved is None:
             names = sorted(m for m in installed if m)
             hint = f"/bench {names[0]}" if names else f"ollama pull {model}"
             return ("MODEL NOT INSTALLED",
@@ -3525,6 +3583,19 @@ def _bench_blocker(backend, model):
                 f"Cannot start benchmark: {problem}\n"
                 "A round that cannot be recorded is not started. Nothing was run or written.")
     return None
+
+
+def _mentor_model_guard(argv, ui):
+    """Unified preflight guard shared by _bench, _bench_preflight, and hotkeys G/N.
+    Delegates to _bench_blocker so Ollama reachability, installed tags (with canonical
+    alias normalization), and dnalang-core recorder availability are all checked before
+    any preflight card or ledger write."""
+    backend = argv[3] if len(argv) > 3 else "ollama"
+    target_model = argv[argv.index("--model") + 1] if "--model" in argv else BENCH_DEFAULT_MODEL
+    blocker = _bench_blocker(backend, target_model)
+    if blocker is None:
+        return None
+    return osiris_ui.notice(ui, "blocked", blocker[0], blocker[1])
 
 
 def _bench_refused(backend, model, ui):
@@ -3545,7 +3616,9 @@ def _bench_preflight(command, argv, label, ui):
     k = int(argv[argv.index("--k") + 1])
     mentor = f"{argv[3]}/{argv[argv.index('--model') + 1]}" if "--model" in argv else argv[3]
 
-    if _bench_refused(argv[3], argv[argv.index("--model") + 1] if "--model" in argv else BENCH_DEFAULT_MODEL, ui):
+    refusal = _mentor_model_guard(argv, ui)
+    if refusal is not None:
+        print("\n" + refusal)
         return
 
     est, base = "a few minutes per task on a phone", "no earlier round to compare with"
@@ -3789,7 +3862,9 @@ def _bench(command: str = "/bench"):
     if argv is None:
         print("\n" + osiris_ui.notice(ui, "review", "BENCH", label) + "\n")
         return
-    if _bench_refused(argv[3], argv[argv.index("--model") + 1] if "--model" in argv else BENCH_DEFAULT_MODEL, ui):
+    refusal = _mentor_model_guard(argv, ui)
+    if refusal is not None:
+        print("\n" + refusal)
         return
     if "now" not in command.lower().split()[1:]:
         _bench_preflight(command, argv, label, ui)

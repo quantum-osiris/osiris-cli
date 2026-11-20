@@ -152,9 +152,19 @@ def main(argv=None) -> int:
         print(f"[!] Sandbox unavailable in this environment: {unavailable}")
         return 3
     model = args.model or (bench._load_osiris().CODE_MODEL if args.backend == "ollama" else None)
+    if args.backend == "ollama":
+        problem = bench.ollama_preflight(model)
+        if problem:
+            print(f"[!] {problem}\n"
+                  f"    Refusing to execute to prevent evidence ledger contamination.", file=sys.stderr)
+            return 1
     baseline_prompt = bench.prompt_for
     print(f"Trial: strategy {args.strategy} ({prompt_strategies.sha256(args.strategy)[:12]}) · "
           f"verifier={args.verifier} · {args.backend}{f' ({model})' if model else ''} · k={args.k}")
+    log = None
+    results = {}
+    cut = None
+    ended = False
     try:
         log = TrialRunLog(args.out, tasks, args.k, args.backend, model, args.strategy, verifier=args.verifier)
         print(f"Run {log.run_id}: each task is recorded as soon as it finishes")
@@ -169,11 +179,20 @@ def main(argv=None) -> int:
             finally:
                 bench.prompt_for = baseline_prompt
         log.end(results, cut)
+        ended = True
         bench.emit("run_end", status="partial" if cut else "complete", completed=len(results),
                    planned=len(tasks), interrupted_during=cut)
     except OSError as e:
         print(f"[!] Recording failed: {e} -- run left without an end entry", file=sys.stderr)
         return 1
+    finally:
+        if log is not None and not ended:
+            try:
+                log.end(results, cut or "aborted")
+                bench.emit("run_end", status="partial", completed=len(results),
+                           planned=len(tasks), interrupted_during=cut or "aborted")
+            except OSError:
+                pass
     s = bench.summarize(results)
     print(f"\ndelivered {s['delivered']}/{s['tasks']}   false confidence {s['false_confidence']}   "
           f"({args.strategy}) -- {'PARTIAL' if cut else 'complete'}: {log.run_id}")

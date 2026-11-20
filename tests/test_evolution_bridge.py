@@ -161,3 +161,39 @@ def test_real_signed_grant_promotes_once_and_only_for_that_digest(repo, tmp_path
     replay = eb.evaluate_candidate(res, str(tmp_path / "l.jsonl"), authorizer=auth(g))
     assert replay.status == "VERIFIED_PENDING_AUTHORIZATION" and "already used" in " ".join(replay.reasons)
     assert tree_digest(str(repo)) == tree_digest(str(repo))
+
+
+def test_pass_rate_includes_skipped_tests_in_denominator():
+    from osiris_cli.orchestration.evidence_firewall import ExecutionEvidence
+
+    ev = ExecutionEvidence(
+        argv=("pytest",),
+        returncode=0,
+        passed=2,
+        failed=0,
+        errors=0,
+        stdout_digest="0" * 64,
+        stdout_tail="2 passed, 2 skipped",
+        workdir_digest="1" * 64,
+        skipped=2,
+    )
+    assert eb.pass_rate(ev) == pytest.approx(0.5)
+
+
+def test_trio_counts_skipped_tests_in_frozen_suite_pass_rate(tmp_path):
+    r = tmp_path / "repo_skip"
+    r.mkdir()
+    (r / "calc.py").write_text(BUGGY, encoding="utf-8")
+    (r / "test_calc.py").write_text(
+        "import pytest\n"
+        "from calc import mean\n\n"
+        "def test_mean():\n    assert mean([2, 4]) == 3\n\n"
+        "@pytest.mark.skip(reason='deferred case')\n"
+        "def test_skipped_case():\n    assert mean([5]) == 5\n",
+        encoding="utf-8",
+    )
+    res = trio(r, tmp_path, {"calc.py": FIXED}, "Changed the divisor.")
+    assert res.candidate is not None
+    assert res.candidate.skipped == 1
+    d = eb.evaluate_candidate(res, str(tmp_path / "lineage_skip.jsonl"))
+    assert d.candidate_fitness == pytest.approx(0.5)

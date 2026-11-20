@@ -22,6 +22,7 @@ from __future__ import annotations
 
 import hashlib
 import json
+import math
 import os
 import secrets
 import stat
@@ -106,6 +107,23 @@ def _is_hex64(value: Any) -> bool:
     return isinstance(value, str) and len(value) == 64 and all(c in _HEX64 for c in value)
 
 
+def _is_strict_int(value: Any) -> bool:
+    return isinstance(value, int) and not isinstance(value, bool)
+
+
+def _is_strict_number(value: Any) -> bool:
+    return isinstance(value, (int, float)) and not isinstance(value, bool) and math.isfinite(value)
+
+
+def _strict_hex_bytes(value: Any, expected_len: int) -> Optional[bytes]:
+    if not isinstance(value, str) or len(value) != expected_len * 2:
+        return None
+    if any(c not in "0123456789abcdefABCDEF" for c in value):
+        return None
+    raw = bytes.fromhex(value)
+    return raw if len(raw) == expected_len else None
+
+
 def _normalize_scope(scope: Union[str, Sequence[str]]) -> List[str]:
     if isinstance(scope, str):
         s = scope.strip()
@@ -153,9 +171,11 @@ def _write_exclusive_file(path: str, data: bytes, mode: int) -> None:
 
 
 def _check_private_key_permissions(path: str) -> None:
+    st = os.lstat(path)
+    if stat.S_ISLNK(st.st_mode) or not stat.S_ISREG(st.st_mode):
+        raise RuntimeError(f"Private key {path} must be a regular file, not a symlink or special file")
     if os.name != "posix":
         return
-    st = os.stat(path)
     if (stat.S_IMODE(st.st_mode) & 0o077) != 0:
         raise RuntimeError(
             f"Insecure permissions {oct(stat.S_IMODE(st.st_mode))} on private key {path}; "
@@ -248,8 +268,10 @@ class PQCEnclaveGate:
         self.operator_id = operator_id
         self.verifier_only = bool(verifier_only)
         self.consumed_ledger_path = consumed_ledger_path
-        self._consumed_grants: Dict[str, str] = {}  # grant_id -> consumer_id
-        self._consumed_nonces: Dict[str, str] = {}  # nonce -> consumer_id
+        self._enclave_dir: Optional[str] = None
+        self._trusted_keys_path: Optional[str] = None
+        self._consumed_grants: Dict[str, Tuple[str, str, str, str]] = {}  # grant_id -> (cid, gid, nonce, sha)
+        self._consumed_nonces: Dict[str, Tuple[str, str, str, str]] = {}  # nonce -> (cid, gid, nonce, sha)
 
         if self.verifier_only:
             if ed25519_private_key is not None or mldsa65_private_key is not None:
@@ -348,6 +370,11 @@ class PQCEnclaveGate:
         if not ed_exists:
             if not allow_init:
                 raise KeySetupRequired(onboarding_text(base))
+            if os.path.exists(trusted_path):
+                raise KeySetupRequired(
+                    f"{trusted_path} already lists trusted keys but local private keys are missing; "
+                    "refusing to generate new keys next to an existing trust store."
+                )
             ed_priv = Ed25519PrivateKey.generate()
             ml_priv = MLDSA65PrivateKey.generate()
             ed_seed = ed_priv.private_bytes(Encoding.Raw, PrivateFormat.Raw, NoEncryption())
@@ -398,13 +425,16 @@ class PQCEnclaveGate:
             )
 
         trusted_keys = load_trusted_public_keys(trusted_path)
-        return cls(
+        inst = cls(
             operator_id=operator_id,
             ed25519_private_key=ed_priv,
             mldsa65_private_key=ml_priv,
             trusted_public_keys=trusted_keys,
             consumed_ledger_path=consumed_path,
         )
+        inst._enclave_dir = base
+        inst._trusted_keys_path = trusted_path
+        return inst
 
     @classmethod
     def verifier_from_enclave_dir(
@@ -419,12 +449,34 @@ class PQCEnclaveGate:
         tpath = trusted_keys_path or os.path.join(base, "trusted_operator_keys.json")
         cpath = os.path.join(base, "consumed_grants.jsonl")
         trusted_keys = load_trusted_public_keys(tpath)
-        return cls(
+        inst = cls(
             operator_id=operator_id,
             trusted_public_keys=trusted_keys,
             consumed_ledger_path=cpath,
             verifier_only=True,
         )
+        inst._enclave_dir = base
+        inst._trusted_keys_path = tpath
+        return inst
+
+    def as_verifier(self) -> "PQCEnclaveGate":
+        """Return a pure verifier-only gate (zero private keys) pinned to this gate's trust root."""
+        if self._enclave_dir and self._trusted_keys_path:
+            return PQCEnclaveGate.verifier_from_enclave_dir(
+                self._enclave_dir,
+                trusted_keys_path=self._trusted_keys_path,
+                operator_id=self.operator_id,
+            )
+        verifier = PQCEnclaveGate(
+            operator_id=self.operator_id,
+            trusted_public_keys=self.trusted_key_records(),
+            consumed_ledger_path=self.consumed_ledger_path,
+            verifier_only=True,
+        )
+        if self.consumed_ledger_path is None:
+            verifier._consumed_grants = self._consumed_grants
+            verifier._consumed_nonces = self._consumed_nonces
+        return verifier
 
     # ------------------------------------------------------------------
     # Digests / canonical signing body
@@ -439,7 +491,13 @@ class PQCEnclaveGate:
 
     @staticmethod
     def compute_shake256_prehash(payload_sha256: str, context: str = "OSIRIS_6.0_PQC") -> str:
-        """Computes NIST FIPS 204 SHAKE-256 512-bit pre-hash."""
+        """Compute application-level SHAKE-256 512-bit payload/context binding digest.
+
+        Note: this digest is embedded inside the canonical JSON signing body (`fips204_prehash`
+        field for OSIRIS-HYBRID-GRANT-V2 compatibility) and signed with pure ML-DSA-65
+        (`MLDSA65PrivateKey.sign(msg)` with default empty context) plus pure Ed25519; it is not
+        NIST FIPS 204 `HashML-DSA` pre-hashing.
+        """
         data = f"{context}:{payload_sha256}".encode("utf-8")
         return hashlib.shake_256(data).hexdigest(64)
 
@@ -515,19 +573,29 @@ class PQCEnclaveGate:
         issued_at: Optional[float] = None,
         approval_mode: str = "direct",
     ) -> Dict[str, Any]:
-        """Sign a hybrid Ed25519 + ML-DSA-65 grant using the enclave's local private keys."""
+        """Sign a hybrid pure-Ed25519 + pure-ML-DSA-65 grant using the enclave's local private keys."""
         if self.verifier_only or self._ed25519_private_key is None or self._mldsa65_private_key is None:
             raise RuntimeError("Verifier-only PQCEnclaveGate cannot sign grants")
+        if not _is_strict_int(sequence_index):
+            raise ValueError("sequence_index must be an integer")
+        if not isinstance(prev_block_hash, str) or not prev_block_hash:
+            raise ValueError("prev_block_hash must be a non-empty string")
+        if not isinstance(event_type, str) or not event_type.strip():
+            raise ValueError("event_type must be a non-empty string")
         if not _is_hex64(payload_sha256):
             raise ValueError("payload_sha256 must be a 64-character lowercase SHA-256 hex digest")
         if not isinstance(operation_schema, dict):
             raise ValueError("operation_schema must be a dict")
-        if not isinstance(ttl_seconds, (int, float)) or ttl_seconds <= 0:
-            raise ValueError("ttl_seconds must be > 0")
+        if not _is_strict_number(ttl_seconds) or ttl_seconds <= 0:
+            raise ValueError("ttl_seconds must be a finite number > 0")
+        if issued_at is not None and not _is_strict_number(issued_at):
+            raise ValueError("issued_at must be a finite number")
 
         norm_scope = _normalize_scope(scope)
         ts = round(float(time.time() if issued_at is None else issued_at), 6)
         exp = round(ts + float(ttl_seconds), 6)
+        if not (math.isfinite(ts) and math.isfinite(exp) and exp > ts):
+            raise ValueError("computed grant timestamps must be finite with expires_at > issued_at")
         nonce = f"OSIRIS-PQC-{secrets.token_hex(16)}"
         op_schema_sha = hashlib.sha256(_canon_json(operation_schema).encode("utf-8")).hexdigest()
 
@@ -654,33 +722,72 @@ class PQCEnclaveGate:
         record_now: bool,
     ) -> Optional[str]:
         cid = consumer_id or f"once:{secrets.token_hex(8)}"
+        expected_tuple = (consumer_id, grant_id, nonce, payload_sha256)
 
         prior_g = self._consumed_grants.get(grant_id)
-        if prior_g is not None and (consumer_id is None or prior_g != consumer_id):
+        if prior_g is not None and (consumer_id is None or prior_g != expected_tuple):
             return f"Grant replay detected: {grant_id} already consumed"
         prior_n = self._consumed_nonces.get(nonce)
-        if prior_n is not None and (consumer_id is None or prior_n != consumer_id):
+        if prior_n is not None and (consumer_id is None or prior_n != expected_tuple):
             return f"Grant nonce replay detected: {nonce} already consumed"
 
         if self.consumed_ledger_path:
+            if not record_now and not os.path.exists(self.consumed_ledger_path):
+                return None
             os.makedirs(os.path.dirname(os.path.abspath(self.consumed_ledger_path)), exist_ok=True)
             try:
-                with chain_lock.locked_tail(self.consumed_ledger_path) as (fh, last):
+                with chain_lock.locked_tail(self.consumed_ledger_path) as (fh, _last):
                     fh.seek(0)
                     already_recorded_for_cid = False
-                    prev_hash = last["hash"] if isinstance(last, dict) and "hash" in last else "0" * 64
+                    expected_prev = "0" * 64
+                    required_row_fields = (
+                        "consumed_at",
+                        "consumer_id",
+                        "grant_id",
+                        "nonce",
+                        "payload_sha256",
+                        "prev",
+                        "hash",
+                    )
                     for raw_line in fh.read().splitlines():
                         if not raw_line.strip():
                             continue
                         try:
                             row = json.loads(raw_line.decode("utf-8"))
-                        except ValueError:
+                        except (UnicodeDecodeError, ValueError):
                             return "Consumed-grants ledger is corrupted"
+                        if not isinstance(row, dict) or any(k not in row for k in required_row_fields):
+                            return "Consumed-grants ledger is corrupted (malformed row)"
+                        if row.get("prev") != expected_prev:
+                            return "Consumed-grants ledger is corrupted (chain link mismatch)"
+                        body_check = {
+                            "consumed_at": row["consumed_at"],
+                            "consumer_id": row["consumer_id"],
+                            "grant_id": row["grant_id"],
+                            "nonce": row["nonce"],
+                            "payload_sha256": row["payload_sha256"],
+                            "prev": row["prev"],
+                        }
+                        try:
+                            want_hash = hashlib.sha256(_canon_json(body_check).encode("utf-8")).hexdigest()
+                        except (TypeError, ValueError):
+                            return "Consumed-grants ledger is corrupted (unserializable row)"
+                        if row.get("hash") != want_hash:
+                            return "Consumed-grants ledger is corrupted (row hash mismatch)"
+                        expected_prev = want_hash
+
                         row_gid = row.get("grant_id")
                         row_nonce = row.get("nonce")
                         row_cid = row.get("consumer_id")
+                        row_sha = row.get("payload_sha256")
                         if row_gid == grant_id or row_nonce == nonce:
-                            if consumer_id is not None and row_cid == consumer_id:
+                            if (
+                                consumer_id is not None
+                                and row_cid == consumer_id
+                                and row_gid == grant_id
+                                and row_nonce == nonce
+                                and row_sha == payload_sha256
+                            ):
                                 already_recorded_for_cid = True
                             else:
                                 return f"Grant replay detected: {grant_id} already consumed"
@@ -691,7 +798,7 @@ class PQCEnclaveGate:
                             "grant_id": grant_id,
                             "nonce": nonce,
                             "payload_sha256": payload_sha256,
-                            "prev": prev_hash,
+                            "prev": expected_prev,
                         }
                         entry = {
                             **body,
@@ -705,8 +812,9 @@ class PQCEnclaveGate:
                 return f"Consumed-grants ledger error: {exc}"
 
         if record_now:
-            self._consumed_grants[grant_id] = cid
-            self._consumed_nonces[nonce] = cid
+            rec_tuple = (cid, grant_id, nonce, payload_sha256)
+            self._consumed_grants[grant_id] = rec_tuple
+            self._consumed_nonces[nonce] = rec_tuple
         return None
 
     def verify_grant_integrity(
@@ -747,6 +855,26 @@ class PQCEnclaveGate:
             if field_name not in grant:
                 return False, f"Missing required grant field: {field_name}"
 
+        for str_field in (
+            "grant_id",
+            "prev_block_hash",
+            "event_type",
+            "operator_id",
+            "key_fingerprint",
+            "payload_sha256",
+            "operation_schema_sha256",
+            "nonce",
+        ):
+            if not isinstance(grant[str_field], str) or not grant[str_field]:
+                return False, f"Invalid non-string or empty grant field: {str_field}"
+
+        if not _is_strict_int(grant["sequence_index"]):
+            return False, "Invalid sequence_index (must be an integer)"
+        if not _is_hex64(grant["payload_sha256"]):
+            return False, "Invalid payload_sha256 digest format"
+        if not _is_hex64(grant["operation_schema_sha256"]):
+            return False, "Invalid operation_schema_sha256 digest format"
+
         if grant["operator_id"] != self.operator_id:
             return False, f"Unauthorized operator: {grant['operator_id']} != {self.operator_id}"
 
@@ -758,8 +886,17 @@ class PQCEnclaveGate:
         if env.get("algorithm") != PQCAlgorithm.HYBRID_ED25519_ML_DSA_65.value:
             return False, "Grant is not a hybrid Ed25519 + ML-DSA-65 grant; a weaker algorithm is not accepted"
 
+        if "lattice_parameters" in env:
+            expected_lattice = {
+                "ring_degree": self.ML_DSA_65_PARAMS.n,
+                "modulus": self.ML_DSA_65_PARAMS.q,
+                "matrix_dimensions": f"{self.ML_DSA_65_PARAMS.k}x{self.ML_DSA_65_PARAMS.l}",
+            }
+            if env.get("lattice_parameters") != expected_lattice:
+                return False, "Unsupported or tampered ML-DSA-65 lattice_parameters"
+
         expected_prehash = self.compute_shake256_prehash(
-            str(grant["payload_sha256"]), context=str(grant["event_type"])
+            grant["payload_sha256"], context=grant["event_type"]
         )
         if env.get("fips204_prehash") != expected_prehash:
             return False, "FIPS 204 SHAKE-256 prehash mismatch"
@@ -785,24 +922,35 @@ class PQCEnclaveGate:
         if expected_event_type is not None and grant["event_type"] != expected_event_type:
             return False, f"Grant event_type mismatch: {grant['event_type']!r} != {expected_event_type!r}"
 
+        raw_scope = grant["scope"]
+        if not isinstance(raw_scope, list) or not raw_scope or not all(isinstance(x, str) for x in raw_scope):
+            return False, "Invalid grant scope (must be a non-empty list of strings)"
         try:
-            grant_scope = _normalize_scope(grant["scope"])
+            grant_scope = _normalize_scope(raw_scope)
         except ValueError as exc:
             return False, f"Invalid grant scope: {exc}"
+        if raw_scope != grant_scope:
+            return False, "Invalid grant scope (non-canonical whitespace)"
         if expected_scope is not None:
             exp_scope_norm = _normalize_scope(expected_scope)
             if grant_scope != exp_scope_norm:
                 return False, f"Grant scope mismatch: {grant_scope!r} != {exp_scope_norm!r}"
 
-        # Verify expiry window
-        try:
-            issued_at = float(grant["issued_at"])
-            expires_at = float(grant["expires_at"])
-        except (TypeError, ValueError):
+        # Verify expiry window (reject booleans, strings, NaN, and infinities)
+        if not _is_strict_number(grant["issued_at"]) or not _is_strict_number(grant["expires_at"]):
             return False, "Invalid issued_at / expires_at timestamps"
+        issued_at = float(grant["issued_at"])
+        expires_at = float(grant["expires_at"])
+        if "timestamp" in grant:
+            if not _is_strict_number(grant["timestamp"]) or float(grant["timestamp"]) != issued_at:
+                return False, "Grant timestamp does not match issued_at"
         if expires_at <= issued_at:
             return False, "Invalid grant lifetime (expires_at <= issued_at)"
+        if now is not None and not _is_strict_number(now):
+            return False, "Invalid verification timestamp (now)"
         check_now = float(time.time() if now is None else now)
+        if not math.isfinite(check_now):
+            return False, "Invalid verification timestamp (now)"
         if check_now < issued_at - MAX_CLOCK_SKEW_S:
             return False, f"Grant is not yet valid (issued_at={issued_at}, now={check_now})"
         if check_now > expires_at:
@@ -811,11 +959,16 @@ class PQCEnclaveGate:
         # Establish trust STRICTLY from self._trusted_keys (never from grant['pqc_envelope'])
         if not self._trusted_keys:
             return False, "No trusted operator public keys enrolled"
-        key_fp = str(grant["key_fingerprint"])
+        key_fp = grant["key_fingerprint"]
+        if env.get("key_fingerprint") != key_fp:
+            return False, "Cryptographic signature verification failed: envelope key_fingerprint mismatch"
         trusted_entry = self._trusted_keys.get(key_fp)
         if trusted_entry is None:
             return False, f"Cryptographic signature verification failed: untrusted signer key {key_fp}"
         ed_pub, ml_pub, trusted_meta = trusted_entry
+
+        if trusted_meta.get("operator_id") != grant["operator_id"]:
+            return False, "Cryptographic signature verification failed: trusted key operator_id mismatch"
 
         # Reject if envelope public keys were swapped or disagree with the pinned trusted key
         if env.get("ed25519_public_key") != trusted_meta["ed25519_public_key"]:
@@ -826,24 +979,26 @@ class PQCEnclaveGate:
         # Reconstruct canonical grant core & grant_id and verify BOTH signatures
         try:
             core = self._grant_core_from_fields(
-                sequence_index=int(grant["sequence_index"]),
-                prev_block_hash=str(grant["prev_block_hash"]),
+                sequence_index=grant["sequence_index"],
+                prev_block_hash=grant["prev_block_hash"],
                 issued_at=issued_at,
                 expires_at=expires_at,
-                event_type=str(grant["event_type"]),
-                operator_id=str(grant["operator_id"]),
+                event_type=grant["event_type"],
+                operator_id=grant["operator_id"],
                 scope=grant_scope,
-                payload_sha256=str(grant["payload_sha256"]),
-                operation_schema_sha256=str(grant["operation_schema_sha256"]),
-                nonce=str(grant["nonce"]),
+                payload_sha256=grant["payload_sha256"],
+                operation_schema_sha256=grant["operation_schema_sha256"],
+                nonce=grant["nonce"],
                 key_fingerprint=key_fp,
             )
             expected_grant_id = "grant-" + hashlib.sha256(_canon_json(core).encode("utf-8")).hexdigest()[:32]
             if grant["grant_id"] != expected_grant_id:
                 return False, "Cryptographic signature verification failed: grant_id core digest mismatch"
             msg = self.signing_message(core, expected_grant_id, expected_prehash)
-            ed_sig = bytes.fromhex(str(env["ed25519_signature"]))
-            ml_sig = bytes.fromhex(str(env["ml_dsa_signature"]))
+            ed_sig = _strict_hex_bytes(env["ed25519_signature"], 64)
+            ml_sig = _strict_hex_bytes(env["ml_dsa_signature"], self.ML_DSA_65_PARAMS.signature_bytes)
+            if ed_sig is None or ml_sig is None:
+                return False, "Cryptographic signature verification failed: invalid signature hex or length"
             ed_pub.verify(ed_sig, msg)
             ml_pub.verify(ml_sig, msg)
         except Exception as exc:
@@ -853,9 +1008,9 @@ class PQCEnclaveGate:
         enforce_replay = bool(consume) if check_replay is None else (bool(consume) or bool(check_replay))
         if enforce_replay:
             replay_err = self._check_and_record_consumption(
-                grant_id=str(grant["grant_id"]),
-                nonce=str(grant["nonce"]),
-                payload_sha256=str(grant["payload_sha256"]),
+                grant_id=grant["grant_id"],
+                nonce=grant["nonce"],
+                payload_sha256=grant["payload_sha256"],
                 consumer_id=consumer_id,
                 record_now=consume,
             )

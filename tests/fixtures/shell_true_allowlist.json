@@ -1,0 +1,55 @@
+{
+  "schema": "osiris.shell_true_allowlist.v1",
+  "policy": "Zero live entries permitted. Only documented gated or dead/unwired legacy paths may appear here.",
+  "entries": [
+    {
+      "path": "copilot-sdk-dnalang/src/dnalang_sdk/nclm/tools.py",
+      "lineno_hint": 485,
+      "kind": "subprocess.run(shell=True)",
+      "status": "dead",
+      "reason": "Legacy standalone copilot-sdk-dnalang subpackage not imported by live osiris_cli runtime."
+    },
+    {
+      "path": "copilot-sdk-dnalang/src/dnalang_sdk/nclm/tools.py",
+      "lineno_hint": 508,
+      "kind": "subprocess.run(shell=True)",
+      "status": "dead",
+      "reason": "Legacy standalone copilot-sdk-dnalang subpackage not imported by live osiris_cli runtime."
+    },
+    {
+      "path": "copilot-sdk-dnalang/src/dnalang_sdk/sovereign/dev_tools.py",
+      "lineno_hint": 292,
+      "kind": "subprocess.run(shell=True)",
+      "status": "dead",
+      "reason": "Legacy standalone copilot-sdk-dnalang subpackage not imported by live osiris_cli runtime."
+    },
+    {
+      "path": "fold7_oscilloscope/fold7_qbyte_oscilloscope.py",
+      "lineno_hint": 351,
+      "kind": "os.system",
+      "status": "dead",
+      "reason": "Standalone Fold7 oscilloscope demo script not imported by live osiris_cli runtime."
+    },
+    {
+      "path": "osiris_cli/osiris_repl.py",
+      "lineno_hint": 1858,
+      "kind": "os.execvp",
+      "status": "gated",
+      "reason": "Explicit human /update self-restart gated behind main-branch guard and verify_upgrade_import()."
+    },
+    {
+      "path": "osiris_shadow/shadow_pipeline.py",
+      "lineno_hint": 67,
+      "kind": "os.system",
+      "status": "dead",
+      "reason": "Legacy shadow pipeline demo script not imported by live osiris_cli runtime."
+    },
+    {
+      "path": "scimitar_sse/dashboard.py",
+      "lineno_hint": 55,
+      "kind": "os.system",
+      "status": "dead",
+      "reason": "Standalone scimitar_sse dashboard script not imported by live osiris_cli runtime."
+    }
+  ]
+}

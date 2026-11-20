@@ -11,9 +11,9 @@ Hard rules, each enforced in code and covered by a test:
     pass + an authorizer that accepts this exact candidate digest. No authorizer -> at best
     VERIFIED_PENDING_AUTHORIZATION.
   * "Promoted" means a PROMOTED row in the lineage ledger. The patch is never applied to the repo.
-  * The only fitness is ``frozen_suite_pass_rate`` = passed / (passed + failed + errors) as the
-    runner measured it. It is a single deterministic measurement (re-run for reproducibility by
-    the Critic); no uncertainty is estimated and none is claimed.
+  * The only fitness is ``frozen_suite_pass_rate`` = passed / (passed + failed + errors + skipped)
+    as the runner measured it. It is a single deterministic measurement (re-run for reproducibility
+    by the Critic); no uncertainty is estimated and none is claimed.
   * The lineage ledger path is explicit. Paths under ~/.osiris are refused unless allow_live=True.
 """
 
@@ -39,7 +39,7 @@ Authorizer = Callable[[str, str], Tuple[bool, str]]   # (candidate_digest, scope
 
 
 def pass_rate(ev: ExecutionEvidence) -> Optional[float]:
-    total = ev.passed + ev.failed + ev.errors
+    total = ev.passed + ev.failed + ev.errors + getattr(ev, "skipped", 0)
     return None if total == 0 else ev.passed / total
 
 

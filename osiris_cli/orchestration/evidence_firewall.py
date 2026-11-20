@@ -34,6 +34,7 @@ class ExecutionEvidence:
     stdout_digest: str
     stdout_tail: str
     workdir_digest: str = ""
+    skipped: int = 0
 
     @property
     def green(self) -> bool:

@@ -172,8 +172,41 @@ def live_state(living=None, console=None) -> Dict[str, Tuple[str, str]]:
         ok, _ = console._check_ollama_reachable(timeout=0.5)
         voice = living.mentor.model() if living is not None and ok else None
         fast = getattr(living.mentor, "fast_model", lambda: None)() if voice else None
-        text = (f"Architect {console.CHAT_MODEL} · draft proposer {console._synth_chain()} (unpromoted) · "
+        arch_label = str(console.CHAT_MODEL)
+        proposer_label = str(console._synth_chain())
+        installed_note = ""
+        kind = "verified" if ok else "review"
+        if ok and (hasattr(console, "_ollama_models") or callable(getattr(console, "_detect_installed_ollama_models", None))):
+            installed = None
+            try:
+                if hasattr(console, "_ollama_models"):
+                    installed = console._ollama_models()
+                else:
+                    probe = getattr(console, "_detect_installed_ollama_models", None)
+                    installed = list(probe(timeout=0.5) or []) if callable(probe) else None
+            except Exception:  # noqa: BLE001
+                installed = None
+            if installed is not None:
+                resolver = getattr(console, "_resolve_installed_ollama_tag", None)
+                def _has(tag: str) -> bool:
+                    if callable(resolver):
+                        return resolver(tag, installed) is not None
+                    return tag in installed or f"{tag}:latest" in installed
+                if not _has(arch_label):
+                    arch_label = f"{arch_label} [not installed]"
+                    kind = "review"
+                # If proposer chain names a single local Ollama model (contains ':' and not 'gemini'), verify it
+                if proposer_label and ":" in proposer_label and "gemini" not in proposer_label.lower() and " -> " not in proposer_label:
+                    if not _has(proposer_label):
+                        proposer_label = f"{proposer_label} [not installed]"
+                        kind = "review"
+                names = sorted(m for m in installed if m)
+                installed_note = f" · installed: {', '.join(names) if names else 'none'}"
+                if not names:
+                    kind = "review"
+        text = (f"Architect {arch_label} · draft proposer {proposer_label} (unpromoted){installed_note} · "
                 f"voice {voice or 'none'}{f' (fast: {fast})' if fast and fast != voice else ''}")
+        return (kind, text) if ok else ("review", "ollama UNREACHABLE: " + text)
         if ok:
             # Show what Ollama actually has installed, not a stale default tag,
             # and flag it when the configured model is not among them.

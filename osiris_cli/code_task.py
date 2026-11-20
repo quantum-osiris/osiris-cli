@@ -30,6 +30,7 @@ import argparse
 import hashlib
 import json
 import os
+import stat
 import sys
 import uuid
 from typing import Any, Callable, Dict, List, Optional, Sequence, Tuple
@@ -82,12 +83,95 @@ def _enclave_dir_for_store(store: RunStore, explicit_dir: Optional[str] = None) 
     return os.path.join(store.dir, "_enclave")
 
 
+def _validate_rel_path(rel_path: Any) -> str:
+    if not isinstance(rel_path, str) or not rel_path or "\x00" in rel_path:
+        raise GrantVerificationError(f"invalid target path {rel_path!r}")
+    norm_slash = rel_path.replace("\\", "/")
+    if norm_slash.startswith("/") or (len(norm_slash) > 1 and norm_slash[1] == ":"):
+        raise GrantVerificationError(f"target path {rel_path!r} must be workspace-relative")
+    parts = [seg for seg in norm_slash.split("/") if seg]
+    if not parts or any(seg in (".", "..") for seg in parts):
+        raise GrantVerificationError(f"target path {rel_path!r} escapes or is non-canonical")
+    return "/".join(parts)
+
+
+def _resolve_confined_target(root: str, rel_path: Any) -> str:
+    """Resolve `rel_path` strictly inside `root`, rejecting path traversal, symlinks, and directories."""
+    clean_rel = _validate_rel_path(rel_path)
+    real_root = os.path.realpath(root)
+    cur = real_root
+    parts = clean_rel.split("/")
+    for idx, part in enumerate(parts):
+        cur = os.path.join(cur, part)
+        is_last = idx == len(parts) - 1
+        try:
+            st = os.lstat(cur)
+        except FileNotFoundError:
+            continue
+        if stat.S_ISLNK(st.st_mode):
+            raise GrantVerificationError(f"target path {rel_path!r} traverses or points to a symlink; refusing write")
+        if is_last:
+            if stat.S_ISDIR(st.st_mode):
+                raise GrantVerificationError(f"target path {rel_path!r} is a directory; refusing write")
+            if not stat.S_ISREG(st.st_mode):
+                raise GrantVerificationError(f"target path {rel_path!r} is not a regular file; refusing write")
+        elif not stat.S_ISDIR(st.st_mode):
+            raise GrantVerificationError(f"parent component of {rel_path!r} is not a directory")
+    candidate = os.path.normpath(os.path.join(real_root, *parts))
+    if not candidate.startswith(real_root.rstrip(os.sep) + os.sep):
+        raise GrantVerificationError(f"target path {rel_path!r} resolves outside workspace root")
+    return candidate
+
+
+def _regular_file_sha256(path: str) -> Optional[str]:
+    try:
+        st = os.lstat(path)
+    except FileNotFoundError:
+        return None
+    if stat.S_ISLNK(st.st_mode) or not stat.S_ISREG(st.st_mode):
+        raise GrantVerificationError(f"target {path!r} is a symlink or non-regular file")
+    with open(path, "rb") as fh:
+        return hashlib.sha256(fh.read()).hexdigest()
+
+
+def _existing_apply_receipt_hash(
+    receipts_path: Optional[str], run_id: str, rel_path: str, after_sha256: Optional[str]
+) -> Optional[str]:
+    if not receipts_path or not os.path.isfile(receipts_path):
+        return None
+    try:
+        with open(receipts_path, "r", encoding="utf-8") as fh:
+            for line in fh:
+                if not line.strip():
+                    continue
+                row = json.loads(line)
+                if row.get("kind") != "code.agent.apply_write":
+                    continue
+                payload = row.get("payload") or {}
+                if (
+                    payload.get("run_id") == run_id
+                    and payload.get("path") == rel_path
+                    and payload.get("after_sha256") == after_sha256
+                    and isinstance(row.get("hash"), str)
+                ):
+                    return row["hash"]
+    except (OSError, ValueError):
+        return None
+    return None
+
+
 def proposals_grant_spec(
     root: str, proposals: Sequence[Dict[str, Any]]
 ) -> Tuple[str, List[str], Dict[str, Any], str]:
     """Build deterministic `(payload_sha256, scope, operation_schema, summary)` for staged writes."""
     real_root = os.path.realpath(root)
     ordered = sorted(proposals, key=lambda p: str(p["rel_path"]))
+    seen_paths = set()
+    for p in ordered:
+        rel = _validate_rel_path(p.get("rel_path"))
+        if rel in seen_paths:
+            raise GrantVerificationError(f"duplicate proposal path: {rel}")
+        seen_paths.add(rel)
     files_spec = [
         {
             "after_sha256": p["after_sha256"],
@@ -140,15 +224,16 @@ def apply_idempotent(
     enclave_dir: Optional[str] = None,
     trusted_keys_path: Optional[str] = None,
 ) -> List[Dict[str, Any]]:
-    """Verify the signed operator approval grant against trusted public keys, then apply
-    the run's approved proposals at most once."""
+    """Verify the signed operator approval grant against pinned trusted public keys, then
+    sequentially apply the run's approved proposals via per-file atomic replacement with
+    idempotent same-run resume (not an atomic multi-file transaction)."""
     grant = run.get("approval_grant")
     if not isinstance(grant, dict):
         raise GrantVerificationError("missing signed operator approval grant")
 
-    opts = run.get("options") or {}
-    eff_enclave_dir = _enclave_dir_for_store(store, enclave_dir or opts.get("enclave_dir"))
-    eff_trusted = trusted_keys_path or opts.get("trusted_keys_path")
+    # Never read enclave_dir or trusted_keys_path from mutable run['options'].
+    eff_enclave_dir = _enclave_dir_for_store(store, enclave_dir)
+    eff_trusted = trusted_keys_path
     try:
         verifier = PQCEnclaveGate.verifier_from_enclave_dir(
             eff_enclave_dir, trusted_keys_path=eff_trusted
@@ -156,9 +241,34 @@ def apply_idempotent(
     except Exception as exc:
         raise GrantVerificationError(str(exc)) from exc
 
+    root, receipts = run["root"], run.get("receipts_path")
     expected_sha, expected_scope, _schema, _summary = proposals_grant_spec(
-        run["root"], run["proposals"]
+        root, run["proposals"]
     )
+    # Verify actual staged content bytes match signed after_sha256 and paths stay confined
+    # (no traversal, no symlinks, no directory collisions) BEFORE consuming the grant.
+    resolved_targets: List[Tuple[Dict[str, Any], str, bytes]] = []
+    for p in run["proposals"]:
+        content = p.get("content")
+        if not isinstance(content, str):
+            raise GrantVerificationError(f"proposal for {p.get('rel_path')!r} missing string content")
+        raw_bytes = content.encode("utf-8")
+        actual_after = hashlib.sha256(raw_bytes).hexdigest()
+        if actual_after != p.get("after_sha256"):
+            raise GrantVerificationError(
+                f"proposal content SHA-256 mismatch for {p.get('rel_path')!r}: "
+                f"{actual_after[:16]}… != {str(p.get('after_sha256'))[:16]}…"
+            )
+        target = _resolve_confined_target(root, p["rel_path"])
+        resolved_targets.append((p, target, raw_bytes))
+
+    # Verify session parent link BEFORE consuming the child grant so an invalid link never spends it.
+    ok_link, link_reason = session_approval.verify_child_link(
+        verifier, grant, run.get("session_grant")
+    )
+    if not ok_link:
+        raise GrantVerificationError(link_reason)
+
     ok, reason = verifier.verify_grant_integrity(
         grant,
         expected_payload_sha256=expected_sha,
@@ -167,35 +277,40 @@ def apply_idempotent(
         consume=True,
         consumer_id=run["run_id"],
     )
-    if ok:
-        ok, reason = session_approval.verify_child_link(verifier, grant, run.get("session_grant"))
     if not ok:
         raise GrantVerificationError(reason)
 
-    root, receipts = run["root"], run.get("receipts_path")
     plan = []
-    for p in run["proposals"]:
-        disk = file_sha256(os.path.join(root, p["rel_path"]))
+    for p, target, raw_bytes in resolved_targets:
+        disk = _regular_file_sha256(target)
         if disk == p["after_sha256"]:
-            plan.append((p, False))
+            plan.append((p, target, raw_bytes, False))
         elif disk == p["before_sha256"] and (disk is not None or not p["existed_at_proposal"]):
-            plan.append((p, True))
+            plan.append((p, target, raw_bytes, True))
         else:
             raise StaleTarget(
                 f"{p['rel_path']} changed since the proposal "
                 f"(proposal-time {str(p['before_sha256'])[:12]}, now {str(disk)[:12]})"
             )
-    for p, write in plan:
-        target = os.path.join(root, p["rel_path"])
+    for p, target, raw_bytes, write in plan:
         if write:
-            atomic_write(target, p["content"].encode("utf-8"))
+            # Re-verify confinement and pre-write digest immediately before replacement.
+            target = _resolve_confined_target(root, p["rel_path"])
+            disk_now = _regular_file_sha256(target)
+            if disk_now != p["before_sha256"] or (disk_now is None and p["existed_at_proposal"]):
+                raise StaleTarget(
+                    f"{p['rel_path']} changed between validation and write "
+                    f"(expected {str(p['before_sha256'])[:12]}, now {str(disk_now)[:12]})"
+                )
+            atomic_write(target, raw_bytes)
+        after_on_disk = _regular_file_sha256(target)
         rec = {
             "tool": "apply_write",
             "decision": "GRANTED",
             "run_id": run["run_id"],
             "path": p["rel_path"],
             "before_sha256": p["before_sha256"],
-            "after_sha256": file_sha256(target),
+            "after_sha256": after_on_disk,
             "approval": run.get("write_approval"),
             "grant_id": grant["grant_id"],
             "key_fingerprint": grant["key_fingerprint"],
@@ -208,7 +323,13 @@ def apply_idempotent(
         if prior and prior.get("receipt_hash"):
             rec["receipt_hash"] = prior["receipt_hash"]
         elif receipts:
-            rec["receipt_hash"] = append_receipt(receipts, "code.agent.apply_write", rec)
+            existing_hash = _existing_apply_receipt_hash(
+                receipts, run["run_id"], p["rel_path"], after_on_disk
+            )
+            if existing_hash:
+                rec["receipt_hash"] = existing_hash
+            else:
+                rec["receipt_hash"] = append_receipt(receipts, "code.agent.apply_write", rec)
         run["applied"] = [a for a in run.get("applied", []) if a["path"] != p["rel_path"]] + [rec]
         store.save(run)  # each write is on record before the next one starts
     return run["applied"]
@@ -225,8 +346,9 @@ def _advance(
     trusted_keys_path: Optional[str] = None,
 ) -> Dict[str, Any]:
     opts = run["options"]
-    eff_enclave_dir = _enclave_dir_for_store(store, enclave_dir or opts.get("enclave_dir"))
-    eff_trusted = trusted_keys_path or opts.get("trusted_keys_path")
+    # Derive enclave & trust store strictly from caller args / store default, never run['options'].
+    eff_enclave_dir = _enclave_dir_for_store(store, enclave_dir)
+    eff_trusted = trusted_keys_path
 
     while run["state"] not in TERMINAL:
         if store.cancel_requested(run["run_id"]):

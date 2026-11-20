@@ -21,6 +21,7 @@ import shlex
 import signal
 import subprocess
 import sys
+import tempfile
 import threading
 import time
 import uuid
@@ -52,6 +53,7 @@ __all__ = [
     "ExecJournal",
     "ExecutionGrant",
     "classify",
+    "classify_json_payload",
     "mint_grant",
     "reset_session_approvals",
     "run",
@@ -118,12 +120,27 @@ def _sha256_hex(data: bytes) -> str:
 
 # --------------------------------------------------------------------------- receipts journal
 
+def _default_state_home() -> Path:
+    env_home = os.environ.get("OSIRIS_HOME", "").strip()
+    if env_home:
+        return Path(env_home).expanduser()
+    if os.environ.get("PYTEST_CURRENT_TEST"):
+        return Path(tempfile.gettempdir()) / "osiris_pytest_exec"
+    return Path.home() / ".osiris"
+
+
 def default_journal_path() -> Path:
-    return Path.home() / ".osiris" / "exec_journal.jsonl"
+    override = os.environ.get("OSIRIS_EXEC_JOURNAL", "").strip()
+    if override:
+        return Path(override).expanduser()
+    return _default_state_home() / "exec_journal.jsonl"
 
 
 def default_artifacts_dir() -> Path:
-    return Path.home() / ".osiris" / "runs"
+    override = os.environ.get("OSIRIS_EXEC_ARTIFACTS_DIR", "").strip()
+    if override:
+        return Path(override).expanduser()
+    return _default_state_home() / "runs"
 
 
 @contextlib.contextmanager
@@ -640,6 +657,109 @@ def run(req: CommandRequest,
 
 # --------------------------------------------------------------------------- CLI
 
+def _split_shell_command(command: str) -> Tuple[List[str], Optional[str]]:
+    """Split a shell command string with POSIX quoting while exposing unquoted operators as tokens."""
+    if not isinstance(command, str) or not command.strip():
+        return [], "empty command string"
+    try:
+        lexer = shlex.shlex(command, posix=True, punctuation_chars="|&;<>")
+        lexer.whitespace_split = True
+        tokens = list(lexer)
+    except ValueError as exc:
+        return [], f"malformed command quoting: {exc}"
+    if not tokens:
+        return [], "empty command string"
+    return tokens, None
+
+
+def classify_json_payload(
+    raw_stdin: str,
+    *,
+    origin: str = "human",
+    cwd: Optional[str] = None,
+    root: Optional[str] = None,
+    fallback_argv: Optional[Sequence[str]] = None,
+) -> dict:
+    """Parse Claude Code PreToolUse JSON, direct argv JSON, or fallback argv and return a
+    deterministic classification dict. Always fails closed on malformed input."""
+    try:
+        _, policy_sha = load_policy()
+    except PolicyError as exc:
+        return {
+            "origin": origin,
+            "tier": "FORBIDDEN",
+            "decision": "DENY",
+            "reasons": [str(exc)],
+            "normalized_argv": [],
+            "policy_sha256": "",
+        }
+
+    def deny(reason: str, req_origin: str = origin, norm: Sequence[str] = ()) -> dict:
+        return {
+            "origin": req_origin,
+            "tier": "FORBIDDEN",
+            "decision": "DENY",
+            "reasons": [reason],
+            "normalized_argv": list(norm),
+            "policy_sha256": policy_sha,
+        }
+
+    req_origin = origin
+    req_cwd = cwd or os.getcwd()
+    req_root = root
+    argv_list: List[str] = []
+
+    text = (raw_stdin or "").strip()
+    if text:
+        try:
+            data = json.loads(text)
+        except ValueError as exc:
+            return deny(f"malformed JSON on stdin: {exc}")
+        if not isinstance(data, dict):
+            return deny("stdin JSON payload must be an object")
+        if isinstance(data.get("origin"), str) and data["origin"]:
+            req_origin = data["origin"]
+        if isinstance(data.get("cwd"), str) and data["cwd"]:
+            req_cwd = data["cwd"]
+        if isinstance(data.get("root"), str) and data["root"]:
+            req_root = data["root"]
+
+        tool_input = data.get("tool_input")
+        if isinstance(tool_input, dict) and "command" in tool_input:
+            argv_list, err = _split_shell_command(tool_input.get("command"))
+            if err:
+                return deny(err, req_origin)
+        elif "argv" in data:
+            raw_argv = data.get("argv")
+            if not isinstance(raw_argv, list) or not raw_argv or not all(isinstance(x, str) for x in raw_argv):
+                return deny("argv must be a non-empty list of strings", req_origin)
+            argv_list = list(raw_argv)
+        elif "command" in data:
+            argv_list, err = _split_shell_command(data.get("command"))
+            if err:
+                return deny(err, req_origin)
+        else:
+            return deny("stdin JSON must provide tool_input.command, command, or argv", req_origin)
+    elif fallback_argv:
+        argv_list = list(fallback_argv)
+    else:
+        return deny("no command provided via stdin JSON or -- argv", req_origin)
+
+    try:
+        cls = classify(CommandRequest(argv=tuple(argv_list), cwd=req_cwd, origin=req_origin, root=req_root))
+    except PolicyError as exc:
+        return deny(str(exc), req_origin, argv_list)
+
+    return {
+        "origin": req_origin,
+        "tier": cls.tier,
+        "decision": cls.decision,
+        "reasons": list(cls.reasons),
+        "normalized_argv": list(cls.normalized_argv),
+        "policy_sha256": cls.policy_sha256,
+    }
+
+
 def _explain(argv: List[str], origin: str, cwd: Optional[str], root: Optional[str]) -> int:
     request = CommandRequest(argv=tuple(argv), cwd=cwd or os.getcwd(), origin=origin, root=root)
     cls = classify(request)
@@ -653,8 +773,11 @@ def _explain(argv: List[str], origin: str, cwd: Optional[str], root: Optional[st
 
 def main(argv: Optional[List[str]] = None) -> int:
     parser = argparse.ArgumentParser(prog="python -m osiris_cli.exec_kernel")
-    parser.add_argument("--explain", action="store_true", required=True,
-                        help="print the tier, decision and reasons; runs nothing")
+    mode = parser.add_mutually_exclusive_group(required=True)
+    mode.add_argument("--explain", action="store_true",
+                      help="print the tier, decision and reasons; runs nothing")
+    mode.add_argument("--classify-json", action="store_true",
+                      help="classify stdin PreToolUse/argv JSON or trailing -- argv and print JSON")
     parser.add_argument("--origin", default="human", choices=ORIGINS)
     parser.add_argument("--cwd", default=None)
     parser.add_argument("--root", default=None)
@@ -663,6 +786,17 @@ def main(argv: Optional[List[str]] = None) -> int:
     command = list(args.command)
     if command and command[0] == "--":
         command = command[1:]
+    if args.classify_json:
+        raw_stdin = "" if sys.stdin.isatty() else sys.stdin.read()
+        result = classify_json_payload(
+            raw_stdin,
+            origin=args.origin,
+            cwd=args.cwd,
+            root=args.root,
+            fallback_argv=command or None,
+        )
+        print(json.dumps(result, sort_keys=True))
+        return 0
     if not command:
         parser.error("no command given after --")
     return _explain(command, args.origin, args.cwd, args.root)

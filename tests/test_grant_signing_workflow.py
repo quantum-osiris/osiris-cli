@@ -453,3 +453,571 @@ def test_code_agent_command_and_batch_write_mint_and_verify_hybrid_grants(tmp_pa
     assert applied[0]["grant_id"].startswith("grant-")
     assert applied[0]["key_fingerprint"] == enclave.key_fingerprint
     assert (ws / "hello.py").read_text(encoding="utf-8") == "X = 2\n"
+
+
+# ---------------------------------------------------------------------------
+# 9. Hardening regression tests (F-01 through F-13)
+# ---------------------------------------------------------------------------
+def test_f01_apply_idempotent_rejects_content_mismatch_against_after_sha256(
+    disposable_repo: Path, tmp_path: Path
+):
+    enclave_dir = tmp_path / "f01_enclave"
+    signer = PQCEnclaveGate.load_or_init_local(str(enclave_dir), allow_init=True)
+    store = RunStore(str(tmp_path / "f01_runs"))
+
+    old_sha = signer.compute_payload_digest(BUGGY)
+    good_after = signer.compute_payload_digest(FIXED)
+    props = [
+        {
+            "rel_path": "calc.py",
+            "existed_at_proposal": True,
+            "before_sha256": old_sha,
+            "after_sha256": good_after,
+            "content": FIXED,
+            "diff": "",
+        }
+    ]
+    psha, pscope, pschema, psumm = proposals_grant_spec(str(disposable_repo), props)
+    grant = signer.request_approved_grant(
+        action="code.apply_writes",
+        scope=pscope,
+        summary=psumm,
+        payload_sha256=psha,
+        operation_schema=pschema,
+        confirm=lambda _p: True,
+    )
+    tampered_props = copy.deepcopy(props)
+    tampered_props[0]["content"] = "def add(a, b):\n    return -999\n"
+    run = store.create(
+        "code-f01",
+        root=str(disposable_repo),
+        proposals=tampered_props,
+        approval_grant=grant,
+        options={},
+    )
+    with pytest.raises(GrantVerificationError, match="content SHA-256 mismatch"):
+        apply_idempotent(run, store, enclave_dir=str(enclave_dir))
+    assert (disposable_repo / "calc.py").read_text(encoding="utf-8") == BUGGY
+
+
+def test_f02_apply_idempotent_ignores_run_options_trust_root_redirection(
+    disposable_repo: Path, tmp_path: Path
+):
+    legit_dir = tmp_path / "f02_legit"
+    rogue_dir = tmp_path / "f02_rogue"
+    PQCEnclaveGate.load_or_init_local(str(legit_dir), allow_init=True)
+    rogue = PQCEnclaveGate.load_or_init_local(str(rogue_dir), allow_init=True)
+    store = RunStore(str(tmp_path / "f02_runs"))
+
+    props = [
+        {
+            "rel_path": "calc.py",
+            "existed_at_proposal": True,
+            "before_sha256": rogue.compute_payload_digest(BUGGY),
+            "after_sha256": rogue.compute_payload_digest(FIXED),
+            "content": FIXED,
+            "diff": "",
+        }
+    ]
+    psha, pscope, pschema, _ = proposals_grant_spec(str(disposable_repo), props)
+    rogue_grant = rogue.generate_hybrid_grant(
+        1, "0" * 64, "code.apply_writes", psha, pschema, scope=pscope
+    )
+    run = store.create(
+        "code-f02",
+        root=str(disposable_repo),
+        proposals=props,
+        approval_grant=rogue_grant,
+        options={
+            "enclave_dir": str(rogue_dir),
+            "trusted_keys_path": str(rogue_dir / "trusted_operator_keys.json"),
+        },
+    )
+    with pytest.raises(GrantVerificationError, match="untrusted signer key"):
+        apply_idempotent(run, store, enclave_dir=str(legit_dir))
+    assert (disposable_repo / "calc.py").read_text(encoding="utf-8") == BUGGY
+
+
+def test_f03_apply_idempotent_blocks_path_traversal_and_symlink_escape(
+    disposable_repo: Path, tmp_path: Path
+):
+    enclave_dir = tmp_path / "f03_enclave"
+    signer = PQCEnclaveGate.load_or_init_local(str(enclave_dir), allow_init=True)
+    store = RunStore(str(tmp_path / "f03_runs"))
+    outside = tmp_path / "outside"
+    outside.mkdir()
+    (outside / "secret.py").write_text("SECRET = 1\n", encoding="utf-8")
+
+    # (a) Path traversal rejected
+    trav_props = [
+        {
+            "rel_path": "../outside/secret.py",
+            "existed_at_proposal": True,
+            "before_sha256": signer.compute_payload_digest("SECRET = 1\n"),
+            "after_sha256": signer.compute_payload_digest("PWN = 1\n"),
+            "content": "PWN = 1\n",
+            "diff": "",
+        }
+    ]
+    with pytest.raises((GrantVerificationError, ValueError)):
+        tsha, tscope, tschema, tsumm = proposals_grant_spec(str(disposable_repo), trav_props)
+        tgrant = signer.request_approved_grant(
+            action="code.apply_writes",
+            scope=tscope,
+            summary=tsumm,
+            payload_sha256=tsha,
+            operation_schema=tschema,
+            confirm=lambda _p: True,
+        )
+        run_t = store.create(
+            "code-f03-trav",
+            root=str(disposable_repo),
+            proposals=trav_props,
+            approval_grant=tgrant,
+            options={},
+        )
+        apply_idempotent(run_t, store, enclave_dir=str(enclave_dir))
+    assert (outside / "secret.py").read_text(encoding="utf-8") == "SECRET = 1\n"
+
+    # (b) Post-approval parent directory replaced by symlink pointing outside workspace
+    sub = disposable_repo / "sub"
+    sub.mkdir()
+    (sub / "target.py").write_text("SAFE = 1\n", encoding="utf-8")
+    (outside / "target.py").write_text("SAFE = 1\n", encoding="utf-8")
+    sprops = [
+        {
+            "rel_path": "sub/target.py",
+            "existed_at_proposal": True,
+            "before_sha256": signer.compute_payload_digest("SAFE = 1\n"),
+            "after_sha256": signer.compute_payload_digest("ESCAPED = 1\n"),
+            "content": "ESCAPED = 1\n",
+            "diff": "",
+        }
+    ]
+    ssha, sscope, sschema, ssumm = proposals_grant_spec(str(disposable_repo), sprops)
+    sgrant = signer.request_approved_grant(
+        action="code.apply_writes",
+        scope=sscope,
+        summary=ssumm,
+        payload_sha256=ssha,
+        operation_schema=sschema,
+        confirm=lambda _p: True,
+    )
+    (sub / "target.py").unlink()
+    sub.rmdir()
+    os.symlink(str(outside), str(sub))
+    run_s = store.create(
+        "code-f03-sym",
+        root=str(disposable_repo),
+        proposals=sprops,
+        approval_grant=sgrant,
+        options={},
+    )
+    with pytest.raises(GrantVerificationError, match="symlink|outside"):
+        apply_idempotent(run_s, store, enclave_dir=str(enclave_dir))
+    assert (outside / "target.py").read_text(encoding="utf-8") == "SAFE = 1\n"
+
+
+def test_f04_f05_no_silent_enrollment_and_no_ephemeral_code_agent_enclave(
+    tmp_path: Path, monkeypatch
+):
+    # Ordinary load_or_init_local() without allow_init=True must refuse to mint or enroll keys
+    empty_dir = tmp_path / "uninit_enclave"
+    with pytest.raises(RuntimeError):
+        PQCEnclaveGate.load_or_init_local(str(empty_dir))
+    assert not (empty_dir / "operator_ed25519.key").exists()
+    assert not (empty_dir / "trusted_operator_keys.json").exists()
+
+    # Existing keys without trusted_operator_keys.json must NOT silently re-enroll when allow_init=False
+    keys_only = tmp_path / "keys_only_enclave"
+    PQCEnclaveGate.load_or_init_local(str(keys_only), allow_init=True)
+    (keys_only / "trusted_operator_keys.json").unlink()
+    with pytest.raises(RuntimeError):
+        PQCEnclaveGate.load_or_init_local(str(keys_only), allow_init=False)
+    assert not (keys_only / "trusted_operator_keys.json").exists()
+
+    # Existing trust store without private keys must refuse even allow_init=True
+    trust_only = tmp_path / "trust_only_enclave"
+    PQCEnclaveGate.load_or_init_local(str(trust_only), allow_init=True)
+    (trust_only / "operator_ed25519.key").unlink()
+    (trust_only / "operator_mldsa65.key").unlink()
+    with pytest.raises(RuntimeError):
+        PQCEnclaveGate.load_or_init_local(str(trust_only), allow_init=True)
+    assert not (trust_only / "operator_ed25519.key").exists()
+
+    # CodeAgent._get_enclave() must NOT mint an ephemeral self-trusting keypair when unconfigured
+    from osiris_cli.code_agent import Denied
+
+    ws = tmp_path / "ws_uninit"
+    ws.mkdir()
+    monkeypatch.setenv("OSIRIS_ENCLAVE_DIR", str(tmp_path / "missing_enclave"))
+    agent = CodeAgent(root=str(ws), chat=_scripted(), out=lambda _s: None)
+    with pytest.raises(Denied):
+        agent._get_enclave()
+
+
+def test_f06_publish_v600_requires_enrolled_operator_approval_before_publish(tmp_path: Path):
+    import publish_v600_to_zenodo as pub
+
+    assert hasattr(pub, "authorize_v600_release")
+    z = tmp_path / "bundle.zip"
+    t = tmp_path / "bundle.tar.gz"
+    z.write_bytes(b"zip-bytes")
+    t.write_bytes(b"tar-bytes")
+
+    # Missing enclave fails closed
+    with pytest.raises(RuntimeError):
+        pub.authorize_v600_release(
+            z, t, enclave_dir=str(tmp_path / "no_enclave"), confirm=lambda _p: True, out=lambda _s: None
+        )
+
+    enc = tmp_path / "pub_enclave"
+    PQCEnclaveGate.load_or_init_local(str(enc), allow_init=True)
+
+    # Declined operator approval fails closed
+    with pytest.raises(ApprovalDeniedError):
+        pub.authorize_v600_release(
+            z, t, enclave_dir=str(enc), confirm=lambda _p: False, out=lambda _s: None
+        )
+
+    # Approved grant verifies and consumes once against pinned trusted keys
+    grant = pub.authorize_v600_release(
+        z, t, enclave_dir=str(enc), confirm=lambda _p: True, out=lambda _s: None
+    )
+    verifier = PQCEnclaveGate.verifier_from_enclave_dir(str(enc))
+    assert verifier.verify_grant_integrity(grant, consume=False)[0] is True
+    assert verifier.verify_grant_integrity(grant, consume=True)[0] is False  # already consumed
+
+
+def test_f07_f11_algorithm_downgrade_nonfinite_coercions_and_envelope_integrity(tmp_path: Path):
+    enc = tmp_path / "f07_enclave"
+    signer = PQCEnclaveGate.load_or_init_local(str(enc), allow_init=True)
+    verifier = PQCEnclaveGate.verifier_from_enclave_dir(str(enc))
+    d = signer.compute_payload_digest("strict-payload")
+    grant = signer.generate_hybrid_grant(
+        sequence_index=7,
+        prev_block_hash="b" * 64,
+        event_type="code.apply_writes",
+        payload_sha256=d,
+        operation_schema={"action": "code.apply_writes"},
+        scope=["code.apply_writes", "/tmp/ws"],
+        ttl_seconds=60.0,
+        issued_at=1000.0,
+    )
+
+    # Missing or downgraded algorithm fails closed
+    for mut in (
+        lambda g: g["pqc_envelope"].pop("algorithm"),
+        lambda g: g["pqc_envelope"].__setitem__("algorithm", "Ed25519"),
+        lambda g: g["pqc_envelope"].__setitem__("algorithm", "ML-DSA-65"),
+        lambda g: g["pqc_envelope"].__setitem__("algorithm", "none"),
+        lambda g: g["pqc_envelope"].__setitem__("key_fingerprint", "sha256:" + "f" * 64),
+        lambda g: g["pqc_envelope"]["lattice_parameters"].__setitem__("modulus", 1),
+        lambda g: g.__setitem__("sequence_index", "7"),
+        lambda g: g.__setitem__("sequence_index", 7.9),
+        lambda g: g.__setitem__("issued_at", "1000.0"),
+        lambda g: g.__setitem__("expires_at", "1060.0"),
+        lambda g: g.__setitem__("timestamp", 9999999.0),
+        lambda g: g.__setitem__("scope", [" code.apply_writes ", "/tmp/ws"]),
+    ):
+        bad = copy.deepcopy(grant)
+        mut(bad)
+        assert verifier.verify_grant_integrity(bad, now=1010.0)[0] is False
+
+    # Non-finite now fails closed
+    assert verifier.verify_grant_integrity(grant, now=float("nan"))[0] is False
+    assert verifier.verify_grant_integrity(grant, now=float("inf"))[0] is False
+
+    # Boolean / non-finite ttl_seconds rejected at generation
+    for bad_ttl in (True, False, float("nan"), float("inf")):
+        with pytest.raises(ValueError):
+            signer.generate_hybrid_grant(1, "0" * 64, "E", d, {}, ttl_seconds=bad_ttl)  # type: ignore[arg-type]
+
+    # Trusted key metadata operator_id mismatch rejected
+    tk = json.loads((enc / "trusted_operator_keys.json").read_text(encoding="utf-8"))
+    tk["trusted_keys"][0]["operator_id"] = "Other Enrolled Operator"
+    alt = tmp_path / "alt_trusted.json"
+    alt.write_text(json.dumps(tk), encoding="utf-8")
+    alt_v = PQCEnclaveGate.verifier_from_enclave_dir(str(enc), trusted_keys_path=str(alt))
+    assert alt_v.verify_grant_integrity(grant, now=1010.0)[0] is False
+
+
+def test_f08_f09_code_agent_post_approval_stale_target_and_script_toctou(tmp_path: Path):
+    from osiris_cli.code_agent import Denied
+
+    enc = tmp_path / "f08_enclave"
+    signer = PQCEnclaveGate.load_or_init_local(str(enc), allow_init=True)
+
+    # (a) apply_pending_write rejects target edited DURING approval callback
+    ws1 = tmp_path / "ws1"
+    ws1.mkdir()
+    (ws1 / "f.py").write_text("V = 1\n", encoding="utf-8")
+    ca1 = CodeAgent(
+        root=str(ws1),
+        chat=_scripted(),
+        propose_write=lambda _p, _c: True,
+        has_pending_write=lambda: False,
+        out=lambda _s: None,
+        enclave=signer,
+    )
+    ca1._write_file("f.py", "V = 2\n")
+    with pytest.raises(Denied, match="changed on disk"):
+        ca1.apply_pending_write(
+            approve=lambda _prop: ((ws1 / "f.py").write_text("CONCURRENT = 99\n", encoding="utf-8") or True)
+        )
+    assert (ws1 / "f.py").read_text(encoding="utf-8") == "CONCURRENT = 99\n"
+
+    # (b) apply_all_pending_writes rejects target edited DURING approval callback
+    ws2 = tmp_path / "ws2"
+    ws2.mkdir()
+    (ws2 / "f.py").write_text("V = 1\n", encoding="utf-8")
+    ca2 = CodeAgent(
+        root=str(ws2),
+        chat=_scripted(),
+        propose_write=lambda _p, _c: True,
+        has_pending_write=lambda: False,
+        out=lambda _s: None,
+        enclave=signer,
+        max_writes=4,
+    )
+    ca2._write_file("f.py", "V = 2\n")
+    with pytest.raises(Denied, match="changed on disk"):
+        ca2.apply_all_pending_writes(
+            approve=lambda _props: ((ws2 / "f.py").write_text("CONCURRENT_BATCH = 99\n", encoding="utf-8") or True)
+        )
+    assert (ws2 / "f.py").read_text(encoding="utf-8") == "CONCURRENT_BATCH = 99\n"
+
+    # (c) _run_command rejects workspace script mutated between approval and launch
+    ws3 = tmp_path / "ws3"
+    ws3.mkdir()
+    script = ws3 / "run.py"
+    script.write_text("print('BENIGN')\n", encoding="utf-8")
+    ca3 = CodeAgent(
+        root=str(ws3),
+        chat=_scripted(),
+        confirm=lambda _p: (script.write_text("print('SWAPPED')\n", encoding="utf-8") or True),
+        out=lambda _s: None,
+        enclave=signer,
+    )
+    with pytest.raises(Denied, match="execution grant verification failed"):
+        ca3._run_command(f"{sys.executable} run.py")
+
+
+def test_f10_consumed_ledger_verifies_hash_chain_and_handles_corruption_and_race(tmp_path: Path):
+    enc = tmp_path / "f10_enclave"
+    signer = PQCEnclaveGate.load_or_init_local(str(enc), allow_init=True)
+    verifier = PQCEnclaveGate.verifier_from_enclave_dir(str(enc))
+    d = signer.compute_payload_digest("ledger-payload")
+    g1 = signer.generate_hybrid_grant(1, "0" * 64, "E", d, {"i": 1}, issued_at=1000.0)
+    g2 = signer.generate_hybrid_grant(2, "0" * 64, "E", d, {"i": 2}, issued_at=1000.0)
+    g3 = signer.generate_hybrid_grant(3, "0" * 64, "E", d, {"i": 3}, issued_at=1000.0)
+    assert verifier.verify_grant_integrity(g1, now=1010.0, consume=True, consumer_id="r1")[0] is True
+    assert verifier.verify_grant_integrity(g2, now=1010.0, consume=True, consumer_id="r2")[0] is True
+
+    ledger = enc / "consumed_grants.jsonl"
+    orig_lines = ledger.read_text(encoding="utf-8").splitlines()
+
+    # Reordered rows must fail closed
+    ledger.write_text("\n".join(reversed(orig_lines)) + "\n", encoding="utf-8")
+    assert (
+        PQCEnclaveGate.verifier_from_enclave_dir(str(enc)).verify_grant_integrity(
+            g3, now=1010.0, consume=True, consumer_id="r3"
+        )[0]
+        is False
+    )
+
+    # Tampered earlier row erasing g1 must fail closed (preventing replay of g1)
+    rows = [json.loads(line) for line in orig_lines]
+    rows[0]["grant_id"] = "grant-erased"
+    rows[0]["nonce"] = "nonce-erased"
+    ledger.write_text("\n".join(json.dumps(r) for r in rows) + "\n", encoding="utf-8")
+    assert (
+        PQCEnclaveGate.verifier_from_enclave_dir(str(enc)).verify_grant_integrity(
+            g1, now=1010.0, consume=True, consumer_id="r-attacker"
+        )[0]
+        is False
+    )
+
+    # Non-dict JSON row must fail closed without uncaught AttributeError
+    ledger.write_text("[]\n" + orig_lines[-1] + "\n", encoding="utf-8")
+    ok_nd, why_nd = PQCEnclaveGate.verifier_from_enclave_dir(str(enc)).verify_grant_integrity(
+        g3, now=1010.0, consume=True
+    )
+    assert ok_nd is False and "corrupted" in why_nd.lower()
+
+    # Multi-process race: 6 independent processes competing for one grant -> exactly 1 succeeds
+    race_enc = tmp_path / "f10_race"
+    rsig = PQCEnclaveGate.load_or_init_local(str(race_enc), allow_init=True)
+    rgrant = rsig.generate_hybrid_grant(1, "0" * 64, "E", d, {"race": 1}, ttl_seconds=60.0)
+    gfile = tmp_path / "race_grant.json"
+    gfile.write_text(json.dumps(rgrant), encoding="utf-8")
+    worker = (
+        "import json, sys, time\n"
+        "from osiris_cli.pqc_enclave import PQCEnclaveGate\n"
+        "v = PQCEnclaveGate.verifier_from_enclave_dir(sys.argv[1])\n"
+        "g = json.load(open(sys.argv[2]))\n"
+        "t0 = float(sys.argv[4])\n"
+        "while time.time() < t0:\n"
+        "    time.sleep(0.002)\n"
+        "ok, why = v.verify_grant_integrity(g, consume=True, consumer_id=sys.argv[3])\n"
+        "print(json.dumps({'ok': ok, 'why': why}))\n"
+    )
+    import time as _time
+
+    t0 = str(_time.time() + 0.35)
+    procs = [
+        subprocess.Popen(
+            [sys.executable, "-c", worker, str(race_enc), str(gfile), f"p-{i}", t0],
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            text=True,
+        )
+        for i in range(6)
+    ]
+    outs = [json.loads(p.communicate(timeout=20)[0].strip()) for p in procs]
+    assert sum(1 for o in outs if o["ok"]) == 1
+    assert len([ln for ln in (race_enc / "consumed_grants.jsonl").read_text(encoding="utf-8").splitlines() if ln.strip()]) == 1
+
+
+def test_f13_atomic_write_cleanup_and_crash_resume_no_duplicate_receipt(tmp_path: Path):
+    from osiris_cli.code_agent import append_receipt, atomic_write
+
+    # (a) atomic_write cleans up orphan temp file when target is a directory
+    d_target = tmp_path / "is_a_dir"
+    d_target.mkdir()
+    with pytest.raises(OSError):
+        atomic_write(str(d_target), b"hello")
+    assert not [p for p in tmp_path.iterdir() if ".osiris-tmp-" in p.name]
+
+    # (b) Crash after receipt append before store.save(run) must not duplicate receipt on resume
+    enc = tmp_path / "f13_enclave"
+    signer = PQCEnclaveGate.load_or_init_local(str(enc), allow_init=True)
+    repo = tmp_path / "f13_repo"
+    repo.mkdir()
+    (repo / "f1.py").write_text("F1 = 1\n", encoding="utf-8")
+    (repo / "f2.py").write_text("F2 = 1\n", encoding="utf-8")
+    rcpt = tmp_path / "f13_receipts.jsonl"
+    store = RunStore(str(tmp_path / "f13_runs"))
+    f1_after = signer.compute_payload_digest("F1 = 2\n")
+    props = [
+        {
+            "rel_path": "f1.py",
+            "existed_at_proposal": True,
+            "before_sha256": signer.compute_payload_digest("F1 = 1\n"),
+            "after_sha256": f1_after,
+            "content": "F1 = 2\n",
+            "diff": "",
+        },
+        {
+            "rel_path": "f2.py",
+            "existed_at_proposal": True,
+            "before_sha256": signer.compute_payload_digest("F2 = 1\n"),
+            "after_sha256": signer.compute_payload_digest("F2 = 2\n"),
+            "content": "F2 = 2\n",
+            "diff": "",
+        },
+    ]
+    csha, cscope, cschema, csumm = proposals_grant_spec(str(repo), props)
+    cgrant = signer.request_approved_grant(
+        action="code.apply_writes",
+        scope=cscope,
+        summary=csumm,
+        payload_sha256=csha,
+        operation_schema=cschema,
+        confirm=lambda _p: True,
+    )
+    # Simulate crash after writing f1.py and appending its receipt, before store.save(run)
+    (repo / "f1.py").write_text("F1 = 2\n", encoding="utf-8")
+    append_receipt(
+        str(rcpt),
+        "code.agent.apply_write",
+        {
+            "tool": "apply_write",
+            "decision": "GRANTED",
+            "run_id": "code-f13",
+            "path": "f1.py",
+            "before_sha256": props[0]["before_sha256"],
+            "after_sha256": f1_after,
+            "grant_id": cgrant["grant_id"],
+            "key_fingerprint": cgrant["key_fingerprint"],
+            "already_applied": False,
+        },
+    )
+    run = store.create(
+        "code-f13",
+        root=str(repo),
+        proposals=props,
+        approval_grant=cgrant,
+        receipts_path=str(rcpt),
+        options={"require_change": True, "accept_timeout": 60.0},
+        accept=f"{sys.executable} -c 'import sys; sys.exit(0)'",
+    )
+    run["state"] = "AWAITING_APPROVAL"
+    store.save(run)
+    res = resume("code-f13", store=store, enclave_dir=str(enc), out=lambda _s: None)
+    assert res["state"] == "SUCCEEDED"
+    assert Receipts.verify(str(rcpt)) is True
+    f1_rows = [
+        json.loads(ln)
+        for ln in rcpt.read_text(encoding="utf-8").splitlines()
+        if ln.strip()
+        and json.loads(ln)["kind"] == "code.agent.apply_write"
+        and json.loads(ln)["payload"]["path"] == "f1.py"
+    ]
+    assert len(f1_rows) == 1
+
+
+def test_f15_session_link_checked_before_consumption_and_covers_scope_and_symlinks(
+    disposable_repo: Path, tmp_path: Path
+):
+    from osiris_cli import session_approval as sa
+
+    enc = tmp_path / "f15_enclave"
+    signer = PQCEnclaveGate.load_or_init_local(str(enc), allow_init=True)
+    scope = sa.SessionScope.build(str(disposable_repo), ["calc.py", "conf/*"], [])
+
+    # Case-insensitive and *.env exclusions + symlink exclusion
+    assert not sa.covers_paths(scope, str(disposable_repo), ["conf/.ENV"])[0]
+    assert not sa.covers_paths(scope, str(disposable_repo), ["conf/prod.env"])[0]
+    (disposable_repo / "conf").mkdir()
+    outside_f = tmp_path / "ext.py"
+    outside_f.write_text("X = 1\n", encoding="utf-8")
+    os.symlink(str(outside_f), str(disposable_repo / "conf" / "link.py"))
+    assert not sa.covers_paths(scope, str(disposable_repo), ["conf/link.py"])[0]
+
+    # Child link checked BEFORE consumption in apply_idempotent (missing parent does not spend grant)
+    sg = sa.request_session_grant(signer, scope, confirm=lambda _p: True)
+    props = [
+        {
+            "rel_path": "calc.py",
+            "existed_at_proposal": True,
+            "before_sha256": signer.compute_payload_digest(BUGGY),
+            "after_sha256": signer.compute_payload_digest(FIXED),
+            "content": FIXED,
+            "diff": "",
+        }
+    ]
+    psha, pscope, pschema, _ = proposals_grant_spec(str(disposable_repo), props)
+    child = sa.issue_child_grant(
+        signer,
+        sg,
+        action="code.apply_writes",
+        scope=pscope,
+        payload_sha256=psha,
+        operation_schema=pschema,
+        covered=sa.covers_paths(scope, str(disposable_repo), ["calc.py"]),
+    )
+    store = RunStore(str(tmp_path / "f15_runs"))
+    run = store.create(
+        "code-f15",
+        root=str(disposable_repo),
+        proposals=props,
+        approval_grant=child,
+        session_grant=None,  # missing parent session grant
+        options={},
+    )
+    with pytest.raises(GrantVerificationError, match="parent approval is missing"):
+        apply_idempotent(run, store, enclave_dir=str(enc))
+    # Confirm child grant was NOT consumed by the failed link check
+    v = PQCEnclaveGate.verifier_from_enclave_dir(str(enc))
+    assert v.verify_grant_integrity(child, consume=False, check_replay=True)[0] is True

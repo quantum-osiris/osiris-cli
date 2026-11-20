@@ -8,8 +8,11 @@ This module gives it two things, both read from disk, never written by a model:
             generated, test-guarded table) and one line per project. Goes in
             the system prompt, which stays byte-identical between turns so
             Ollama can reuse its cached prefix.
-  lookup    per-message retrieval (BM25 over paragraphs of the sources below),
-            returned with file paths so answers can cite where a fact came from.
+  lookup    per-message retrieval (pure-Python BM25F over heading + body fields
+            of the sources below, bounded by a 1,200-token retrieval budget,
+            with optional Reciprocal Rank Fusion when dense olmo3-embed-7b
+            rankings are available on Node Beta), returned with file paths so
+            answers can cite where a fact came from.
 
 Sources are ~/.osiris/living/knowledge.json {"sources": [...]} when present,
 otherwise DEFAULT_SOURCES. The osiris-cli README is left out on purpose: it
@@ -23,7 +26,7 @@ import math
 import os
 import re
 from collections import Counter
-from typing import Dict, List, Optional
+from typing import Callable, Dict, List, Optional, Sequence, Tuple
 
 HOME = os.path.expanduser("~")
 LIVING_HOME = os.path.join(HOME, ".osiris", "living")
@@ -50,6 +53,16 @@ PROJECTS = """\
 - Hardware: IBM Heron runs of GHZ witnesses and staggered dynamical decoupling, logged in a write-ahead ledger."""
 
 CHUNK_CHARS = 900
+RETRIEVAL_TOKEN_BUDGET = 1200
+CHARS_PER_TOKEN = 4
+BM25F_K1 = 1.5
+BM25F_HEADING_WEIGHT = 2.5
+BM25F_BODY_WEIGHT = 1.0
+BM25F_B_HEADING = 0.4
+BM25F_B_BODY = 0.75
+RRF_K = 60
+DENSE_MIN_FREE_RAM_MB = 12288
+
 STOP = frozenset("""a an and are as at be but by can did do does for from has have how i if in is it its
 me my of on or so that the their them then there these this to was we were what when where which who
 why will with you your about tell know yourself osiris""".split())
@@ -59,6 +72,49 @@ def _tokens(text: str) -> List[str]:
     return [w for w in re.findall(r"[a-z0-9][a-z0-9_\-]{1,}", text.lower()) if w not in STOP]
 
 
+def estimate_tokens(text: str) -> int:
+    """Deterministic lightweight token count estimate (~4 chars/token, min 1 for non-empty)."""
+    if not text:
+        return 0
+    return max(1, (len(text) + CHARS_PER_TOKEN - 1) // CHARS_PER_TOKEN)
+
+
+def dense_retrieval_allowed(
+    free_ram_mb: Optional[int] = None,
+    is_termux: Optional[bool] = None,
+) -> bool:
+    """Guard heavy olmo3-embed-7b dense retrieval away from Termux/edge and low-RAM hosts."""
+    if free_ram_mb is None or is_termux is None:
+        from osiris_cli.probes import probe_substrate
+
+        sub = probe_substrate()
+        if is_termux is None:
+            is_termux = sub.is_termux
+        if free_ram_mb is None:
+            free_ram_mb = sub.free_ram_mb
+    if is_termux:
+        return False
+    return int(free_ram_mb) >= DENSE_MIN_FREE_RAM_MB
+
+
+def reciprocal_rank_fusion(
+    bm25_indices: Sequence[int],
+    dense_indices: Sequence[int],
+    k_rrf: int = RRF_K,
+) -> List[Tuple[float, int]]:
+    """Fuse lexical (BM25F) and dense rankings via RRF(d) = 1/(k+r_bm25) + 1/(k+r_dense).
+
+    Returns sorted list of (fused_score, chunk_index) highest score first with
+    deterministic tie-breaking by chunk_index.
+    """
+    scores: Dict[int, float] = {}
+    for rank, idx in enumerate(bm25_indices, start=1):
+        scores[idx] = scores.get(idx, 0.0) + 1.0 / (k_rrf + rank)
+    for rank, idx in enumerate(dense_indices, start=1):
+        scores[idx] = scores.get(idx, 0.0) + 1.0 / (k_rrf + rank)
+    return sorted(((score, idx) for idx, score in scores.items()), key=lambda item: (-item[0], item[1]))
+
+
 def _sources(living_home: str, base: str) -> List[str]:
     try:
         with open(os.path.join(living_home, "knowledge.json"), encoding="utf-8") as f:
@@ -66,7 +122,12 @@ def _sources(living_home: str, base: str) -> List[str]:
     except (OSError, ValueError):
         listed = DEFAULT_SOURCES
     resolved = []
-    roots = (base, os.path.join(base, "osiris-assessment", "work"), os.path.join(base, "osiris-assessment"))
+    roots = (
+        base,
+        os.path.join(base, "osiris-repos"),
+        os.path.join(base, "osiris-assessment", "work"),
+        os.path.join(base, "osiris-assessment"),
+    )
     for p in listed:
         if os.path.isabs(p):
             resolved.append(p)
@@ -131,8 +192,12 @@ def active_notes(living_home: str) -> List[dict]:
                     rec = json.loads(line)
                 except ValueError:
                     continue
-                if (isinstance(rec, dict) and rec.get("status") == "active"
-                        and rec.get("id") and isinstance(rec.get("content"), str)):
+                if (
+                    isinstance(rec, dict)
+                    and rec.get("status") == "active"
+                    and rec.get("id")
+                    and isinstance(rec.get("content"), str)
+                ):
                     out.append(rec)
     except OSError:
         pass
@@ -140,8 +205,13 @@ def active_notes(living_home: str) -> List[dict]:
 
 
 class Knowledge:
-    def __init__(self, living_home: str = LIVING_HOME, base: str = HOME,
-                 sources: Optional[List[str]] = None, notes: Optional[bool] = None):
+    def __init__(
+        self,
+        living_home: str = LIVING_HOME,
+        base: str = HOME,
+        sources: Optional[List[str]] = None,
+        notes: Optional[bool] = None,
+    ):
         self.base = base
         paths = sources if sources is not None else _sources(living_home, base)
         self.texts: Dict[str, str] = {}
@@ -162,7 +232,18 @@ class Knowledge:
                 title = str(rec.get("title") or "").strip()
                 self.note_ids.append(rec["id"])
                 self.chunks += [(src, h or title, t) for h, t in chunk_markdown(rec["content"])]
-        self._tf = [Counter(_tokens(h + " " + t)) for _, h, t in self.chunks]
+
+        # Field-separated BM25F statistics (heading boosted over body) + combined TF for compatibility.
+        self._heading_tf = [Counter(_tokens(h)) for _, h, _ in self.chunks]
+        self._body_tf = [Counter(_tokens(t)) for _, _, t in self.chunks]
+        self._heading_len = [sum(tf.values()) for tf in self._heading_tf]
+        self._body_len = [sum(tf.values()) for tf in self._body_tf]
+        nonzero_h = [ln for ln in self._heading_len if ln > 0]
+        nonzero_b = [ln for ln in self._body_len if ln > 0]
+        self._heading_avg = (sum(nonzero_h) / len(nonzero_h)) if nonzero_h else 1.0
+        self._body_avg = (sum(nonzero_b) / len(nonzero_b)) if nonzero_b else 1.0
+
+        self._tf = [h_tf + b_tf for h_tf, b_tf in zip(self._heading_tf, self._body_tf)]
         self._len = [sum(tf.values()) for tf in self._tf]
         self._avg = (sum(self._len) / len(self._len)) if self._len else 1.0
         df = Counter(w for tf in self._tf for w in tf)
@@ -174,8 +255,10 @@ class Knowledge:
         for src in sorted(self.texts, key=lambda k: not k.endswith(SCORECARD_SOURCE)):
             verdicts = scorecard_verdicts(self.texts[src])
             if verdicts:
-                parts.append(f"Pre-registered results so far (from {src}, generated from "
-                             "results/ and test-guarded):\n" + "\n".join("- " + v for v in verdicts))
+                parts.append(
+                    f"Pre-registered results so far (from {src}, generated from "
+                    "results/ and test-guarded):\n" + "\n".join("- " + v for v in verdicts)
+                )
                 break
         return "\n\n".join(parts)
 
@@ -196,35 +279,119 @@ class Knowledge:
                 return [f"{r}  ({src})" for r in rows]
         return []
 
-    def lookup(self, query: str, k: int = 3, per_source: int = 2) -> List[dict]:
+    def _bm25f_scored(self, query: str) -> List[Tuple[float, int]]:
         q = set(_tokens(query))
         if not q or not self.chunks:
             return []
-        scored = []
-        for i, tf in enumerate(self._tf):
+        scored: List[Tuple[float, int]] = []
+        for i in range(len(self.chunks)):
+            h_tf = self._heading_tf[i]
+            b_tf = self._body_tf[i]
+            h_norm = 1.0 - BM25F_B_HEADING + BM25F_B_HEADING * (self._heading_len[i] / self._heading_avg)
+            b_norm = 1.0 - BM25F_B_BODY + BM25F_B_BODY * (self._body_len[i] / self._body_avg)
             s = 0.0
             for w in q:
-                f = tf.get(w)
-                if f:
-                    s += self._idf[w] * f * 2.5 / (f + 1.5 * (0.25 + 0.75 * self._len[i] / self._avg))
-            if s > 0:
+                idf = self._idf.get(w)
+                if idf is None:
+                    continue
+                fh = h_tf.get(w, 0)
+                fb = b_tf.get(w, 0)
+                if fh or fb:
+                    pseudo_tf = (BM25F_HEADING_WEIGHT * fh / max(h_norm, 1e-6)) + (
+                        BM25F_BODY_WEIGHT * fb / max(b_norm, 1e-6)
+                    )
+                    s += idf * pseudo_tf * (BM25F_K1 + 1.0) / (pseudo_tf + BM25F_K1)
+            if s > 0.0:
                 scored.append((s, i))
-        scored.sort(reverse=True)
-        out, used = [], Counter()
-        for s, i in scored:
+        scored.sort(key=lambda item: (-item[0], item[1]))
+        return scored
+
+    def lookup(
+        self,
+        query: str,
+        k: int = 3,
+        per_source: int = 2,
+        *,
+        max_tokens: int = RETRIEVAL_TOKEN_BUDGET,
+        dense_scores: Optional[Dict[int, float]] = None,
+    ) -> List[dict]:
+        """Retrieve up to `k` chunks ranked by BM25F (or BM25F + RRF when `dense_scores` is given),
+        strictly bounded within `max_tokens` (default 1,200 tokens)."""
+        bm25_scored = self._bm25f_scored(query)
+        if dense_scores:
+            bm25_order = [idx for _, idx in bm25_scored]
+            dense_order = [
+                idx
+                for idx, _ in sorted(
+                    ((i, float(sc)) for i, sc in dense_scores.items() if 0 <= i < len(self.chunks)),
+                    key=lambda kv: (-kv[1], kv[0]),
+                )
+            ]
+            ranked = reciprocal_rank_fusion(bm25_order, dense_order)
+            score_precision = 4
+        else:
+            ranked = bm25_scored
+            score_precision = 2
+
+        if not ranked:
+            return []
+
+        out: List[dict] = []
+        used = Counter()
+        budget_used = 0
+        for s, i in ranked:
             src, h, t = self.chunks[i]
             if used[src] >= per_source:
                 continue
+            chunk_tokens = estimate_tokens(h + "\n" + t)
+            if max_tokens > 0 and out and budget_used + chunk_tokens > max_tokens:
+                continue
+            text_out = t
+            if max_tokens > 0 and not out and chunk_tokens > max_tokens:
+                max_chars = max(64, max_tokens * CHARS_PER_TOKEN - len(h) - 8)
+                text_out = t[:max_chars].rstrip() + "..."
+                chunk_tokens = estimate_tokens(h + "\n" + text_out)
             used[src] += 1
-            out.append({"source": src, "heading": h, "text": t, "score": round(s, 2)})
+            budget_used += chunk_tokens
+            out.append({"source": src, "heading": h, "text": text_out, "score": round(s, score_precision)})
             if len(out) >= k:
                 break
         return out
 
+    def lookup_hybrid(
+        self,
+        query: str,
+        k: int = 3,
+        per_source: int = 2,
+        *,
+        max_tokens: int = RETRIEVAL_TOKEN_BUDGET,
+        dense_ranker: Optional[Callable[[str, Sequence[Tuple[str, str, str]]], Dict[int, float]]] = None,
+        free_ram_mb: Optional[int] = None,
+        is_termux: Optional[bool] = None,
+    ) -> List[dict]:
+        """Run BM25F, fusing optional dense rankings via RRF only when substrate RAM guards allow."""
+        dense_scores: Optional[Dict[int, float]] = None
+        if dense_ranker is not None and dense_retrieval_allowed(free_ram_mb=free_ram_mb, is_termux=is_termux):
+            try:
+                dense_scores = dense_ranker(query, self.chunks)
+            except Exception:  # noqa: BLE001 - degrade gracefully to pure BM25F
+                dense_scores = None
+        return self.lookup(
+            query,
+            k=k,
+            per_source=per_source,
+            max_tokens=max_tokens,
+            dense_scores=dense_scores,
+        )
+
     @staticmethod
     def format_notes(hits: List[dict]) -> str:
         def label(h: dict) -> str:
-            tag = ("  (approved by Devin; user-provided, unverified -- not a measurement record)"
-                   if h["source"].startswith(NOTE_PREFIX) else "")
+            tag = (
+                "  (approved by Devin; user-provided, unverified -- not a measurement record)"
+                if h["source"].startswith(NOTE_PREFIX)
+                else ""
+            )
             return f"[{h['source']}" + (f" § {h['heading']}" if h["heading"] else "") + "]" + tag
+
         return "\n\n".join(label(h) + "\n" + h["text"] for h in hits)
