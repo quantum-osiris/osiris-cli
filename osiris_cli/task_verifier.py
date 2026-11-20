@@ -293,8 +293,9 @@ def run_separate_verifier(
         fh.flush()
         os.fsync(fh.fileno())
 
+    verifier_script = str(Path(__file__).resolve())
     req = CommandRequest(
-        argv=(sys.executable, "-m", "osiris_cli.task_verifier", "--manifest", str(manifest_path)),
+        argv=(sys.executable, verifier_script, "--manifest", str(manifest_path)),
         cwd=os.path.realpath(workdir),
         origin="human",
         root=os.path.realpath(workdir),
