@@ -39,6 +39,12 @@ def _b64_npy(packed: np.ndarray) -> str:
 
 def _runtime_job_json(rows: list[str], num_bits: int) -> str:
     """Serialize a real one-PUB sampler result via qiskit's own RuntimeEncoder."""
+    # The three tests that build a real Runtime payload need qiskit and qiskit-ibm-runtime. CI
+    # installs neither on Python 3.9 and never installs qiskit-ibm-runtime (the convention in
+    # tests/test_phase3_*.py), so there they are reported as skipped, with this reason.
+    pytest.importorskip("qiskit", reason="needs qiskit to build a real sampler result")
+    pytest.importorskip("qiskit_ibm_runtime", reason="needs qiskit-ibm-runtime's RuntimeEncoder; "
+                        "CI does not install qiskit-ibm-runtime")
     from qiskit.primitives.containers import BitArray, DataBin, SamplerPubResult, PrimitiveResult
     from qiskit_ibm_runtime import RuntimeEncoder
 

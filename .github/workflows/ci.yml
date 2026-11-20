@@ -32,6 +32,15 @@ jobs:
           pip install numpy scipy requests PyYAML rich networkx cryptography
           pip install pytest pytest-cov
           python -c 'import subprocess, sys; sys.version_info >= (3, 10) and subprocess.check_call([sys.executable, "-m", "pip", "install", "qiskit"])'
+          # The sibling repos that osiris_cli imports (dnalang, organism_sim, aegis-bridge,
+          # osiris-governance) are pinned by commit in pyproject's [research] extra. dnalang and
+          # osiris-governance need Python 3.10+, so 3.9 runs without them; tests/conftest.py
+          # names the tests that leaves out, and they are reported as skipped with that reason.
+          python -c 'import subprocess, sys; sys.version_info >= (3, 10) and subprocess.check_call([sys.executable, "-m", "pip", "install", "-e", ".[research]"])'
+
+      - name: Check the research packages are importable (Python 3.10+)
+        run: |
+          python -c 'import sys; sys.version_info < (3, 10) and sys.exit(0); import dnalang, organism_sim, osiris_governance, qiskit, qiskit_aer; print("dnalang", dnalang.__version__, "| organism_sim OK | osiris_governance OK | qiskit", qiskit.__version__, "| qiskit_aer", qiskit_aer.__version__)'
 
       - name: Run import smoke tests
         run: |
@@ -47,7 +56,8 @@ jobs:
           python -c "from osiris.core.intent_engine import IntentEngine; print('osiris.core OK')"
 
       - name: Run tests
-        run: pytest tests/ -v --tb=short --strict-markers
+        # -rfEs lists every failure, error and skipped test with its reason, so a shrinking suite is visible in the log
+        run: pytest tests/ -v --tb=short --strict-markers -rfEs
 
       - name: Wheel install smoke (what users get from pip)
         run: |
