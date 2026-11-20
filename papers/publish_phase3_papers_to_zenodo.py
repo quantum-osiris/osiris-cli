@@ -328,6 +328,102 @@ PAPERS = {
                          "ibm_fez", "ibm_kingston", "preregistration", "TESSERACT-MAP-04"],
         },
     },
+    "tmap05pre": {
+        "dir": ROOT / "papers" / "tmap05_prereg",
+        "related": [{"identifier": "10.5281/zenodo.24407001", "relation": "continues", "scheme": "doi"}],
+        "files": [
+            ("phase3/TESSERACT_MAP_05_PREREGISTRATION.md", None),
+            ("phase3/tesseract_map_05.py", None),
+            ("phase3/tesseract_map_04.py", None),
+            ("phase3/tesseract_map_03.py", None),
+        ],
+        "meta": {
+            "title": ("Preregistration: TESSERACT-MAP-05, keep the calibration ranking and exclude only grossly "
+                      "faulty readout qubits: three IBM Heron r2 processors"),
+            "description": (
+                "<p>Published before any MAP-05 job. Follows TESSERACT-MAP-04 (doi:10.5281/zenodo.24407001). Per "
+                "backend (ibm_marrakesh, ibm_fez, ibm_kingston): a readout probe on every qubit, then a 60-PUB job "
+                "comparing the calibration-ranked 40-qubit path, the same rule with qubits of probe readout error "
+                "&gt; 0.15 removed, the probe-ranked path, and Qiskit's stock layout. Contrasts M1&ndash;M4, "
+                "decision rules and exact code included.</p>"
+            ),
+            "keywords": ["preregistration", "qubit layout", "readout error", "IBM Heron r2", "TESSERACT-MAP-05"],
+        },
+    },
+    "tmap05": {
+        "dir": ROOT / "papers" / "tmap05_exclusion_layout",
+        "related": [{"identifier": "10.5281/zenodo.24407538", "relation": "isSupplementTo", "scheme": "doi"},
+                    {"identifier": "10.5281/zenodo.24407001", "relation": "continues", "scheme": "doi"}],
+        "files": [
+            ("papers/tmap05_exclusion_layout/tmap05_exclusion_layout.pdf", None),
+            ("papers/tmap05_exclusion_layout/tmap05_exclusion_layout.tex", None),
+            ("papers/tmap05_exclusion_layout/generated.tex", None),
+            ("papers/tmap05_exclusion_layout/generate_tables.py", None),
+            ("phase3/TESSERACT_MAP_05_PREREGISTRATION.md", None),
+            ("phase3/tesseract_map_05.py", None),
+            ("docs/phase5/tesseract_map_05_ibm_fez_live_analysis.json", None),
+            ("docs/phase5/tesseract_map_05_ibm_fez_live_prereg_lock.json", None),
+            ("docs/phase5/tesseract_map_05_ibm_fez_live_pubs.qpy", None),
+            ("docs/phase5/tesseract_map_05_ibm_fez_live_raw_counts.json", None),
+            ("docs/phase5/tesseract_map_05_ibm_fez_probe_raw_counts.json", None),
+            ("docs/phase5/tesseract_map_05_ibm_fez_probe_readout.json", None),
+            ("docs/phase5/tesseract_map_05_ibm_fez_probe_receipt.json", None),
+            ("docs/phase5/tesseract_map_05_ibm_fez_probe_time_calibration.json", None),
+            ("docs/phase5/tesseract_map_05_ibm_fez_submission_receipt.json", None),
+            ("docs/phase5/tesseract_map_05_ibm_kingston_live_analysis.json", None),
+            ("docs/phase5/tesseract_map_05_ibm_kingston_live_prereg_lock.json", None),
+            ("docs/phase5/tesseract_map_05_ibm_kingston_live_pubs.qpy", None),
+            ("docs/phase5/tesseract_map_05_ibm_kingston_live_raw_counts.json", None),
+            ("docs/phase5/tesseract_map_05_ibm_kingston_probe_raw_counts.json", None),
+            ("docs/phase5/tesseract_map_05_ibm_kingston_probe_readout.json", None),
+            ("docs/phase5/tesseract_map_05_ibm_kingston_probe_receipt.json", None),
+            ("docs/phase5/tesseract_map_05_ibm_kingston_probe_time_calibration.json", None),
+            ("docs/phase5/tesseract_map_05_ibm_kingston_submission_receipt.json", None),
+            ("docs/phase5/tesseract_map_05_ibm_marrakesh_live_analysis.json", None),
+            ("docs/phase5/tesseract_map_05_ibm_marrakesh_live_prereg_lock.json", None),
+            ("docs/phase5/tesseract_map_05_ibm_marrakesh_live_pubs.qpy", None),
+            ("docs/phase5/tesseract_map_05_ibm_marrakesh_live_raw_counts.json", None),
+            ("docs/phase5/tesseract_map_05_ibm_marrakesh_probe_raw_counts.json", None),
+            ("docs/phase5/tesseract_map_05_ibm_marrakesh_probe_readout.json", None),
+            ("docs/phase5/tesseract_map_05_ibm_marrakesh_probe_receipt.json", None),
+            ("docs/phase5/tesseract_map_05_ibm_marrakesh_probe_time_calibration.json", None),
+            ("docs/phase5/tesseract_map_05_ibm_marrakesh_submission_receipt.json", None),
+        ],
+        "meta": {
+            "title": ("Qubit-selection rules for IBM Heron r2 do not hold their ranking for ninety minutes: a "
+                      "preregistered exclusion test and an unplanned sign flip on three processors (TESSERACT-MAP-05)"),
+            "description": (
+                "<p>Preregistered (doi:10.5281/zenodo.24407538) on ibm_marrakesh, ibm_fez, ibm_kingston; 6 jobs, 120 s QPU.</p><ul>"
+                "<li>Excluding qubits with probe readout error &gt; 15% from the calibration-ranked path helped where "
+                "such a qubit was on the path (+2.3 pp fez, +4.7 pp kingston), null on marrakesh.</li>"
+                "<li>Plain probe ranking beat exclusion on fez and kingston; the preregistered conclusion is not supported.</li>"
+                "<li>Probe-vs-calibration ranking, rerun ~90 min after MAP-04 with the same code, flipped sign on all "
+                "three devices (+25.0 to -3.0, -3.6 to +6.9, -0.3 to +7.8 pp).</li>"
+                "<li>ibm_marrakesh qubit 46: 34.4% readout error at 20:26Z, 0.6% at 21:51Z.</li></ul>"
+                "<p>Readout faults are intermittent on an hour scale; single-job layout comparisons are snapshots.</p>"
+            ),
+            "keywords": ["qubit layout", "readout error", "calibration drift", "replication", "IBM Heron r2",
+                         "ibm_marrakesh", "ibm_fez", "ibm_kingston", "TESSERACT-MAP-05"],
+        },
+    },
+    "ro06pre": {
+        "dir": ROOT / "papers" / "ro06_prereg",
+        "related": [{"identifier": "10.5281/zenodo.24407538", "relation": "continues", "scheme": "doi"}],
+        "files": [
+            ("phase3/TESSERACT_RO_06_PREREGISTRATION.md", None),
+            ("phase3/readout_drift_06.py", None),
+            ("phase3/tesseract_map_03.py", None),
+            ("phase3/tesseract_map_04.py", None),
+        ],
+        "meta": {
+            "title": "Preregistration: TESSERACT-RO-06, a time series of readout faults on three IBM Heron r2 processors",
+            "description": ("<p>Published before any RO-06 job. Eight rounds, 15 minutes apart, of an all-qubit readout "
+                            "probe on ibm_marrakesh, ibm_fez and ibm_kingston, with IBM calibration snapshots. Hypotheses on "
+                            "prevalence, intermittency and persistence of readout faults that IBM's calibration does not "
+                            "show (probe &gt; 15%, IBM &lt; 3%), and on how well IBM's figures track the probe.</p>"),
+            "keywords": ["preregistration", "readout error", "calibration drift", "IBM Heron r2", "TESSERACT-RO-06"],
+        },
+    },
 }
 
 

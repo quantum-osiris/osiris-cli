@@ -1,0 +1,159 @@
+\documentclass[10pt,twocolumn]{article}
+\usepackage[margin=0.8in]{geometry}
+\usepackage{amsmath,amssymb,booktabs,xcolor}
+\usepackage[hidelinks]{hyperref}
+\usepackage{caption}
+\captionsetup{font=small,labelfont=bf}
+\input{generated.tex}
+
+\title{\bfseries Qubit-selection rules for IBM Heron r2 do not hold their ranking for ninety minutes:
+a preregistered exclusion test and an unplanned sign flip on three processors}
+\author{Devin Phillip Davis\\ \small Agile Defense Systems LLC}
+\date{20 November 2026 \quad (TESSERACT-MAP-05 results, version 1.0)}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+\noindent
+TESSERACT-MAP-04 found that ranking 40-qubit paths with a per-job readout probe helped on one of
+three IBM Heron r2 processors, and that after readout mitigation the calibration-ranked path was
+better everywhere. We preregistered a compromise: keep IBM's calibration ranking, but drop qubits
+whose probe readout error exceeds 15\%. On \texttt{ibm\_marrakesh}, \texttt{ibm\_fez} and
+\texttt{ibm\_kingston} (six jobs, \TotalSeconds{}\,s QPU), exclusion beat the plain calibration path
+where the calibration path contained a faulty qubit ($+2.3$\,pp on \texttt{ibm\_fez}, $+4.7$\,pp on
+\texttt{ibm\_kingston}), but it lost to plain probe ranking on both ($-4.6$, $-3.2$\,pp). On
+\texttt{ibm\_marrakesh} the calibration path held no faulty qubit and exclusion made no difference.
+By the preregistered rule the compromise is not supported. The larger finding was not planned. The
+probe-versus-calibration contrast, rerun about 90 minutes after MAP-04 with the same code, changed
+sign on all three devices: $+25.0\to-3.0$, $-3.6\to+6.9$ and $-0.3\to+7.8$\,pp. On
+\texttt{ibm\_marrakesh}, qubit~46 fell from \QFSixFour\% probe readout error at \TFour{}Z to
+\QFSixFive\% at \TFive{}Z. Readout faults on these processors are intermittent on a time scale of an
+hour, so a qubit-selection rule compared in one job describes that hour, not the rule.
+\end{abstract}
+
+\section{Background and design}
+MAP-02~\cite{map02} to MAP-04~\cite{map04} established that the choice of 40 physical qubits for a
+fixed 39-CZ circuit changes its classical fidelity $F_{\mathrm{cl}}$ by up to 25\,pp, mainly through
+single qubits whose readout is much worse than IBM's calibration reports. MAP-05~\cite{prereg} uses
+MAP-04's probe and path search (greedy, 400 candidates, cost
+$-\sum\log(1-e_{\mathrm{CZ}})-\sum\log(1-e_{\mathrm{RO}})$) and compares four layouts of the same
+circuit: C1, the best path by IBM readout (MAP-02 rule); C2, the same with every qubit of probe readout
+error $>0.15$ removed; C3, the best path by probe readout (MAP-04's B1); and C4, Qiskit's stock level-3
+layout. Each backend ran a 6-PUB probe job, then a main job of 10 shuffled blocks $\times$ 6 PUBs
+$\times$ 2{,}048 shots with union all-0/all-1 readout circuits. Contrasts (paired $t$, df $=9$, Holm
+across four per device): M1 = C2$-$C1, M2 = C2$-$C3, M3 = C2$-$C4, M4 = C3$-$C1 (MAP-04's L1 rerun).
+The preregistered conclusion ``exclusion beats both MAP-04 rules'' required M1 $>0$ (Holm $p<0.05$)
+on every device where C1 and C2 differ, and M2 not significantly negative on every device.
+
+\section{Results}
+
+\begin{table}[t]
+\centering\scriptsize\setlength{\tabcolsep}{2pt}
+\caption{Jobs and QPU seconds charged (probe + main).}
+\begin{tabular}{@{}lllr@{}}
+\toprule
+Backend & Probe job & Main job & s\\
+\midrule
+\JobRows
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table*}[t]
+\centering\footnotesize
+\caption{Arms. $F_{\mathrm{cl}}$: mean over 10 blocks (SD). ``Mitigated'': readout-mitigated
+$F_{\mathrm{cl}}$. Last column: the layout's worst qubit by probe readout error, with the probe's and
+IBM's readout error (\%).}
+\begin{tabular}{@{}lllrl@{}}
+\toprule
+Backend & Arm & $F_{\mathrm{cl}}$ (SD) & Mitigated & Worst qubit: probe / IBM (\%)\\
+\midrule
+\ArmRows
+\bottomrule
+\end{tabular}
+\end{table*}
+
+\begin{table*}[t]
+\centering\footnotesize
+\caption{Preregistered contrasts (pp of $F_{\mathrm{cl}}$), Holm across four per device; exact
+Wilcoxon (Holm) as sensitivity.}
+\begin{tabular}{@{}lllrcrr@{}}
+\toprule
+Backend & ID & Contrast & Mean (pp) & 95\% CI (pp) & Holm $p$ & Wilcoxon $p$\\
+\midrule
+\ContrastRows
+\bottomrule
+\end{tabular}
+\end{table*}
+
+\begin{table}[t]
+\centering\scriptsize\setlength{\tabcolsep}{2.5pt}
+\caption{Probe-ranked minus calibration-ranked path (pp), same code, about 90 minutes apart.}
+\begin{tabular}{@{}lrcrc@{}}
+\toprule
+ & \multicolumn{2}{c}{MAP-04 L1} & \multicolumn{2}{c}{MAP-05 M4}\\
+Backend & Mean & 95\% CI & Mean & 95\% CI\\
+\midrule
+\RepRows
+\bottomrule
+\end{tabular}
+\end{table}
+
+\paragraph{Exclusion (M1).} On \texttt{ibm\_fez} the calibration path contained q11 (probe 22.8\%) and on
+\texttt{ibm\_kingston} q107 (19.1\%, listed at 1.0\%). Removing them raised $F_{\mathrm{cl}}$ by
+$+2.26$ and $+4.65$\,pp. On \texttt{ibm\_marrakesh} none of the six excluded qubits lay on the
+calibration path. Removing them from the graph still changed the greedy search's result (33 of 40
+qubits shared), and the difference was null ($-0.29$\,pp, CI $[-1.27,+0.69]$). The preregistered rule
+counts \texttt{ibm\_marrakesh} as testable because the layouts differ, so ``helps on every testable
+device'' fails (2 of 3). In substance, exclusion helped wherever it removed a faulty qubit from the path.
+
+\paragraph{Exclusion against probe ranking (M2).} Plain probe ranking beat exclusion on
+\texttt{ibm\_fez} ($-4.64$\,pp) and \texttt{ibm\_kingston} ($-3.16$\,pp), and lost to it on
+\texttt{ibm\_marrakesh} ($+2.71$\,pp). The ``safe'' criterion fails on two devices, so the
+preregistered conclusion is \emph{not supported}. On \texttt{ibm\_fez}, Qiskit's stock layout was again
+the best arm (0.300).
+
+\paragraph{The sign flip (M4).} The probe-versus-calibration contrast reversed on every device relative
+to MAP-04 (last table). Each estimate is internally precise (all ten blocks agree in sign), so the
+reversal is not sampling noise within a job. It reflects the device changing between jobs. The clearest
+case is q46 on \texttt{ibm\_marrakesh}: 54\% (mean of $p(1|0)$ and $p(0|1)$: 35\%) in MAP-03 at
+about 20:14Z, \QFSixFour\% at \TFour{}Z (MAP-04 probe), and \QFSixFive\% at \TFive{}Z. Once q46 recovered, the calibration path no
+longer carried a faulty qubit, and probe ranking's cost (worse gates, as the mitigated endpoint showed in
+MAP-04) was all that remained. Calibration and probe paths also differed between MAP-04 and MAP-05 on
+most devices, because both the probe and IBM's calibration had changed.
+
+\section{Discussion}
+Three things follow. First, the readout faults that drove MAP-03 and MAP-04 are \emph{intermittent}:
+a qubit can move between 1\% and 54\% readout error within hours, and IBM's calibration showed none of
+these excursions. Second, no single selection rule we tested won consistently. Across six device-runs
+(MAP-04 and MAP-05) the probe-ranked path beat the calibration path three times and lost three times,
+with effects of up to 25\,pp either way. Third, a probe run minutes before the main job captures the
+faults that will be present in that job. On every device, excluding a qubit the probe flagged on the
+calibration path helped. The useful practice is therefore narrow: probe immediately before each job,
+and remove only qubits that the probe shows to be grossly faulty at that moment. Single-job
+comparisons of layout algorithms on these devices should be read as snapshots and repeated across
+hours before any general claim.
+
+\paragraph{Limitations.} Two sessions on one day; one job per device per session. The 15\% threshold
+was chosen, not tuned. The greedy search can return a different path when unrelated qubits are
+removed, which confounds M1 on \texttt{ibm\_marrakesh}. Mitigation is tensored.
+
+\section*{Data and code availability}
+The record contains, for each device, the probe counts and readout, the probe-time calibration, the lock,
+the QPY, the raw counts and the analysis, together with \texttt{phase3/tesseract\_map\_05.py} and
+\texttt{generate\_tables.py}, which produce every number here (the MAP-04 comparison reads the MAP-04
+record's files), with a SHA-256 manifest.
+
+\section*{Acknowledgements}
+We acknowledge the use of IBM Quantum services; the views expressed are the author's and do not
+reflect the official policy or position of IBM or the IBM Quantum team. Analysis code and this
+manuscript were prepared with the assistance of AI coding tools under the author's direction and
+review.
+
+\begin{thebibliography}{9}\small
+\bibitem{map02} D.~P.~Davis, Zenodo, doi:10.5281/zenodo.24406426 (2026).
+\bibitem{map04} D.~P.~Davis, Zenodo, doi:10.5281/zenodo.24407001 (2026).
+\bibitem{prereg} D.~P.~Davis, ``Preregistration: TESSERACT-MAP-05,'' Zenodo, doi:10.5281/zenodo.24407538 (2026).
+\end{thebibliography}
+\end{document}
