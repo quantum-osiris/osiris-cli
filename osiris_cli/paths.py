@@ -55,3 +55,55 @@ def results_dir(*parts: str) -> Path:
     else:
         base = Path.home() / ".osiris" / "results"
     return base.joinpath(*parts)
+
+
+def _resolve_osiris_home(environ: dict = None, home: Path = None) -> Path:
+    """``$OSIRIS_HOME`` when set, else ``~/.osiris``. Never a hardcoded absolute
+    path: Node Alpha (Termux) and Node Beta (WSL2) resolve their own home."""
+    env = os.environ if environ is None else environ
+    root = Path(env.get("OSIRIS_HOME") or "").expanduser() if env.get("OSIRIS_HOME") else None
+    if root is not None:
+        return root
+    return (home or Path.home()) / ".osiris"
+
+
+def _resolve_dnalang_ledger(osiris_home: Path, repo_root: Path = None, environ: dict = None,
+                           home: Path = None) -> Path:
+    """Locate dnalang-core's ``dnalang/ledger.py`` without assuming one machine's
+    layout. Lookup order:
+
+    1. ``$OSIRIS_DNALANG_LEDGER`` (explicit override);
+    2. ``~/osiris-repos/dnalang-core/dnalang/ledger.py`` (Node Alpha checkout);
+    3. ``<osiris_home>/src/dnalang-core/dnalang/ledger.py`` (installed under OSIRIS_HOME);
+    4. ``~/dnalang-core/dnalang/ledger.py`` (home checkout);
+    5. ``<repo_root>/../.osiris/src/dnalang-core/...`` and ``<repo_root>/../dnalang-core/...``
+       (legacy sibling-workdir layouts, probed relative to the checkout, not hardcoded);
+    6. an installed ``dnalang`` package (located without importing it).
+
+    Returns the first candidate that exists, else candidate 2 (the canonical
+    OSIRIS_HOME location) so error messages name a stable path.
+    """
+    env = os.environ if environ is None else environ
+    home = home or Path.home()
+    root = repo_root or REPO_ROOT
+    candidates = []
+    if env.get("OSIRIS_DNALANG_LEDGER"):
+        candidates.append(Path(env["OSIRIS_DNALANG_LEDGER"]).expanduser())
+    candidates += [
+        home / "osiris-repos" / "dnalang-core" / "dnalang" / "ledger.py",
+        osiris_home / "src" / "dnalang-core" / "dnalang" / "ledger.py",
+        home / "dnalang-core" / "dnalang" / "ledger.py",
+        root.parent / ".osiris" / "src" / "dnalang-core" / "dnalang" / "ledger.py",
+        root.parent / "dnalang-core" / "dnalang" / "ledger.py",
+    ]
+    try:
+        import importlib.util
+        spec = importlib.util.find_spec("dnalang")
+    except (ImportError, ValueError):
+        spec = None
+    if spec is not None and spec.submodule_search_locations:
+        candidates += [Path(p) / "ledger.py" for p in spec.submodule_search_locations]
+    for cand in candidates:
+        if cand.is_file():
+            return cand
+    return candidates[1] if len(candidates) > 1 else candidates[0]

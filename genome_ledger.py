@@ -78,9 +78,9 @@ def ledger_src_candidates(environ=None, user_home=None, checkout_parent=None, pa
     tail = os.path.join("dnalang-core", "dnalang", "ledger.py")
     candidates = []
     if environ.get("OSIRIS_DNALANG_LEDGER"):
-        candidates.append(environ["OSIRIS_DNALANG_LEDGER"])
+        candidates.append(os.path.expanduser(environ["OSIRIS_DNALANG_LEDGER"]))
     if environ.get("OSIRIS_HOME"):
-        candidates.append(os.path.join(environ["OSIRIS_HOME"], "src", tail))
+        candidates.append(os.path.join(os.path.expanduser(environ["OSIRIS_HOME"]), "src", tail))
     candidates += [
         os.path.join(checkout_parent, ".osiris", "src", tail),
         os.path.join(user_home, tail),
