@@ -1,0 +1,29 @@
+{
+ "noiseless_fcl_block0": {
+  "A6_STAR_BEST": 0.9997012912308956,
+  "A3_CHAIN_C7REPLAY": 0.9997012912308956,
+  "A4_CHAIN_STOCK": 0.9997012912308956,
+  "A1_CHAIN_BEST": 0.9997012912308956,
+  "A5_STAR_MED": 0.9998340463877153,
+  "A2_CHAIN_MED": 0.9998340463877153
+ },
+ "spam_ok": {
+  "U1_UNION_ALL1": true,
+  "U0_UNION_ALL0": true
+ },
+ "synthetic_readout_only": {
+  "A1_CHAIN_BEST": {
+   "raw_fcl": 0.3820481630239065,
+   "mitigated_fcl": 1.0135332946642892
+  },
+  "A2_CHAIN_MED": {
+   "raw_fcl": 0.26092595427208987,
+   "mitigated_fcl": 0.9998548061679359
+  }
+ },
+ "checks": {
+  "all_arms_noiseless_fcl_above_0.95": true,
+  "spam_circuits_exact": true,
+  "mitigation_recovers_readout_only_fcl_above_0.97": true
+ }
+}

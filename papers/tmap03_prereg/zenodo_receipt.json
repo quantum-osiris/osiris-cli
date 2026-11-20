@@ -1,0 +1,35 @@
+{
+  "paper": "tmap03pre",
+  "deposition_id": 24406496,
+  "state": "published",
+  "files": {
+    "TESSERACT_MAP_03_PREREGISTRATION.md": "4e9968aec5bb0175001ead3a9b4d0a89441e7e5b19f2b8c3911775bdf7ac563a",
+    "tesseract_map_03_live_prereg_lock.json": "ea7e8765a9d82f4c7c5604f0d2cf06eef444f4bd78fc8f6f245b64a79c895817",
+    "tesseract_map_03_live_pubs.qpy": "f15167c40519ee3d7b4cb7b37e871f7f19b48d21df032097d0e28cbe754f816f",
+    "tesseract_map_03_prelock_calibration.json": "70cc69bc226e6022e6a9bdfdc07af6d80fa66949464ecb6747255fcd5be760ce",
+    "tesseract_map_03_dryrun.json": "59479795271a71e399207a007984fed1840027d575902c369e0e65cda4c60b0f",
+    "tesseract_map_03.py": "20beb4e3a9cc982f2eed05b6eaa6809c2bf20458111e375c777bef580169f8ff",
+    "tesseract_map_02.py": "4d4270adca0beab86a379a7fc6a0ec868072db053078509f8a2078b1f287e964",
+    "live_hardware_runner.py": "4f7c2349f9dfd86355d84bfedf86aa3ccbe034574f6c1037b7588b5ddc5a4de8",
+    "execute_and_analyze_live.py": "e5e194bd67fd3e1b5db428c04ea04927ada292f231ddb968f47a6e7ff503091c",
+    "SHA256SUMS.txt": "b4138648ecc8f18ff9d4ef8f469a3616cc9a6c758dfc5a96d049462f3a2d4c7c"
+  },
+  "sources": {
+    "TESSERACT_MAP_03_PREREGISTRATION.md": "phase3/TESSERACT_MAP_03_PREREGISTRATION.md",
+    "tesseract_map_03_live_prereg_lock.json": "docs/phase3/tesseract_map_03_live_prereg_lock.json",
+    "tesseract_map_03_live_pubs.qpy": "docs/phase3/tesseract_map_03_live_pubs.qpy",
+    "tesseract_map_03_prelock_calibration.json": "docs/phase3/tesseract_map_03_prelock_calibration.json",
+    "tesseract_map_03_dryrun.json": "docs/phase3/tesseract_map_03_dryrun.json",
+    "tesseract_map_03.py": "phase3/tesseract_map_03.py",
+    "tesseract_map_02.py": "phase2/tesseract_map_02/tesseract_map_02.py",
+    "live_hardware_runner.py": "phase3/live_hardware_runner.py",
+    "execute_and_analyze_live.py": "phase3/execute_and_analyze_live.py",
+    "SHA256SUMS.txt": "papers/tmap03_prereg/SHA256SUMS.txt"
+  },
+  "draft_html": "https://zenodo.org/deposit/24406496",
+  "prereserved_doi": "10.5281/zenodo.24406496",
+  "drafted_utc": "2026-11-20T20:13:27.358301+00:00",
+  "doi": "10.5281/zenodo.24406496",
+  "record_url": "https://zenodo.org/record/24406496",
+  "published_utc": "2026-11-20T20:13:40.852532+00:00"
+}
