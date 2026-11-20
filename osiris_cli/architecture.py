@@ -174,6 +174,18 @@ def live_state(living=None, console=None) -> Dict[str, Tuple[str, str]]:
         fast = getattr(living.mentor, "fast_model", lambda: None)() if voice else None
         text = (f"Architect {console.CHAT_MODEL} · draft proposer {console._synth_chain()} (unpromoted) · "
                 f"voice {voice or 'none'}{f' (fast: {fast})' if fast and fast != voice else ''}")
+        if ok:
+            # Show what Ollama actually has installed, not a stale default tag,
+            # and flag it when the configured model is not among them.
+            probe = getattr(console, "_detect_installed_ollama_models", None)
+            if callable(probe):
+                installed = list(probe(timeout=0.5) or [])
+                if installed:
+                    text += f" · installed: {', '.join(installed)}"
+                    if console.CHAT_MODEL not in installed and f"{console.CHAT_MODEL}:latest" not in installed:
+                        text += f" · WARNING: Architect model {console.CHAT_MODEL!r} not installed"
+                else:
+                    text += " · installed: none reported by /api/tags"
         return ("verified", text) if ok else ("review", "ollama UNREACHABLE: " + text)
 
     def l5():

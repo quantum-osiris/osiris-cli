@@ -81,12 +81,11 @@ try:
     OLLAMA_GEN_URL = ollama_base_url() + "/api/generate"
 except ImportError:
     OLLAMA_GEN_URL = "http://localhost:11434/api/generate"
-CHAT_MODEL = os.environ.get("OSIRIS_CHAT_MODEL", "gemma-3-1b")
-CODE_MODEL = os.environ.get("OSIRIS_CODE_MODEL", "gemma-3-1b")
+CHAT_MODEL = os.environ.get("OSIRIS_CHAT_MODEL", "gemma3:1b")
+CODE_MODEL = os.environ.get("OSIRIS_CODE_MODEL", "gemma3:1b")
 
 ARCHITECT_PREFERENCES = (
     "gemma2:2b",
-    "gemma-3-1b",
     "gemma-3-4b",
     "gemma-3-270m",
     "gemma-2-2b",
@@ -107,7 +106,6 @@ SYNTHESIZER_PREFERENCES = (
     "qwen3:8b",
     "qwen2.5:7b",
     "gemma2:2b",
-    "gemma-3-1b",
     "gemma-3-4b",
     "gemma-2-2b",
     "gemma3:1b",
@@ -1037,6 +1035,21 @@ def _sprint_log_velocity():
     _organism_telemetry(line)
 
 
+def _sprint_usage():
+    """Bare '/sprint': status plus usage, instead of falling through to
+    "Unknown command". Read-only."""
+    counts, _stories = sprint_manager.summary()
+    print("\n" + "─" * 65)
+    print(" 📋 /sprint -- backlog status & usage")
+    print("─" * 65)
+    print(f"  backlog {counts.get('backlog', 0)} · active {counts.get('active', 0)} · "
+          f"proposed {counts.get('proposed', 0)} · done {counts.get('done', 0)} · failed {counts.get('failed', 0)}")
+    print("\n  /sprint plan              activate top backlog stories")
+    print("  /sprint execute [#id]     run active stories through the sandbox gate")
+    print("  /sprint review            full backlog summary with recent outcomes")
+    print()
+
+
 def _sprint_review():
     """'/sprint review': real summary from the actual backlog state."""
     counts, stories = sprint_manager.summary()
@@ -1556,6 +1569,47 @@ def _runs_stats():
     print("\n" + run_record.stats(entries) + "\n")
 
 
+def _runs_orphans():
+    """'/runs --orphans': read-only inspector for run directories on disk that no
+    'sprint_run' ledger entry vouches for (a record or ledger append that failed
+    part-way -- the "run left without an end entry" case). Reports each orphan,
+    what is on disk for it, and the likely cause. Never deletes, never appends
+    to the hash chain."""
+    try:
+        led = genome_ledger.GenomeLedger() if os.path.exists(genome_ledger.DEFAULT_PATH) else None
+        entries = led.chain if led else []
+        problem = led.problem() if led else None
+    except Exception as e:
+        print(f"\n[!] /runs --orphans: genome ledger unreadable ({type(e).__name__}: {e}) -- cannot tell "
+              f"which runs are attested.\n")
+        return
+    if problem:
+        print(f"\n[!] /runs --orphans: genome ledger is BROKEN ({problem}); orphan analysis needs a valid "
+              f"chain, so nothing is listed.\n")
+        return
+    lost = run_record.orphans(entries)
+    print("\n" + "─" * 65)
+    print(f" 🔍 Orphan run inspection ({len(lost)} found)")
+    print("─" * 65)
+    if not lost:
+        print("  none -- every run directory on disk is vouched for by a sprint_run ledger entry.")
+        print()
+        return
+    for run_id in lost:
+        d = os.path.join(run_record.RUNS_DIR, run_id)
+        on_disk = sorted(os.listdir(d)) if os.path.isdir(d) else []
+        has_record = run_record.RECORD_NAME in on_disk
+        cause = ("record exists but no ledger entry vouches for it -- the ledger append failed or the "
+                 "process died between writing run.json and appending to the genome ledger"
+                 if has_record else
+                 "no run.json on disk -- the run directory was created but the record write never landed")
+        print(f"  orphan {run_id}")
+        print(f"    on disk : {', '.join(on_disk) if on_disk else '(empty directory)'}")
+        print(f"    cause   : {cause}")
+    print("\n  Kept as evidence, not deleted; /apply and /run show never read them.")
+    print()
+
+
 def _check():
     """'/check': runs CHECK_COMMANDS, prints their output, then one summary
     line, also sent as a notification. No model call; nothing proposed."""
@@ -1924,7 +1978,7 @@ def _next_best():
                 wont="start any work until you activate the draft")
 
 
-BENCH_LOCAL_MENTORS = ("gemma-3-1b", "gemma-3-270m", "gemma-2-2b", "qwen2.5-coder:7b", "deepseek-coder", "llama3.2:1b")
+BENCH_LOCAL_MENTORS = ("gemma3:1b", "gemma-3-270m", "gemma-2-2b", "qwen2.5-coder:7b", "deepseek-coder", "llama3.2:1b")
 
 
 def _ollama_models():
@@ -3260,6 +3314,7 @@ def _ui(command: str = ""):
 HELP_SECTIONS = (
     ("Look (read-only)", ["/home  the menu", "/status  every fact on one screen", "/check  ledger, runs, bench",
                           "/run show [id] [n]  a run's candidates", "/runs stats  verified run history",
+                          "/runs --orphans  run dirs no ledger entry vouches for (read-only)",
                           "/why  last sandbox log", "/intent status  Engine 1", "/organism status  Engine 3",
                           "/mentors  which model the hidden tests favor (protege.py)",
                           "/bench [model|gemini] [all|task,task] [k=N]  score a mentor (G) · /bench log",
@@ -3284,7 +3339,7 @@ HELP_SECTIONS = (
     ("Plan and build", [
                         "/gap [outcome]  guided capability-gap draft (H)",
                         "/gaps  review and activate drafts (I)", "/ignite  active gaps -> backlog stories",
-                        "/sprint plan · /sprint execute [#id] · /sprint review",
+                        "/sprint  status & usage · /sprint plan · /sprint execute [#id] · /sprint review",
                         "/auto-enhance · /research · /consensus · /dd ..."]),
     ("Decide", ["/apply  write the pending proposal (typed, never a menu key)"]),
     ("Interface", ["/tap  menu as Android buttons", "/ui  appearance", "exit  quit"]),
@@ -5732,7 +5787,7 @@ IMMEDIATE_COMMANDS = {
 
 # Read-only: run while a write is pending without asking to discard it --
 # /status even has a "Pending write" row for exactly that moment.
-READ_ONLY_COMMANDS = {"/status", "/why", "/home", "/runs", "/runs stats", "/help", "/ui", "/mentors", "/digest",
+READ_ONLY_COMMANDS = {"/status", "/why", "/home", "/runs", "/runs stats", "/runs --orphans", "/help", "/ui", "/mentors", "/digest",
                       "/lab", "/sources", "/map", "/hypotheses",
                       "/ui rich", "/ui plain", "/ui access", "/intent", "/intent status",
                       "/organism", "/organism status", "/pr", "/sync", "/provision status", "/edge"}
@@ -6108,6 +6163,9 @@ def run_command(user_input: str) -> bool:
     if user_input.strip().lower() in ("/runs", "/runs stats"):
         _runs_stats()
         return True
+    if user_input.strip().lower().split()[:2] == ["/runs", "--orphans"]:
+        _runs_orphans()
+        return True
     if user_input.strip().lower() == "/check":
         _check()
         return True
@@ -6147,6 +6205,9 @@ def run_command(user_input: str) -> bool:
         return True
     if user_input.strip().lower() == "/vision sync-sprint":
         _vision_sync_sprint()
+        return True
+    if user_input.strip().lower() == "/sprint":
+        _sprint_usage()
         return True
     if user_input.strip().lower().startswith("/sprint plan"):
         _sprint_plan(user_input.strip())

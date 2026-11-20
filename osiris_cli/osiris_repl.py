@@ -2236,6 +2236,8 @@ def dispatch_command(state: OsirisReplState, line: str) -> None:
                     code_agent.discard_repl_acceptance()
             elif cmd in ("/digest", "/ingest") and (len(parts) > 1 or cmd == "/ingest"):
                 execute_digest(state, line_clean[len(parts[0]):].strip().strip('\'\"'))
+            elif cmd in ("/run", "/runs") and parts[1:2] == ["--orphans"]:
+                otc._runs_orphans()
             elif cmd in ("/run", "/runs") and parts[1:2] != ["show"]:
                 otc._runs_stats()
             elif cmd == "/nclm":
