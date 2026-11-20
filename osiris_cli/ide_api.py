@@ -32,7 +32,7 @@ from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from typing import Any, Callable, Dict, Optional, Tuple
 from urllib.parse import urlparse
 
-API_VERSION = "1.6.0"
+API_VERSION = "1.7.0"
 MAX_BODY = 256 * 1024
 TOKEN_HEADER = "X-OSIRIS-Token"
 TOKEN_PLACEHOLDER = "__OSIRIS_SESSION_TOKEN__"
@@ -80,7 +80,10 @@ class Backend:
                  store_factory: Optional[Callable[[], Any]] = None,
                  editor_store_factory: Optional[Callable[[], Any]] = None,
                  assist_route_fn: Optional[Callable[..., Any]] = None,
-                 code_runs_dir: Optional[str] = None, code_receipts: Optional[str] = None):
+                 code_runs_dir: Optional[str] = None, code_receipts: Optional[str] = None,
+                 task_graphs_dir: Optional[str] = None, task_receipts: Optional[str] = None,
+                 exec_journal: Optional[str] = None, task_artifacts_dir: Optional[str] = None,
+                 task_workdir: Optional[str] = None):
         from osiris_cli import code_runs as _code_runs, code_task as _code_task
         self.code_runs_dir = code_runs_dir or _code_runs.DEFAULT_DIR
         self.code_receipts = code_receipts or _code_task.DEFAULT_RECEIPTS
@@ -93,8 +96,14 @@ class Backend:
         self.examples_dir = examples_dir
         self.workspace_dirs = workspace_dirs
         self._slice_runner = slice_runner
-        self.agent_receipts = agent_receipts or os.path.join(os.path.dirname(os.path.abspath(slice_receipts)),
-                                                             "agent_receipts.jsonl")
+        base_dir = os.path.dirname(os.path.abspath(slice_receipts))
+        self.agent_receipts = agent_receipts or os.path.join(base_dir, "agent_receipts.jsonl")
+        self.task_graphs_dir = task_graphs_dir or os.path.join(base_dir, "task_graphs")
+        self.task_receipts = task_receipts or os.path.join(base_dir, "task_receipts.jsonl")
+        self.exec_journal = exec_journal or os.path.join(base_dir, "exec_journal.jsonl")
+        self.task_artifacts_dir = task_artifacts_dir or os.path.join(base_dir, "task_runs")
+        self.task_workdir = task_workdir or (workspace_dirs[0] if workspace_dirs and os.path.isdir(workspace_dirs[0]) else REPO_ROOT)
+        self._task_engine = None
         self._agent_model_fn = agent_model_fn
         self._agent_lock = threading.Lock()
         self._cache: Dict[str, Tuple[float, Any]] = {}
@@ -640,6 +649,84 @@ class Backend:
                  "failed_stage": r["payload"].get("failed_stage")} for r in rows["rows"]]
         return {"chain_valid": rows["chain_valid"], "runs": runs}
 
+    # ── Phase C: DAG task graph & server-owned state machine (API 1.7.0) ──
+    @property
+    def task_engine(self):
+        with self._lock:
+            if self._task_engine is None:
+                from osiris_cli.task_graph import TaskGraphEngine
+                self._task_engine = TaskGraphEngine(
+                    graphs_dir=self.task_graphs_dir,
+                    receipts_path=self.task_receipts,
+                    exec_journal_path=self.exec_journal,
+                    artifacts_dir=self.task_artifacts_dir,
+                    default_workdir=self.task_workdir,
+                    slice_runner=self._slice_runner,
+                )
+            return self._task_engine
+
+    def _task_call(self, fn: Callable[[], Dict[str, Any]]) -> Dict[str, Any]:
+        from osiris_cli.task_graph import TaskGraphError
+        try:
+            return fn()
+        except TaskGraphError as e:
+            raise ApiError(e.status, e.code, e.message)
+
+    def tasks_graphs(self) -> Dict[str, Any]:
+        return self._task_call(lambda: self.task_engine.list_graphs())
+
+    def tasks_graph_create(self, body: Dict[str, Any]) -> Dict[str, Any]:
+        return self._task_call(
+            lambda: self.task_engine.create_graph(
+                objective=body.get("objective", ""),
+                nodes=body.get("nodes") or [],
+                workdir=body.get("workdir"),
+                origin=str(body.get("origin") or "model"),
+                max_nodes=body.get("max_nodes", 20),
+                token_budget=body.get("token_budget", 16384),
+                walltime_ms=body.get("walltime_ms", 300_000),
+                client_request_id=body.get("client_request_id"),
+            )
+        )
+
+    def tasks_graph_get(self, body: Dict[str, Any]) -> Dict[str, Any]:
+        return self._task_call(lambda: self.task_engine.get_graph(body.get("graph_id", "")))
+
+    def tasks_node_approve(self, body: Dict[str, Any]) -> Dict[str, Any]:
+        return self._task_call(
+            lambda: self.task_engine.approve_node(
+                body.get("graph_id", ""),
+                body.get("node_id", ""),
+                action_digest=body.get("action_digest", ""),
+                actor_origin=str(body.get("actor_origin") or "human"),
+                session_id=body.get("session_id"),
+                client_request_id=body.get("client_request_id"),
+            )
+        )
+
+    def tasks_node_execute(self, body: Dict[str, Any]) -> Dict[str, Any]:
+        return self._task_call(
+            lambda: self.task_engine.execute_node(
+                body.get("graph_id", ""),
+                body.get("node_id", ""),
+                client_request_id=body.get("client_request_id"),
+            )
+        )
+
+    def tasks_node_cancel(self, body: Dict[str, Any]) -> Dict[str, Any]:
+        return self._task_call(
+            lambda: self.task_engine.cancel_node(
+                body.get("graph_id", ""),
+                body.get("node_id"),
+                session_id=body.get("session_id"),
+                reason=str(body.get("reason") or "cancelled by operator"),
+                client_request_id=body.get("client_request_id"),
+            )
+        )
+
+    def tasks_events(self) -> Dict[str, Any]:
+        return self._task_call(lambda: self.task_engine.events())
+
 
 ROUTES = {
     ("GET", "/api/v1/meta"): "meta",
@@ -678,6 +765,13 @@ ROUTES = {
     ("POST", "/api/v1/files/runs"): "files_runs",
     ("POST", "/api/v1/notebook/run"): "notebook_run",
     ("POST", "/api/v1/assist"): "assist",
+    ("GET", "/api/v1/tasks/graphs"): "tasks_graphs",
+    ("POST", "/api/v1/tasks/graph"): "tasks_graph_create",
+    ("POST", "/api/v1/tasks/graph/get"): "tasks_graph_get",
+    ("POST", "/api/v1/tasks/node/approve"): "tasks_node_approve",
+    ("POST", "/api/v1/tasks/node/run"): "tasks_node_execute",
+    ("POST", "/api/v1/tasks/node/cancel"): "tasks_node_cancel",
+    ("GET", "/api/v1/tasks/events"): "tasks_events",
 }
 
 
@@ -769,6 +863,16 @@ def make_handler(backend: Backend, token: str, console_dir: Optional[str], allow
                         f"missing or wrong {TOKEN_HEADER}, X-Session-Token, or Authorization Bearer credential",
                     )
                 name = ROUTES.get((method, path))
+                path_params: Dict[str, Any] = {}
+                if name is None:
+                    m_graph = re.fullmatch(r"/api/v1/tasks/graph/(graph-[0-9a-f]{12})", path)
+                    m_approve = re.fullmatch(r"/api/v1/tasks/node/([A-Za-z0-9_.-]{1,64})/approve", path)
+                    if method == "GET" and m_graph:
+                        name = "tasks_graph_get"
+                        path_params["graph_id"] = m_graph.group(1)
+                    elif method == "POST" and m_approve:
+                        name = "tasks_node_approve"
+                        path_params["node_id"] = m_approve.group(1)
                 if name is None:
                     raise ApiError(404 if not any(p == path for _, p in ROUTES) else 405, "NO_ROUTE",
                                    f"{method} {path} is not part of API v1")
@@ -785,8 +889,10 @@ def make_handler(backend: Backend, token: str, console_dir: Optional[str], allow
                         raise ApiError(400, "BAD_JSON", "body is not valid JSON")
                     if not isinstance(body, dict):
                         raise ApiError(400, "BAD_JSON", "body must be a JSON object")
+                if path_params:
+                    body = {**body, **path_params}
                 fn = getattr(backend, name)
-                call = (lambda: fn(body)) if method == "POST" else fn
+                call = (lambda: fn(body)) if (method == "POST" or path_params) else fn
                 result = on_qiskit_thread(call) if name in QISKIT_OPERATIONS else call()
                 self._json(200, {"api_version": API_VERSION, **result})
             except ApiError as e:
