@@ -150,12 +150,20 @@ def classify(req: CommandRequest) -> Classification:
     if not raw or not all(isinstance(t, str) for t in raw):
         return refuse(["argv must be a non-empty list of strings"])
     argv: Tuple[str, ...] = tuple(raw)
+    if not argv[0] or not argv[0].strip():
+        return refuse(["argv[0] must be a non-empty program name"])
     if _NON_PLAIN_ASCII.search(argv[0]):
         return refuse(["argv[0] contains control or non-ASCII characters"])
-    if any("\x00" in tok for tok in argv):
-        return refuse(["NUL byte in argv"])
+    if any("\x00" in tok or "\n" in tok or "\r" in tok for tok in argv):
+        return refuse(["control or newline byte in argv"])
     markers = tuple(pol["shell_substitution_markers"])
-    if any(tok in pol["shell_operator_tokens"] or any(m in tok for m in markers) for tok in argv):
+    _shell_op_re = re.compile(r"^[|&;<>]+$|^\d+[<>](?:&\d+|&-)?$|^&>>?$|^[<>]&(?:\d+|-)?$|^>\|$")
+    if any(
+        tok in pol["shell_operator_tokens"]
+        or _shell_op_re.fullmatch(tok)
+        or any(m in tok for m in markers)
+        for tok in argv
+    ):
         return refuse(["one program, no shell: shell operator or substitution token"])
     if _ENV_ASSIGN.match(argv[0]):
         return refuse(["environment assignment before the program is not allowed"])

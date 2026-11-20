@@ -33,7 +33,7 @@ hardware_action) and a risk tier (LOW, MEDIUM, HIGH, CRITICAL). See RUBRIC.
 """
 import re
 from dataclasses import dataclass
-from typing import Optional, Tuple
+from typing import Optional, Tuple, ClassVar
 
 import paste_digest
 
@@ -249,7 +249,14 @@ _TIER_RULES = (
 
 @dataclass(frozen=True)
 class RiskAssessment:
-    """What a wrong answer to one request would cost. Built only by assess()."""
+    """What a wrong answer to one request would cost. Built only by assess().
+
+    ADVISORY (G-7, REQ-EXEC-2): this tier is computed from the operator's words and only informs
+    the reply and the intent card. It never authorizes anything. The tier a command runs under is
+    computed from its argv by exec_policy.classify, and a write's scope from its path.
+    """
+
+    ADVISORY: ClassVar[bool] = True
     cls: str                     # the intent class (classify)
     cost_class: str              # one of COST_CLASSES
     tier: str                    # one of RISK_TIERS

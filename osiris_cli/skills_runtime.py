@@ -19,9 +19,12 @@ from __future__ import annotations
 import hashlib
 import os
 import re
+import stat
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Literal
+
+from osiris_cli.probes import FORBIDDEN_SECRET_RE, is_forbidden_secret_parts
 
 SkillScope = Literal["project", "global"]
 
@@ -29,11 +32,6 @@ SKILL_NAME_RE = re.compile(r"^[a-z0-9]+(?:-[a-z0-9]+)*$")
 FRONTMATTER_RE = re.compile(r"^---\n(.*?)\n---\n(.+)$", re.DOTALL)
 COMPANION_REF_RE = re.compile(
     r"(?<![A-Za-z0-9_./-])((?:references|scripts|assets)/[A-Za-z0-9_./-]+\.[A-Za-z0-9]+)"
-)
-FORBIDDEN_SECRET_RE = re.compile(
-    r"(^\.env($|\.)|^apikey\.json$|credentials|secret|token|"
-    r"^id_rsa|^id_ed25519|\.pem$|\.key$|\.netrc$)",
-    re.IGNORECASE,
 )
 
 
@@ -101,32 +99,52 @@ def resolve_skill_roots(
 
 
 def is_forbidden_secret_path(candidate: Path, base_dir: Path | None = None) -> bool:
-    """Return True if candidate or any relative segment matches forbidden secret patterns."""
-    parts_to_check = [candidate.name]
+    """Return True if candidate or any relative segment/sequence matches forbidden secret patterns."""
+    parts_to_check = list(candidate.parts) if base_dir is None else [candidate.name]
     if base_dir is not None:
         try:
             rel = candidate.relative_to(base_dir)
             parts_to_check = list(rel.parts)
         except ValueError:
-            parts_to_check = [candidate.name]
-    return any(bool(FORBIDDEN_SECRET_RE.search(part)) for part in parts_to_check)
+            parts_to_check = list(candidate.parts)
+    return is_forbidden_secret_parts(parts_to_check)
 
 
 def safe_resolve_skill_resource(skill_dir: Path, relative_path: str) -> Path:
     """Confine resource access strictly within skill_dir and block secrets/symlink escapes."""
     clean_rel = relative_path.strip()
-    if not clean_rel or "\x00" in clean_rel or clean_rel.startswith("/") or "\\" in clean_rel:
+    if not clean_rel or "\x00" in clean_rel or clean_rel.startswith("/") or clean_rel.startswith("~") or "\\" in clean_rel:
         raise PermissionError(f"Unsafe resource path outside relative skill scope: {relative_path!r}")
 
     canonical_skill_dir = skill_dir.resolve()
-    raw_target = skill_dir / clean_rel
-
-    for part in Path(clean_rel).parts:
+    parts = [p for p in Path(clean_rel).parts if p != "."]
+    if not parts:
+        raise PermissionError(f"Unsafe empty resource path: {relative_path!r}")
+    for part in parts:
         if part == "..":
             raise PermissionError(f"Parent traversal blocked by SafePathGuard: {relative_path!r}")
-        if FORBIDDEN_SECRET_RE.search(part):
-            raise PermissionError(f"Credential file blocked by SafePathGuard: {relative_path!r}")
+    if is_forbidden_secret_parts(parts):
+        raise PermissionError(f"Credential file blocked by SafePathGuard: {relative_path!r}")
 
+    cur = canonical_skill_dir
+    for part in parts:
+        cur = cur / part
+        try:
+            st = os.lstat(cur)
+        except FileNotFoundError:
+            continue
+        if stat.S_ISLNK(st.st_mode):
+            hop_target = cur.resolve(strict=False)
+            if not hop_target.is_relative_to(canonical_skill_dir):
+                raise PermissionError(
+                    f"Symlink hop escapes skill directory ({canonical_skill_dir}): {relative_path!r}"
+                )
+            if is_forbidden_secret_path(hop_target, canonical_skill_dir):
+                raise PermissionError(
+                    f"Symlink hop resolves to forbidden secret: {relative_path!r}"
+                )
+
+    raw_target = canonical_skill_dir / clean_rel
     resolved_target = raw_target.resolve(strict=False)
     if not resolved_target.is_relative_to(canonical_skill_dir):
         raise PermissionError(

@@ -13,7 +13,9 @@ Implements distinct logical roles using the Gemma-native provider substrate:
 
 from __future__ import annotations
 
+import ast
 import os
+import re
 import time
 import uuid
 from typing import Any, Dict, List, Optional, Tuple
@@ -155,54 +157,141 @@ class ImplementationAgent:
         )
 
 
+_PYTEST_COUNTS = re.compile(r"(\d+) (passed|failed|errors?|skipped|xfailed|xpassed)")
+
+
+def check_test_shape(test_code: str, module_name: str) -> List[str]:
+    """Why a test file cannot count as evidence for ``module_name`` (empty list: none found).
+
+    Refused: no test function; never importing the target module; no assertion that is not a
+    constant (``assert True``, ``assert 1``); and calls that never name anything imported from the
+    target. These are static facts about the test text; running it is a separate check.
+    """
+    try:
+        tree = ast.parse(test_code)
+    except SyntaxError as exc:
+        return [f"test code does not parse: {exc}"]
+    problems: List[str] = []
+    tests = [n for n in ast.walk(tree)
+             if isinstance(n, (ast.FunctionDef, ast.AsyncFunctionDef)) and n.name.startswith("test")]
+    if not tests:
+        problems.append("no test functions (names starting with 'test')")
+    bound: set = set()
+    imports_target = False
+    for node in ast.walk(tree):
+        if isinstance(node, ast.Import):
+            for a in node.names:
+                if a.name == module_name or a.name.split(".")[0] == module_name:
+                    imports_target = True
+                    bound.add(a.asname or a.name.split(".")[0])
+        elif isinstance(node, ast.ImportFrom) and node.level == 0 and node.module \
+                and node.module.split(".")[0] == module_name:
+            imports_target = True
+            bound.update(a.asname or a.name for a in node.names)
+    if not imports_target:
+        problems.append(f"tests never import the target module '{module_name}'")
+    asserts = [n for n in ast.walk(tree) if isinstance(n, ast.Assert)]
+    raises = [n for n in ast.walk(tree) if isinstance(n, ast.With) and any(
+        isinstance(i.context_expr, ast.Call) and isinstance(i.context_expr.func, ast.Attribute)
+        and i.context_expr.func.attr == "raises" for i in n.items)]
+    real = [a for a in asserts if not isinstance(a.test, ast.Constant)]
+    if not real and not raises:
+        problems.append("only constant assertions (e.g. 'assert True'), or none")
+    used = {n.id for n in ast.walk(tree) if isinstance(n, ast.Name)}
+    if imports_target and not (bound & used):
+        problems.append(f"tests import '{module_name}' but never use it")
+    return problems
+
+
 class VerificationAgent:
-    """Independently verifies candidate code proposals via static AST and sandbox tests."""
+    """Independently verifies candidate code proposals: AST firewall, test shape, then a real
+    pytest run of the proposal's tests in a temporary workspace through the execution kernel.
+
+    The run is classified by exec_policy (VERIFY tier), uses the kernel's scrubbed environment and
+    process-group kill, and leaves one hash-chained receipt. The only command this agent approves
+    is its own fixed pytest invocation. PASS needs exit code 0 and at least one collected test.
+    """
+
+    def __init__(self, journal_path: Optional[str] = None, artifacts_dir: Optional[str] = None,
+                 timeout_s: float = 120.0):
+        self.journal_path = journal_path
+        self.artifacts_dir = artifacts_dir
+        self.timeout_s = timeout_s
+
+    def _run_tests(self, proposal: CodeProposal, module_name: str) -> Tuple[bool, int, str]:
+        import shutil
+        import sys
+        import tempfile
+
+        from osiris_cli import exec_kernel
+        from osiris_cli.exec_policy import CommandRequest
+
+        work = tempfile.mkdtemp(prefix="osiris-verify-")
+        try:
+            with open(os.path.join(work, module_name + ".py"), "w", encoding="utf-8", newline="\n") as fh:
+                fh.write(proposal.module_code)
+            test_name = f"test_{module_name}_proposal.py"
+            with open(os.path.join(work, test_name), "w", encoding="utf-8", newline="\n") as fh:
+                fh.write(proposal.test_code)
+            argv = (sys.executable, "-m", "pytest", "-q", "-p", "no:cacheprovider", test_name)
+            req = CommandRequest(argv=argv, cwd=work, origin="model", root=work, timeout_s=self.timeout_s)
+
+            def approve_own_command(_prompt, cls) -> bool:
+                return cls.tier == "VERIFY" and tuple(cls.normalized_argv)[-1:] == (test_name,)
+
+            result = exec_kernel.run(req, approve_own_command, exec_kernel.ExecJournal(self.journal_path),
+                                     artifacts_dir=self.artifacts_dir)
+        finally:
+            shutil.rmtree(work, ignore_errors=True)
+        out = result.stdout_view + "\n" + result.stderr_view
+        counts = {kind.rstrip("s"): int(n) for n, kind in _PYTEST_COUNTS.findall(out)}
+        collected = sum(counts.get(k, 0) for k in ("passed", "failed", "error", "skipped", "xfailed", "xpassed"))
+        if result.decision not in ("ALLOW", "ASK_APPROVED"):
+            return False, collected, f"test run {result.decision}: {'; '.join(result.reasons)}"
+        if result.exit_code != 0:
+            why = "no tests collected" if result.exit_code == 5 else f"pytest exit code {result.exit_code}"
+            return False, collected, f"{why}; receipt {result.receipt_id}\n{out[-1500:]}"
+        if counts.get("passed", 0) == 0:
+            return False, collected, f"no test passed; receipt {result.receipt_id}"
+        return True, collected, f"{counts.get('passed', 0)} passed; receipt {result.receipt_id}"
 
     def verify(self, proposal: CodeProposal) -> VerificationReport:
         t0 = time.monotonic()
         results: List[VerificationResult] = []
+        module_name = os.path.splitext(os.path.basename(proposal.target_file))[0] or "candidate"
 
         # 1. AST Firewall Check (SYS-025)
         ast_ok, ast_violations = GovernanceController.inspect_ast(proposal.module_code)
         results.append(VerificationResult(
-            check_name="ast_firewall_module",
-            passed=ast_ok,
+            check_name="ast_firewall_module", passed=ast_ok,
             reason="Clean AST" if ast_ok else f"Violations: {ast_violations}",
-            execution_time_ms=(time.monotonic() - t0) * 1000,
-        ))
-
+            execution_time_ms=(time.monotonic() - t0) * 1000))
         test_ast_ok, test_violations = GovernanceController.inspect_ast(proposal.test_code)
         results.append(VerificationResult(
-            check_name="ast_firewall_test",
-            passed=test_ast_ok,
+            check_name="ast_firewall_test", passed=test_ast_ok,
             reason="Clean AST" if test_ast_ok else f"Violations: {test_violations}",
-            execution_time_ms=(time.monotonic() - t0) * 1000,
-        ))
-
+            execution_time_ms=(time.monotonic() - t0) * 1000))
         all_ast_ok = ast_ok and test_ast_ok
         banned = ast_violations + test_violations
 
-        # 2. In-memory smoke execution of test
-        test_passed = False
-        test_err = ""
-        if all_ast_ok:
-            try:
-                # Compile in restricted scope to ensure no syntax errors
-                compiled_mod = compile(proposal.module_code, "<module>", "exec")
-                compiled_test = compile(proposal.test_code, "<test>", "exec")
-                test_passed = True
-            except Exception as e:
-                test_err = str(e)
-                test_passed = False
-
+        # 2. Test shape: must exercise the target, with a real assertion
+        shape = check_test_shape(proposal.test_code, module_name) if all_ast_ok else ["AST firewall failed"]
         results.append(VerificationResult(
-            check_name="syntax_compilation",
-            passed=test_passed,
-            reason="Compilation successful" if test_passed else f"Compilation failed: {test_err}",
-        ))
+            check_name="test_shape", passed=not shape,
+            reason="Tests import and exercise the target" if not shape else "; ".join(shape)))
 
-        overall = "PASS" if (all_ast_ok and test_passed) else "FAIL"
+        # 3. Real test run in a temporary workspace, through the execution kernel
+        test_passed, collected, detail = False, 0, "not run: earlier checks failed"
+        if all_ast_ok and not shape:
+            try:
+                test_passed, collected, detail = self._run_tests(proposal, module_name)
+            except Exception as exc:  # the kernel or the filesystem failed: that is a FAIL
+                test_passed, detail = False, f"test run could not start: {exc}"
+        results.append(VerificationResult(
+            check_name="sandboxed_pytest", passed=test_passed, reason=detail,
+            execution_time_ms=(time.monotonic() - t0) * 1000))
 
+        overall = "PASS" if (all_ast_ok and not shape and test_passed) else "FAIL"
         return VerificationReport(
             proposal_id=proposal.proposal_id,
             overall_verdict=overall,
@@ -211,6 +300,8 @@ class VerificationAgent:
             acceptance_test_pass=test_passed,
             checks=results,
             timestamp=time.time(),
+            proposal_digest=proposal.payload_digest(),
+            tests_collected=collected,
         )
 
 

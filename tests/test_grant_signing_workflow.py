@@ -430,7 +430,7 @@ def test_code_agent_command_and_batch_write_mint_and_verify_hybrid_grants(tmp_pa
         root=str(ws),
         chat=_scripted(
             _call("write_file", path="hello.py", content="X = 2\n"),
-            _call("run_command", command=f"{sys.executable} -c \"print('AGENT_CMD_OK')\""),
+            _call("run_command", command=f"{sys.executable} -V"),
         ),
         confirm=lambda p: (prompts.append(p) or True),
         propose_write=lambda _p, _c: True,
@@ -943,6 +943,7 @@ def test_f13_atomic_write_cleanup_and_crash_resume_no_duplicate_receipt(tmp_path
             "already_applied": False,
         },
     )
+    (repo / "accept_ok.py").write_text("import sys\nsys.exit(0)\n", encoding="utf-8")
     run = store.create(
         "code-f13",
         root=str(repo),
@@ -950,7 +951,7 @@ def test_f13_atomic_write_cleanup_and_crash_resume_no_duplicate_receipt(tmp_path
         approval_grant=cgrant,
         receipts_path=str(rcpt),
         options={"require_change": True, "accept_timeout": 60.0},
-        accept=f"{sys.executable} -c 'import sys; sys.exit(0)'",
+        accept=f"{sys.executable} accept_ok.py",
     )
     run["state"] = "AWAITING_APPROVAL"
     store.save(run)

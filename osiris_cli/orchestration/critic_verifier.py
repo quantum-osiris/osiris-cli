@@ -14,38 +14,24 @@ from typing import List
 
 from .schemas import CodeProposal, VerificationReport, VerificationResult
 
-BANNED_FUNCTIONS = {"exec", "eval", "compile", "__import__"}
-BANNED_MODULES = {"os.system", "posix.system"}
-IMMUTABLE_FILES = {
-    "policy.json",
-    "cloudbuild.yaml",
-    "quarantine_notice.md",
-    "gemini.md",
-}
+from . import ast_firewall, governance_scope
+
+BANNED_FUNCTIONS = set(ast_firewall.BANNED_BUILTINS)
+BANNED_MODULES = {"os.system", "posix.system"}  # kept for importers; the rules live in ast_firewall
+# Basenames refused anywhere; governance_scope adds the repo-relative paths (exec_policy.json,
+# governance/allowed_signers, contracts/, ...).
+IMMUTABLE_FILES = set(governance_scope.LEGACY_BASENAMES)
 
 
-class ASTSecurityVisitor(ast.NodeVisitor):
+class ASTSecurityVisitor:
+    """Compatibility wrapper over the shared firewall: ``visit(tree)`` then read ``violations``
+    as critic tokens such as ``banned_call:os.system:L3``."""
+
     def __init__(self):
         self.violations: List[str] = []
 
-    def visit_Call(self, node: ast.Call):
-        # Detect eval, exec, compile, __import__
-        if isinstance(node.func, ast.Name):
-            if node.func.id in BANNED_FUNCTIONS:
-                self.violations.append(f"banned_primitive:{node.func.id}:L{node.lineno}")
-        # Detect os.system(...)
-        elif isinstance(node.func, ast.Attribute):
-            if isinstance(node.func.value, ast.Name):
-                full_call = f"{node.func.value.id}.{node.func.attr}"
-                if full_call in BANNED_MODULES:
-                    self.violations.append(f"banned_call:{full_call}:L{node.lineno}")
-                # Detect subprocess(shell=True)
-                if node.func.value.id == "subprocess" and any(
-                    kw.arg == "shell" and getattr(kw.value, "value", False) is True
-                    for kw in node.keywords
-                ):
-                    self.violations.append(f"banned_subprocess_shell:L{node.lineno}")
-        self.generic_visit(node)
+    def visit(self, tree) -> None:
+        self.violations.extend(ast_firewall.critic_token(v) for v in ast_firewall.scan_tree(tree))
 
 
 class IndependentCriticVerifier:
@@ -57,8 +43,7 @@ class IndependentCriticVerifier:
         banned_constructs: List[str] = []
 
         # 1. Target file immutability check
-        target_basename = proposal.target_file.split("/")[-1].lower()
-        if target_basename in IMMUTABLE_FILES:
+        if governance_scope.is_protected(proposal.target_file):
             checks.append(VerificationResult(
                 check_name="immutable_governance_target",
                 passed=False,
@@ -128,6 +113,9 @@ class IndependentCriticVerifier:
             overall_verdict=overall_verdict,
             static_ast_pass=len(banned_constructs) == 0,
             banned_constructs_found=banned_constructs,
-            acceptance_test_pass=all(c.passed for c in checks),
+            # This critic parses tests; it never runs them, so its report can never stand in for a
+            # test run when a write is authorized (REQ-AUTH-4 needs VerificationAgent's report).
+            acceptance_test_pass=False,
             checks=checks,
+            proposal_digest=proposal.payload_digest(),
         )

@@ -131,8 +131,9 @@ def test_verify_before_run_is_blocked(repo):
 
 
 def test_acceptance_timeout_kills_and_fails(repo):
+    (repo / "slow_accept.py").write_text("import time\ntime.sleep(30)\n", encoding="utf-8")
     s = summary(repo, call("write_file", path="calc.py", content=FIXED), approve_writes=True,
-                accept=f"{sys.executable} -c \"import time; time.sleep(30)\"", accept_timeout=1.0)
+                accept=f"{sys.executable} slow_accept.py", accept_timeout=1.0)
     assert s["disposition"] == "FAILED" and s["verification"]["timed_out"] is True
 
 
@@ -173,9 +174,9 @@ def test_child_env_drops_credentials():
 
 def test_model_run_command_does_not_see_secrets(repo, monkeypatch):
     monkeypatch.setenv("OSIRIS_FAKE_API_KEY", "sk-should-not-leak")
+    (repo / "show_env.py").write_text("import os\nprint(sorted(os.environ))\n", encoding="utf-8")
     agent = CodeAgent(root=str(repo), out=lambda s: None, confirm=lambda p: True,
-                      chat=scripted(call("run_command", command=f"{sys.executable} -c "
-                                         "\"import os; print(sorted(os.environ))\"")))
+                      chat=scripted(call("run_command", command=f"{sys.executable} show_env.py")))
     seen = []
     orig = agent._chat
 
@@ -190,8 +191,12 @@ def test_model_run_command_does_not_see_secrets(repo, monkeypatch):
 
 def test_acceptance_command_does_not_see_secrets(repo, monkeypatch):
     monkeypatch.setenv("OSIRIS_FAKE_API_KEY", "sk-should-not-leak")
+    (repo / "check_env.py").write_text(
+        "import os, sys\nsys.exit(1 if 'OSIRIS_FAKE_API_KEY' in os.environ else 0)\n",
+        encoding="utf-8",
+    )
     s = summary(repo, require_change=False,
-                accept=f"{sys.executable} -c \"import os, sys; sys.exit(1 if 'OSIRIS_FAKE_API_KEY' in os.environ else 0)\"")
+                accept=f"{sys.executable} check_env.py")
     assert s["disposition"] == "VERIFIED", s["verification"]
 
 

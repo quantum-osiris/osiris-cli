@@ -28,6 +28,7 @@ from collections import Counter
 from typing import Any, Callable, Dict, List, Optional
 
 from osiris_cli.orchestration.critic_verifier import IMMUTABLE_FILES, ASTSecurityVisitor
+from osiris_cli.orchestration.governance_scope import IMMUTABLE_GOVERNANCE_DIRS, IMMUTABLE_GOVERNANCE_FILES
 
 PROTECTED_GLOBS = (".git/*", ".github/workflows/*", ".env", ".env.*", "*.pem", "*.key",
                    "*/.git/*", "*/.env", "*/.env.*")
@@ -59,7 +60,10 @@ def deterministic_findings(proposals: List[Dict[str, Any]], *, accept: Optional[
     for p in proposals:
         rel = os.path.normpath(p["rel_path"])
         base = os.path.basename(rel)
-        if base.lower() in IMMUTABLE_FILES or any(fnmatch.fnmatch(rel, g) for g in PROTECTED_GLOBS):
+        rel_posix = rel.replace(os.sep, "/")
+        governance = rel_posix in IMMUTABLE_GOVERNANCE_FILES or any(
+            rel_posix == d or rel_posix.startswith(d + "/") for d in IMMUTABLE_GOVERNANCE_DIRS)
+        if base.lower() in IMMUTABLE_FILES or governance or any(fnmatch.fnmatch(rel, g) for g in PROTECTED_GLOBS):
             findings.append({"path": rel, "check": "protected_path",
                              "reason": f"{rel} is a protected file (VCS, CI, secrets or governance)"})
         if not allow_test_edits and (rel in named or any(fnmatch.fnmatch(rel, g) for g in TEST_GLOBS)):

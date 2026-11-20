@@ -23,6 +23,7 @@ from osiris_cli.orchestration import (
     TaskSpec,
 )
 from osiris_cli.providers import GemmaProvider
+from tests.signing_support import make_owner, needs_ssh_keygen, real_code_responder, signed_grant, synced_clock
 
 FIXTURE_LEDGER = os.path.join(os.path.dirname(os.path.abspath(__file__)), "fixtures", "dnalang_ledger_v0_2_0.py")
 
@@ -64,11 +65,12 @@ def test_ast_firewall_blocks_forbidden_calls():
     assert ok is False
     assert any("Forbidden os call: 'os.system'" in v for v in violations)
 
-    # subprocess with shell=True rejected
-    bad_sp = "import subprocess\nsubprocess.run('ls', shell=True)\n"
-    ok, violations = GovernanceController.inspect_ast(bad_sp)
-    assert ok is False
-    assert any("shell=True" in v for v in violations)
+    # subprocess is refused outright (deny by default), with or without shell=True
+    for bad_sp in ("import subprocess\nsubprocess.run('ls', shell=True)\n",
+                   "import subprocess\nsubprocess.run(['ls'])\n"):
+        ok, violations = GovernanceController.inspect_ast(bad_sp)
+        assert ok is False
+        assert any("subprocess.run" in v for v in violations)
 
 
 def test_scope_protection_blocks_governance_files():
@@ -80,57 +82,32 @@ def test_scope_protection_blocks_governance_files():
 
 
 def test_payload_bound_authorization_sys021():
-    """Verify SYS-021 strictly binds authorization to exact payload digest."""
+    """SYS-021 / REQ-AUTH-1: a constructed ExecutionGrant dataclass authorizes nothing, even with
+    the exact digest; a missing grant fails closed. Signed grants: tests/test_wave1_gates.py."""
     proposal = CodeProposal(
         proposal_id="p-001",
         task_id="t-001",
         target_file="module.py",
         module_code="def valid():\n    return 42\n",
-        test_code="def test_valid():\n    assert valid() == 42\n",
+        test_code="import module\n\ndef test_valid():\n    assert module.valid() == 42\n",
     )
-    correct_digest = proposal.payload_digest()
-
-    # 1. Valid grant
-    valid_grant = ExecutionGrant(
+    forged = ExecutionGrant(
         grant_id="grant-101",
-        payload_digest=correct_digest,
+        payload_digest=proposal.payload_digest(),
         authorized_by="operator",
         authorized_at=time.time(),
         expires_at=time.time() + 300,
     )
-    ok, msg = GovernanceController.authorize_execution(proposal, valid_grant)
-    assert ok is True
-    assert msg == "AUTHORIZED"
-
-    # 2. Grant with mismatched digest (tampered code)
-    tampered_grant = ExecutionGrant(
-        grant_id="grant-102",
-        payload_digest="0123456789abcdef" * 4,
-        authorized_by="operator",
-        authorized_at=time.time(),
-        expires_at=time.time() + 300,
-    )
-    ok, msg = GovernanceController.authorize_execution(proposal, tampered_grant)
+    ok, msg = GovernanceController.authorize_execution(proposal, forged)
     assert ok is False
-    assert "Grant digest mismatch" in msg
+    assert "REQ-AUTH-1" in msg
 
-    # 3. Expired grant
-    expired_grant = ExecutionGrant(
-        grant_id="grant-103",
-        payload_digest=correct_digest,
-        authorized_by="operator",
-        authorized_at=time.time() - 600,
-        expires_at=time.time() - 300,
-    )
-    ok, msg = GovernanceController.authorize_execution(proposal, expired_grant)
-    assert ok is False
-
-    # 4. Missing grant fails closed
     ok, msg = GovernanceController.authorize_execution(proposal, None)
     assert ok is False
     assert "Missing execution grant" in msg
 
 
+@needs_ssh_keygen
 def test_end_to_end_governed_engine(tmp_path, monkeypatch):
     """Verify full governed loop: intent -> plan -> synthesis -> verification -> ledger."""
     import genome_ledger as gl
@@ -139,11 +116,12 @@ def test_end_to_end_governed_engine(tmp_path, monkeypatch):
         monkeypatch.setattr(gl, "LEDGER_SRC", FIXTURE_LEDGER)
         monkeypatch.setattr(gl, "_ledger_mod", None)
     ledger_file = str(tmp_path / "test_ledger.jsonl")
-    provider = GemmaProvider(model="gemma-3-1b", mode="mock")
+    provider = GemmaProvider(model="gemma-3-1b", mode="mock", mock_responder=real_code_responder)
     engine = GovernedAgentEngine(
         provider=provider,
         ledger_file=ledger_file,
         allowed_paths=[str(tmp_path)],
+        grant_clock=synced_clock,
     )
 
     result = engine.run_sprint_step(
@@ -161,14 +139,9 @@ def test_end_to_end_governed_engine(tmp_path, monkeypatch):
     assert led.chain[-1]["kind"] == "governed_agent_step"
     assert led.verify()
 
-    # Now authorize with exact payload digest
-    grant = ExecutionGrant(
-        grant_id="grant-auth-1",
-        payload_digest=result["payload_digest"],
-        authorized_by="human_operator",
-        authorized_at=time.time(),
-        expires_at=time.time() + 60,
-    )
+    # Now authorize: the owner signs the action digest the engine reported
+    owner = make_owner(tmp_path)
+    grant = signed_grant(owner, result["action_digest"])
     result_auth = engine.run_sprint_step(
         goal="Implement simple math adder function",
         target_file=str(tmp_path / "adder.py"),

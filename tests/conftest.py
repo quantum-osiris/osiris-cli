@@ -40,6 +40,11 @@ _TEST_ENCLAVE = tempfile.mkdtemp(prefix="osiris-test-enclave-")
 os.environ["OSIRIS_ENCLAVE_DIR"] = _TEST_ENCLAVE
 atexit.register(shutil.rmtree, _TEST_ENCLAVE, ignore_errors=True)
 
+_TEST_EXEC_DIR = tempfile.mkdtemp(prefix="osiris-test-exec-")
+os.environ.setdefault("OSIRIS_EXEC_JOURNAL", os.path.join(_TEST_EXEC_DIR, "exec_journal.jsonl"))
+os.environ.setdefault("OSIRIS_EXEC_ARTIFACTS_DIR", os.path.join(_TEST_EXEC_DIR, "runs"))
+atexit.register(shutil.rmtree, _TEST_EXEC_DIR, ignore_errors=True)
+
 
 @pytest.fixture(scope="session", autouse=True)
 def _throwaway_operator_key():
@@ -70,6 +75,8 @@ PY39_MODULES = {
 }
 # Single tests that import it when they run.
 PY39_TESTS = {
+    "test_checkpoint2_security_hardening.py::test_t12_high05_med01_pytest_xfail_xpass_spoof_and_skip_promotion":
+        "dnalang",
     "test_compiler_fallback_characterization.py::test_loop_validation_accepts_a_genome_whose_body_names_a_forbidden_op":
         "dnalang",
     "test_production_synth_and_r0_r4.py::test_r3_sprint_execute_runs_verified_first_passing_and_records_run_artifact":

@@ -161,9 +161,13 @@ def _existing_apply_receipt_hash(
 
 
 def proposals_grant_spec(
-    root: str, proposals: Sequence[Dict[str, Any]]
+    root: str,
+    proposals: Sequence[Dict[str, Any]],
+    *,
+    accept: Optional[str] = None,
 ) -> Tuple[str, List[str], Dict[str, Any], str]:
-    """Build deterministic `(payload_sha256, scope, operation_schema, summary)` for staged writes."""
+    """Build deterministic `(payload_sha256, scope, operation_schema, summary)` for staged writes
+    and (when supplied) the bound acceptance command."""
     real_root = os.path.realpath(root)
     ordered = sorted(proposals, key=lambda p: str(p["rel_path"]))
     seen_paths = set()
@@ -186,6 +190,8 @@ def proposals_grant_spec(
         "files": files_spec,
         "root": real_root,
     }
+    if accept is not None:
+        schema["accept_command"] = str(accept)
     canon = json.dumps(schema, sort_keys=True, separators=(",", ":"), ensure_ascii=True)
     payload_sha256 = hashlib.sha256(canon.encode("utf-8")).hexdigest()
     scope = ["code.apply_writes", real_root, *[p["rel_path"] for p in ordered]]
@@ -194,6 +200,8 @@ def proposals_grant_spec(
         for p in ordered
     )
     summary = f"Apply {len(ordered)} staged file change(s): {file_parts}"
+    if accept is not None:
+        summary += f" | verify: {accept}"
     return payload_sha256, scope, schema, summary
 
 
@@ -242,8 +250,10 @@ def apply_idempotent(
         raise GrantVerificationError(str(exc)) from exc
 
     root, receipts = run["root"], run.get("receipts_path")
+    grant_schema = grant.get("operation_schema")
+    bound_accept = run.get("accept") if (isinstance(grant_schema, dict) and "accept_command" in grant_schema) else None
     expected_sha, expected_scope, _schema, _summary = proposals_grant_spec(
-        root, run["proposals"]
+        root, run["proposals"], accept=bound_accept
     )
     # Verify actual staged content bytes match signed after_sha256 and paths stay confined
     # (no traversal, no symlinks, no directory collisions) BEFORE consuming the grant.
@@ -367,7 +377,7 @@ def _advance(
                 out(f"\n--- proposed change to {p['rel_path']} ---\n{p['diff'] or '(no textual change)'}")
             if not isinstance(run.get("approval_grant"), dict):
                 payload_sha, scope, schema, summary_text = proposals_grant_spec(
-                    run["root"], run["proposals"]
+                    run["root"], run["proposals"], accept=run.get("accept")
                 )
                 try:
                     signer = load_or_onboard(eff_enclave_dir, confirm=confirm, out=out)
@@ -443,6 +453,40 @@ def _advance(
                 run["verification"] = {"decision": "UNVERIFIED", "reasons": [NO_ACCEPT]}
                 store.transition(run, "BLOCKED", NO_ACCEPT)
                 break
+            # Re-verify signed approval_grant binding before executing persisted run["accept"]
+            # so tampering run["accept"] in <run_id>.json on disk fails closed before spawn.
+            if isinstance(run.get("approval_grant"), dict):
+                try:
+                    v_gate = PQCEnclaveGate.verifier_from_enclave_dir(
+                        eff_enclave_dir, trusted_keys_path=eff_trusted
+                    )
+                    g_doc = run["approval_grant"]
+                    g_schema = g_doc.get("operation_schema")
+                    if not isinstance(g_schema, dict):
+                        raise GrantVerificationError("approval_grant missing operation_schema")
+                    bind_acc = run.get("accept") if "accept_command" in g_schema else None
+                    exp_sha, exp_scope, _sch, _sum = proposals_grant_spec(
+                        run["root"], run["proposals"], accept=bind_acc
+                    )
+                    ok_v, why_v = v_gate.verify_grant_integrity(
+                        g_doc,
+                        expected_payload_sha256=exp_sha,
+                        expected_scope=exp_scope,
+                        expected_event_type="code.apply_writes",
+                        consume=False,
+                        consumer_id=run["run_id"],
+                    )
+                    if not ok_v:
+                        raise GrantVerificationError(why_v)
+                    if "accept_command" in g_schema and g_schema.get("accept_command") != run.get("accept"):
+                        raise GrantVerificationError(
+                            "persisted acceptance command does not match signed approval grant"
+                        )
+                except Exception as exc:
+                    reason = f"acceptance grant verification failed: {exc}"
+                    run["verification"] = {"decision": "BLOCKED", "reasons": [reason]}
+                    store.transition(run, "BLOCKED", reason)
+                    break
             applied = [a for a in run.get("applied", []) if a.get("decision") == "GRANTED"]
             v = verify_applied(
                 run["root"],

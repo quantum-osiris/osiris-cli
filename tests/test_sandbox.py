@@ -50,3 +50,11 @@ def test_trio_sandboxed_run(tmp_path):
     res = run_trio(str(r), lambda f, sb: DeveloperOutput({"calc.py": fixed}, "Fixed the divisor."),
                    str(tmp_path / "o"), sandboxed=True)
     assert res.outcome == "PENDING_HUMAN_APPROVAL", res.reasons
+
+
+def test_opt_interpreter_prefix_is_ro_bound(monkeypatch, tmp_path):
+    fake_opt = "/opt/uv/python/cpython-3.12.15"
+    monkeypatch.setattr(sandbox, "_interpreter_prefixes", lambda: [fake_opt])
+    argv = sandbox._argv_bwrap(["/usr/bin/true"], str(tmp_path), ())
+    pairs = [(argv[i], argv[i + 1], argv[i + 2]) for i in range(len(argv) - 2) if argv[i] == "--ro-bind"]
+    assert ("--ro-bind", fake_opt, fake_opt) in pairs
