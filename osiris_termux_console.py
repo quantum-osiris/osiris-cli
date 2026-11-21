@@ -3418,7 +3418,12 @@ def _mentors(command: str = ""):
     st = protege.run_status(entries)
     runs = (f"\nRuns: {st['complete']} complete, {st['partial']} partial, {st['unterminated']} unterminated"
             if any(st.values()) else "")
-    print("\n" + protege.format_scorecard(card, skipped, suite) + runs + "\n\n" + protege.format_route(card) + "\n")
+    try:
+        from osiris_cli import calibration as _cal_mod
+        cal_block = "\n\n" + _cal_mod.format_summary()
+    except Exception:
+        cal_block = ""
+    print("\n" + protege.format_scorecard(card, skipped, suite) + runs + "\n\n" + protege.format_route(card) + cal_block + "\n")
 
 
 BENCH_SCRIPT = os.path.join(os.path.dirname(os.path.abspath(__file__)), "osiris_bench.py")
@@ -3834,6 +3839,10 @@ def _bench(command: str = "/bench"):
     not the REPL. Writes only the bench ledger, artifacts and that log."""
     import subprocess
     ui = osiris_ui.Canvas()
+    if command.split()[1:2] == ["calibration"]:
+        from osiris_cli import calibration as _cal_mod
+        print("\n" + _cal_mod.run_command(" ".join(command.split()[2:])) + "\n")
+        return
     if command.split()[1:] == ["log"]:
         try:
             with open(BENCH_LOG, encoding="utf-8", errors="replace") as f:
@@ -4865,6 +4874,20 @@ def _apply_pending_write():
         return
     path, content, existed = _pending_write["path"], _pending_write["content"], _pending_write["existed"]
     story_meta = _pending_write.get("story_meta")
+    try:
+        from osiris_cli import quarantine as _quar_mod
+        _cand_digest = str(_pending_write.get("candidate_digest") or (
+            hashlib.sha256(content.encode("utf-8")).hexdigest() if isinstance(content, str) else ""
+        ))
+        _qverdict = _quar_mod.QuarantineQueue().check_promotion_allowed(
+            candidate_digest=_cand_digest, target_path=str(path or "")
+        )
+    except Exception as _qexc:
+        from osiris_cli import quarantine as _quar_mod
+        _qverdict = _quar_mod.QuarantineGateVerdict(False, "FAIL_CLOSED_LEDGER_TAMPERED", str(_qexc))
+    if not _qverdict.allowed:
+        print(f"\n[!] /apply refused (quarantine gate): {_qverdict.reason}\n")
+        return
     if "base_sha256" in _pending_write and _sha256_of(path) != _pending_write["base_sha256"]:
         # The target changed (edited, created or deleted) after the diff was
         # shown: applying now would overwrite changes nobody reviewed.
@@ -5838,6 +5861,7 @@ IMMEDIATE_COMMANDS = {
     "/experiments", "/facts", "/cancel", "/reroute", "/focus", "/digest", "/lab", "/import", "/sources",
     "/source", "/map", "/hypothesis", "/hypotheses", "/outcome", "/trial", "/evolve", "/capabilities", "/discover",
     "/pr", "/sync", "/provision", "/edge",
+    "/provenance", "/calibration", "/quarantine", "/clusters",
     "exit", "quit",
 }
 
@@ -5847,7 +5871,8 @@ IMMEDIATE_COMMANDS = {
 READ_ONLY_COMMANDS = {"/status", "/why", "/home", "/runs", "/runs stats", "/runs --orphans", "/help", "/ui", "/mentors", "/digest",
                       "/lab", "/sources", "/map", "/hypotheses",
                       "/ui rich", "/ui plain", "/ui access", "/intent", "/intent status",
-                      "/organism", "/organism status", "/pr", "/sync", "/provision status", "/edge"}
+                      "/organism", "/organism status", "/pr", "/sync", "/provision status", "/edge",
+                      "/provenance", "/calibration", "/quarantine", "/clusters", "/runs clusters"}
 
 # OSIRIS_INTENT_CARD=0 sends free-form input straight to the models, as before.
 INTENT_CARD = os.environ.get("OSIRIS_INTENT_CARD", "1") != "0"
@@ -5873,7 +5898,8 @@ def _is_read_only(text: str) -> bool:
     t = text.strip().lower()
     return t in READ_ONLY_COMMANDS or t.split()[:2] == ["/run", "show"] or \
         t.split()[:1] in (["/bench"], ["/gap"], ["/gaps"], ["/ask"], ["/plan"], ["/experiment"], ["/experiments"],
-                          ["/facts"], ["/cancel"], ["/reroute"], ["/focus"])  # none writes the workspace: bench ledger, drafts, briefs, answers
+                          ["/facts"], ["/cancel"], ["/reroute"], ["/focus"],
+                          ["/provenance"], ["/calibration"], ["/quarantine"], ["/clusters"])  # none writes the workspace: bench ledger, drafts, briefs, answers
 
 
 def _is_unknown_command(text: str) -> bool:
@@ -6222,6 +6248,26 @@ def run_command(user_input: str) -> bool:
         return True
     if user_input.strip().lower().split()[:2] == ["/runs", "--orphans"]:
         _runs_orphans()
+        return True
+    if user_input.strip().lower().split()[:2] == ["/runs", "clusters"]:
+        from osiris_cli import failure_clustering
+        print("\n" + failure_clustering.run_command(" ".join(user_input.strip().split()[2:])) + "\n")
+        return True
+    if user_input.strip().lower().split()[:1] == ["/clusters"]:
+        from osiris_cli import failure_clustering
+        print("\n" + failure_clustering.run_command(" ".join(user_input.strip().split()[1:])) + "\n")
+        return True
+    if user_input.strip().lower().split()[:1] == ["/provenance"]:
+        from osiris_cli import claim_provenance
+        print("\n" + claim_provenance.run_command(" ".join(user_input.strip().split()[1:])) + "\n")
+        return True
+    if user_input.strip().lower().split()[:1] == ["/calibration"]:
+        from osiris_cli import calibration
+        print("\n" + calibration.run_command(" ".join(user_input.strip().split()[1:])) + "\n")
+        return True
+    if user_input.strip().lower().split()[:1] == ["/quarantine"]:
+        from osiris_cli import quarantine
+        print("\n" + quarantine.run_command(" ".join(user_input.strip().split()[1:]), origin="human") + "\n")
         return True
     if user_input.strip().lower() == "/check":
         _check()

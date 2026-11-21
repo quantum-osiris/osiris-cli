@@ -63,7 +63,9 @@ LAYERS = (
         ("notes from your docs, cited by file", "osiris_cli/knowledge.py"),
         ("facts you asked OSIRIS to keep", "/remember · /forget"),
         ("research lab: sources, concept map, hypotheses", "research.py · /lab"),
-    ), ("a provenance record for each claim made in a reply",)),
+        ("a provenance record for each claim made in a reply",
+         "osiris_cli/claim_provenance.py · /provenance"),
+    ), ()),
     Layer("L4", "Propose", (
         ("Architect: intent → spec", "Ollama · osiris_termux_console.CHAT_MODEL"),
         ("draft proposer: spec → candidate code (unpromoted assistant)", "osiris_termux_console._synthesize"),
@@ -91,16 +93,22 @@ LAYERS = (
         ("paired pre/post scoring of the core on held-out exchanges", "osiris_cli/prepost.py"),
         ("embedding retrieval on SciFact: nDCG@10 against the model card, evidence capsules",
          "osiris_cli/retrieval · /retrieval"),
-    ), ("calibration: stated confidence against measured correctness",)),
+        ("calibration: stated confidence against measured correctness",
+         "osiris_cli/calibration.py · /mentors · /bench calibration"),
+    ), ()),
     Layer("L7", "Promote", (
         ("speaking gate: the core answers only after earning it on held-out text", "living.Osiris.gate"),
         ("/apply fails closed and can be blocked persistently", "osiris_termux_console._apply_pending_write"),
         ("gap drafts do nothing until activated", "gaps.py · /gaps"),
-    ), ("a quarantine queue for inconclusive candidates",)),
+        ("a quarantine queue for inconclusive candidates",
+         "osiris_cli/quarantine.py · /quarantine"),
+    ), ()),
     Layer("L8", "Ledger", (
         ("genome ledger: dnalang hash chain", "genome_ledger.py · ~/.osiris/genome_ledger.jsonl"),
         ("write-once run records with artifact hashes", "run_record.py · /runs"),
-    ), ("failure-pattern clustering across the ledgers",)),
+        ("failure-pattern clustering across the ledgers",
+         "osiris_cli/failure_clustering.py · /clusters"),
+    ), ()),
 )
 
 SUBSYSTEMS = (

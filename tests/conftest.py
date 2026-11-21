@@ -75,6 +75,8 @@ PY39_MODULES = {
 }
 # Single tests that import it when they run.
 PY39_TESTS = {
+    "test_wave2_capabilities.py::test_l7_evolution_bridge_enqueues_inconclusive_and_blocks_until_resolved":
+        "dnalang",
     "test_checkpoint2_security_hardening.py::test_t12_high05_med01_pytest_xfail_xpass_spoof_and_skip_promotion":
         "dnalang",
     "test_compiler_fallback_characterization.py::test_loop_validation_accepts_a_genome_whose_body_names_a_forbidden_op":
