@@ -520,6 +520,7 @@ PAPERS = {
     },
     "xtop005": {
         "dir": ROOT / "papers" / "xtop005_codespace_hp",
+        "version": "1.1.0",
         "related": [{"identifier": "10.5281/zenodo.24425416", "relation": "isSupplementTo", "scheme": "doi"},
                     {"identifier": "10.5281/zenodo.24420902", "relation": "continues", "scheme": "doi"}],
         "files": [
@@ -543,7 +544,11 @@ PAPERS = {
                             "Bell fidelity by 0.10-0.18 at a 20 microsecond idle window (4 of 4 DD tests supported, Holm alpha = 0.01). "
                             "The simulator with IBM's published noise model predicted the opposite on both counts. Includes a full-encoding "
                             "design for Quantinuum H2 (72 circuits, every H2-1-compiled circuit verified exactly), predictions under an "
-                            "H2-like noise model, and exact HQC costs: 1,336 HQC for the decisive comparison at 500 shots.</p>"),
+                            "H2-like noise model, and exact HQC costs: 1,336 HQC for the decisive comparison at 500 shots.</p>"
+                            "<p>Version 1.1: cites the trapped-ion precedents (Landsman et al. 2019, verified scrambling; Linke "
+                            "et al. 2017, fault-tolerant [[4,2,2]] error detection and the IBM/ion-trap architecture comparison; "
+                            "Pino et al. 2021; Gaebler et al. 2021) and notes that the H2 noise model omits mid-circuit-measurement "
+                            "crosstalk. Data and results are unchanged.</p>"),
             "keywords": ["Hayden-Preskill", "[[4,2,2]] code", "error detection", "dynamical decoupling", "IBM Heron r2",
                          "heavy-hex", "Quantinuum H2", "trapped ions", "preregistration", "OSIRIS-XTOP-005"],
         },
@@ -569,6 +574,8 @@ def main() -> int:
     g = ap.add_mutually_exclusive_group(required=True)
     g.add_argument("--draft", action="store_true")
     g.add_argument("--publish", action="store_true")
+    ap.add_argument("--new-version", action="store_true",
+                    help="with --draft: start a new version of the already-published record (same concept DOI)")
     a = ap.parse_args()
     cfg = PAPERS[a.paper]
     receipt_path = cfg["dir"] / "zenodo_receipt.json"
@@ -596,7 +603,20 @@ def main() -> int:
     names = [n for _, n in files]
     assert len(set(names)) == len(names), "duplicate upload names"
 
-    if receipt_path.is_file() and json.loads(receipt_path.read_text()).get("state") == "draft":
+    prev = json.loads(receipt_path.read_text()) if receipt_path.is_file() else {}
+    if a.new_version:
+        if prev.get("state") != "published":
+            raise SystemExit("--new-version needs a published record in zenodo_receipt.json")
+        archived = cfg["dir"] / f"zenodo_receipt_v{prev.get('version', '1.0.0')}.json"
+        archived.write_text(json.dumps(prev, indent=2) + "\n")
+        st, r = _call("POST", f"{API}/{prev['deposition_id']}/actions/newversion", tok)
+        if st != 201:
+            raise SystemExit(f"newversion failed HTTP {st}: {r}")
+        dep = int(r["links"]["latest_draft"].rstrip("/").rsplit("/", 1)[1])
+        st, d = _call("GET", f"{API}/{dep}", tok)
+        for fobj in d.get("files", []):
+            _call("DELETE", f"{API}/{dep}/files/{fobj['id']}", tok)
+    elif receipt_path.is_file() and prev.get("state") == "draft":
         dep = json.loads(receipt_path.read_text())["deposition_id"]
         st, d = _call("GET", f"{API}/{dep}", tok)
         for fobj in d.get("files", []):
@@ -616,7 +636,7 @@ def main() -> int:
         "creators": CREATOR,
         "access_right": "open",
         "license": "cc-by-4.0",
-        "version": "1.0.0",
+        "version": cfg.get("version", "1.0.0"),
         "language": "eng",
         **cfg["meta"],
         "related_identifiers": [
@@ -628,6 +648,7 @@ def main() -> int:
         raise SystemExit(f"metadata failed HTTP {st}: {r}")
 
     rec = {"paper": a.paper, "deposition_id": dep, "state": "draft", "files": {}, "sources": {},
+           "version": cfg.get("version", "1.0.0"),
            "draft_html": d["links"].get("html"), "prereserved_doi": r.get("metadata", {}).get("prereserve_doi", {}).get("doi"),
            "drafted_utc": datetime.now(timezone.utc).isoformat()}
     for src, name in files:
