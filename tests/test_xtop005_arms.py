@@ -117,6 +117,7 @@ def test_native_xy4_is_identity():
 
 
 def test_heavy_hex_is_bipartite_and_layout_avoids_hotspots():
+    pytest.importorskip("qiskit_ibm_runtime")
     from qiskit_ibm_runtime.fake_provider import FakeMarrakesh
     be = FakeMarrakesh()
     va, vb = x.sublattices(be)

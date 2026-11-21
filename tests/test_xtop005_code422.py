@@ -126,6 +126,7 @@ def test_verified_prep_catches_logical_cnot_fault():
 
 
 def test_pytket_and_qiskit_emit_same_unitary():
+    pytest.importorskip("pytket")
     from qiskit.quantum_info import Operator
     p = c.Program(8)
     c.logical_bell_pairs(p, (0, 1, 2, 3), (4, 5, 6, 7))

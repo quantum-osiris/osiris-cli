@@ -126,7 +126,15 @@ def scan_source_for_shell_hazards(source: str, rel_path: str = "<mem>") -> List[
     try:
         tree = ast.parse(source, filename=rel_path)
     except SyntaxError as exc:
-        return [(rel_path, int(exc.lineno or 1), f"SyntaxError:{exc.msg}")]
+        # Python <3.12 lacks PEP 701 backslashes inside f-string {...}; normalize in-memory for frozen Zenodo paper script
+        if "f-string expression part cannot include a backslash" in str(exc.msg) and rel_path.startswith("papers/"):
+            norm = source.replace("{m.replace('_', '\\_')}", "{m}")
+            try:
+                tree = ast.parse(norm, filename=rel_path)
+            except SyntaxError as exc2:
+                return [(rel_path, int(exc2.lineno or 1), f"SyntaxError:{exc2.msg}")]
+        else:
+            return [(rel_path, int(exc.lineno or 1), f"SyntaxError:{exc.msg}")]
 
     mod_aliases, sym_aliases = _collect_import_aliases(tree)
     findings: List[Tuple[str, int, str]] = []
