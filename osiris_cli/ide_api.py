@@ -937,16 +937,21 @@ def serve(backend: Backend, *, host: str = "127.0.0.1", port: int = 8765, consol
     if not ipaddress.ip_address(host).is_loopback:
         raise ValueError(f"refusing to bind {host}: the OSIRIS IDE API is loopback-only")
     token = token or secrets.token_urlsafe(32)
+    if token_file:
+        tdir = os.path.dirname(os.path.abspath(token_file))
+        os.makedirs(tdir, mode=0o700, exist_ok=True)
+        tmp_tok = f"{token_file}.{os.getpid()}.tmp"
+        fd = os.open(tmp_tok, os.O_WRONLY | os.O_CREAT | os.O_TRUNC, 0o600)
+        with os.fdopen(fd, "w", encoding="utf-8") as fh:
+            fh.write(token)
+            fh.flush()
+            os.fsync(fh.fileno())
+        os.replace(tmp_tok, token_file)
     httpd = ThreadingHTTPServer((host, port), None)
     bound_port = httpd.server_address[1]
     hostpart = f"[{host}]" if ":" in host else host
     allowed = (f"{hostpart}:{bound_port}", f"localhost:{bound_port}")
     httpd.RequestHandlerClass = make_handler(backend, token, console_dir, allowed)
-    if token_file:
-        os.makedirs(os.path.dirname(token_file), mode=0o700, exist_ok=True)
-        fd = os.open(token_file, os.O_WRONLY | os.O_CREAT | os.O_TRUNC, 0o600)
-        with os.fdopen(fd, "w") as fh:
-            fh.write(token)
     return httpd, token
 
 
