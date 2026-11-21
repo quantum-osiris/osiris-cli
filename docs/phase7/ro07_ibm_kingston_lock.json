@@ -1,0 +1,204 @@
+{
+ "experiment_id": "TESSERACT-RO-07",
+ "backend": "ibm_kingston",
+ "locked_utc": "2026-11-21T14:27:03.827005+00:00",
+ "selection": {
+  "ro06_round": 7,
+  "ro06_job_id": "dc0q196q4uuc73a2vpr0",
+  "ro06_time": "2026-11-21T13:47:38.834933Z",
+  "targets": [
+   121,
+   2,
+   21,
+   146
+  ],
+  "controls": [
+   148,
+   93
+  ],
+  "disagree": [
+   121,
+   2,
+   21
+  ],
+  "agree": [
+   146
+  ],
+  "e_probe": {
+   "121": 0.243408203125,
+   "2": 0.06852213541666666,
+   "21": 0.060221354166666664,
+   "146": 0.4874674479166667,
+   "148": 0.0028483072916666665,
+   "93": 0.003011067708333333
+  },
+  "e_ibm": {
+   "121": 0.17138671875,
+   "2": 0.01318359375,
+   "21": 0.0068359375,
+   "146": 0.48974609375,
+   "148": 0.0029296875,
+   "93": 0.0068359375
+  }
+ },
+ "measured_set": [
+  121,
+  2,
+  21,
+  146,
+  148,
+  93
+ ],
+ "schedule": [
+  {
+   "repeat": 0,
+   "type": "ALL1"
+  },
+  {
+   "repeat": 0,
+   "type": "FLIP1"
+  },
+  {
+   "repeat": 0,
+   "type": "ALL0"
+  },
+  {
+   "repeat": 0,
+   "type": "ISO0"
+  },
+  {
+   "repeat": 0,
+   "type": "ISO1"
+  },
+  {
+   "repeat": 0,
+   "type": "FLIP0"
+  },
+  {
+   "repeat": 1,
+   "type": "ISO0"
+  },
+  {
+   "repeat": 1,
+   "type": "ALL0"
+  },
+  {
+   "repeat": 1,
+   "type": "ALL1"
+  },
+  {
+   "repeat": 1,
+   "type": "FLIP0"
+  },
+  {
+   "repeat": 1,
+   "type": "ISO1"
+  },
+  {
+   "repeat": 1,
+   "type": "FLIP1"
+  },
+  {
+   "repeat": 2,
+   "type": "FLIP0"
+  },
+  {
+   "repeat": 2,
+   "type": "ISO0"
+  },
+  {
+   "repeat": 2,
+   "type": "ISO1"
+  },
+  {
+   "repeat": 2,
+   "type": "ALL1"
+  },
+  {
+   "repeat": 2,
+   "type": "ALL0"
+  },
+  {
+   "repeat": 2,
+   "type": "FLIP1"
+  },
+  {
+   "repeat": 3,
+   "type": "ISO1"
+  },
+  {
+   "repeat": 3,
+   "type": "ALL0"
+  },
+  {
+   "repeat": 3,
+   "type": "ALL1"
+  },
+  {
+   "repeat": 3,
+   "type": "ISO0"
+  },
+  {
+   "repeat": 3,
+   "type": "FLIP1"
+  },
+  {
+   "repeat": 3,
+   "type": "FLIP0"
+  },
+  {
+   "repeat": 4,
+   "type": "ISO0"
+  },
+  {
+   "repeat": 4,
+   "type": "ALL0"
+  },
+  {
+   "repeat": 4,
+   "type": "ALL1"
+  },
+  {
+   "repeat": 4,
+   "type": "ISO1"
+  },
+  {
+   "repeat": 4,
+   "type": "FLIP1"
+  },
+  {
+   "repeat": 4,
+   "type": "FLIP0"
+  },
+  {
+   "repeat": 5,
+   "type": "ALL0"
+  },
+  {
+   "repeat": 5,
+   "type": "ISO0"
+  },
+  {
+   "repeat": 5,
+   "type": "ISO1"
+  },
+  {
+   "repeat": 5,
+   "type": "ALL1"
+  },
+  {
+   "repeat": 5,
+   "type": "FLIP0"
+  },
+  {
+   "repeat": 5,
+   "type": "FLIP1"
+  }
+ ],
+ "repeats": 6,
+ "shots": 2048,
+ "qpy_sha256": "4eb4ac070d5734c8348a3f3640916483dd798e3d60e8e512f2948c6b652fbc7b",
+ "calibration_sha256": "f4b6b5946ee56e041cc9f29621b7e0a3a3a2320b6e5e5dde503dee1f0ce1c2aa",
+ "code_sha256": "c1ea0de85189ff2316ae1f60c4c29792ec7f2fcac8ffecbb52045d2a7218aa2f",
+ "estimated_qpu_seconds": 22.3
+}

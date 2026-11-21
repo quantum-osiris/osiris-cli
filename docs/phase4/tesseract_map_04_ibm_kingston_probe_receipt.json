@@ -1,0 +1,7 @@
+{
+  "job_id": "dc0av1eq4uuc73a2bk0g",
+  "backend": "ibm_kingston",
+  "submitted_utc": "2026-11-20T20:37:28.384948+00:00",
+  "quota_remaining_before_s": 517.0,
+  "stage": "probe"
+}

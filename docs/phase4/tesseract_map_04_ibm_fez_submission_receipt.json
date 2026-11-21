@@ -1,0 +1,8 @@
+{
+  "job_id": "dc0as15s2omc73891lgg",
+  "backend": "ibm_fez",
+  "submitted_utc": "2026-11-20T20:31:03.147577+00:00",
+  "quota_remaining_before_s": 551.0,
+  "prereg_lock_sha256": "65440ecdfda7b9e9bcf1dc891ab27fd96bb4552db5d1d02e9cc04f3a2d7a02c9",
+  "qpy_sha256": "8fc8804a3c0d6ee313c88126491030e991332f6e82b9aa67e4d57925225060ea"
+}

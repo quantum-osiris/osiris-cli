@@ -1,0 +1,165 @@
+\documentclass[10pt,twocolumn]{article}
+\usepackage[margin=0.8in]{geometry}
+\usepackage{amsmath,amssymb,booktabs,xcolor}
+\usepackage[hidelinks]{hyperref}
+\usepackage{caption}
+\captionsetup{font=small,labelfont=bf}
+\input{generated.tex}
+
+\title{\bfseries A per-job readout probe rescues qubit selection on one IBM Heron r2 processor and
+hurts it on another: a preregistered three-device test}
+\author{Devin Phillip Davis\\ \small Agile Defense Systems LLC}
+\date{20 November 2026 \quad (TESSERACT-MAP-04 results, version 1.0)}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+\noindent
+In TESSERACT-MAP-03, a single qubit with a readout fault absent from IBM's published calibration
+reversed a 10\,pp layout effect. We preregistered a direct test of the obvious remedy: measure readout
+on every qubit in a few-second probe job just before the experiment, and rank 40-qubit paths with the
+probe's readout errors instead of the published ones. On \texttt{ibm\_marrakesh}, \texttt{ibm\_fez}
+and \texttt{ibm\_kingston} (six jobs, \TotalSeconds{}\,s QPU in total), we compared four layouts of the
+same 39-CZ circuit: the probe-ranked best path, the calibration-ranked best path, Qiskit's stock
+level-3 layout, and the probe-ranked median path. On \texttt{ibm\_marrakesh} the probe path won by
+$+25.0$\,pp (classical fidelity 0.313 against 0.063): the calibration-ranked path again contained
+qubit~46, which the probe measured at 34\% readout error while IBM listed 1.1\%. On \texttt{ibm\_fez}
+the probe path lost by 3.6\,pp, and the stock layout beat every other arm. On \texttt{ibm\_kingston}
+there was no difference, although the calibration path contained a qubit read out at 20\% (listed at
+1.0\%). After readout mitigation, the calibration-ranked path scored higher on all three devices. The
+probe therefore trades readout quality for gate and coherence quality, and that trade pays only when
+a readout fault is severe. By the preregistered criterion (a significant gain on at least two of three
+devices), probe-guided selection does not generalise. Hidden readout faults, however, were present on
+two of the three processors.
+\end{abstract}
+
+\section{Background}
+TESSERACT-MAP-02~\cite{map02} found that, at a fixed 39~CZ and depth~66, the choice of 40 physical
+qubits changed a circuit's classical fidelity $F_{\mathrm{cl}}$ by 10.5\,pp on \texttt{ibm\_marrakesh}.
+Four days later, MAP-03~\cite{map03} found the same layouts reversed: qubit~46 on the
+calibration-ranked best path reported~1 for $|0\rangle$ in 54\% of shots, against a listed error near
+1\%. If readout faults like this are common and undisclosed, a cheap readout probe before each job
+should choose better qubits. MAP-04 tests that idea, preregistered~\cite{prereg} before any job ran.
+
+\section{Design}
+Each backend received two jobs, minutes apart.
+
+\paragraph{Probe.} All-$|0\rangle$ and all-$|1\rangle$ on every qubit, 3 repeats each, 2{,}048 shots
+(6~PUBs, about 5\,s). A qubit's probe readout error is the mean of $p(1|0)$ and $p(0|1)$.
+
+\paragraph{Selection.} This is MAP-02's path rule: a greedy search over 400 simple 40-qubit paths, with
+cost $-\sum\log(1-e_{\mathrm{CZ}})-\sum\log(1-e_{\mathrm{RO}})$ and CZ errors from IBM's calibration
+at probe time. The probe paths use the probe's $e_{\mathrm{RO}}$; the calibration paths use IBM's.
+
+\paragraph{Main job.} The 39-CZ chain circuit of MAP-02 (exact four-string output, optimisation
+level~3) on four layouts: B1, the probe-ranked best path; B2, the calibration-ranked best path; B3,
+Qiskit's stock level-3 layout; B4, the probe-ranked median path. Union all-0/all-1 circuits cover
+every qubit used. There were 10 shuffled blocks $\times$ 6 PUBs $\times$ 2{,}048 shots. Before
+submission, every arm was checked in a noiseless matrix-product-state simulation
+($F_{\mathrm{cl}}\ge0.998$).
+
+\paragraph{Contrasts} (per device; paired $t$ over 10 blocks; Holm across four): L1 = B1$-$B2,
+L2 = B1$-$B3, L3 = B1$-$B4, and L4 = B1$-$B2 on readout-mitigated $F_{\mathrm{cl}}$ (tensored inverse,
+as in MAP-03). Decision: probe selection \emph{helps} on a device if L1~$>0$ with Holm $p<0.05$, and
+\emph{generalises} if it helps on at least two of three devices.
+
+\section{Results}
+
+\begin{table}[t]
+\centering\scriptsize\setlength{\tabcolsep}{2pt}
+\caption{Jobs and QPU seconds charged (probe + main).}
+\begin{tabular}{@{}lllr@{}}
+\toprule
+Backend & Probe job & Main job & s\\
+\midrule
+\JobRows
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table*}[t]
+\centering\footnotesize
+\caption{Arms. $F_{\mathrm{cl}}$: mean over 10 blocks (SD). ``Mitigated'': readout-mitigated
+$F_{\mathrm{cl}}$. Last column: the layout's worst qubit by probe readout error, with the probe's and
+IBM's readout error (\%).}
+\label{tab:arms}
+\begin{tabular}{@{}lllrl@{}}
+\toprule
+Backend & Arm & $F_{\mathrm{cl}}$ (SD) & Mitigated & Worst qubit: probe / IBM (\%)\\
+\midrule
+\ArmRows
+\bottomrule
+\end{tabular}
+\end{table*}
+
+\begin{table*}[t]
+\centering\footnotesize
+\caption{Preregistered contrasts (pp of $F_{\mathrm{cl}}$), Holm across four per device; exact
+Wilcoxon (Holm) as sensitivity.}
+\label{tab:contrasts}
+\begin{tabular}{@{}lllrcrr@{}}
+\toprule
+Backend & ID & Contrast & Mean (pp) & 95\% CI (pp) & Holm $p$ & Wilcoxon $p$\\
+\midrule
+\ContrastRows
+\bottomrule
+\end{tabular}
+\end{table*}
+
+\paragraph{ibm\_marrakesh.} q46 was still faulty, four days after MAP-03: probe readout error 34\%,
+listed at 1.1\%. The calibration rule placed the circuit on it, as did the stock layout and the probe
+median path. The probe path avoided it and scored 0.313, against 0.063 for the calibration path
+(L1~$=+25.0$\,pp) and 0.074 for the stock layout (L2~$=+24.0$\,pp).
+
+\paragraph{ibm\_fez.} Readout faults there were milder and mostly visible in IBM's own figures. The
+probe path lost to the calibration path (L1~$=-3.6$\,pp) and to the stock layout by 11.1\,pp. The
+stock layout was the best arm on this device.
+
+\paragraph{ibm\_kingston.} The calibration path contained q107, read out at 19.8\% (listed at 1.0\%),
+yet B1 and B2 did not differ (L1~$=-0.25$\,pp, 95\% CI $[-1.62,+1.13]$). What B2 lost on readout it
+made up elsewhere.
+
+\paragraph{Mitigated endpoint.} L4 was negative on all three devices ($-10.2$, $-19.6$ and $-9.2$\,pp).
+Once readout is corrected, the calibration-ranked path is the better path everywhere. Avoiding a bad
+readout qubit forces the 40-qubit path onto couplers and qubits that are worse in other respects.
+
+\paragraph{Path quality.} L3 (probe best vs probe median) was positive on all three devices
+($+16.9$, $+2.4$ and $+5.8$\,pp), so the size of the path effect itself is device dependent.
+
+\section{Discussion}
+The preregistered verdict is that probe-guided selection helped on \HelpsCount{} of 3 devices and
+does not generalise. Two findings stand out nonetheless.
+
+\textbf{Undisclosed readout faults are common.} The two processors with large faults had a qubit
+at 20--34\% readout error that IBM's calibration listed at about 1\%. On \texttt{ibm\_marrakesh} the
+same qubit has been faulty for at least four days, and every calibration-driven layout we tried, the
+stock Qiskit pass included, used it.
+
+\textbf{Correcting the readout term is not enough.} The path cost weighs a qubit's readout error the
+same as one CZ error. A 40-qubit path, however, uses 39 CZ gates and many idle periods, and the
+probe-ranked paths were worse on those. The remedy that the mitigated endpoint points to is to keep the
+calibration-ranked path when its readout faults can be corrected, or to exclude only grossly faulty
+qubits. Testing that is a natural next step.
+
+\paragraph{Limitations.} One run per device, on one day. The probe measures only all-0/all-1 readout.
+The selection rule is a greedy search over 400 candidates. Mitigation is tensored. B1 and B2 differ in
+many qubits at once, so we do not attribute the differences to individual qubits.
+
+\section*{Data and code availability}
+The record contains, for each device, the probe counts, the probe-time calibration, the lock, the
+QPY, the raw counts, the analysis, and the code (\texttt{phase3/tesseract\_map\_04.py},
+\texttt{generate\_tables.py}) that produces every number here, with a SHA-256 manifest.
+
+\section*{Acknowledgements}
+We acknowledge the use of IBM Quantum services; the views expressed are the author's and do not
+reflect the official policy or position of IBM or the IBM Quantum team. Analysis code and this
+manuscript were prepared with the assistance of AI coding tools under the author's direction and
+review.
+
+\begin{thebibliography}{9}\small
+\bibitem{map02} D.~P.~Davis, Zenodo, doi:10.5281/zenodo.24406426 (2026).
+\bibitem{map03} D.~P.~Davis, Zenodo, doi:10.5281/zenodo.24406525 (2026).
+\bibitem{prereg} D.~P.~Davis, ``Preregistration: TESSERACT-MAP-04,'' Zenodo, doi:10.5281/zenodo.24406640 (2026).
+\end{thebibliography}
+\end{document}

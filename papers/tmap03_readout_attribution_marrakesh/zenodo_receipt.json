@@ -1,0 +1,43 @@
+{
+  "paper": "tmap03",
+  "deposition_id": 24406525,
+  "state": "published",
+  "files": {
+    "tmap03_readout_attribution_marrakesh.pdf": "975187d87c83f66f2bf6abee3bc02d85fe891e797a1cd4d9a575674c5bb1bd79",
+    "tmap03_readout_attribution_marrakesh.tex": "918e596ba1869ec05b520b486760c2ae83e70979b84b1b9727c1076be7181c8d",
+    "generated.tex": "2a229c266d399a356836c966d359af6b7f7294d6e6dd640703065472f04ad714",
+    "generate_tables.py": "ff0f61e0d8ac2f24848be839272f2367d32e800cac4ab2448d945a189c5e762b",
+    "TESSERACT_MAP_03_PREREGISTRATION.md": "4e9968aec5bb0175001ead3a9b4d0a89441e7e5b19f2b8c3911775bdf7ac563a",
+    "tesseract_map_03_live_prereg_lock.json": "ea7e8765a9d82f4c7c5604f0d2cf06eef444f4bd78fc8f6f245b64a79c895817",
+    "tesseract_map_03_live_pubs.qpy": "f15167c40519ee3d7b4cb7b37e871f7f19b48d21df032097d0e28cbe754f816f",
+    "tesseract_map_03_prelock_calibration.json": "70cc69bc226e6022e6a9bdfdc07af6d80fa66949464ecb6747255fcd5be760ce",
+    "tesseract_map_03_dryrun.json": "59479795271a71e399207a007984fed1840027d575902c369e0e65cda4c60b0f",
+    "tesseract_map_03_submission_receipt.json": "2f8761e5bb41fd103cdf15c9b827b7494701a8e28e0d2624e59098dcbcc55c58",
+    "tesseract_map_03_live_raw_counts.json": "6640da49a8fac27261592a86c881838d388948d1416fc17816b7722b329581a5",
+    "tesseract_map_03_live_analysis.json": "618afbb347f63ec149378931c94ad8920183eb5cd35c2b89ddd51ec1f4b6ebca",
+    "tesseract_map_03.py": "20beb4e3a9cc982f2eed05b6eaa6809c2bf20458111e375c777bef580169f8ff",
+    "SHA256SUMS.txt": "ade4e4fe11582deb04d85eb75f5b235b37c5d3ecc861b6a739f16d246a7a0b44"
+  },
+  "sources": {
+    "tmap03_readout_attribution_marrakesh.pdf": "papers/tmap03_readout_attribution_marrakesh/tmap03_readout_attribution_marrakesh.pdf",
+    "tmap03_readout_attribution_marrakesh.tex": "papers/tmap03_readout_attribution_marrakesh/tmap03_readout_attribution_marrakesh.tex",
+    "generated.tex": "papers/tmap03_readout_attribution_marrakesh/generated.tex",
+    "generate_tables.py": "papers/tmap03_readout_attribution_marrakesh/generate_tables.py",
+    "TESSERACT_MAP_03_PREREGISTRATION.md": "phase3/TESSERACT_MAP_03_PREREGISTRATION.md",
+    "tesseract_map_03_live_prereg_lock.json": "docs/phase3/tesseract_map_03_live_prereg_lock.json",
+    "tesseract_map_03_live_pubs.qpy": "docs/phase3/tesseract_map_03_live_pubs.qpy",
+    "tesseract_map_03_prelock_calibration.json": "docs/phase3/tesseract_map_03_prelock_calibration.json",
+    "tesseract_map_03_dryrun.json": "docs/phase3/tesseract_map_03_dryrun.json",
+    "tesseract_map_03_submission_receipt.json": "docs/phase3/tesseract_map_03_submission_receipt.json",
+    "tesseract_map_03_live_raw_counts.json": "docs/phase3/tesseract_map_03_live_raw_counts.json",
+    "tesseract_map_03_live_analysis.json": "docs/phase3/tesseract_map_03_live_analysis.json",
+    "tesseract_map_03.py": "phase3/tesseract_map_03.py",
+    "SHA256SUMS.txt": "papers/tmap03_readout_attribution_marrakesh/SHA256SUMS.txt"
+  },
+  "draft_html": "https://zenodo.org/deposit/24406525",
+  "prereserved_doi": "10.5281/zenodo.24406525",
+  "drafted_utc": "2026-11-20T20:16:57.017060+00:00",
+  "doi": "10.5281/zenodo.24406525",
+  "record_url": "https://zenodo.org/record/24406525",
+  "published_utc": "2026-11-20T20:23:53.635698+00:00"
+}

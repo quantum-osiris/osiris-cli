@@ -1,0 +1,186 @@
+\documentclass[10pt,twocolumn]{article}
+\usepackage[margin=0.8in]{geometry}
+\usepackage{amsmath,amssymb,booktabs,graphicx,xcolor}
+\usepackage[hidelinks]{hyperref}
+\usepackage{caption}
+\captionsetup{font=small,labelfont=bf}
+\input{generated.tex}
+
+\title{\bfseries Four days later, the best qubits were the worst: a preregistered replication on
+\texttt{ibm\_marrakesh} in which readout faults invisible to the published calibration reversed a
+10\,pp layout effect}
+\author{Devin Phillip Davis\\ \small Agile Defense Systems LLC}
+\date{20 November 2026 \quad (TESSERACT-MAP-03 results, version 1.0)}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+\noindent
+TESSERACT-MAP-02 (16 November 2026) found that a 40-qubit circuit on a calibration-ranked ``best''
+path of \texttt{ibm\_marrakesh} beat the same circuit on a median path by $+10.5$\,pp of classical
+fidelity at an identical 39~CZ and depth~66. We preregistered and ran a follow-up on the same physical
+qubits four days later (one job, 80 PUBs, \QpuSeconds{}\,s QPU; preregistration published on Zenodo
+before submission). The effect did not replicate: it \emph{reversed}. The best path now scored
+$-4.29$\,pp below the median path (95\% CI $[-5.24,-3.33]$, Holm $p=6.4\times10^{-6}$), and its
+fidelity fell from \MtwoCfive{} to \Aone. Union readout calibration shows why. Qubit 46, on the best
+path, reported 1 for a prepared $|0\rangle$ in \QFSixP\% of shots, while IBM's calibration at the
+time of the job listed its readout error as \QFSixIBM\%. After tensored readout mitigation, the best
+path again leads by \MitGap\,pp. The path effect also failed to carry over from the SWAP-free chain
+to the routed star (interaction $-5.64$\,pp, $p=1.0\times10^{-6}$). Two conclusions are
+supported. Layout rankings built on published calibration data can be overturned within days by
+readout faults that the calibration does not show. And a cheap, per-job union readout check would
+have caught it.
+\end{abstract}
+
+\section{Background}
+In MAP-02~\cite{map02}, at fixed gate count and depth, the choice of 40 physical qubits changed
+classical fidelity $F_{\mathrm{cl}}$ by 10.5\,pp, and a greedy calibration-weighted path beat Qiskit's
+stock level-3 layout by 5.7\,pp. Union readout calibration found two qubits on the losing layouts
+(q41, q42) with 12--22\% assignment error that IBM listed near 1\%. MAP-02 left three questions open:
+does the gap replicate, how much of it is readout, and is the path effect additive across circuit
+structures? We preregistered MAP-03 to answer them~\cite{prereg}.
+
+\section{Design}
+The logical circuits are MAP-02's: a 40-qubit state with exact support on four strings, written
+either as a degree-2 chain (39~CZ, no SWAPs) or as a degree-20 star routed by SABRE (79~CZ). All arms
+use optimisation level~3. To exclude any influence of today's calibration or of MAP-02's outcome on
+qubit choice, arms A1, A2, A3 and A6 \emph{replay MAP-02's frozen layouts} from its published lock:
+A1 = chain on the best path (C5's qubits), A2 = chain on the median path (C6), A3 = chain on C7's
+qubits, A6 = star on the best path (C2). A4 is the chain with the stock level-3 layout chosen on
+today's calibration. A5, star on the median path, is new: it completes a $2\times2$ of structure by path.
+Two union circuits prepare all-$|0\rangle$ and all-$|1\rangle$ on all \UnionN{} qubits any arm uses. Ten
+shuffled blocks $\times$ 8 circuits $\times$ 2{,}048 shots ran in one job.
+
+\paragraph{Endpoints and tests.} The primary endpoint is $F_{\mathrm{cl}}$, scored as in MAP-02. The
+readout-mitigated $F_{\mathrm{cl}}$ applies the tensored inverse of each qubit's $2\times2$ assignment
+matrix, with rates pooled from the union circuits over all blocks, evaluated on the four ideal strings.
+There are five contrasts, each a paired $t$-test over 10 blocks (df~$=9$) with Holm correction:
+K1 = A1$-$A2 (path gap);
+K2 = raw gap $-$ mitigated gap (readout share);
+K3 = (A1$-$A2)$-$(A6$-$A5) (structure $\times$ path interaction);
+K4 = A1$-$A3; and K5 = A1$-$A4. The decision rule for K2 was conditional on K1 replicating.
+
+\paragraph{Provenance.} Locked \LockedUtc{}Z. The preregistration, lock, QPY and analysis code were
+published as Zenodo record 10.5281/zenodo.24406496 at 2026-11-20 20:13:37Z (Zenodo server
+time). Job \texttt{\JobId} was submitted at \SubmittedUtc{}Z. Before submission, a noiseless
+matrix-product-state simulation of every compiled arm gave $F_{\mathrm{cl}}\ge0.9997$, and the
+mitigation restored $F_{\mathrm{cl}}\approx1$ on synthetic readout-only data.
+
+\section{Results}
+
+\begin{table*}[t]
+\centering\footnotesize\setlength{\tabcolsep}{4pt}
+\caption{Arms. $F_{\mathrm{cl}}$: mean over 10 blocks (SD). ``Mitigated'': readout-mitigated
+$F_{\mathrm{cl}}$. ``MAP-02'': the same qubits' $F_{\mathrm{cl}}$ on 16 November. ``Worst RO'': the
+largest measured readout assignment error in the layout, and which qubit.}
+\label{tab:arms}
+\begin{tabular}{@{}lllrrlrrl@{}}
+\toprule
+Arm & Logical & Qubits & CZ & Depth & $F_{\mathrm{cl}}$ (SD) & Mitigated & MAP-02 & Worst RO, \% (qubit)\\
+\midrule
+\ArmRows
+\bottomrule
+\end{tabular}
+\end{table*}
+
+\begin{table*}[t]
+\centering\footnotesize\setlength{\tabcolsep}{4pt}
+\caption{Preregistered contrasts (pp of $F_{\mathrm{cl}}$, Holm across five). With 10 blocks the
+smallest attainable Holm-adjusted exact Wilcoxon $p$ is $9.8\times10^{-3}$; every contrast reaches it,
+i.e.\ all 10 blocks agree in sign.}
+\label{tab:contrasts}
+\begin{tabular}{@{}lllrcrr@{}}
+\toprule
+ID & Contrast & Question & Mean (pp) & 95\% CI (pp) & Holm $p$ & Wilcoxon $p$\\
+\midrule
+\ContrastRows
+\bottomrule
+\end{tabular}
+\end{table*}
+
+\begin{table}[t]
+\centering\footnotesize\setlength{\tabcolsep}{3pt}
+\caption{Six worst readout qubits today (mean assignment error, \%), against MAP-02's union
+calibration and IBM's lock-time reported value.}
+\label{tab:qubits}
+\begin{tabular}{@{}lrrrl@{}}
+\toprule
+Qubit & Today & MAP-02 & IBM & In arms\\
+\midrule
+\QubitRows
+\bottomrule
+\end{tabular}
+\end{table}
+
+\paragraph{K1: the path gap reversed.} The chain on MAP-02's best path scored $-4.29$\,pp
+\emph{below} the median path, and every block agreed. By the preregistered rule the gap did not
+replicate. It also changed sign significantly. The best path's $F_{\mathrm{cl}}$ halved, from
+\MtwoCfive{} to \Aone, while the median path's rose from 0.110 to 0.144.
+
+\paragraph{Why: readout.} Three qubits on the best path read out far worse than four days earlier
+(Table~\ref{tab:qubits}). q46, on the best path, gave $p(1|0)=\QFSixP\%$ and $p(0|1)=\QFSixQ\%$;
+in MAP-02 its mean assignment error was 1.3\%, and IBM's lock-time and execution-time calibrations
+list about 1\%. q31, on both paths, gave $p(0|1)=\QTOneQ\%$, and q37 rose from 1.9\% to 13.6\%. The q46 fault is stable across blocks
+and appears independently in the circuit data: in A1, q46's bit disagrees with the majority of the 19
+qubits that ideally share its value in 39\% of shots. MAP-02's outliers have largely recovered:
+q41 is at 1.6\% and q42 at 4.8\%.
+
+\paragraph{K2: readout share.} The preregistered rule for K2 applied only if K1 replicated, so we report
+K2 descriptively. After mitigation the best path leads by \MitGap\,pp (mitigated $F_{\mathrm{cl}}$ 0.651
+against 0.481). The mitigation therefore moves the gap by 21.3\,pp ($p=1.8\times10^{-6}$), from a
+4.3\,pp deficit to a 17.0\,pp lead. The preregistered share $\eta=1-\text{mitigated}/\text{raw}$ assumes
+both gaps have the same sign. Here it comes out at \EtaEst{} and is not interpretable as a fraction.
+On the mitigated endpoint the MAP-02 ranking holds: the best path is better on everything except
+readout.
+
+\paragraph{K3: no additivity.} For the routed star, the best path still beat the median path
+(+1.35\,pp), the opposite sign to the chain. The interaction is $-5.64$\,pp ($p=1.0\times10^{-6}$).
+SABRE routing changes which logical bit each physical qubit holds at measurement, and the star has
+79 CZ, so the same faulty qubit costs the two structures differently. We do not separate these
+mechanisms.
+
+\paragraph{K4, K5: other layouts.} MAP-02's stock-layout qubits (A3), which lost by 5.7\,pp on 16
+November, now beat the best path by 5.26\,pp. Today's stock level-3 layout (A4) beat it by 1.75\,pp,
+even though A4 also contains q46: IBM lists q46 at about 1\%, so the stock pass had no reason to avoid
+it.
+
+\section{Discussion}
+MAP-02's central result, a 10.5\,pp layout effect at fixed gate count, was real for its calibration
+window and gone four days later. What changed is not visible in IBM's published calibration. It
+shows up only in an independent readout check run inside the same job. Two practical consequences
+follow. First, rankings of physical qubits, whether by a greedy path search, VF2Layout or anything
+else that consumes published calibration data, can be overturned within days by readout faults on
+single qubits. Second, a union $|0\rangle$/$|1\rangle$ readout check costs two circuits per block and
+would have flagged q46 before any conclusion was drawn. We recommend it, or a per-job readout probe,
+as standard practice for layout studies.
+
+The mitigated endpoint suggests that the gate and coherence quality ranking of MAP-02's paths
+persisted. That rests on inverting a 54\% assignment error, which amplifies statistical noise by about
+$3\times$ for that qubit, and on assuming that readout errors are independent between qubits. Both
+caveats apply.
+
+\paragraph{Limitations.} One job; one device; two dates. The mitigation is tensored (uncorrelated) and
+uses all-0/all-1 calibration only. The K3 interaction is measured but not explained.
+
+\section*{Data and code availability}
+The record contains this paper, its LaTeX source, the preregistration, the lock, the QPY, lock-time and
+execution-time calibrations, the dry run, raw counts for all 80 PUBs, the analysis output, and the
+scripts that produce every number here (\texttt{phase3/tesseract\_map\_03.py},
+\texttt{generate\_tables.py}), with a SHA-256 manifest. The raw-counts file contains no IBM account
+identifiers.
+
+\section*{Acknowledgements}
+We acknowledge the use of IBM Quantum services; the views expressed are the author's and do not reflect
+the official policy or position of IBM or the IBM Quantum team. Analysis code and this manuscript were
+prepared with the assistance of AI coding tools under the author's direction and review.
+
+\begin{thebibliography}{9}\small
+\bibitem{map02} D.~P.~Davis, ``Same gate count, half the fidelity: a preregistered decomposition of
+layout, routing and optimisation-level effects on a 40-qubit circuit on ibm\_marrakesh,'' Zenodo,
+doi:10.5281/zenodo.24406426 (2026).
+\bibitem{prereg} D.~P.~Davis, ``Preregistration: TESSERACT-MAP-03,'' Zenodo,
+doi:10.5281/zenodo.24406496 (2026).
+\bibitem{nation2023} P.~D.~Nation and M.~Treinish, \emph{PRX Quantum} \textbf{4}, 010327 (2023).
+\end{thebibliography}
+\end{document}

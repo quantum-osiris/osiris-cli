@@ -1,0 +1,8 @@
+{
+  "job_id": "dc0c1t5s2omc738938eg",
+  "backend": "ibm_marrakesh",
+  "submitted_utc": "2026-11-20T21:51:51.389628+00:00",
+  "quota_remaining_before_s": 471.0,
+  "prereg_lock_sha256": "22fe2d9b48bbf8518f1539e2dc83cfc74f243e2611ccb8fa06bd6935f3008867",
+  "qpy_sha256": "52b0584f0def3d4a3b2016f737d2288da5ef26e97706cd38a3b486a889d6b2e4"
+}
