@@ -28,6 +28,25 @@ tests, evidence record, and human approval establish a narrower capability:
 - Deletion, recursive cleanup, filesystem mounts, host sockets, and access outside
   an explicit workspace or job root.
 
+## Tiered quantum execution & HQC governance
+
+Quantum circuit verification and hardware submission follow a strict three-tier gate:
+
+- **Tier 1 (Static Syntax & Resource Gate)**: Local OpenQASM / Guppy validation against
+  `H2-1SC`, `H2-2SC`, and `Helios-SC` resource ceilings. Emits `disposition: "SIMULATED"`
+  with `hardware: false`.
+- **Tier 2 (Local QCCD & Noise Emulation)**: Deterministic local trajectory or density-matrix
+  simulation bounded by `OSIRIS_MAX_SHOTS`. Preserves unmutated `G-14` raw integer shot
+  counts and SHA-256 digests (`disposition: "SIMULATED"`, `hardware: false`).
+- **Tier 3 (Live QPU via Quantinuum Nexus / IBM Quantum)**: Fails closed unless:
+  1. Mandatory Tier 1 syntax-checker pre-flight (`H2-1SC` / `Helios-SC`) succeeds,
+  2. Exact `Decimal` HQC estimate satisfies both `--budget-hqc` and `OSIRIS_MAX_HQC`,
+  3. An operator-signed approval token (`Ed25519` or `OSIRIS_TIER3_HMAC_SECRET`) matches the
+     exact `(circuit_sha256, target, max_shots, max_hqc)` tuple prior to expiry, and
+  4. Live submission is explicitly enabled (`OSIRIS_ALLOW_LIVE_NEXUS_SUBMIT=1` + valid
+     provider credentials). Dry-run pre-flight receipts record `PREVIEW_COMPLETE` with
+     `hardware: false` and never claim `HARDWARE_ATTESTED`.
+
 ## Artifact handling
 
 - Treat `.dna`, model output, archives, generated code, and experiment files as
