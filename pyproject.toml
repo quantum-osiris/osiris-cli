@@ -48,6 +48,9 @@ quantum = [
     "qiskit-ibm-runtime>=0.14.0",
     "qiskit-aer>=0.13.0",
 ]
+quantinuum = [
+    "pytket>=1.28.0",
+]
 tui = [
     "textual>=0.40.0",
 ]
@@ -68,7 +71,7 @@ retrieval = [
     "transformers>=5.0",
 ]
 all = [
-    "osiris-cli[quantum,tui,plot,forge]",
+    "osiris-cli[quantum,quantinuum,tui,plot,forge]",
 ]
 # The sibling research repos (optional; the console guards every import of them).
 research = [

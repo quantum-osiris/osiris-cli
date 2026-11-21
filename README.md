@@ -100,9 +100,12 @@ osiris-cli/
 │   ├── osiris_repl.py         # Universal CLI & interactive console entrypoint
 │   ├── quantinuum_cli.py      # Subcommands: propose, verify, bench, grant-tier3, run, ledger
 │   ├── quantinuum_gate.py     # H2-1SC gatekeeper, Tier 3 signed tokens, SHA-256 Nexus ledger
+│   ├── nexus_ledger.py        # NexusDisposition hash-chain ledger & receipt uploader
 │   ├── quantum_readiness.py   # Coherence budget & Kraus noise-sensitivity readiness gate
 │   ├── exec_kernel.py         # Single governed execution kernel & exec-canon-1 hash chain
 │   └── providers/
+│       ├── quantinuum_nexus.py# Zero-dependency governed Quantinuum Nexus submission client
+│       ├── tket_wrapper.py    # Deterministic TKET / OpenQASM 2.0 QCCD compiler & lowerer
 │       ├── quantinuum.py      # Quantinuum H2 / Helios specs, HQC model, QCCD vs. heavy-hex router
 │       └── local_qccd.py      # Deterministic OpenQASM/Guppy parser & QCCD trajectory emulator
 ├── examples/

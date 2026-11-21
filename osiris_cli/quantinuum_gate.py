@@ -7,10 +7,11 @@ Core invariant: *Models propose; deterministic code decides, measures, and recor
      exact `Decimal` HQC cost calculation, optional local QCCD trajectory noise emulation,
      and `exec-canon-1` SHA-256 receipt recording (`SIMULATED`, `hardware=False`).
   3. `mint_tier3_token` / `verify_tier3_token` / `run_tier3_governed`: cryptographic Tier 3
-     approval guard bound to `(circuit_sha256, target, max_shots, budget_hqc)` so an AI
+     approval guard bound to `(circuit_sha256, target, max_shots, budget_hqc)` (as well as
+     `OSIRIS_APPROVAL_SECRET` HMAC tokens over `target:compiled_sha256:shots`) so an AI
      loop can never burn HQCs on unapproved or mutated circuits.
   4. `verify_nexus_ledger` / `verify_all_quantum_ledgers`: offline tamper-evident audit of
-     `$OSIRIS_HOME/quantum/nexus_receipts.jsonl` and sibling quantum/execution ledgers.
+     `$OSIRIS_HOME/quantum/nexus_receipts.jsonl`, `nexus_dispositions.jsonl`, and sibling ledgers.
 """
 
 from __future__ import annotations
@@ -49,13 +50,20 @@ from .providers.quantinuum import (
     optional_tket_check,
     resolve_quantinuum_target,
 )
+from .providers.quantinuum_nexus import (
+    GovernanceError,
+    NexusConfig,
+    QuantinuumNexusClient,
+    verify_tier3_approval_token,
+)
+from .providers.tket_wrapper import compile_for_quantinuum
 from .quantum_readiness import _canon_safe, default_osiris_home, default_readiness_receipts_path
 
 NEXUS_RECEIPT_SCHEMA = "osiris.quantinuum_nexus_receipt/1"
 TIER3_TOKEN_SCHEMA = "osiris.tier3_approval/1"
 _GENESIS = "0" * 64
 
-DISPOSITIONS = frozenset({"SIMULATED", "PREVIEW_COMPLETE", "HARDWARE_ATTESTED"})
+DISPOSITIONS = frozenset({"SIMULATED", "PREVIEW_COMPLETE", "HARDWARE_ATTESTED", "QUARANTINED"})
 PathArg = Optional[Union[os.PathLike, str]]
 
 
@@ -265,8 +273,9 @@ reset q[1];
 if(m1 == 1) x q[2];
 if(m0 == 1) z q[2];
 rx(-pi/3) q[2];
+measure q[2];
 measure q[2] -> out[0];
-"""
+""".replace("measure q[2];\n", "")
 
 
 def _try_ollama_propose(prompt: str, model: str) -> Optional[str]:
@@ -502,7 +511,6 @@ def verify_quantinuum_circuit(
         except QCCDCircuitError as exc:
             raise QuantinuumGateError("EMULATION_ERROR", str(exc)) from exc
 
-    # Verify runs are strictly non-hardware (Tier 1 syntax checker or Tier 2 emulator)
     effective_tier = 2 if (spec.tier >= 2 or emu_result is not None) else 1
     report = VerificationReport(
         passed=True,
@@ -606,6 +614,7 @@ def verify_tier3_token(
     shots: int,
     hqc_estimate: Decimal,
     osiris_home: PathArg = None,
+    compiled_sha256: Optional[str] = None,
 ) -> Dict[str, Any]:
     """Verify cryptographic signature and scope of a Tier 3 approval token."""
     raw = (token or "").strip()
@@ -614,6 +623,31 @@ def verify_tier3_token(
             "BLOCKED_APPROVAL_TOKEN",
             "Tier 3 live QPU target requires a non-empty signed --approval-token",
         )
+
+    # Support compact 64-hex HMAC tokens minted via `OSIRIS_APPROVAL_SECRET` (`quantinuum_nexus.py`)
+    if "." not in raw and len(raw) == 64 and compiled_sha256:
+        secret = (
+            os.environ.get("OSIRIS_APPROVAL_SECRET")
+            or os.environ.get("OSIRIS_TIER3_HMAC_SECRET")
+            or ""
+        ).strip()
+        try:
+            verify_tier3_approval_token(
+                raw,
+                target=target_spec.name,  # type: ignore[arg-type]
+                compiled_sha256=compiled_sha256,
+                shots=shots,
+                secret=secret or None,
+            )
+            return {
+                "schema": "osiris.tier3_hmac_compact/1",
+                "compiled_sha256": compiled_sha256,
+                "target": target_spec.name,
+                "max_shots": shots,
+                "exp": int(time.time()) + 300,
+            }
+        except GovernanceError as exc:
+            raise QuantinuumGateError("BLOCKED_APPROVAL_TOKEN", str(exc)) from exc
 
     parts = raw.split(".")
     try:
@@ -760,6 +794,7 @@ def run_tier3_governed(
         osiris_home=osiris_home,
         filename=filename,
     )
+    compiled = compile_for_quantinuum(source, target=spec.name)  # type: ignore[arg-type]
 
     # Gate 2: Hard HQC budget cap check BEFORE checking credentials or network
     if preflight.hqc_estimate > effective_cap:
@@ -778,11 +813,12 @@ def run_tier3_governed(
             shots=shots,
             hqc_estimate=preflight.hqc_estimate,
             osiris_home=osiris_home,
+            compiled_sha256=compiled.compiled_sha256,
         )
     else:
         token_claims = {"tier": spec.tier, "note": "non_hardware_target"}
 
-    # Gate 4: Live Nexus submission remains fail-closed unless explicitly enabled + qnexus present
+    # Gate 4: Live Nexus submission remains fail-closed unless explicitly enabled + token present
     allow_live = os.environ.get("OSIRIS_ALLOW_LIVE_NEXUS_SUBMIT", "").strip() == "1"
     nexus_token = os.environ.get("QUANTINUUM_NEXUS_TOKEN", "").strip()
 
@@ -795,6 +831,7 @@ def run_tier3_governed(
             "disposition": "PREVIEW_COMPLETE",
             "hardware": False,
             "circuit_sha256": preflight.circuit_sha256,
+            "compiled_sha256": compiled.compiled_sha256,
             "shots": shots,
             "hqc_estimate": str(preflight.hqc_estimate),
             "budget_hqc": str(effective_cap),
@@ -820,17 +857,47 @@ def run_tier3_governed(
             nexus_job_id=None,
         )
 
-    try:
-        import qnexus  # type: ignore[import-not-found]  # noqa: F401
-    except Exception as exc:
-        raise QuantinuumGateError(
-            "QNEXUS_SDK_UNAVAILABLE",
-            "Live submission enabled, but `qnexus` package is not installed in this environment",
-        ) from exc
+    # Dispatch via zero-dependency governed HTTP client (`QuantinuumNexusClient`)
+    from .nexus_ledger import NexusAuditLedger
 
-    raise QuantinuumGateError(
-        "QNEXUS_PROJECT_REQUIRED",
-        "Set OSIRIS_NEXUS_PROJECT_REF to dispatch an authenticated qnexus.start_execute_job() call",
+    cfg = NexusConfig.from_env()
+    hmac_tok = approval_token
+    if "." in hmac_tok and cfg.approval_secret:
+        from .providers.quantinuum_nexus import sign_tier3_approval_token
+
+        hmac_tok = sign_tier3_approval_token(
+            target=spec.name,  # type: ignore[arg-type]
+            compiled_sha256=compiled.compiled_sha256,
+            shots=shots,
+            secret=cfg.approval_secret,
+        )
+    client = QuantinuumNexusClient(cfg)
+    try:
+        disp = client.submit_and_wait(
+            source,
+            target=spec.name,  # type: ignore[arg-type]
+            shots=shots,
+            budget_hqc=float(effective_cap),
+            approval_token=hmac_tok,
+        )
+    except (GovernanceError, RuntimeError) as exc:
+        raise QuantinuumGateError("NEXUS_SUBMIT_FAILED", str(exc)) from exc
+
+    persisted = NexusAuditLedger(osiris_home).append_disposition(disp)
+    return GovernedRunResult(
+        status=disp.status.upper(),
+        target=disp.target,
+        tier=disp.tier,
+        disposition=disp.disposition,
+        hardware=disp.hardware,
+        circuit_sha256=disp.source_sha256,
+        shots=disp.shots,
+        hqc_estimate=Decimal(str(disp.estimated_hqc)),
+        budget_hqc=effective_cap,
+        preflight_checker=checker_name,
+        receipt_hash=persisted["chain_hash"],
+        receipt_path=persisted["ledger_path"],
+        nexus_job_id=disp.job_id,
     )
 
 
@@ -920,10 +987,13 @@ def verify_nexus_ledger(osiris_home: PathArg = None) -> Dict[str, Any]:
 
 
 def verify_all_quantum_ledgers(osiris_home: PathArg = None) -> Dict[str, Any]:
-    """Verify Nexus receipts, Wave 4 readiness receipts, and execution journal chains."""
+    """Verify Nexus receipts, Nexus dispositions, Wave 4 readiness receipts, and exec journal."""
     home = default_osiris_home(osiris_home)
     nexus_res = _verify_canon_chain_file(
         default_nexus_receipts_path(home), check_quantum_integrity=True
+    )
+    dispositions_res = _verify_canon_chain_file(
+        home / "quantum" / "nexus_dispositions.jsonl", check_quantum_integrity=True
     )
     readiness_res = _verify_canon_chain_file(
         default_readiness_receipts_path(home), check_quantum_integrity=True
@@ -931,6 +1001,7 @@ def verify_all_quantum_ledgers(osiris_home: PathArg = None) -> Dict[str, Any]:
     exec_res = _verify_canon_chain_file(home / "exec_journal.jsonl", check_quantum_integrity=False)
     ledgers = {
         "nexus_receipts": nexus_res,
+        "nexus_dispositions": dispositions_res,
         "readiness_receipts": readiness_res,
         "exec_journal": exec_res,
     }

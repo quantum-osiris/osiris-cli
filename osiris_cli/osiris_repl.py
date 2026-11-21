@@ -2822,7 +2822,7 @@ def main(argv: Optional[List[str]] = None) -> None:
     """Main entry point for 'osiris' universal command line."""
     if argv is None:
         argv = sys.argv[1:]
-    if argv and argv[0] in ("propose", "verify", "bench", "grant-tier3", "run", "ledger", "quantinuum", "/quantinuum"):
+    if argv and argv[0] in ("propose", "compile", "verify", "bench", "grant-tier3", "nexus-sign", "run", "ledger", "quantinuum", "/quantinuum"):
         from osiris_cli.quantinuum_cli import dispatch_quantinuum_argv
         q_rc = dispatch_quantinuum_argv(list(argv))
         if q_rc is not None:

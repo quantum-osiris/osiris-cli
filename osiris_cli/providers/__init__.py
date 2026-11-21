@@ -106,3 +106,35 @@ __all__.extend([
     "parse_quantum_source",
     "resolve_quantinuum_target",
 ])
+
+from .quantinuum_nexus import (
+    GovernanceError,
+    NexusConfig,
+    NexusDisposition,
+    QuantinuumNexusClient,
+    estimate_hqc,
+    sign_tier3_approval_token,
+    verify_tier3_approval_token,
+)
+from .tket_wrapper import (
+    QuantinuumCompilerOptions,
+    QuantinuumTarget,
+    TketCircuitMetrics,
+    TketCompilationResult,
+    compile_for_quantinuum,
+)
+
+__all__.extend([
+    "GovernanceError",
+    "NexusConfig",
+    "NexusDisposition",
+    "QuantinuumCompilerOptions",
+    "QuantinuumNexusClient",
+    "QuantinuumTarget",
+    "TketCircuitMetrics",
+    "TketCompilationResult",
+    "compile_for_quantinuum",
+    "estimate_hqc",
+    "sign_tier3_approval_token",
+    "verify_tier3_approval_token",
+])
