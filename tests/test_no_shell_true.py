@@ -128,7 +128,7 @@ def scan_source_for_shell_hazards(source: str, rel_path: str = "<mem>") -> List[
     except SyntaxError as exc:
         # Python <3.12 lacks PEP 701 backslashes inside f-string {...}; normalize in-memory for frozen Zenodo paper script
         if "f-string expression part cannot include a backslash" in str(exc.msg) and rel_path.startswith("papers/"):
-            norm = source.replace("{m.replace('_', '\\_')}", "{m}")
+            norm = source.replace(r"{m.replace('_', '\\_')}", "{m}")
             try:
                 tree = ast.parse(norm, filename=rel_path)
             except SyntaxError as exc2:
