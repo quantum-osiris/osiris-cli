@@ -370,9 +370,9 @@ def test_l4_multi_candidate_respects_quarantine_gate(tmp_path: Path) -> None:
 def test_wave3_architecture_marks_all_nine_layers_l0_through_l8_built() -> None:
     for ly in architecture.LAYERS:
         assert ly.missing == (), f"Layer {ly.key} ({ly.name}) still has missing items: {ly.missing}"
-    # Only the 3 Wave 4 Physics & Quantum research items remain in SUBSYSTEMS
+    # All Wave 4 Physics & Quantum research items in SUBSYSTEMS are now built too
     remaining = [item for _name, _built, missing in architecture.SUBSYSTEMS for item in missing]
-    assert len(remaining) == 3
+    assert len(remaining) == 0
     state = architecture.live_state(None, None)
     rendered = architecture.full(osiris_ui.Canvas("plain", 80), state)
     assert "osiris_cli/multi_candidate.py" in rendered
