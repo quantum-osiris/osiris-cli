@@ -1208,6 +1208,7 @@ class Osiris:
         self._last_probe_receipts: List[Dict[str, Any]] = []
         self._last_retrieved_files: Set[str] = set()
         self._last_grounding_audit: Optional[GroundingAudit] = None
+        self._last_provenance_records: List[Dict[str, Any]] = []
         self._last_route_decision: Any = None
         self.mentor = mentor or OllamaMentor()
         self.home = home
@@ -1233,6 +1234,18 @@ class Osiris:
         self.last_review: Optional[Dict[str, Any]] = None
 
     # -- persistence -------------------------------------------------------
+
+    def _provenance_ledger_path(self) -> str:
+        override = os.environ.get("OSIRIS_PROVENANCE_LOG")
+        if override:
+            return os.path.abspath(os.path.expanduser(override))
+        norm_home = os.path.abspath(os.path.expanduser(self.home))
+        default_living = os.path.abspath(os.path.join(os.path.expanduser("~"), ".osiris", "living"))
+        if norm_home == default_living and os.environ.get("OSIRIS_HOME"):
+            from osiris_cli import claim_provenance
+            return str(claim_provenance.default_provenance_path())
+        state_root = os.path.dirname(norm_home) if os.path.basename(norm_home) == "living" else norm_home
+        return os.path.join(state_root, "evidence", "claim_provenance.jsonl")
 
     def _load_stats(self) -> dict:
         try:
@@ -1905,6 +1918,22 @@ class Osiris:
         if self._last_probe_receipts:
             rec_data["probe_receipts"] = list(self._last_probe_receipts)
         key = self._record(rec_data)
+        try:
+            from osiris_cli import claim_provenance
+            prov_rows = claim_provenance.record_reply_provenance(
+                reply,
+                ledger_path=self._provenance_ledger_path(),
+                run_id=f"exch-{key[:12]}",
+                exchange_hash=key,
+                voice=str(voice or ""),
+                retrieved_files=self._last_retrieved_files,
+                probe_receipts=self._last_probe_receipts,
+                on_record=self._on_record,
+                grounding_audit=grounding_audit,
+            )
+            self._last_provenance_records = [dict(r.to_body(), hash=h) for r, h in prov_rows]
+        except Exception:  # noqa: BLE001 - never drop a recorded reply on provenance I/O error
+            self._last_provenance_records = []
         if (resolved_transport in ("bracketed_paste", "unknown")) or not effective_learnable:
             self.last_paste = dict(rec_data, hash=key)
             self.last_review = None

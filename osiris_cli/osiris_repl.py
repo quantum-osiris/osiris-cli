@@ -2080,6 +2080,7 @@ REPL_COMMANDS = {
     "/power", "/pr", "/provision", "/publish", "/q", "/remember", "/review", "/retrieval", "/run", "/self", "/sim",
     "/skill", "/skills", "/status", "/swarm", "/sync", "/tetra1d", "/tournament", "/train", "/trio", "/unlearn",
     "/update", "/validate", "/voice", "/welcome",
+    "/calibration", "/clusters", "/provenance", "/quarantine",
 }
 # Safe to offer as a one-key [1]: they only read and print.
 READ_ONLY_COMMANDS = {
@@ -2604,6 +2605,18 @@ def dispatch_command(state: OsirisReplState, line: str) -> None:
     elif cmd == "/retrieval":
         from osiris_cli import retrieval
         print("\n" + retrieval.run_command(line_clean[len(parts[0]):].strip()) + "\n")
+    elif cmd == "/provenance":
+        from osiris_cli import claim_provenance
+        print("\n" + claim_provenance.run_command(line_clean[len(parts[0]):].strip()) + "\n")
+    elif cmd == "/calibration":
+        from osiris_cli import calibration
+        print("\n" + calibration.run_command(line_clean[len(parts[0]):].strip()) + "\n")
+    elif cmd == "/quarantine":
+        from osiris_cli import quarantine
+        print("\n" + quarantine.run_command(line_clean[len(parts[0]):].strip(), origin="human") + "\n")
+    elif cmd == "/clusters":
+        from osiris_cli import failure_clustering
+        print("\n" + failure_clustering.run_command(line_clean[len(parts[0]):].strip()) + "\n")
     elif cmd == "/check":
         living = get_living()
         names = [p for p in parts[1:] if p in ("trainer", "git", "ledger", "system", "evidence")] or \

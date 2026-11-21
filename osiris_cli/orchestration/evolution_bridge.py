@@ -123,11 +123,25 @@ def _criticism(res: TrioResult) -> Dict[str, Any]:
     }
 
 
+def _quarantine_path_for_lineage(lineage_ledger: str, explicit: Optional[str] = None) -> str:
+    from osiris_cli import quarantine
+    if explicit:
+        return str(Path(explicit).expanduser().resolve()) if 'Path' in globals() else os.path.abspath(os.path.expanduser(explicit))
+    if os.environ.get("OSIRIS_QUARANTINE_QUEUE"):
+        return str(quarantine.default_quarantine_path())
+    abs_lin = os.path.abspath(os.path.expanduser(lineage_ledger))
+    home_root = str(quarantine.default_osiris_home())
+    if abs_lin == home_root or abs_lin.startswith(home_root + os.sep):
+        return str(quarantine.default_quarantine_path())
+    return os.path.join(os.path.dirname(abs_lin), "quarantine_queue.jsonl")
+
+
 def evaluate_candidate(res: TrioResult, lineage_ledger: str, *,
                        authorizer: Optional[Authorizer] = None,
                        policy: Optional[PromotionPolicy] = None,
                        allow_live: bool = False,
-                       allow_partial_skipped: bool = False) -> CandidateDecision:
+                       allow_partial_skipped: bool = False,
+                       quarantine_ledger: Optional[str] = None) -> CandidateDecision:
     """Decide and record. Always appends exactly one lineage row, whatever the outcome."""
     _refuse_live(lineage_ledger, allow_live)
     import genome_ledger
@@ -137,6 +151,10 @@ def evaluate_candidate(res: TrioResult, lineage_ledger: str, *,
     cdigest = candidate_digest(files)
     cid = f"cand_{cdigest[:12]}"
     refs = _evidence_refs(res)
+    from osiris_cli import quarantine as quarantine_mod
+    q_queue = quarantine_mod.QuarantineQueue(_quarantine_path_for_lineage(lineage_ledger, quarantine_ledger))
+    q_gate = q_queue.check_promotion_allowed(candidate_digest=cdigest)
+
     dec = CandidateDecision(cid, cdigest, "UNMEASURED", [], refs)
     kind = "CANDIDATE_UNMEASURED"
 
@@ -180,7 +198,13 @@ def evaluate_candidate(res: TrioResult, lineage_ledger: str, *,
         else:
             ok, why = (policy or PromotionPolicy()).evaluate_promotion(cand, champ, cdigest)
             why = why.replace("PROMOTED:", "PromotionPolicy passed:", 1) if ok else why
-            if not ok:
+            if not q_gate.allowed:
+                if q_gate.status == "BLOCKED_REJECTED":
+                    dec.status, kind = "REJECTED", "CANDIDATE_REJECTED"
+                else:
+                    dec.status, kind = "QUARANTINED", "CANDIDATE_QUARANTINED"
+                dec.reasons = [q_gate.reason]
+            elif not ok:
                 dec.status, kind, dec.reasons = "REJECTED", "CANDIDATE_REJECTED", [why]
             elif authorizer is None:
                 dec.status, kind = "VERIFIED_PENDING_AUTHORIZATION", "CANDIDATE_VERIFIED_PENDING_AUTHORIZATION"
@@ -193,6 +217,20 @@ def evaluate_candidate(res: TrioResult, lineage_ledger: str, *,
                 else:
                     dec.status, kind = "PROMOTED", "CANDIDATE_PROMOTED"
                     dec.reasons = [why, f"authorized: {detail}"]
+
+    if dec.status in ("QUARANTINED", "UNMEASURED") and q_gate.status == "CLEAR":
+        q_queue.enqueue(
+            cid,
+            cdigest,
+            dec.reasons or [f"inconclusive candidate status: {dec.status}"],
+            target_paths=list(files.keys()),
+            run_id=res.run_id,
+            source="evolution_bridge",
+            metrics={
+                "baseline_fitness": dec.baseline_fitness,
+                "candidate_fitness": dec.candidate_fitness,
+            },
+        )
 
     payload = {"candidate_id": cid, "candidate_digest": cdigest, "status": dec.status,
                "reasons": dec.reasons, "criticism": _criticism(res), "evidence_refs": refs,
