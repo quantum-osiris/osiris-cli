@@ -3437,6 +3437,8 @@ def _mentors(command: str = ""):
             if any(st.values()) else "")
     try:
         from osiris_cli import calibration as _cal_mod
+        if cands:
+            _cal_mod.sync_from_bench_candidates(cands)
         cal_block = "\n\n" + _cal_mod.format_summary()
     except Exception:
         cal_block = ""

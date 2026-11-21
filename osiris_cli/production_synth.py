@@ -23,7 +23,6 @@ Implements Iterations R1-R3 of the OSIRIS production-code pipeline ("models prop
 from __future__ import annotations
 
 import ast
-from dataclasses import dataclass, field
 import hashlib
 import json
 import os
@@ -32,6 +31,7 @@ import shutil
 import subprocess
 import sys
 import tempfile
+from dataclasses import dataclass
 from typing import Any, Callable, Dict, List, Optional, Sequence, Set, Tuple
 
 import payload_gate
@@ -464,7 +464,7 @@ def build_invariant_spec(story_text: str, contract: Optional[ModuleContract] = N
                 pairs = ", ".join(f"self.{k}: {v}" for k, v in sorted(cls_c.init_attr_types.items()))
                 invariants.append(
                     f"Preserve `{cls_name}.__init__` attribute container/scalar types ({pairs}); "
-                    f"do not replace a list with a dict or rename public attributes."
+                    f"do not replace a `list` with a `dict` (callers index `[-1]` and iterate in insertion order)."
                 )
             non_none_methods = [
                 m_name for m_name, mc in cls_c.methods.items()
@@ -492,10 +492,11 @@ def build_invariant_spec(story_text: str, contract: Optional[ModuleContract] = N
             "Idempotency: repeating the same operation with identical or whitespace/case-normalized keys must not "
             "create duplicate entries, advance counters, or return None when a handle/ID is expected."
         )
-    if re.search(r"\b(truncat|long|line|regex|pattern|extract|parse|match|claim|gap)", low):
+    if re.search(r"\b(truncat|long|line|regex|pattern|extract|parse|match|claim|gap|number)", low):
         invariants.append(
-            "Unbounded & embedded text: handle >250-character inputs without fixed-length truncation, and match "
-            "numbers/tokens embedded mid-sentence before punctuation (e.g. '0.97.' or '51.843,')."
+            "Unbounded & embedded text: handle >250-character inputs without fixed-length truncation, "
+            r"extract numbers via regex (`r'\d+(?:\.\d+)?'`) rather than calling `int()`/`float()` on prose words "
+            "like `'parity'`, and never split sentences on decimal points inside numbers (e.g. `'0.97'`)."
         )
     if re.search(r"\b(breaker|auth|401|403|status|error|retry| sticky|transient|timeout)", low):
         invariants.append(
@@ -552,11 +553,11 @@ def synthesize_independent_critic_tests(
     making self-confirming "false confidence" collusion structurally impossible.
     """
     lines: List[str] = [
-        f"import inspect",
+        "import inspect",
         f"import {module_name} as _osiris_target",
         "",
         "def _osiris_critic_contract():",
-        f"    assert _osiris_target is not None",
+        "    assert _osiris_target is not None",
     ]
 
     if contract is not None:
@@ -566,8 +567,8 @@ def synthesize_independent_critic_tests(
             lines.append(f"    assert callable(getattr(_osiris_target, {fn_name!r}, None))")
             lines.append(f"    _sig = inspect.signature(_osiris_target.{fn_name})")
             lines.append(
-                f"    _req = [p for p in _sig.parameters.values() "
-                f"if p.kind in (p.POSITIONAL_ONLY, p.POSITIONAL_OR_KEYWORD) and p.default is p.empty]"
+                "    _req = [p for p in _sig.parameters.values() "
+                "if p.kind in (p.POSITIONAL_ONLY, p.POSITIONAL_OR_KEYWORD) and p.default is p.empty]"
             )
             lines.append(
                 f"    assert len(_req) <= {fc.min_positional}, "
@@ -578,7 +579,11 @@ def synthesize_independent_critic_tests(
                 and re.search(r"\b(numbers?|unsourced|made-up|invented|claim|cite|evidence)\b", (story_text or "").lower())
             ):
                 lines.append(
-                    f"    _bad_num = _osiris_target.{fn_name}('telemetry reached 0.9728', 'measured fidelity 0.9722')"
+                    f"    _bad_num = _osiris_target.{fn_name}('parity telemetry reached 0.9728', 'measured fidelity 0.9722 (FAIL)')"
+                )
+                lines.append(
+                    f"    assert _osiris_target.{fn_name}('the ledger is intact', 'all chains verified') == [], "
+                    f"'{fn_name} must accept prose without unsourced numbers'"
                 )
                 lines.append(
                     f"    assert _bad_num and any('0.9728' in str(_p) for _p in _bad_num), "
@@ -595,6 +600,26 @@ def synthesize_independent_critic_tests(
                     f"    assert _sub_num and any('3' in str(_p) for _p in _sub_num), "
                     f"'{fn_name} must treat numbers as whole tokens (3 != 13)'"
                 )
+            if (
+                fc.min_positional == 1
+                and fn_name.startswith("extract_")
+                and (contract.bounded_regex_caps or re.search(r"\b(gap|truncat|long)\b", (story_text or "").lower()))
+            ):
+                lines.append(
+                    "    _long_gap = 'a hash-chained ledger that records ' + ('every genome and prompt change ' * 8) + 'cleanly'"
+                )
+                lines.append(
+                    f"    _g_long = _osiris_target.{fn_name}([f'We have a capability gap: {{_long_gap}}. Unrelated tail.'])"
+                )
+                lines.append(
+                    f"    assert _g_long == [_long_gap], '{fn_name} must extract >250-char description whole without truncation'"
+                )
+                lines.append(
+                    f"    _g_dec = _osiris_target.{fn_name}(['Capability Gap: export 0.97 fidelity values. More.'])"
+                )
+                lines.append(
+                    f"    assert _g_dec == ['export 0.97 fidelity values'], '{fn_name} must not split on decimal point 0.97'"
+                )
         for cls_name, cc in contract.classes.items():
             lines.append(f"    _cls = getattr(_osiris_target, {cls_name!r})")
             for m_name in cc.methods:
@@ -604,7 +629,7 @@ def synthesize_independent_critic_tests(
                         f"'missing method {cls_name}.{m_name}'"
                     )
             if cc.init_min_args == 0:
-                lines.append(f"    _inst = _cls()")
+                lines.append("    _inst = _cls()")
                 for attr, tname in sorted(cc.init_attr_types.items()):
                     lines.append(
                         f"    assert hasattr(_inst, {attr!r}) and isinstance(getattr(_inst, {attr!r}), {tname}), "
@@ -622,11 +647,19 @@ def synthesize_independent_critic_tests(
                             f"    assert _r1 is not None and _r2 is not None, "
                             f"'{cls_name}.{m_name} returned None on initial or duplicate call'"
                         )
+                        if re.search(r"\b(duplicate|twice|idempoten|existing)\b", (story_text or "").lower()):
+                            lines.append(
+                                f"    assert _r1 == _r2, '{cls_name}.{m_name} must return the existing id on duplicate open entry'"
+                            )
                         for attr, tname in sorted(cc.init_attr_types.items()):
                             lines.append(
-                                f"    assert isinstance(getattr(_inst, {attr!r}), {tname}), "
-                                f"'{cls_name}.{attr} mutated away from {tname} after {m_name}()'"
+                                f"    assert isinstance(getattr(_inst, {attr!r}), {tname}) and type(getattr(_inst, {attr!r})) is {tname}, "
+                                f"'{cls_name}.{attr} must remain an exact {tname} (never a dict subclass)'"
                             )
+                            if tname == "list":
+                                lines.append(
+                                    f"    if len(getattr(_inst, {attr!r})) > 0: _ = getattr(_inst, {attr!r})[-1]"
+                                )
 
     critic_extra_fn_present = False
     if critic_model_fn is not None:

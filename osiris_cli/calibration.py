@@ -15,7 +15,7 @@ import os
 import time
 import uuid
 from dataclasses import dataclass
-from decimal import Decimal, InvalidOperation, ROUND_HALF_EVEN
+from decimal import ROUND_HALF_EVEN, Decimal, InvalidOperation
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Sequence, Tuple, Union
 
@@ -454,6 +454,72 @@ class CalibrationLedger:
         return report, receipt_hash
 
 
+def sync_from_bench_candidates(
+    cands: Sequence[Dict[str, Any]],
+    *,
+    path: PathArg = None,
+) -> int:
+    """Idempotently ingest verified `protege.candidates(...)` records into `CalibrationLedger`.
+
+    Maps each candidate's self-test gate (`own_ok`) as empirical self-verification confidence
+    (`1.000000` if `own_ok` else `0.000000`) against `hidden_ok` (`1` or `0`), skipping
+    infrastructure/artifact `integrity` exclusions. Returns count of newly appended rows.
+    """
+    valid = [c for c in cands if isinstance(c, dict) and not c.get("integrity")]
+    if not valid:
+        return 0
+
+    ledger = CalibrationLedger(path)
+    existing_ids = {o.prediction_id for o in ledger.observations()}
+    added = 0
+    for c in valid:
+        run_id = str(c.get("run") or c.get("entry") or "run")
+        task_id = str(c.get("task") or "task")
+        attempt_n = c.get("n") if c.get("n") is not None else 1
+        pid = f"bench-{run_id}-{task_id}-{attempt_n}"
+        if pid in existing_ids:
+            continue
+        mentor = str(c.get("mentor") or "unknown")
+        conf = "1.000000" if c.get("own_ok") else "0.000000"
+        correct = 1 if c.get("hidden_ok") else 0
+        sha_ref = str(c.get("module_sha256") or c.get("entry") or "")[:16]
+        ledger.record_observation(
+            mentor,
+            task_id,
+            conf,
+            correct,
+            prediction_id=pid,
+            run_id=run_id,
+            evidence_ref=f"bench_self_test:{sha_ref}",
+        )
+        existing_ids.add(pid)
+        added += 1
+    return added
+
+
+def sync_bench_ledger(
+    *,
+    bench_dir: PathArg = None,
+    path: PathArg = None,
+) -> int:
+    """Load `~/.osiris/bench/results.ledger.jsonl` via `protege` and sync comparable candidates."""
+    try:
+        import protege
+    except ImportError:
+        return 0
+    bdir = str(Path(bench_dir).expanduser().resolve()) if bench_dir is not None else protege.BENCH_DIR
+    entries, problem = protege.load_ledger(bdir)
+    if problem or not entries:
+        return 0
+    cands, _skipped = protege.candidates(
+        entries,
+        protege.current_suite(),
+        protege.current_runner(),
+        bench_dir=bdir,
+    )
+    return sync_from_bench_candidates(cands, path=path)
+
+
 def format_summary(
     path: PathArg = None,
     *,
@@ -519,11 +585,18 @@ def format_detailed(
 
 
 def run_command(args: str = "", *, osiris_home: PathArg = None) -> str:
-    """CLI handler for ``/calibration [model_id|verify]`` and ``/bench calibration``."""
+    """CLI handler for ``/calibration [model_id|sync|verify]`` and ``/bench calibration``."""
     parts = (args or "").strip().split()
-    if parts and parts[0].lower() == "calibration":
+    from_bench_cmd = bool(parts and parts[0].lower() == "calibration")
+    if from_bench_cmd:
         parts = parts[1:]
     path = default_calibration_path(osiris_home)
+    if parts and parts[0].lower() == "sync":
+        bdir = (default_osiris_home(osiris_home) / "bench") if osiris_home is not None else None
+        added = sync_bench_ledger(bench_dir=bdir, path=path)
+        return f"Synced {added} new benchmark attempt(s) into calibration ledger.\n" + format_detailed(path)
+    if from_bench_cmd and osiris_home is None and "OSIRIS_CALIBRATION_LOG" not in os.environ:
+        sync_bench_ledger(path=path)
     if parts and parts[0].lower() == "verify":
         ledger = CalibrationLedger(path)
         ok, count, err = ledger.verify()
