@@ -2080,14 +2080,14 @@ REPL_COMMANDS = {
     "/power", "/pr", "/provision", "/publish", "/q", "/remember", "/review", "/retrieval", "/run", "/self", "/sim",
     "/skill", "/skills", "/status", "/swarm", "/sync", "/tetra1d", "/tournament", "/train", "/trio", "/unlearn",
     "/update", "/validate", "/voice", "/welcome",
-    "/calibration", "/candidates", "/clusters", "/plan-check", "/provenance", "/quarantine",
+    "/calibration", "/candidates", "/clusters", "/plan-check", "/provenance", "/quarantine", "/readiness",
 }
 # Safe to offer as a one-key [1]: they only read and print.
 READ_ONLY_COMMANDS = {
     "/help", "/status", "/home", "/check", "/osiris", "/mentors", "/why", "/ledger",
     "/architecture", "/lab", "/sources", "/hypotheses", "/gaps", "/runs", "/suggest", "/welcome",
     "/power", "/firewall", "/ollama", "/facts", "/nclm", "/intent", "/skills",
-    "/calibration", "/candidates", "/clusters", "/provenance",
+    "/calibration", "/candidates", "/clusters", "/provenance", "/readiness",
 }
 # Commands that need words after them to do anything.
 NEEDS_ARGUMENT = {"/code": "/code explain osiris_cli/living.py", "/legit": "/legit list",
@@ -2261,6 +2261,10 @@ def dispatch_command(state: OsirisReplState, line: str) -> None:
             elif cmd == "/experiment" and len(parts) > 1 and parts[1].lower() == "run":
                 fixture = parts[2] if len(parts) > 2 else "local-fixture-2"
                 execute_learn(state, generations=2)
+            elif cmd == "/experiment" and len(parts) > 1 and parts[1].lower() == "readiness":
+                from osiris_cli import quantum_readiness
+                rest_idx = line_clean.lower().find("readiness") + len("readiness")
+                print("\n" + quantum_readiness.run_command(line_clean[rest_idx:].strip()) + "\n")
             elif not otc.run_command(line_clean):
                 otc._unknown_command(line_clean)
         except Exception as e:
@@ -2621,6 +2625,9 @@ def dispatch_command(state: OsirisReplState, line: str) -> None:
     elif cmd == "/candidates":
         from osiris_cli import multi_candidate
         print("\n" + multi_candidate.run_command(line_clean[len(parts[0]):].strip()) + "\n")
+    elif cmd == "/readiness":
+        from osiris_cli import quantum_readiness
+        print("\n" + quantum_readiness.run_command(line_clean[len(parts[0]):].strip()) + "\n")
     elif cmd == "/plan-check":
         from osiris_cli import plan_gates
         pfile = line_clean[len(parts[0]):].strip().strip("'\"")

@@ -100,3 +100,19 @@ def save(b):
 
 def briefs():
     return _load()["briefs"]
+
+
+def readiness(brief_or_id, **kwargs):
+    """Run the simulator-first hardware-readiness gate on a saved brief ID or brief dict."""
+    from osiris_cli import quantum_readiness
+
+    if isinstance(brief_or_id, int):
+        matches = [b for b in briefs() if b.get("id") == brief_or_id]
+        if not matches:
+            raise ValueError(f"experiment brief #{brief_or_id} not found")
+        target = matches[0]
+    elif isinstance(brief_or_id, dict):
+        target = brief_or_id
+    else:
+        raise ValueError("brief_or_id must be an integer brief ID or brief dict")
+    return quantum_readiness.assess_experiment_brief(target, **kwargs)

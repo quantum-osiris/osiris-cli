@@ -5879,7 +5879,7 @@ IMMEDIATE_COMMANDS = {
     "/source", "/map", "/hypothesis", "/hypotheses", "/outcome", "/trial", "/evolve", "/capabilities", "/discover",
     "/pr", "/sync", "/provision", "/edge",
     "/provenance", "/calibration", "/quarantine", "/clusters",
-    "/candidates", "/propose",
+    "/candidates", "/propose", "/readiness",
     "exit", "quit",
 }
 
@@ -5891,7 +5891,7 @@ READ_ONLY_COMMANDS = {"/status", "/why", "/home", "/runs", "/runs stats", "/runs
                       "/ui rich", "/ui plain", "/ui access", "/intent", "/intent status",
                       "/organism", "/organism status", "/pr", "/sync", "/provision status", "/edge",
                       "/provenance", "/calibration", "/quarantine", "/clusters", "/runs clusters",
-                      "/candidates"}
+                      "/candidates", "/readiness"}
 
 # OSIRIS_INTENT_CARD=0 sends free-form input straight to the models, as before.
 INTENT_CARD = os.environ.get("OSIRIS_INTENT_CARD", "1") != "0"
@@ -5919,7 +5919,7 @@ def _is_read_only(text: str) -> bool:
         t.split()[:1] in (["/bench"], ["/gap"], ["/gaps"], ["/ask"], ["/plan"], ["/experiment"], ["/experiments"],
                           ["/facts"], ["/cancel"], ["/reroute"], ["/focus"],
                           ["/provenance"], ["/calibration"], ["/quarantine"], ["/clusters"],
-                          ["/candidates"])  # none writes the workspace: bench ledger, drafts, briefs, answers
+                          ["/candidates"], ["/readiness"])  # none writes the workspace: bench ledger, drafts, briefs, answers
 
 
 def _is_unknown_command(text: str) -> bool:
@@ -6231,6 +6231,15 @@ def run_command(user_input: str) -> bool:
         return True
     if first == "/plan":
         _plan(user_input.strip()[5:])
+        return True
+    if user_input.strip().lower().split()[:2] == ["/experiment", "readiness"]:
+        from osiris_cli import quantum_readiness
+        rest_idx = user_input.lower().find("readiness") + len("readiness")
+        print("\n" + quantum_readiness.run_command(user_input[rest_idx:].strip()) + "\n")
+        return True
+    if first == "/readiness":
+        from osiris_cli import quantum_readiness
+        print("\n" + quantum_readiness.run_command(user_input.strip()[len("/readiness"):].strip()) + "\n")
         return True
     if first == "/experiment":
         _experiment(user_input.strip()[len("/experiment"):])

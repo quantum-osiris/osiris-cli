@@ -14,8 +14,9 @@ from __future__ import annotations
 
 import math
 import re
+import shlex
 from dataclasses import dataclass, field
-from typing import Dict, List, Optional
+from typing import Dict, List, Mapping, Optional, Sequence, Tuple, Union
 
 C = 299_792_458.0                # m/s
 G = 6.67430e-11                  # m^3 kg^-1 s^-2
@@ -205,6 +206,71 @@ def parse_quantity(text: str) -> float:
     return value * _UNITS[unit.lower()]
 
 
+def formal_model(
+    variables: Union[str, Mapping[str, str], Sequence[Tuple[str, str]]],
+    equations: Union[str, Sequence[str]],
+    symmetries: Union[str, Sequence[str]] = (),
+) -> Check:
+    """Capability #9: validate declared variables, SI dimensions, equations, and symmetries."""
+    from . import physics_model as pm
+
+    res = pm.build_and_check_model(variables=variables, equations=equations, symmetries=symmetries)
+    q: Dict[str, str] = {
+        "variables": ", ".join(
+            f"{v.name}:[{v.dimension.format_si()}]" for v in res.variables.values()
+        ),
+    }
+    for idx, eq in enumerate(res.equations, 1):
+        q[f"eq {idx} ({eq.raw})"] = eq.detail
+    for sym in res.symmetries:
+        q[f"symmetry ({sym.raw})"] = ("INVARIANT · " if sym.invariant else "BROKEN · ") + sym.detail
+    return Check("formal model", res.verdict, res.summary, q)
+
+
+def compare_standard_theory(
+    prediction: float,
+    *,
+    ref_key: Optional[str] = None,
+    ref_value: Optional[float] = None,
+    ref_uncertainty: float = 0.0,
+    ref_unit: str = "1",
+    source_ref: str = "",
+    pred_uncertainty: float = 0.0,
+    pred_unit: Optional[str] = None,
+    tol_sigma: float = 3.0,
+    rel_tol: float = 1e-4,
+) -> Check:
+    """Capability #10: compare a model prediction against an authoritative standard-theory reference."""
+    from . import physics_model as pm
+
+    cmp = pm.compare_to_standard_theory(
+        prediction,
+        ref_key=ref_key,
+        ref_value=ref_value,
+        ref_uncertainty=ref_uncertainty,
+        ref_unit=ref_unit,
+        source_ref=source_ref,
+        pred_uncertainty=pred_uncertainty,
+        pred_unit=pred_unit,
+        tol_sigma=tol_sigma,
+        rel_tol=rel_tol,
+    )
+    ref = cmp.reference
+    q: Dict[str, str] = {
+        "prediction": f"{cmp.prediction_in_ref_unit:.8g} {ref.unit}"
+        + (f" ± {cmp.pred_uncertainty_in_ref_unit:.3g}" if cmp.pred_uncertainty_in_ref_unit > 0 else ""),
+        "standard reference": f"{ref.value} {ref.unit}"
+        + (f" ± {ref.uncertainty}" if ref.uncertainty > 0 else " (exact)"),
+        "source": ref.source_ref,
+    }
+    if math.isfinite(cmp.residual):
+        q["residual (pred - ref)"] = f"{cmp.residual:+.4e} {ref.unit}"
+        q["relative error"] = f"{cmp.relative_error:.3e}"
+    if cmp.z_score is not None:
+        q["z-score"] = f"{cmp.z_score:.3f} sigma (tol {cmp.tol_sigma:.2f} sigma)"
+    return Check(f"standard-theory compare ({ref.key})", cmp.verdict, cmp.why, q)
+
+
 USAGE = """/physics thrust power=1.1MW [mass=18500kg]     most thrust radiated power can give
 /physics rim omega=8.8e10 radius=5cm              (or freq=14GHz) rim speed vs light
 /physics metric h=1.297e-19 r=5cm [power=4.4MW duration=3.15e7s]  mass-energy a static h_tt implies
@@ -212,14 +278,23 @@ USAGE = """/physics thrust power=1.1MW [mass=18500kg]     most thrust radiated p
 /physics efficiency eta=194%                      energy out over energy in
 /physics entropy shots=1e6 [bits=19.93]           log2(shots) ceiling on measured entropy
 /physics dd window=2us pulse=35.55ns n=8 [ratio=2]  does a DD sequence fit its window
-/physics planck                                   the Planck mass (compare a 'constant' with it)"""
+/physics planck                                   the Planck mass (compare a 'constant' with it)
+/physics model vars="E:J,m:kg,c:m/s" eq="E=m*c**2" [symmetries="time_translation,parity:c"]
+/physics compare ref=tsirelson_chsh pred=2.828 [unc=0.002] [unit=1] [tol_sigma=3.0]
+/physics refs                                     list standard-theory references & citations"""
 
 
 def run_command(args: str) -> str:
-    parts = args.split()
+    try:
+        parts = shlex.split(args)
+    except ValueError:
+        parts = args.split()
     if not parts:
         return USAGE
     name, kv = parts[0].lower(), {}
+    if name == "refs" and len(parts) == 1:
+        from . import physics_model as pm
+        return pm.format_standard_references()
     for p in parts[1:]:
         if "=" not in p:
             return f"expected key=value, got {p!r}\n{USAGE}"
@@ -248,6 +323,21 @@ def run_command(args: str) -> str:
                           parse_quantity(kv["ratio"]) if "ratio" in kv else 2.0)
         elif name == "planck":
             c = planck_mass()
+        elif name == "model":
+            c = formal_model(kv["vars"], kv["eq"], kv.get("symmetries", ""))
+        elif name == "compare":
+            c = compare_standard_theory(
+                float(kv["pred"]),
+                ref_key=kv.get("ref"),
+                ref_value=float(kv["ref_val"]) if "ref_val" in kv else None,
+                ref_uncertainty=float(kv.get("ref_unc", "0")),
+                ref_unit=kv.get("ref_unit", "1"),
+                source_ref=kv.get("source_ref", ""),
+                pred_uncertainty=float(kv.get("unc", "0")),
+                pred_unit=kv.get("unit"),
+                tol_sigma=float(kv.get("tol_sigma", "3.0")),
+                rel_tol=float(kv.get("rel_tol", "1e-4")),
+            )
         else:
             return f"unknown check {name!r}\n{USAGE}"
     except KeyError as e:
