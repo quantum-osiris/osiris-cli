@@ -39,6 +39,22 @@ def _token() -> str:
 
 
 def _call(method: str, url: str, tok: str, data=None, raw: bytes | None = None, ctype="application/json"):
+    """Retry transient failures (5xx, 403/429 flaps, timeouts) per request, with backoff."""
+    import time
+    last = None
+    for attempt in range(8):
+        try:
+            st, body = _call_once(method, url, tok, data, raw, ctype)
+        except Exception as e:  # timeouts, connection resets
+            st, body = 0, {"raw": f"{type(e).__name__}: {e}"}
+        if st not in (0, 403, 429, 500, 502, 503, 504):
+            return st, body
+        last = (st, body)
+        time.sleep(min(60, 5 * 2 ** attempt))
+    return last
+
+
+def _call_once(method: str, url: str, tok: str, data=None, raw: bytes | None = None, ctype="application/json"):
     body = raw if raw is not None else (json.dumps(data).encode() if data is not None else None)
     h = {"Authorization": f"Bearer {tok}"}
     if body is not None and ctype:
@@ -456,73 +472,8 @@ PAPERS = {
             ("phase3/readout_drift_06.py", None),
             ("phase3/readout_context_07.py", None),
             ("phase3/readout_staleness_explore.py", None),
-            ("docs/phase6/ro06_analysis.json", None),
-            ("docs/phase6/ro06_ibm_fez_r00_calibration.json", None),
-            ("docs/phase6/ro06_ibm_fez_r00_counts.json", None),
-            ("docs/phase6/ro06_ibm_fez_r01_calibration.json", None),
-            ("docs/phase6/ro06_ibm_fez_r01_counts.json", None),
-            ("docs/phase6/ro06_ibm_fez_r02_calibration.json", None),
-            ("docs/phase6/ro06_ibm_fez_r02_counts.json", None),
-            ("docs/phase6/ro06_ibm_fez_r03_calibration.json", None),
-            ("docs/phase6/ro06_ibm_fez_r03_counts.json", None),
-            ("docs/phase6/ro06_ibm_fez_r04_calibration.json", None),
-            ("docs/phase6/ro06_ibm_fez_r04_counts.json", None),
-            ("docs/phase6/ro06_ibm_fez_r05_calibration.json", None),
-            ("docs/phase6/ro06_ibm_fez_r05_counts.json", None),
-            ("docs/phase6/ro06_ibm_fez_r06_calibration.json", None),
-            ("docs/phase6/ro06_ibm_fez_r06_counts.json", None),
-            ("docs/phase6/ro06_ibm_fez_r07_calibration.json", None),
-            ("docs/phase6/ro06_ibm_fez_r07_counts.json", None),
-            ("docs/phase6/ro06_ibm_kingston_r00_calibration.json", None),
-            ("docs/phase6/ro06_ibm_kingston_r00_counts.json", None),
-            ("docs/phase6/ro06_ibm_kingston_r01_calibration.json", None),
-            ("docs/phase6/ro06_ibm_kingston_r01_counts.json", None),
-            ("docs/phase6/ro06_ibm_kingston_r02_calibration.json", None),
-            ("docs/phase6/ro06_ibm_kingston_r02_counts.json", None),
-            ("docs/phase6/ro06_ibm_kingston_r03_calibration.json", None),
-            ("docs/phase6/ro06_ibm_kingston_r03_counts.json", None),
-            ("docs/phase6/ro06_ibm_kingston_r04_calibration.json", None),
-            ("docs/phase6/ro06_ibm_kingston_r04_counts.json", None),
-            ("docs/phase6/ro06_ibm_kingston_r05_calibration.json", None),
-            ("docs/phase6/ro06_ibm_kingston_r05_counts.json", None),
-            ("docs/phase6/ro06_ibm_kingston_r06_calibration.json", None),
-            ("docs/phase6/ro06_ibm_kingston_r06_counts.json", None),
-            ("docs/phase6/ro06_ibm_kingston_r07_calibration.json", None),
-            ("docs/phase6/ro06_ibm_kingston_r07_counts.json", None),
-            ("docs/phase6/ro06_ibm_marrakesh_r00_calibration.json", None),
-            ("docs/phase6/ro06_ibm_marrakesh_r00_counts.json", None),
-            ("docs/phase6/ro06_ibm_marrakesh_r01_calibration.json", None),
-            ("docs/phase6/ro06_ibm_marrakesh_r01_counts.json", None),
-            ("docs/phase6/ro06_ibm_marrakesh_r02_calibration.json", None),
-            ("docs/phase6/ro06_ibm_marrakesh_r02_counts.json", None),
-            ("docs/phase6/ro06_ibm_marrakesh_r03_calibration.json", None),
-            ("docs/phase6/ro06_ibm_marrakesh_r03_counts.json", None),
-            ("docs/phase6/ro06_ibm_marrakesh_r04_calibration.json", None),
-            ("docs/phase6/ro06_ibm_marrakesh_r04_counts.json", None),
-            ("docs/phase6/ro06_ibm_marrakesh_r05_calibration.json", None),
-            ("docs/phase6/ro06_ibm_marrakesh_r05_counts.json", None),
-            ("docs/phase6/ro06_ibm_marrakesh_r06_calibration.json", None),
-            ("docs/phase6/ro06_ibm_marrakesh_r06_counts.json", None),
-            ("docs/phase6/ro06_ibm_marrakesh_r07_calibration.json", None),
-            ("docs/phase6/ro06_ibm_marrakesh_r07_counts.json", None),
-            ("docs/phase7/ro06_07_exploratory.json", None),
-            ("docs/phase7/ro06_07_job_usage.json", None),
-            ("docs/phase7/ro07_analysis.json", None),
-            ("docs/phase7/ro07_ibm_fez_calibration.json", None),
-            ("docs/phase7/ro07_ibm_fez_lock.json", None),
-            ("docs/phase7/ro07_ibm_fez_pubs.qpy", None),
-            ("docs/phase7/ro07_ibm_fez_raw_counts.json", None),
-            ("docs/phase7/ro07_ibm_fez_receipt.json", None),
-            ("docs/phase7/ro07_ibm_kingston_calibration.json", None),
-            ("docs/phase7/ro07_ibm_kingston_lock.json", None),
-            ("docs/phase7/ro07_ibm_kingston_pubs.qpy", None),
-            ("docs/phase7/ro07_ibm_kingston_raw_counts.json", None),
-            ("docs/phase7/ro07_ibm_kingston_receipt.json", None),
-            ("docs/phase7/ro07_ibm_marrakesh_calibration.json", None),
-            ("docs/phase7/ro07_ibm_marrakesh_lock.json", None),
-            ("docs/phase7/ro07_ibm_marrakesh_pubs.qpy", None),
-            ("docs/phase7/ro07_ibm_marrakesh_raw_counts.json", None),
-            ("docs/phase7/ro07_ibm_marrakesh_receipt.json", None),
+
+            ("papers/ro06_07_readout_staleness/ro06_ro07_data.zip", None),
         ],
         "meta": {
             "title": ("Stale snapshots, not hidden physics: readout faults on three IBM Heron r2 processors are rare, "
