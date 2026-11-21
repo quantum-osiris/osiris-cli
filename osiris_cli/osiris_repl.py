@@ -2073,6 +2073,7 @@ def execute_trio(rest: str) -> None:
 # Commands this REPL handles itself (the command branches of dispatch_command); a test
 # keeps the set in step with the source.
 REPL_COMMANDS = {
+    "/quantinuum",
     "/apply", "/architecture", "/benchmark", "/bridges", "/chat", "/check", "/clean", "/closure",
     "/code", "/core", "/digest", "/discard", "/dna", "/edge", "/eval-audit", "/experiment", "/fast", "/firewall", "/forge",
     "/forget", "/gate", "/gemini", "/help", "/ignite", "/ingest", "/intent", "/introspect", "/learn",
@@ -2717,6 +2718,10 @@ def dispatch_command(state: OsirisReplState, line: str) -> None:
         edge_provisioner.run_provision_command(sub_argv)
     elif cmd in ("/update", "update"):
         execute_update()
+    elif cmd in ("/quantinuum", "quantinuum"):
+        from osiris_cli.quantinuum_cli import handle_repl_quantinuum
+        tail_q = line_clean[len(parts[0]):].strip()
+        print(handle_repl_quantinuum(tail_q))
     elif cmd in ("/help", "help", "?"):
         display_help()
     elif otc is not None and otc.run_command(line_clean):
@@ -2817,6 +2822,11 @@ def main(argv: Optional[List[str]] = None) -> None:
     """Main entry point for 'osiris' universal command line."""
     if argv is None:
         argv = sys.argv[1:]
+    if argv and argv[0] in ("propose", "verify", "bench", "grant-tier3", "run", "ledger", "quantinuum", "/quantinuum"):
+        from osiris_cli.quantinuum_cli import dispatch_quantinuum_argv
+        q_rc = dispatch_quantinuum_argv(list(argv))
+        if q_rc is not None:
+            sys.exit(q_rc)
     if argv and argv[0] == "train":
         from osiris_cli import train as osiris_train
         osiris_train.main(argv[1:])

@@ -24,13 +24,6 @@
       "reason": "Legacy standalone copilot-sdk-dnalang subpackage not imported by live osiris_cli runtime."
     },
     {
-      "path": "fold7_oscilloscope/fold7_qbyte_oscilloscope.py",
-      "lineno_hint": 351,
-      "kind": "os.system",
-      "status": "dead",
-      "reason": "Standalone Fold7 oscilloscope demo script not imported by live osiris_cli runtime."
-    },
-    {
       "path": "osiris_cli/osiris_repl.py",
       "lineno_hint": 1858,
       "kind": "os.execvp",

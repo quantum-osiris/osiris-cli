@@ -78,3 +78,11 @@ __pycache__/
 
 # Local venv (osiris_env was already ignored above)
 osiris-venv/
+
+# Hygiene guards (prevent backup/dump clutter)
+*.bak
+*.bak2
+Untitled*
+job-*-info.json
+job-*-result.*
+autoadvance_*.json
