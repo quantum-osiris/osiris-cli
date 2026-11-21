@@ -424,6 +424,126 @@ PAPERS = {
             "keywords": ["preregistration", "readout error", "calibration drift", "IBM Heron r2", "TESSERACT-RO-06"],
         },
     },
+    "ro07pre": {
+        "dir": ROOT / "papers" / "ro07_prereg",
+        "related": [{"identifier": "10.5281/zenodo.24407897", "relation": "continues", "scheme": "doi"}],
+        "files": [
+            ("phase3/TESSERACT_RO_07_PREREGISTRATION.md", None),
+            ("phase3/readout_context_07.py", None),
+            ("phase3/readout_drift_06.py", None),
+        ],
+        "meta": {
+            "title": "Preregistration: TESSERACT-RO-07, is readout error on IBM Heron r2 context-dependent?",
+            "description": ("<p>Published before any RO-07 job. On ibm_marrakesh, ibm_fez and ibm_kingston, tests whether qubits "
+                            "whose in-job readout error exceeds IBM's reported value change readout error with measurement "
+                            "context: isolated vs all-qubit multiplexed readout, and other qubits in |0&gt; vs |1&gt;. "
+                            "Selection rule, circuits, contrasts and criteria fixed in the included code.</p>"),
+            "keywords": ["preregistration", "readout error", "readout crosstalk", "IBM Heron r2", "TESSERACT-RO-07"],
+        },
+    },
+    "ro0607": {
+        "dir": ROOT / "papers" / "ro06_07_readout_staleness",
+        "related": [{"identifier": "10.5281/zenodo.24407897", "relation": "isSupplementTo", "scheme": "doi"},
+                    {"identifier": "10.5281/zenodo.24419327", "relation": "isSupplementTo", "scheme": "doi"},
+                    {"identifier": "10.5281/zenodo.24407875", "relation": "continues", "scheme": "doi"}],
+        "files": [
+            ("papers/ro06_07_readout_staleness/ro06_07_readout_staleness.pdf", None),
+            ("papers/ro06_07_readout_staleness/ro06_07_readout_staleness.tex", None),
+            ("papers/ro06_07_readout_staleness/generated.tex", None),
+            ("papers/ro06_07_readout_staleness/generate_tables.py", None),
+            ("phase3/TESSERACT_RO_06_PREREGISTRATION.md", None),
+            ("phase3/TESSERACT_RO_07_PREREGISTRATION.md", None),
+            ("phase3/readout_drift_06.py", None),
+            ("phase3/readout_context_07.py", None),
+            ("phase3/readout_staleness_explore.py", None),
+            ("docs/phase6/ro06_analysis.json", None),
+            ("docs/phase6/ro06_ibm_fez_r00_calibration.json", None),
+            ("docs/phase6/ro06_ibm_fez_r00_counts.json", None),
+            ("docs/phase6/ro06_ibm_fez_r01_calibration.json", None),
+            ("docs/phase6/ro06_ibm_fez_r01_counts.json", None),
+            ("docs/phase6/ro06_ibm_fez_r02_calibration.json", None),
+            ("docs/phase6/ro06_ibm_fez_r02_counts.json", None),
+            ("docs/phase6/ro06_ibm_fez_r03_calibration.json", None),
+            ("docs/phase6/ro06_ibm_fez_r03_counts.json", None),
+            ("docs/phase6/ro06_ibm_fez_r04_calibration.json", None),
+            ("docs/phase6/ro06_ibm_fez_r04_counts.json", None),
+            ("docs/phase6/ro06_ibm_fez_r05_calibration.json", None),
+            ("docs/phase6/ro06_ibm_fez_r05_counts.json", None),
+            ("docs/phase6/ro06_ibm_fez_r06_calibration.json", None),
+            ("docs/phase6/ro06_ibm_fez_r06_counts.json", None),
+            ("docs/phase6/ro06_ibm_fez_r07_calibration.json", None),
+            ("docs/phase6/ro06_ibm_fez_r07_counts.json", None),
+            ("docs/phase6/ro06_ibm_kingston_r00_calibration.json", None),
+            ("docs/phase6/ro06_ibm_kingston_r00_counts.json", None),
+            ("docs/phase6/ro06_ibm_kingston_r01_calibration.json", None),
+            ("docs/phase6/ro06_ibm_kingston_r01_counts.json", None),
+            ("docs/phase6/ro06_ibm_kingston_r02_calibration.json", None),
+            ("docs/phase6/ro06_ibm_kingston_r02_counts.json", None),
+            ("docs/phase6/ro06_ibm_kingston_r03_calibration.json", None),
+            ("docs/phase6/ro06_ibm_kingston_r03_counts.json", None),
+            ("docs/phase6/ro06_ibm_kingston_r04_calibration.json", None),
+            ("docs/phase6/ro06_ibm_kingston_r04_counts.json", None),
+            ("docs/phase6/ro06_ibm_kingston_r05_calibration.json", None),
+            ("docs/phase6/ro06_ibm_kingston_r05_counts.json", None),
+            ("docs/phase6/ro06_ibm_kingston_r06_calibration.json", None),
+            ("docs/phase6/ro06_ibm_kingston_r06_counts.json", None),
+            ("docs/phase6/ro06_ibm_kingston_r07_calibration.json", None),
+            ("docs/phase6/ro06_ibm_kingston_r07_counts.json", None),
+            ("docs/phase6/ro06_ibm_marrakesh_r00_calibration.json", None),
+            ("docs/phase6/ro06_ibm_marrakesh_r00_counts.json", None),
+            ("docs/phase6/ro06_ibm_marrakesh_r01_calibration.json", None),
+            ("docs/phase6/ro06_ibm_marrakesh_r01_counts.json", None),
+            ("docs/phase6/ro06_ibm_marrakesh_r02_calibration.json", None),
+            ("docs/phase6/ro06_ibm_marrakesh_r02_counts.json", None),
+            ("docs/phase6/ro06_ibm_marrakesh_r03_calibration.json", None),
+            ("docs/phase6/ro06_ibm_marrakesh_r03_counts.json", None),
+            ("docs/phase6/ro06_ibm_marrakesh_r04_calibration.json", None),
+            ("docs/phase6/ro06_ibm_marrakesh_r04_counts.json", None),
+            ("docs/phase6/ro06_ibm_marrakesh_r05_calibration.json", None),
+            ("docs/phase6/ro06_ibm_marrakesh_r05_counts.json", None),
+            ("docs/phase6/ro06_ibm_marrakesh_r06_calibration.json", None),
+            ("docs/phase6/ro06_ibm_marrakesh_r06_counts.json", None),
+            ("docs/phase6/ro06_ibm_marrakesh_r07_calibration.json", None),
+            ("docs/phase6/ro06_ibm_marrakesh_r07_counts.json", None),
+            ("docs/phase7/ro06_07_exploratory.json", None),
+            ("docs/phase7/ro06_07_job_usage.json", None),
+            ("docs/phase7/ro07_analysis.json", None),
+            ("docs/phase7/ro07_ibm_fez_calibration.json", None),
+            ("docs/phase7/ro07_ibm_fez_lock.json", None),
+            ("docs/phase7/ro07_ibm_fez_pubs.qpy", None),
+            ("docs/phase7/ro07_ibm_fez_raw_counts.json", None),
+            ("docs/phase7/ro07_ibm_fez_receipt.json", None),
+            ("docs/phase7/ro07_ibm_kingston_calibration.json", None),
+            ("docs/phase7/ro07_ibm_kingston_lock.json", None),
+            ("docs/phase7/ro07_ibm_kingston_pubs.qpy", None),
+            ("docs/phase7/ro07_ibm_kingston_raw_counts.json", None),
+            ("docs/phase7/ro07_ibm_kingston_receipt.json", None),
+            ("docs/phase7/ro07_ibm_marrakesh_calibration.json", None),
+            ("docs/phase7/ro07_ibm_marrakesh_lock.json", None),
+            ("docs/phase7/ro07_ibm_marrakesh_pubs.qpy", None),
+            ("docs/phase7/ro07_ibm_marrakesh_raw_counts.json", None),
+            ("docs/phase7/ro07_ibm_marrakesh_receipt.json", None),
+        ],
+        "meta": {
+            "title": ("Stale snapshots, not hidden physics: readout faults on three IBM Heron r2 processors are rare, "
+                      "persist for tens of minutes, and do not depend on measurement context (TESSERACT-RO-06/RO-07)"),
+            "description": (
+                "<p>Two preregistered experiments (doi:10.5281/zenodo.24407897, doi:10.5281/zenodo.24419327) on ibm_marrakesh, "
+                "ibm_fez and ibm_kingston; 27 jobs, 193 s QPU.</p><ul>"
+                "<li>RO-06, 8 rounds of an all-qubit readout probe: readout faults hidden from IBM's calibration (probe &gt; 15%, "
+                "IBM &lt; 3%) were rare (H1 not supported); every such qubit recovered in another round (H2 supported); faults "
+                "persist across 15-minute rounds 87% of the time.</li>"
+                "<li>RO-07: readout error did not depend on context (isolated vs all-qubit readout; other qubits in 0 vs 1): "
+                "all effects below 1.7 pp; both context hypotheses failed; controls clean.</li>"
+                "<li>Exploratory: IBM's readout values did not change during 1.75 h of sampling, ibm_kingston's not for &gt;15 h; "
+                "when ibm_fez updated, the new values matched our latest probes (rho 0.95 vs 0.81 for the old values).</li></ul>"
+                "<p>The gap between IBM's numbers and in-job readout is stale calibration plus hour-scale qubit changes. Record "
+                "contains paper, source, all counts, calibrations, locks, QPYs, analyses and code.</p>"
+            ),
+            "keywords": ["readout error", "calibration drift", "readout crosstalk", "IBM Heron r2", "ibm_marrakesh",
+                         "ibm_fez", "ibm_kingston", "preregistration", "TESSERACT-RO-06", "TESSERACT-RO-07"],
+        },
+    },
 }
 
 

@@ -1,0 +1,23 @@
+{
+  "paper": "ro07pre",
+  "deposition_id": 24419327,
+  "state": "published",
+  "files": {
+    "TESSERACT_RO_07_PREREGISTRATION.md": "d606da4c335858c18f5ed1681b31d8c9aea6be105bd46b6a1b156ed5be2898da",
+    "readout_context_07.py": "c1ea0de85189ff2316ae1f60c4c29792ec7f2fcac8ffecbb52045d2a7218aa2f",
+    "readout_drift_06.py": "c7a2f174ddc762252071393c8c85543a467ab60f5851a0e5dc7813011331adc5",
+    "SHA256SUMS.txt": "9246d472200c212e2f3ea037c676e952469dd93a4ac7667596064f1c08a558be"
+  },
+  "sources": {
+    "TESSERACT_RO_07_PREREGISTRATION.md": "phase3/TESSERACT_RO_07_PREREGISTRATION.md",
+    "readout_context_07.py": "phase3/readout_context_07.py",
+    "readout_drift_06.py": "phase3/readout_drift_06.py",
+    "SHA256SUMS.txt": "papers/ro07_prereg/SHA256SUMS.txt"
+  },
+  "draft_html": "https://zenodo.org/deposit/24419327",
+  "prereserved_doi": "10.5281/zenodo.24419327",
+  "drafted_utc": "2026-11-21T12:55:22.209570+00:00",
+  "doi": "10.5281/zenodo.24419327",
+  "record_url": "https://zenodo.org/record/24419327",
+  "published_utc": "2026-11-21T12:55:26.728012+00:00"
+}

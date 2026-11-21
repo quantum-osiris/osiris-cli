@@ -1,0 +1,197 @@
+\documentclass[10pt,twocolumn]{article}
+\usepackage[margin=0.8in]{geometry}
+\usepackage{amsmath,amssymb,booktabs,xcolor}
+\usepackage[hidelinks]{hyperref}
+\usepackage{caption}
+\captionsetup{font=small,labelfont=bf}
+\input{generated.tex}
+
+\title{\bfseries Stale snapshots, not hidden physics: readout faults on three IBM Heron r2 processors
+are rare, persist for tens of minutes, and do not depend on measurement context}
+\author{Devin Phillip Davis\\ \small Agile Defense Systems LLC}
+\date{21 November 2026 \quad (TESSERACT-RO-06 and RO-07 results, version 1.0)}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+\noindent
+Earlier experiments in this series (MAP-03 to MAP-05) found qubits on \texttt{ibm\_marrakesh} whose
+in-job readout error reached 34--54\% while IBM's calibration listed about 1\%, and qubit-selection
+rules that reversed their ranking within 90 minutes. We ran two preregistered follow-ups
+(\NJobs{} jobs, \TotalSeconds{}\,s QPU). In RO-06, an all-qubit readout probe ran 8 times on
+\texttt{ibm\_marrakesh}, \texttt{ibm\_fez} and \texttt{ibm\_kingston}. ``Hidden faults'' (probe
+$>15\%$, IBM $<3\%$) were rare: 0.13--0.5 per device per round, so H1 was not supported. All
+\HTwoEver{} qubits that were ever hidden faults recovered in another round (H2 supported). A faulty
+qubit was still faulty 15 minutes later in \HThreeFF\% of cases, against \HThreeOF\% for a healthy
+one. RO-07 tested whether readout error depends on context (isolated against simultaneous readout of
+all qubits, other qubits in $|0\rangle$ or $|1\rangle$). It does not: every context effect was below
+\MaxD\,pp, and both preregistered context hypotheses failed. A further analysis, not preregistered,
+points to the explanation. IBM's reported readout errors did not change once in 1.75 hours of
+15-minute sampling on any device; \texttt{ibm\_kingston}'s did not change for more than 15 hours.
+When \texttt{ibm\_fez}'s values did update, they matched our most recent probes better than the old
+values did (Spearman $\rho=0.95$ against $0.81$). The gap between IBM's numbers and in-job readout is
+explained by infrequent calibration combined with qubits that change on an hour scale, not by a
+difference in how readout is measured.
+\end{abstract}
+
+\section{Background}
+MAP-03~\cite{map03} reported q46 on \texttt{ibm\_marrakesh} at 54\% readout error against IBM's 1.1\%,
+which reversed a 10\,pp layout effect. MAP-05~\cite{map05} saw the same qubit fall to 0.6\% within 90
+minutes, and the probe-versus-calibration layout contrast flipped sign on three devices. Two
+explanations were open: IBM's calibration and our probe measure readout differently (context), or
+IBM's calibration is simply out of date (staleness). RO-06~\cite{pre6} and RO-07~\cite{pre7}, both
+preregistered on Zenodo before any job, test the first and describe the time course.
+
+\section{Methods}
+\paragraph{RO-06.} Each of 8 rounds submitted one probe job per device (all-$|0\rangle$ and
+all-$|1\rangle$ on every qubit, 3 repeats, 2{,}048 shots) and recorded IBM's calibration at
+submission. $e_{\mathrm{probe}}$ is the mean of $p(1|0)$ and $p(0|1)$. A hidden fault is
+$e_{\mathrm{probe}}>0.15$ with IBM's value $<0.03$, and recovery is $e_{\mathrm{probe}}<0.05$. Rounds
+were 15 minutes apart, with one deviation: the client machine slept after round 0 (20 November,
+22:28\,UTC), and rounds 1--7 ran from 12:08\,UTC the next day. The 0$\to$1 pair therefore spans
+13.5\,h. We report the preregistered analysis together with a sensitivity check that drops it.
+
+\paragraph{RO-07.} On each device, a selection rule fixed in advance and applied to RO-06's last round
+chose up to 3 DISAGREE qubits (largest $e_{\mathrm{probe}}-e_{\mathrm{IBM}}$), up to 2 AGREE qubits
+(bad readout that IBM reports) and 2 controls, none of them coupled to each other. One job ran 6
+interleaved repeats of six circuits: ISO (only the selected qubits measured), ALL (every qubit
+prepared alike and measured) and FLIP (selected qubits in $b$, all others in $1-b$, all measured), each
+for $b\in\{0,1\}$. The multiplexing effect is $D_{\mathrm{mux}}=e(\mathrm{ALL})-e(\mathrm{ISO})$ and the
+neighbour effect is $D_{\mathrm{nbr}}=e(\mathrm{FLIP})-e(\mathrm{ALL})$, each tested with a paired $t$
+over repeats (df $=5$). RO-07 ran at about 14:27\,UTC, roughly 40 minutes after RO-06's last round.
+
+\section{Results}
+
+\begin{table}[t]
+\centering\scriptsize\setlength{\tabcolsep}{3pt}
+\caption{RO-06 H1: hidden faults per round (rounds 0--7) and H4: median Spearman $\rho$ between
+probe and IBM readout errors.}
+\begin{tabular}{@{}llrr@{}}
+\toprule
+Device & Hidden faults by round & Mean & $\rho$\\
+\midrule
+\HOneRows
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[t]
+\centering\scriptsize\setlength{\tabcolsep}{3pt}
+\caption{Every hidden fault observed in RO-06 (readout error, \%).}
+\begin{tabular}{@{}lrllrr@{}}
+\toprule
+Device & Round & UTC & Qubit & Probe & IBM\\
+\midrule
+\HiddenRows
+\bottomrule
+\end{tabular}
+\end{table}
+
+\paragraph{H1, prevalence: not supported.} No device had a hidden fault in a majority of rounds. Most
+badly reading qubits (for example q130 and q48 on \texttt{ibm\_marrakesh} at 45--50\%) are reported
+correctly by IBM.
+
+\paragraph{H2, intermittency: supported.} All \HTwoRec{} of \HTwoEver{} qubits that were hidden faults
+in some round had recovered ($<5\%$) in another.
+
+\paragraph{H3, persistence.} Over consecutive rounds, P(fault at $r+1$ | fault at $r$) $=$
+\HThreeFF\% and P(fault at $r+1$ | healthy at $r$) $=$ \HThreeOF\% (Fisher exact
+$p<10^{-100}$). Dropping the 13.5\,h pair gives \SensFF\% and \SensOF\%. Faults typically last at
+least tens of minutes, and they appear and disappear between rounds. The median spread between repeats
+within a round was \NoiseWithin\,pp, against a median change of \NoiseBetween\,pp between rounds for
+flagged qubits, so these changes are not sampling noise.
+
+\begin{table*}[t]
+\centering\scriptsize\setlength{\tabcolsep}{3pt}
+\caption{RO-07. Readout error (\%) at selection (RO-06 last round: probe and IBM) and in each RO-07
+context; $D_{\mathrm{mux}}$ and $D_{\mathrm{nbr}}$ in pp with 95\% CI over 6 repeats. Jobs:
+\ROSevenJobs.}
+\begin{tabular}{@{}lllrrrrrll@{}}
+\toprule
+Device & Qubit & Group & Probe & IBM & ISO & ALL & FLIP & $D_{\mathrm{mux}}$ & $D_{\mathrm{nbr}}$\\
+\midrule
+\ROSevenRows
+\bottomrule
+\end{tabular}
+\end{table*}
+
+\paragraph{RO-07, context: R1 and R2 not supported; R3 (controls) satisfied.} No qubit changed by more
+than \MaxD\,pp between contexts, far below the 5\,pp criterion. A qubit at 24\% reads at 24\% whether
+measured alone or with 155 others, and whatever the others' states. A few effects are statistically
+non-zero at the 1--2\,pp level (q130 on \texttt{ibm\_marrakesh}, q121 on \texttt{ibm\_kingston}, where
+$D_{\mathrm{nbr}}$ is positive), which is small multiplexed-readout crosstalk of the size reported in
+the literature. Context does not explain the 10--30\,pp gaps. Five of the nine DISAGREE qubits had
+also recovered (below 5\%) in the 40 minutes between selection and RO-07 (for example q111 on
+\texttt{ibm\_marrakesh}, 31.7\% to 2.0\%), which is another instance of H2.
+
+\begin{table}[t]
+\centering\scriptsize\setlength{\tabcolsep}{3pt}
+\caption{Exploratory. Qubits (of 156) whose IBM-reported readout error changed between consecutive
+snapshots: RO-06 rounds 0$\to$1 (13.5\,h), 1$\to$2, \dots, 6$\to$7 (15\,min each), then 7$\to$RO-07
+(40\,min).}
+\begin{tabular}{@{}l@{\hspace{4pt}}l@{}}
+\toprule
+Device & Qubits changed per interval\\
+\midrule
+\CadRows
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[t]
+\centering\scriptsize\setlength{\tabcolsep}{3pt}
+\caption{Exploratory. \texttt{ibm\_fez}'s new IBM values (updated between 13:48 and 14:26\,UTC)
+against the probe from each RO-06 round. Old values against the round-7 probe: $\rho=\OldRho$,
+median $|$gap$|$ \OldGap\,pp.}
+\begin{tabular}{@{}rlrr@{}}
+\toprule
+Round & UTC & $\rho$ & Median $|$gap$|$ (pp)\\
+\midrule
+\AlignRows
+\bottomrule
+\end{tabular}
+\end{table}
+
+\paragraph{Exploratory: calibration cadence.} IBM's readout errors change in discrete updates.
+\texttt{ibm\_marrakesh} and \texttt{ibm\_fez} updated overnight. During the 1.75\,h of 15-minute
+sampling no device updated, and \texttt{ibm\_kingston} did not update at all between 22:28 on 20
+November and 14:26 on 21 November. When \texttt{ibm\_fez} updated, the new values agreed best with
+our latest probes (rounds 6--7, $\rho\approx0.95$) and better than the values they replaced
+($\rho=\OldRho$). That is what a correct but infrequent measurement would produce.
+
+\section{Discussion}
+Taken together, the results point to a simple account. IBM's per-qubit readout errors are accurate
+when measured, but they are refreshed only every several to 15 or more hours. Individual qubits move
+between about 1\% and 30--50\% readout error on a time scale of tens of minutes to hours. A layout
+chosen from the calibration therefore inherits whatever changed since the last update, which accounts
+for MAP-03's reversal and MAP-05's sign flip. Context-dependent readout, the alternative mechanism,
+is ruled out at the 5\,pp level. The practical rule from MAP-04 and MAP-05 stands: probe all qubits
+immediately before a job, and exclude any qubit that is grossly faulty at that moment.
+
+\paragraph{Limitations.} One day; three devices; 8 rounds. The cadence and alignment analyses were not
+preregistered. The 15-minute grid cannot resolve faults shorter than about 15 minutes. RO-07 targeted
+qubits whose faults had partly recovered by run time, which weakens the context test for the
+remaining faulty qubits (q31 and q93 on \texttt{ibm\_marrakesh}, q11 on \texttt{ibm\_fez}, q121 on
+\texttt{ibm\_kingston}). We measured only all-0/all-1 and complementary-state contexts.
+
+\section*{Data and code availability}
+The record contains all probe counts and calibration snapshots for the 24 RO-06 jobs and 3 RO-07
+jobs, the RO-07 locks and QPYs, the per-job usage, the analysis JSONs, and the code that produces
+every number here, with a SHA-256 manifest: in \texttt{phase3/}, \texttt{readout\_drift\_06.py},
+\texttt{readout\_context\_07.py} and \texttt{readout\_staleness\_explore.py}; and the paper's
+\texttt{generate\_tables.py}.
+
+\section*{Acknowledgements}
+We acknowledge the use of IBM Quantum services; the views expressed are the author's and do not
+reflect the official policy or position of IBM or the IBM Quantum team. Analysis code and this
+manuscript were prepared with the assistance of AI coding tools under the author's direction and
+review.
+
+\begin{thebibliography}{9}\small
+\bibitem{map03} D.~P.~Davis, Zenodo, doi:10.5281/zenodo.24406525 (2026).
+\bibitem{map05} D.~P.~Davis, Zenodo, doi:10.5281/zenodo.24407875 (2026).
+\bibitem{pre6} D.~P.~Davis, ``Preregistration: TESSERACT-RO-06,'' Zenodo, doi:10.5281/zenodo.24407897 (2026).
+\bibitem{pre7} D.~P.~Davis, ``Preregistration: TESSERACT-RO-07,'' Zenodo, doi:10.5281/zenodo.24419327 (2026).
+\end{thebibliography}
+\end{document}
