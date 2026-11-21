@@ -467,8 +467,7 @@ def test_wave2_architecture_marks_l3_l6_l7_l8_built_and_keeps_wave3_wave4_honest
     by_key = {ly.key: ly for ly in architecture.LAYERS}
     for key in ("L0", "L1", "L2", "L3", "L5", "L6", "L7", "L8"):
         assert by_key[key].missing == (), f"{key} still has missing items: {by_key[key].missing}"
-    # Wave 3 (L4) remains honestly listed as not built until Wave 3 runs
-    assert by_key["L4"].missing == ("baseline, alternative and conservative candidates side by side",)
+    assert by_key["L4"].missing == ()
 
     state = architecture.live_state(None, None)
     text_narrow = architecture.full(osiris_ui.Canvas("plain", 80), state)

@@ -3163,6 +3163,23 @@ def _plan(text: str):
     """'/plan <goal>' or '/plan brief N': the Architect's plan or critique as
     TEXT ONLY -- grounded in the same verified facts, no code, no files."""
     ui = osiris_ui.Canvas()
+    if text.strip().lower().startswith("check "):
+        from osiris_cli import plan_gates
+        plan_file = text.strip()[6:].strip().strip("'\"")
+        try:
+            with open(plan_file, encoding="utf-8") as _pf:
+                _pdoc = json.load(_pf)
+            _audit = plan_gates.validate_plan_v1(_pdoc, root=os.getcwd())
+            _status = "PASS" if _audit.gates_passed else "FAIL"
+            print(f"\n[PLAN V1 AUDIT: {_status}] sha256={_audit.plan_sha256[:12]}\n")
+            for _chk in _audit.gates.get("checks", []):
+                print(f"  - {_chk['name']}: measured={_chk['measured']} threshold={_chk['threshold']} -> {'PASS' if _chk['passed'] else 'FAIL'} ({_chk['reason']})")
+            for _err in _audit.errors:
+                print(f"  ! {_err}")
+            print()
+        except Exception as _pe:
+            print(f"\n[!] Plan check failed: {_pe}\n")
+        return
     m = re.fullmatch(r"brief\s+(\d+)", text.strip(), re.IGNORECASE)
     if m:
         b = next((x for x in experiments.briefs() if x["id"] == int(m.group(1))), None)
@@ -5862,6 +5879,7 @@ IMMEDIATE_COMMANDS = {
     "/source", "/map", "/hypothesis", "/hypotheses", "/outcome", "/trial", "/evolve", "/capabilities", "/discover",
     "/pr", "/sync", "/provision", "/edge",
     "/provenance", "/calibration", "/quarantine", "/clusters",
+    "/candidates", "/propose",
     "exit", "quit",
 }
 
@@ -5872,7 +5890,8 @@ READ_ONLY_COMMANDS = {"/status", "/why", "/home", "/runs", "/runs stats", "/runs
                       "/lab", "/sources", "/map", "/hypotheses",
                       "/ui rich", "/ui plain", "/ui access", "/intent", "/intent status",
                       "/organism", "/organism status", "/pr", "/sync", "/provision status", "/edge",
-                      "/provenance", "/calibration", "/quarantine", "/clusters", "/runs clusters"}
+                      "/provenance", "/calibration", "/quarantine", "/clusters", "/runs clusters",
+                      "/candidates"}
 
 # OSIRIS_INTENT_CARD=0 sends free-form input straight to the models, as before.
 INTENT_CARD = os.environ.get("OSIRIS_INTENT_CARD", "1") != "0"
@@ -5899,7 +5918,8 @@ def _is_read_only(text: str) -> bool:
     return t in READ_ONLY_COMMANDS or t.split()[:2] == ["/run", "show"] or \
         t.split()[:1] in (["/bench"], ["/gap"], ["/gaps"], ["/ask"], ["/plan"], ["/experiment"], ["/experiments"],
                           ["/facts"], ["/cancel"], ["/reroute"], ["/focus"],
-                          ["/provenance"], ["/calibration"], ["/quarantine"], ["/clusters"])  # none writes the workspace: bench ledger, drafts, briefs, answers
+                          ["/provenance"], ["/calibration"], ["/quarantine"], ["/clusters"],
+                          ["/candidates"])  # none writes the workspace: bench ledger, drafts, briefs, answers
 
 
 def _is_unknown_command(text: str) -> bool:
@@ -6268,6 +6288,39 @@ def run_command(user_input: str) -> bool:
     if user_input.strip().lower().split()[:1] == ["/quarantine"]:
         from osiris_cli import quarantine
         print("\n" + quarantine.run_command(" ".join(user_input.strip().split()[1:]), origin="human") + "\n")
+        return True
+    if user_input.strip().lower().split()[:1] == ["/candidates"]:
+        from osiris_cli import multi_candidate
+        ui_cols = osiris_ui.Canvas().cols
+        def _stage_selected(ev):
+            _propose_write(ev.target_rel_path, ev.module_source, allow_self_modify=False,
+                           story_meta={"strategy": ev.strategy, "candidate_digest": ev.module_sha256})
+            _pending_write["candidate_digest"] = ev.module_sha256
+        print("\n" + multi_candidate.run_command(
+            " ".join(user_input.strip().split()[1:]), width=min(92, max(68, ui_cols - 2)), on_select=_stage_selected
+        ) + "\n")
+        return True
+    if user_input.strip().lower().split()[:1] == ["/propose"]:
+        from osiris_cli import multi_candidate
+        raw_rest = user_input.strip()[len("/propose"):].strip()
+        if "::" not in raw_rest:
+            print("\nUsage: /propose <relative_py_path> :: <goal specification>\n")
+            return True
+        rel_target, goal_spec = [p.strip() for p in raw_rest.split("::", 1)]
+        ui_cols = osiris_ui.Canvas().cols
+        bundle = multi_candidate.propose_three_candidates(
+            root=os.getcwd(),
+            target_rel_path=rel_target,
+            goal=goal_spec,
+            proposer_fn=lambda _strat, prompt: (_synthesize(prompt, structured=False)[0] or ""),
+        )
+        multi_candidate.set_active_bundle(bundle)
+        print("\n" + multi_candidate.render_side_by_side(bundle, width=min(92, max(68, ui_cols - 2))) + "\n")
+        if bundle.selected is not None:
+            _propose_write(bundle.selected.target_rel_path, bundle.selected.module_source,
+                           allow_self_modify=False,
+                           story_meta={"strategy": bundle.selected.strategy, "bundle_id": bundle.bundle_id})
+            _pending_write["candidate_digest"] = bundle.selected.module_sha256
         return True
     if user_input.strip().lower() == "/check":
         _check()

@@ -2080,13 +2080,14 @@ REPL_COMMANDS = {
     "/power", "/pr", "/provision", "/publish", "/q", "/remember", "/review", "/retrieval", "/run", "/self", "/sim",
     "/skill", "/skills", "/status", "/swarm", "/sync", "/tetra1d", "/tournament", "/train", "/trio", "/unlearn",
     "/update", "/validate", "/voice", "/welcome",
-    "/calibration", "/clusters", "/provenance", "/quarantine",
+    "/calibration", "/candidates", "/clusters", "/plan-check", "/provenance", "/quarantine",
 }
 # Safe to offer as a one-key [1]: they only read and print.
 READ_ONLY_COMMANDS = {
     "/help", "/status", "/home", "/check", "/osiris", "/mentors", "/why", "/ledger",
     "/architecture", "/lab", "/sources", "/hypotheses", "/gaps", "/runs", "/suggest", "/welcome",
     "/power", "/firewall", "/ollama", "/facts", "/nclm", "/intent", "/skills",
+    "/calibration", "/candidates", "/clusters", "/provenance",
 }
 # Commands that need words after them to do anything.
 NEEDS_ARGUMENT = {"/code": "/code explain osiris_cli/living.py", "/legit": "/legit list",
@@ -2617,6 +2618,27 @@ def dispatch_command(state: OsirisReplState, line: str) -> None:
     elif cmd == "/clusters":
         from osiris_cli import failure_clustering
         print("\n" + failure_clustering.run_command(line_clean[len(parts[0]):].strip()) + "\n")
+    elif cmd == "/candidates":
+        from osiris_cli import multi_candidate
+        print("\n" + multi_candidate.run_command(line_clean[len(parts[0]):].strip()) + "\n")
+    elif cmd == "/plan-check":
+        from osiris_cli import plan_gates
+        pfile = line_clean[len(parts[0]):].strip().strip("'\"")
+        if not pfile:
+            print("\nUsage: /plan-check <plan_v1.json path>\n")
+        else:
+            try:
+                with open(pfile, encoding="utf-8") as _fh:
+                    _doc = json.load(_fh)
+                _res = plan_gates.validate_plan_v1(_doc, root=os.getcwd())
+                print(f"\nPlan v1 valid={_res.valid} gates_passed={_res.gates_passed} sha256={_res.plan_sha256[:12]}")
+                for _c in _res.gates.get("checks", []):
+                    print(f"  {_c['name']}: {_c['measured']} / {_c['threshold']} ({'PASS' if _c['passed'] else 'FAIL'})")
+                for _e in _res.errors:
+                    print(f"  ! {_e}")
+                print()
+            except Exception as _exc:
+                print(f"\n[!] /plan-check failed: {_exc}\n")
     elif cmd == "/check":
         living = get_living()
         names = [p for p in parts[1:] if p in ("trainer", "git", "ledger", "system", "evidence")] or \

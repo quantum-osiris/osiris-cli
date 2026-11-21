@@ -83,7 +83,9 @@ def test_full_view_lists_what_is_not_built(tmp_path, ledger):
     assert "not built: an independent critic that tries to falsify a candidate" not in text
     assert "a quarantine queue for inconclusive candidates -- osiris_cli/quarantine.py" in text
     assert "not built: a quarantine queue for inconclusive candidates" not in text
-    assert "not built: baseline, alternative and conservative candidates side by side" in text
+    assert "baseline, alternative and conservative candidates side by side" in text and "osiris_cli/multi_candidate.py" in text
+    assert "not built: baseline, alternative and conservative candidates side by side" not in text
+    assert "not built: formal model builder (variables, units, symmetries)" in text
     assert text.count("not built:") == sum(len(ly.missing) for ly in arch.LAYERS) + \
         sum(len(s[2]) for s in arch.SUBSYSTEMS)
 
