@@ -1,0 +1,10 @@
+{
+  "job_id": "dc0uhdts2omc7389tmt0",
+  "backend": "ibm_marrakesh",
+  "shots": 1000,
+  "n_pubs": 216,
+  "qpy_sha256": "d78d15b7a2040fb10e54a423443da1dfda3be15164e1bd1b03fe349d8650f1aa",
+  "prereg_doi": "10.5281/zenodo.24425416",
+  "submitted_utc": "2026-11-21T18:53:43.247070+00:00",
+  "quota_remaining_before_s": 164.0
+}
