@@ -90,7 +90,11 @@ def bare_hp004_counts() -> dict:
     out = {}
     for b1, b2 in BASES:
         qc = m.build_hp004_circuit("Arm B", b1, b2)
-        out[b1 + b2] = {"ibm_cz": sum(1 for i in qc.data if i.operation.name == "cz"), **_tk_counts(qiskit_to_tk(qc))}
+        try:  # prefer the official converter (gives the larger, conservative 1-qubit count)
+            from pytket.extensions.qiskit import qiskit_to_tk as conv
+        except ImportError:
+            conv = qiskit_to_tk
+        out[b1 + b2] = {"ibm_cz": sum(1 for i in qc.data if i.operation.name == "cz"), **_tk_counts(conv(qc))}
     return out
 
 

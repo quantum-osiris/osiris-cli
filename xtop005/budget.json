@@ -2,7 +2,7 @@
  "bare_hp004_compiled_h2": {
   "XX": {
    "ibm_cz": 32,
-   "n1": 38,
+   "n1": 65,
    "n2": 18,
    "measure": 4,
    "reset": 0,
@@ -11,7 +11,7 @@
   },
   "XY": {
    "ibm_cz": 32,
-   "n1": 37,
+   "n1": 65,
    "n2": 18,
    "measure": 4,
    "reset": 0,
@@ -20,7 +20,7 @@
   },
   "XZ": {
    "ibm_cz": 32,
-   "n1": 38,
+   "n1": 63,
    "n2": 18,
    "measure": 4,
    "reset": 0,
@@ -29,7 +29,7 @@
   },
   "YX": {
    "ibm_cz": 32,
-   "n1": 39,
+   "n1": 65,
    "n2": 18,
    "measure": 4,
    "reset": 0,
@@ -38,7 +38,7 @@
   },
   "YY": {
    "ibm_cz": 32,
-   "n1": 38,
+   "n1": 65,
    "n2": 18,
    "measure": 4,
    "reset": 0,
@@ -47,7 +47,7 @@
   },
   "YZ": {
    "ibm_cz": 32,
-   "n1": 39,
+   "n1": 63,
    "n2": 18,
    "measure": 4,
    "reset": 0,
@@ -56,7 +56,7 @@
   },
   "ZX": {
    "ibm_cz": 32,
-   "n1": 39,
+   "n1": 63,
    "n2": 18,
    "measure": 4,
    "reset": 0,
@@ -65,7 +65,7 @@
   },
   "ZY": {
    "ibm_cz": 32,
-   "n1": 38,
+   "n1": 63,
    "n2": 18,
    "measure": 4,
    "reset": 0,
@@ -74,7 +74,7 @@
   },
   "ZZ": {
    "ibm_cz": 32,
-   "n1": 39,
+   "n1": 61,
    "n2": 18,
    "measure": 4,
    "reset": 0,
@@ -222,57 +222,57 @@
    "shots_ibm": 4096,
    "shots_quantinuum": 1000,
    "arm": "A",
-   "hqc_per_depth_9_bases": 546.0,
-   "hqc_all_3_depths": 1638.0
+   "hqc_per_depth_9_bases": 591.6,
+   "hqc_all_3_depths": 1774.8
   },
   {
    "shots_ibm": 4096,
    "shots_quantinuum": 1000,
    "arm": "B",
-   "hqc_per_depth_9_bases": 546.0,
-   "hqc_all_3_depths": 1638.0
+   "hqc_per_depth_9_bases": 591.6,
+   "hqc_all_3_depths": 1774.8
   },
   {
    "shots_ibm": 4096,
    "shots_quantinuum": 1000,
    "arm": "C",
-   "hqc_per_depth_9_bases": 1560.6,
-   "hqc_all_3_depths": 4681.8
+   "hqc_per_depth_9_bases": 1606.2,
+   "hqc_all_3_depths": 4818.6
   },
   {
    "shots_ibm": 4096,
    "shots_quantinuum": 1000,
    "arm": "D",
-   "hqc_per_depth_9_bases": 1560.6,
-   "hqc_all_3_depths": 4681.8
+   "hqc_per_depth_9_bases": 1606.2,
+   "hqc_all_3_depths": 4818.6
   },
   {
    "shots_ibm": 2048,
    "shots_quantinuum": 500,
    "arm": "A",
-   "hqc_per_depth_9_bases": 295.5,
-   "hqc_all_3_depths": 886.5
+   "hqc_per_depth_9_bases": 318.3,
+   "hqc_all_3_depths": 954.9
   },
   {
    "shots_ibm": 2048,
    "shots_quantinuum": 500,
    "arm": "B",
-   "hqc_per_depth_9_bases": 295.5,
-   "hqc_all_3_depths": 886.5
+   "hqc_per_depth_9_bases": 318.3,
+   "hqc_all_3_depths": 954.9
   },
   {
    "shots_ibm": 2048,
    "shots_quantinuum": 500,
    "arm": "C",
-   "hqc_per_depth_9_bases": 802.8,
-   "hqc_all_3_depths": 2408.4
+   "hqc_per_depth_9_bases": 825.6,
+   "hqc_all_3_depths": 2476.8
   },
   {
    "shots_ibm": 2048,
    "shots_quantinuum": 500,
    "arm": "D",
-   "hqc_per_depth_9_bases": 802.8,
-   "hqc_all_3_depths": 2408.4
+   "hqc_per_depth_9_bases": 825.6,
+   "hqc_all_3_depths": 2476.8
   }
  ],
  "ibm_seconds": {

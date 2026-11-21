@@ -39,7 +39,7 @@ Both totals are for 108 circuits: 4 arms × 9 bases × 3 depths.
 | Resource | Proposal as written | Half-size variant |
 | --- | --- | --- |
 | IBM seconds | 4,096 shots: 136 s per backend, 271 s for two backends | 2,048 shots: 69 s per backend, 139 s for two |
-| Quantinuum HQC (lower bound) | 1,000 shots: 12,640 | 500 shots: 6,590 |
+| Quantinuum HQC (lower bound) | 1,000 shots: 13,187 | 500 shots: 6,863 |
 
 - **IBM rate:** estimated at 0.30 ms per shot plus 3 s per job. This is this account's measured rate (MAP-04: 0.29 ms per shot; QEC-001 dynamic circuits: 0.28 ms per shot), not an IBM formula.
 - **HQC formula:** `5 + C(N1q + 10 N2q + 5 Nm)/5000` per circuit, on circuits compiled offline for H2-1.
