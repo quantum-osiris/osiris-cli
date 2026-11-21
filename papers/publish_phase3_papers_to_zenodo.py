@@ -518,6 +518,36 @@ PAPERS = {
                          "IBM Heron r2", "heavy-hex", "OSIRIS-XTOP-005"],
         },
     },
+    "xtop005": {
+        "dir": ROOT / "papers" / "xtop005_codespace_hp",
+        "related": [{"identifier": "10.5281/zenodo.24425416", "relation": "isSupplementTo", "scheme": "doi"},
+                    {"identifier": "10.5281/zenodo.24420902", "relation": "continues", "scheme": "doi"}],
+        "files": [
+            ("papers/xtop005_codespace_hp/xtop005_codespace_hp.pdf", None),
+            ("papers/xtop005_codespace_hp/xtop005_codespace_hp.tex", None),
+            ("papers/xtop005_codespace_hp/generated.tex", None),
+            ("papers/xtop005_codespace_hp/generate_tables.py", None),
+            ("papers/xtop005_codespace_hp/xtop005_data.zip", None),
+            ("xtop005/osiris_xtop_005.py", None),
+            ("xtop005/xtop005_qpu.py", None),
+            ("xtop005/quantinuum.py", None),
+            ("xtop005/code422.py", None),
+            ("xtop005/XTOP_005_PREREGISTRATION.md", None),
+        ],
+        "meta": {
+            "title": ("Dynamical decoupling, not error detection, protects an idle quantum register on heavy-hex: a preregistered "
+                      "code-space Hayden-Preskill test on IBM Heron r2, and a validated design for Quantinuum H2"),
+            "description": ("<p>Preregistered (10.5281/zenodo.24425416) hardware test on ibm_marrakesh, 216 circuits, 63 QPU seconds. "
+                            "A [[4,2,2]]-encoded idle reference register (5-CNOT star encoder fitted to heavy-hex) did not improve "
+                            "Hayden-Preskill-style entanglement recovery; staggered native-gate XY4 dynamical decoupling raised two-pair "
+                            "Bell fidelity by 0.10-0.18 at a 20 microsecond idle window (4 of 4 DD tests supported, Holm alpha = 0.01). "
+                            "The simulator with IBM's published noise model predicted the opposite on both counts. Includes a full-encoding "
+                            "design for Quantinuum H2 (72 circuits, every H2-1-compiled circuit verified exactly), predictions under an "
+                            "H2-like noise model, and exact HQC costs: 1,336 HQC for the decisive comparison at 500 shots.</p>"),
+            "keywords": ["Hayden-Preskill", "[[4,2,2]] code", "error detection", "dynamical decoupling", "IBM Heron r2",
+                         "heavy-hex", "Quantinuum H2", "trapped ions", "preregistration", "OSIRIS-XTOP-005"],
+        },
+    },
 }
 
 
