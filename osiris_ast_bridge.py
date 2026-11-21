@@ -10,8 +10,8 @@ No network calls, no third-party deps -- must run cheaply on-device.
 """
 
 import ast
-import os
 import json
+import os
 
 SKIP_DIRS = {
     ".git", "__pycache__", ".venv", "venv", "env", "node_modules",
@@ -76,33 +76,65 @@ def _summarize_file(path: str, rel: str):
     }
 
 
-def scan_repo(root: str, max_files: int = 40):
-    """Walk root, return list of per-file summaries (real files only)."""
-    results = []
-    for dirpath, dirnames, filenames in os.walk(root):
-        dirnames[:] = [d for d in dirnames if d not in SKIP_DIRS and not d.startswith(".")]
-        for fn in filenames:
-            if not fn.endswith(".py"):
+def scan_repo(root: str, max_files: int = 40, query: str = ""):
+    """Index `root` across Python/TS/DNA/SQL files and return the top `max_files` ranked summaries."""
+    try:
+        from osiris_cli import codebase_visibility as cv
+
+        idx = cv.index_repository(root)
+        ranked = cv.rank_files(idx, query=query, limit=max_files)
+        results = []
+        for _score, node in ranked:
+            classes = []
+            functions = []
+            for sym in node.symbols:
+                if sym.kind == "class":
+                    classes.append({
+                        "name": sym.name,
+                        "doc": sym.doc,
+                        "methods": [{"name": m[0], "args": m[1]} for m in sym.methods[:12]],
+                    })
+                else:
+                    functions.append({
+                        "name": sym.name,
+                        "args": sym.signature,
+                        "doc": sym.doc,
+                    })
+            if not classes and not functions and not node.module_doc:
                 continue
-            full = os.path.join(dirpath, fn)
-            rel = os.path.relpath(full, root)
-            summary = _summarize_file(full, rel)
-            if summary:
-                results.append(summary)
-            if len(results) >= max_files:
-                return results
-    return results
+            results.append({
+                "file": node.rel_path,
+                "language": node.language,
+                "imported_by": len(node.imported_by),
+                "module_doc": node.module_doc,
+                "classes": classes[:15],
+                "functions": functions[:15],
+            })
+        return results
+    except Exception:
+        results = []
+        for dirpath, dirnames, filenames in os.walk(root):
+            dirnames[:] = [d for d in dirnames if d not in SKIP_DIRS and not d.startswith(".")]
+            for fn in sorted(filenames):
+                if not fn.endswith(".py"):
+                    continue
+                full = os.path.join(dirpath, fn)
+                rel = os.path.relpath(full, root)
+                summary = _summarize_file(full, rel)
+                if summary:
+                    results.append(summary)
+                if len(results) >= max_files:
+                    return results
+        return results
 
 
-def build_context(root: str = ".", max_files: int = 40, max_chars: int = 6000) -> str:
+def build_context(root: str = ".", max_files: int = 40, max_chars: int = 6000, query: str = "") -> str:
     """
     Returns a compact JSON string summarizing the real codebase at `root`,
-    truncated to fit a small model's context window. Empty file list means
-    "no Python source found here" -- callers should surface that honestly
-    rather than let the model invent an architecture.
+    ranked against `query` and truncated to fit the target context window.
     """
     root = os.path.abspath(root)
-    files = scan_repo(root)
+    files = scan_repo(root, max_files=max_files, query=query)
     payload = {"root": root, "file_count": len(files), "files": files}
     text = json.dumps(payload, separators=(",", ":"))
 

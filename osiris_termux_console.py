@@ -85,6 +85,11 @@ CHAT_MODEL = os.environ.get("OSIRIS_CHAT_MODEL", "gemma3:1b")
 CODE_MODEL = os.environ.get("OSIRIS_CODE_MODEL", "gemma3:1b")
 
 ARCHITECT_PREFERENCES = (
+    "qwen3.5:9b",
+    "gemma4:e4b",
+    "qwen3:8b",
+    "gemma3:4b",
+    "qwen3.5:4b",
     "gemma2:2b",
     "gemma-3-4b",
     "gemma-3-270m",
@@ -102,9 +107,13 @@ ARCHITECT_PREFERENCES = (
 
 SYNTHESIZER_PREFERENCES = (
     "qwen2.5-coder:7b",
+    "qwen3.5:9b",
+    "gemma4:e4b",
     "deepseek-coder",
     "qwen3:8b",
+    "qwen3.5:4b",
     "qwen2.5:7b",
+    "gemma3:4b",
     "gemma2:2b",
     "gemma-3-4b",
     "gemma-2-2b",
@@ -208,10 +217,27 @@ def _resolve_active_models(installed: list = None, bench_dir: str = None):
     if not installed:
         return
     ranked, demoted = _protege_mentor_ranking(installed, bench_dir=bench_dir)
+    try:
+        from osiris_cli import evidence_router as _ev_router
+
+        arch_pick = _ev_router.select_for_role("architect", installed=installed, bench_dir=bench_dir)
+        code_pick = _ev_router.select_for_role("code", installed=installed, bench_dir=bench_dir)
+    except Exception:
+        arch_pick, code_pick = None, None
     if not os.environ.get("OSIRIS_CHAT_MODEL"):
-        CHAT_MODEL = _pick_preferred_model(installed, ARCHITECT_PREFERENCES, ranked, demoted, prefer_ranked_first=bool(ranked))
+        if ranked:
+            CHAT_MODEL = _pick_preferred_model(installed, ARCHITECT_PREFERENCES, ranked, demoted, prefer_ranked_first=True)
+        elif arch_pick is not None:
+            CHAT_MODEL = arch_pick.model
+        else:
+            CHAT_MODEL = _pick_preferred_model(installed, ARCHITECT_PREFERENCES, ranked, demoted, prefer_ranked_first=False)
     if not os.environ.get("OSIRIS_CODE_MODEL"):
-        CODE_MODEL = _pick_preferred_model(installed, SYNTHESIZER_PREFERENCES, ranked, demoted, prefer_ranked_first=True)
+        if ranked:
+            CODE_MODEL = _pick_preferred_model(installed, SYNTHESIZER_PREFERENCES, ranked, demoted, prefer_ranked_first=True)
+        elif code_pick is not None:
+            CODE_MODEL = code_pick.model
+        else:
+            CODE_MODEL = _pick_preferred_model(installed, SYNTHESIZER_PREFERENCES, ranked, demoted, prefer_ranked_first=True)
 
 try:
     _resolve_active_models()
@@ -5881,7 +5907,7 @@ IMMEDIATE_COMMANDS = {
     "/source", "/map", "/hypothesis", "/hypotheses", "/outcome", "/trial", "/evolve", "/capabilities", "/discover",
     "/pr", "/sync", "/provision", "/edge",
     "/provenance", "/calibration", "/quarantine", "/clusters",
-    "/candidates", "/propose", "/readiness",
+    "/candidates", "/propose", "/readiness", "/models", "/route", "/codebase", "/repo",
     "exit", "quit",
 }
 
@@ -5893,7 +5919,7 @@ READ_ONLY_COMMANDS = {"/status", "/why", "/home", "/runs", "/runs stats", "/runs
                       "/ui rich", "/ui plain", "/ui access", "/intent", "/intent status",
                       "/organism", "/organism status", "/pr", "/sync", "/provision status", "/edge",
                       "/provenance", "/calibration", "/quarantine", "/clusters", "/runs clusters",
-                      "/candidates", "/readiness"}
+                      "/candidates", "/readiness", "/models", "/route", "/codebase", "/repo"}
 
 # OSIRIS_INTENT_CARD=0 sends free-form input straight to the models, as before.
 INTENT_CARD = os.environ.get("OSIRIS_INTENT_CARD", "1") != "0"
@@ -5921,7 +5947,7 @@ def _is_read_only(text: str) -> bool:
         t.split()[:1] in (["/bench"], ["/gap"], ["/gaps"], ["/ask"], ["/plan"], ["/experiment"], ["/experiments"],
                           ["/facts"], ["/cancel"], ["/reroute"], ["/focus"],
                           ["/provenance"], ["/calibration"], ["/quarantine"], ["/clusters"],
-                          ["/candidates"], ["/readiness"])  # none writes the workspace: bench ledger, drafts, briefs, answers
+                          ["/candidates"], ["/readiness"], ["/models"], ["/route"], ["/codebase"], ["/repo"])  # none writes the workspace: bench ledger, drafts, briefs, answers
 
 
 def _is_unknown_command(text: str) -> bool:
@@ -6029,7 +6055,15 @@ def run_synergy_pipeline(raw_text: str):
     repo_context_block = ""
     if CODEBASE_INTENT_RE.search(raw_text):
         cwd = os.getcwd()
-        context_json = build_context(cwd)
+        try:
+            from osiris_cli import codebase_visibility as _cv
+            scan_root, _why_root = _cv.resolve_read_only_repo(cwd, raw_text)
+        except Exception:
+            scan_root = cwd
+        try:
+            context_json = build_context(scan_root, max_files=28, max_chars=7500, query=raw_text)
+        except TypeError:
+            context_json = build_context(scan_root)
         file_count = json.loads(context_json).get("file_count", 0)
         if file_count:
             print(f"[*] FS_SCAN: found {file_count} Python file(s) under {cwd} -> injecting real AST context.")
@@ -6242,6 +6276,14 @@ def run_command(user_input: str) -> bool:
     if first == "/readiness":
         from osiris_cli import quantum_readiness
         print("\n" + quantum_readiness.run_command(user_input.strip()[len("/readiness"):].strip()) + "\n")
+        return True
+    if first in ("/models", "/route"):
+        from osiris_cli import evidence_router
+        print("\n" + evidence_router.run_command(user_input.strip()[len(first):].strip()) + "\n")
+        return True
+    if first in ("/codebase", "/repo"):
+        from osiris_cli import codebase_visibility
+        print("\n" + codebase_visibility.run_command(user_input.strip()[len(first):].strip()) + "\n")
         return True
     if first == "/experiment":
         _experiment(user_input.strip()[len("/experiment"):])

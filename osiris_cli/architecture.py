@@ -75,6 +75,10 @@ LAYERS = (
          "osiris_cli/code_agent.py · /code"),
         ("baseline, alternative and conservative candidates side by side",
          "osiris_cli/multi_candidate.py · /candidates · /propose"),
+        ("evidence-weighted role & cross-family critic model router",
+         "osiris_cli/evidence_router.py · /models · /route"),
+        ("polyglot AST, dependency blast-radius & multi-repo codebase map",
+         "osiris_cli/codebase_visibility.py · /codebase · /repo"),
     ), ()),
     Layer("L5", "Verify", (
         ("sandboxed test run after a static AST check", "osiris_termux_console._run_sandboxed_test · /why"),

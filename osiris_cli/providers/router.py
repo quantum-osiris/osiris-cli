@@ -26,7 +26,11 @@ from osiris_cli.probes import probe_substrate
 SOVEREIGN_LOCAL_MODELS: Tuple[str, ...] = (
     "qwen2.5:7b",
     "qwen2.5-coder:7b",
+    "qwen3.5:9b",
+    "gemma4:e4b",
     "qwen3:8b",
+    "qwen3.5:4b",
+    "gemma3:4b",
     "qwen2.5:3b",
 )
 
@@ -34,7 +38,9 @@ EDGE_LIGHTWEIGHT_MODELS: Tuple[str, ...] = (
     "gemma3:1b",
     "gemma2:2b",
     "qwen2.5:1.5b",
+    "qwen3.5:4b",
     "gemma3:4b",
+    "gemma4:e4b",
     "llama3.2:1b",
     "llama3.2:3b",
     "smollm2:360m",

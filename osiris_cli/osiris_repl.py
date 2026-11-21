@@ -2081,6 +2081,7 @@ REPL_COMMANDS = {
     "/skill", "/skills", "/status", "/swarm", "/sync", "/tetra1d", "/tournament", "/train", "/trio", "/unlearn",
     "/update", "/validate", "/voice", "/welcome",
     "/calibration", "/candidates", "/clusters", "/plan-check", "/provenance", "/quarantine", "/readiness",
+    "/codebase", "/models", "/repo", "/route",
 }
 # Safe to offer as a one-key [1]: they only read and print.
 READ_ONLY_COMMANDS = {
@@ -2088,6 +2089,7 @@ READ_ONLY_COMMANDS = {
     "/architecture", "/lab", "/sources", "/hypotheses", "/gaps", "/runs", "/suggest", "/welcome",
     "/power", "/firewall", "/ollama", "/facts", "/nclm", "/intent", "/skills",
     "/calibration", "/candidates", "/clusters", "/provenance", "/readiness",
+    "/codebase", "/models", "/repo", "/route",
 }
 # Commands that need words after them to do anything.
 NEEDS_ARGUMENT = {"/code": "/code explain osiris_cli/living.py", "/legit": "/legit list",
@@ -2628,6 +2630,12 @@ def dispatch_command(state: OsirisReplState, line: str) -> None:
     elif cmd == "/readiness":
         from osiris_cli import quantum_readiness
         print("\n" + quantum_readiness.run_command(line_clean[len(parts[0]):].strip()) + "\n")
+    elif cmd in ("/models", "/route"):
+        from osiris_cli import evidence_router
+        print("\n" + evidence_router.run_command(line_clean[len(parts[0]):].strip()) + "\n")
+    elif cmd in ("/codebase", "/repo"):
+        from osiris_cli import codebase_visibility
+        print("\n" + codebase_visibility.run_command(line_clean[len(parts[0]):].strip()) + "\n")
     elif cmd == "/plan-check":
         from osiris_cli import plan_gates
         pfile = line_clean[len(parts[0]):].strip().strip("'\"")

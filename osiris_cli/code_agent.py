@@ -39,7 +39,7 @@ from pathlib import Path
 from typing import Any, Callable, Dict, Iterable, List, Optional, Tuple
 
 DEFAULT_MODEL = os.environ.get("OSIRIS_CODE_MODEL", "qwen2.5-coder:7b")
-PREFERRED_CODE_MODELS = ("qwen2.5-coder:7b", "qwen3:8b", "gemma3:4b")
+PREFERRED_CODE_MODELS = ("qwen2.5-coder:7b", "qwen3.5:9b", "gemma4:e4b", "qwen3:8b", "qwen3.5:4b", "gemma3:4b")
 MAX_STEPS = 8
 _MAX_TOOL_RESULT = 6000
 _MAX_READ_BYTES = 600_000
@@ -328,6 +328,7 @@ class CodeAgent:
         clock: Callable[[], float] = time.monotonic,
         exec_journal: Optional[Any] = None,
         exec_artifacts_dir: Optional[Any] = None,
+        include_workspace_map: Optional[bool] = None,
     ):
         self.root = os.path.realpath(root or os.getcwd())
         # The task's run context (osiris_cli.task_context.TaskRunContext): which tools this run may
@@ -353,6 +354,7 @@ class CodeAgent:
         self._pinned_model: Optional[str] = model or env_model
         self.model = self._pinned_model or DEFAULT_MODEL
         self._live_ollama = chat is None
+        self._include_workspace_map = self._live_ollama if include_workspace_map is None else bool(include_workspace_map)
         self._chat = chat or self._ollama_chat
         self._confirm = confirm or _tty_confirm
         self._propose_write = propose_write or _otc_propose_write
@@ -397,6 +399,18 @@ class CodeAgent:
             self.model = self._pinned_model
             self.resolved_digest = installed.get(self.model) or None
             return None
+
+        try:
+            from osiris_cli import evidence_router
+
+            ranked = evidence_router.rank_models("code", installed=sorted(k for k in installed if k))
+            for cand_score in ranked:
+                if cand_score.model in installed and not cand_score.demoted:
+                    self.model = cand_score.model
+                    self.resolved_digest = installed.get(self.model) or None
+                    return None
+        except Exception:
+            pass
 
         for candidate in PREFERRED_CODE_MODELS:
             if candidate in installed:
@@ -750,8 +764,18 @@ class CodeAgent:
             if fail is not None:
                 st, err = fail
                 return self._finish(run_id, task, "", st, err)
+        ws_map_block = ""
+        if self._include_workspace_map:
+            try:
+                from osiris_cli import codebase_visibility
+
+                ws_map = codebase_visibility.format_workspace_map_for_prompt(self.root, query=task, max_files=12, max_chars=1800)
+                if ws_map:
+                    ws_map_block = "\n" + ws_map
+            except Exception:
+                ws_map_block = ""
         messages: List[Dict[str, Any]] = [
-            {"role": "system", "content": f"{SYSTEM}\nWorking directory: {self.root}"},
+            {"role": "system", "content": f"{SYSTEM}\nWorking directory: {self.root}{ws_map_block}"},
             {"role": "user", "content": task},
         ]
         seen_calls: Dict[str, Dict[str, Any]] = {}
