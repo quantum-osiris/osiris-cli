@@ -37,13 +37,13 @@ def test_logical_frame_exact(L):
 @pytest.mark.parametrize("L", DEPTHS)
 @pytest.mark.parametrize("opts", [{}, {"verify": True}, {"checks": True, "verify": True}])
 def test_encoded_arm_noiseless_all_settings(L, opts):
-    """Encoded program: F = 1 and every shot passes every check, for all 9 settings."""
+    """Full-encoding program: F = 1 and every shot passes every check, for all 9 settings."""
     from qiskit_aer import AerSimulator
     sim = AerSimulator(method="stabilizer")
     frame = x.logical_frame(L)
     per = {}
     for st in x.SETTINGS:
-        b = x.build("C", L, st, idle_ns=0, **opts)
+        b = x.build("C", L, st, 0, "full", **opts)
         qc = x.to_qiskit(b)
         qc.data = [i for i in qc.data if i.operation.name != "delay"]
         per["".join(st)] = x.correlators(b, sim.run(qc, shots=128, seed_simulator=5).result().get_counts())
@@ -131,3 +131,52 @@ def test_heavy_hex_is_bipartite_and_layout_avoids_hotspots():
 def test_canonical_json_has_no_floats():
     s = x.canonical_json({"b": 0.5, "a": [1, float("nan"), np.float64(2.0)]})
     assert s == '{"a":[1,"nan","2.000000"],"b":"0.500000"}'
+
+
+@pytest.mark.parametrize("L", DEPTHS)
+def test_r_encoded_arm_noiseless_all_settings(L):
+    """Heavy-hex design (only R encoded): F = 1 and no shot rejected, all 9 settings."""
+    from qiskit_aer import AerSimulator
+    sim = AerSimulator(method="stabilizer")
+    per = {}
+    for st in x.SETTINGS:
+        b = x.build("C", L, st, 0, "r")
+        assert b.prog.n_qubits == 10 and len(b.postselect) == 2
+        qc = x.to_qiskit(b)
+        qc.data = [i for i in qc.data if i.operation.name != "delay"]
+        per["".join(st)] = x.correlators(b, sim.run(qc, shots=128, seed_simulator=6).result().get_counts())
+    assert x.fidelity(per, x.logical_frame(L), "acc") == pytest.approx(1)
+    assert all(v["acc"]["n"] == v["raw"]["n"] for v in per.values())
+
+
+def test_r_encoder_is_star_and_detects_every_single_qubit_error():
+    enc = QuantumCircuit(4)
+    for g, *q in x.R_ENCODER:
+        getattr(enc, g)(*q)
+        if g == "cx":
+            assert 0 in q  # star centred on qubit 0 (a degree-3 heavy-hex node)
+    from qiskit.quantum_info import random_statevector
+    for seed in range(3):
+        qc = QuantumCircuit(4); qc.initialize(random_statevector(4, seed=seed).data, [1, 2]); qc.compose(enc, inplace=True)
+        sv = Statevector(qc.decompose(reps=6))
+        for lab in ("XXXX", "ZZZZ"):
+            assert float(np.real(sv.expectation_value(c._pauli(lab)))) == pytest.approx(1)
+        for q in range(4):
+            for e in "xyz":
+                q2 = qc.copy(); getattr(q2, e)(q); q2.compose(enc.inverse(), inplace=True)
+                assert Statevector(q2.decompose(reps=6)).probabilities([0, 3])[0] == pytest.approx(0, abs=1e-9)
+
+
+def test_r_encoded_arm_detects_idle_error_on_reference():
+    """An X error on any R qubit during the transit window is caught by the syndrome bits."""
+    from qiskit_aer import AerSimulator
+    for q in range(4):
+        b = x.build("C", 1, ("Z", "Z"), 0, "r")
+        qc = x.to_qiskit(b)
+        k = next(i for i, ins in enumerate(qc.data) if ins.operation.name == "delay")
+        qc.data = [ins for ins in qc.data if ins.operation.name != "delay"]
+        from qiskit.circuit.library import XGate
+        from qiskit.circuit import CircuitInstruction
+        qc.data.insert(k, CircuitInstruction(XGate(), [qc.qubits[q]]))
+        cnt = AerSimulator(method="stabilizer").run(qc, shots=64, seed_simulator=7).result().get_counts()
+        assert x.correlators(b, cnt)["acc"]["n"] == 0

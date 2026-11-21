@@ -495,6 +495,29 @@ PAPERS = {
                          "ibm_fez", "ibm_kingston", "preregistration", "TESSERACT-RO-06", "TESSERACT-RO-07"],
         },
     },
+    "xtop005pre": {
+        "dir": ROOT / "xtop005" / "prereg",
+        "related": [{"identifier": "10.5281/zenodo.24420902", "relation": "continues", "scheme": "doi"}],
+        "files": [
+            ("xtop005/XTOP_005_PREREGISTRATION.md", None),
+            ("xtop005/osiris_xtop_005.py", None),
+            ("xtop005/xtop005_qpu.py", None),
+            ("xtop005/code422.py", None),
+            ("docs/xtop005/qpu/lock.json", None),
+            ("docs/xtop005/qpu/circuits.qpy", None),
+            ("docs/xtop005/stage1_hh/xtop005_stage1.json", None),
+        ],
+        "meta": {
+            "title": "Preregistration: OSIRIS-XTOP-005, does a [[4,2,2]]-encoded idle reference improve Hayden-Preskill recovery on IBM Heron r2?",
+            "description": ("<p>Published before any XTOP-005 hardware job. On ibm_marrakesh, a 4-arm factorial (bare vs [[4,2,2]]-encoded "
+                            "reference register, idle vs staggered native XY4 dynamical decoupling) of a transversal-Clifford "
+                            "Hayden-Preskill recovery protocol at depths 1 and 3 and transit windows of 2, 10 and 20 microseconds, "
+                            "216 circuits locked by QPY SHA-256. Hypotheses, post-selection rule, contrasts and Holm-corrected "
+                            "criteria are fixed in the included document and code, with Stage-1 FakeMarrakesh predictions.</p>"),
+            "keywords": ["preregistration", "Hayden-Preskill", "[[4,2,2]] code", "error detection", "dynamical decoupling",
+                         "IBM Heron r2", "heavy-hex", "OSIRIS-XTOP-005"],
+        },
+    },
 }
 
 

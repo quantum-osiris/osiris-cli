@@ -90,13 +90,30 @@ class Built:
     data_qubits: List[int] = field(default_factory=list)
 
 
-def _bare(depth: int, setting: Tuple[str, str], idle_ns: float) -> Built:
-    """8 physical qubits; block k holds logical qubits slot-mapped by perm[k] (relabels are free)."""
-    p = c.Program(8)
-    perm = {k: [2 * k, 2 * k + 1] for k in range(4)}
+# R-block encoder into the [[4,2,2]] code space (XXXX = ZZZZ = +1): inputs on qubits 1 and 2, qubits 0 and 3
+# start in |0>. Star-shaped (every CX touches qubit 0), so it maps onto a degree-3 heavy-hex node with no SWAPs.
+# Found by BFS (5 CX is the minimum on a star). R is never operated on while encoded, so the logical basis
+# the encoder picks does not matter: the inverse (reversed list; every gate is self-inverse) undoes it, and the
+# two stabilizer syndromes come back out on qubits 0 and 3.
+R_ENCODER = [("cx", 1, 0), ("cx", 2, 0), ("h", 3), ("cx", 3, 0), ("cx", 0, 1), ("cx", 0, 2)]
+
+
+def _bare(depth: int, setting: Tuple[str, str], idle_ns: float, encode_r: bool = False) -> Built:
+    """Bare M, B, E (2 qubits each). R is bare (8 qubits total) or, with encode_r, one [[4,2,2]] block on
+    qubits 0-3 that is encoded right after the Bell pairs are made, idles through U / transit / V, and is
+    unencoded before readout; the unencoder leaves the two stabilizer syndromes on qubits 0 and 3."""
+    n = 10 if encode_r else 8
+    p = c.Program(n)
+    if encode_r:
+        perm = {R: [1, 2], M: [4, 5], B: [6, 7], E: [8, 9]}
+    else:
+        perm = {k: [2 * k, 2 * k + 1] for k in range(4)}
     for a, b in ((R, M), (B, E)):
         for i in (0, 1):
             p.add("h", [perm[a][i]]); p.add("cx", [perm[a][i], perm[b][i]])
+    if encode_r:
+        for g, *qs in R_ENCODER:
+            p.add(g, qs)
 
     def do(op):
         k = op[0]
@@ -118,12 +135,19 @@ def _bare(depth: int, setting: Tuple[str, str], idle_ns: float) -> Built:
 
     for op in SCRAMBLERS[depth]:
         do(op)
-    p.add("barrier", list(range(8)))
-    p.add("delay_ns", list(range(8)), ())  # placeholder, expanded at emit time
-    p.add("barrier", list(range(8)))
+    p.add("barrier", list(range(n)))
+    p.add("delay_ns", list(range(n)), ())  # placeholder, expanded at emit time
+    p.add("barrier", list(range(n)))
     for op in DECODERS[depth]:
         do(op)
-    built = Built("bare", depth, setting, p, data_qubits=list(range(8)))
+    built = Built("bare", depth, setting, p, data_qubits=list(range(n)))
+    built.kind = "renc" if encode_r else "bare"  # type: ignore[attr-defined]
+    if encode_r:
+        for g, *qs in reversed(R_ENCODER):  # every gate is self-inverse
+            p.add(g, qs)
+        syn = p.new_clbits(2)
+        p.add("measure", [0], [syn[0]]); p.add("measure", [3], [syn[1]])
+        built.postselect = syn
     for blk in (R, E):
         cs = p.new_clbits(2)
         for i, (q, P) in enumerate(zip(perm[blk], setting)):
@@ -186,8 +210,19 @@ def _encoded(depth: int, setting: Tuple[str, str], idle_ns: float, checks: bool 
     return built
 
 
-def build(arm: str, depth: int, setting: Tuple[str, str], idle_ns: float = 2000.0, **enc_opts) -> Built:
-    b = _encoded(depth, setting, idle_ns, **enc_opts) if ENCODED[arm] else _bare(depth, setting, idle_ns)
+def build(arm: str, depth: int, setting: Tuple[str, str], idle_ns: float = 2000.0, mode: str = "r",
+          **enc_opts) -> Built:
+    """mode 'r' (default, heavy-hex design): only the quarantined reference R is encoded.
+    mode 'full': all four blocks encoded (needs all-to-all connectivity; see README)."""
+    if not ENCODED[arm]:
+        b = _bare(depth, setting, idle_ns)
+    elif mode == "r":
+        b = _bare(depth, setting, idle_ns, encode_r=True)
+    elif mode == "full":
+        b = _encoded(depth, setting, idle_ns, **enc_opts)
+        b.kind = "enc"  # type: ignore[attr-defined]
+    else:
+        raise ValueError(mode)
     b.arm = arm
     return b
 
@@ -225,10 +260,11 @@ def correlators(b: Built, counts: Mapping) -> Dict[str, object]:  # type: ignore
     P, Q = b.setting
     for key, n in counts.items():
         bits = _bits(key)
-        if b.arm in ("A", "B"):
+        if getattr(b, "kind", "bare") in ("bare", "renc"):
             r = [1 - 2 * bits[i] for i in b.readout["R"]]
             e = [1 - 2 * bits[i] for i in b.readout["E"]]
-            v1, v2, ok = r[0] * e[0], r[1] * e[1], True
+            v1, v2 = r[0] * e[0], r[1] * e[1]
+            ok = all(bits[i] == 0 for i in b.postselect)
         else:
             dr = c.decode_block([bits[i] for i in b.readout["R"]], P, Q)
             de = c.decode_block([bits[i] for i in b.readout["E"]], P, Q)
@@ -274,7 +310,7 @@ def hotspots(backend, decile: float = 0.10) -> set:
     return bad
 
 
-def choose_layout(qc, backend, seed: int = 11, tries: int = 12) -> Tuple[List[int], Dict]:
+def choose_layout(qc, backend, seed: int = 11, tries: int = 40) -> Tuple[List[int], Dict]:
     """Route on the coupling graph with hotspots removed, then keep that virtual->physical layout."""
     from qiskit import transpile
     from qiskit.transpiler import CouplingMap
@@ -284,7 +320,7 @@ def choose_layout(qc, backend, seed: int = 11, tries: int = 12) -> Tuple[List[in
     best = None
     for s in range(seed, seed + tries):
         tq = transpile(qc, coupling_map=cmap, basis_gates=["cz", "rz", "sx", "x", "id", "measure", "reset", "delay"],
-                       optimization_level=1, seed_transpiler=s)
+                       optimization_level=3, seed_transpiler=s)
         lay = tq.layout.initial_virtual_layout(filter_ancillas=True)
         phys = [lay[qc.qubits[i]] for i in range(qc.num_qubits)]
         ncz = tq.count_ops().get("cz", 0)
@@ -337,13 +373,15 @@ def _xy4_native():
     return seq, sp_a, sp_b
 
 
-def compile_isa(qc, backend, layout: Sequence[int], dd: bool, seed: int = 7):
-    """Transpile on the fixed layout, schedule ALAP, pad delays (or staggered XY4) on active wires only."""
+def compile_isa(qc, backend, layout: Sequence[int], dd: bool, seed: int = 7, tries: int = 8):
+    """Transpile on the fixed layout (best of `tries` routing seeds by CZ count), schedule ALAP, then pad delays
+    (or staggered XY4) on active wires only."""
     from qiskit import transpile
     from qiskit.transpiler import PassManager
     from qiskit.transpiler.passes import ALAPScheduleAnalysis, PadDelay, PadDynamicalDecoupling
     t = backend.target
-    tq = transpile(qc, backend=backend, initial_layout=list(layout), optimization_level=1, seed_transpiler=seed)
+    tq = min((transpile(qc, backend=backend, initial_layout=list(layout), optimization_level=3, seed_transpiler=seed + k)
+              for k in range(tries)), key=lambda c_: (c_.count_ops().get("cz", 0), c_.depth()))
     active = sorted({tq.find_bit(q).index for inst in tq.data for q in inst.qubits
                      if inst.operation.name not in ("barrier", "delay")})
     passes = [ALAPScheduleAnalysis(target=t)]
@@ -441,61 +479,76 @@ def qpy_sha(circuits) -> str:
     return hashlib.sha256(buf.getvalue()).hexdigest()
 
 
-def run(depths=(1, 2, 3), shots=1000, idle_ns=2000.0, seed=20261121, out_dir: Path | None = None,
-        checks: bool = False, verify: bool = False) -> Dict:
-    enc_opts = {"checks": checks, "verify": verify}
+def prepare(backend, depths=(1, 3), idles=(2000.0, 10000.0), mode: str = "r", enc_opts=None):
+    """Build and compile every circuit. Returns (layouts, cells); cell = dict(meta) + 'items' [(Built, isa)].
+    One hotspot-avoiding layout per encoding, chosen on the largest circuit and shared by idle/DD arms."""
+    enc_opts = dict(enc_opts or {})
+    big = (max(depths), max(idles))
+    layouts = {}
+    for key, arm in (("bare", "A"), ("enc", "C")):
+        layouts[key] = choose_layout(to_qiskit(build(arm, big[0], ("X", "X"), big[1], mode,
+                                                     **(enc_opts if key == "enc" else {}))), backend)
+    cells = []
+    for L in depths:
+        for idle in idles:
+            for arm in ARMS:
+                key = "enc" if ENCODED[arm] else "bare"
+                items = []
+                for st in SETTINGS:
+                    b = build(arm, L, st, idle, mode, **(enc_opts if ENCODED[arm] else {}))
+                    isa, active = compile_isa(to_qiskit(b), backend, layouts[key][0], WITH_DD[arm])
+                    items.append((b, isa))
+                cells.append({"arm": arm, "label": ARM_LABEL[arm], "depth": L, "idle_ns": idle,
+                              "active_qubits": len(active), "isa": isa_counts(items[0][1]), "items": items})
+    return layouts, cells
+
+
+def analyze(cell, counts_list, rng, frame=None) -> Dict:
+    frame = frame or logical_frame(cell["depth"])
+    per = {"".join(b.setting): correlators(b, cnt) for (b, _), cnt in zip(cell["items"], counts_list)}
+    out = {k: v for k, v in cell.items() if k != "items"}
+    out["F_raw"] = fidelity(per, frame, "raw")
+    out["F_raw_ci99"] = bootstrap_ci(per, frame, "raw", rng)
+    if ENCODED[cell["arm"]]:
+        n_raw = sum(v["raw"]["n"] for v in per.values()); n_acc = sum(v["acc"]["n"] for v in per.values())
+        out.update({"F_det": fidelity(per, frame, "acc"), "F_det_ci99": bootstrap_ci(per, frame, "acc", rng),
+                    "p_keep": n_acc / n_raw})
+    out["correlator_sums"] = per
+    return out
+
+
+def stage0(cells, seed: int = 1, shots: int = 64) -> None:
+    """Noiseless compiled-ISA check: F = 1 exactly and no shot rejected, every cell."""
+    from qiskit_aer import AerSimulator
+    ideal = AerSimulator()
+    for cell in cells:
+        res = ideal.run([i[1] for i in cell["items"]], shots=shots, seed_simulator=seed).result()
+        per = {"".join(b.setting): correlators(b, res.get_counts(k)) for k, (b, _) in enumerate(cell["items"])}
+        f0 = fidelity(per, logical_frame(cell["depth"]), "raw")
+        if abs(f0 - 1) > 1e-9 or any(v["acc"]["n"] != v["raw"]["n"] for v in per.values()):
+            raise AssertionError(f"Stage 0 failed: {cell['arm']} L={cell['depth']} idle={cell['idle_ns']} F={f0}")
+        cell["stage0_F"] = f0
+
+
+def run(depths=(1, 3), shots=1000, idles=(2000.0, 10000.0), seed=20261121, out_dir: Path | None = None,
+        mode: str = "r", checks: bool = False, verify: bool = False) -> Dict:
     from qiskit_aer import AerSimulator
     from qiskit_ibm_runtime.fake_provider import FakeMarrakesh
+    enc_opts = {"checks": checks, "verify": verify} if mode == "full" else {}
     backend = FakeMarrakesh()
     noisy = AerSimulator.from_backend(backend)
-    ideal = AerSimulator()
     rng = np.random.default_rng(seed)
     t0 = time.time()
-
-    layouts = {}
-    for enc, arm in (("bare", "A"), ("enc", "C")):
-        layouts[enc] = choose_layout(to_qiskit(build(arm, max(depths), ("X", "X"), idle_ns, **(enc_opts if enc == "enc" else {}))), backend)
-
-    report = {"backend": backend.name, "shots": shots, "idle_ns": idle_ns, "seed": seed, "encoded_options": enc_opts,
+    layouts, cells = prepare(backend, depths, idles, mode, enc_opts)
+    stage0(cells)
+    report = {"backend": backend.name, "shots": shots, "seed": seed, "mode": mode, "encoded_options": enc_opts,
               "layouts": {k: {"physical": v[0], **v[1]} for k, v in layouts.items()}, "cells": []}
-    all_isa = []
-    for L in depths:
-        frame = logical_frame(L)
-        for arm in ARMS:
-            enc = "enc" if ENCODED[arm] else "bare"
-            per_ideal, per_noisy, isa_list = {}, {}, []
-            for st in SETTINGS:
-                b = build(arm, L, st, idle_ns, **(enc_opts if ENCODED[arm] else {}))
-                isa, active = compile_isa(to_qiskit(b), backend, layouts[enc][0], WITH_DD[arm])
-                isa_list.append((b, isa))
-            all_isa += [x[1] for x in isa_list]
-            # Stage 0 (noiseless, compiled ISA) and Stage 1 (FakeMarrakesh noise)
-            res_i = ideal.run([x[1] for x in isa_list], shots=max(64, shots // 8), seed_simulator=seed).result()
-            res_n = noisy.run([x[1] for x in isa_list], shots=shots, seed_simulator=seed + L).result()
-            for k, (b, isa) in enumerate(isa_list):
-                key = "".join(b.setting)
-                per_ideal[key] = correlators(b, res_i.get_counts(k))
-                per_noisy[key] = correlators(b, res_n.get_counts(k))
-            f0 = fidelity(per_ideal, frame, "raw")
-            if abs(f0 - 1) > 1e-9:
-                raise AssertionError(f"Stage 0 failed: arm {arm} L={L} noiseless F={f0}")
-            if any(v["acc"]["n"] != v["raw"]["n"] for v in per_ideal.values()):
-                raise AssertionError(f"Stage 0 failed: arm {arm} L={L} noiseless shots rejected by a check")
-            cell = {"arm": arm, "label": ARM_LABEL[arm], "depth": L, "stage0_F": f0,
-                    "isa": isa_counts(isa_list[0][1]), "active_qubits": len(active),
-                    "F_raw": fidelity(per_noisy, frame, "raw"),
-                    "F_raw_ci99": bootstrap_ci(per_noisy, frame, "raw", rng)}
-            if ENCODED[arm]:
-                n_raw = sum(v["raw"]["n"] for v in per_noisy.values())
-                n_acc = sum(v["acc"]["n"] for v in per_noisy.values())
-                cell.update({"F_det": fidelity(per_noisy, frame, "acc"),
-                             "F_det_ci99": bootstrap_ci(per_noisy, frame, "acc", rng),
-                             "p_keep": n_acc / n_raw})
-            cell["counts_sha256"] = hashlib.sha256(canonical_json(
-                {k: v for k, v in per_noisy.items()}).encode()).hexdigest()
-            report["cells"].append(cell)
-            print(json.dumps(_canon({k: cell[k] for k in cell if k not in ("isa",)})), flush=True)
-    report["qpy_sha256_all_isa"] = qpy_sha(all_isa)
+    for n, cell in enumerate(cells):
+        res = noisy.run([i[1] for i in cell["items"]], shots=shots, seed_simulator=seed + n).result()
+        out = analyze(cell, [res.get_counts(k) for k in range(len(cell["items"]))], rng)
+        report["cells"].append(out)
+        print(json.dumps(_canon({k: out[k] for k in out if k not in ("isa", "correlator_sums")})), flush=True)
+    report["qpy_sha256_all_isa"] = qpy_sha([i[1] for cell in cells for i in cell["items"]])
     report["wall_s"] = round(time.time() - t0, 1)
     body = canonical_json(report)
     report_receipt = {"canon": "exec-canon-1", "sha256": hashlib.sha256(body.encode()).hexdigest()}
@@ -509,15 +562,18 @@ def run(depths=(1, 2, 3), shots=1000, idle_ns=2000.0, seed=20261121, out_dir: Pa
 
 def main(argv=None) -> None:
     ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
-    ap.add_argument("--depths", default="1,2,3")
+    ap.add_argument("--depths", default="1,3")
+    ap.add_argument("--idles-ns", default="2000,10000")
     ap.add_argument("--shots", type=int, default=1000)
-    ap.add_argument("--idle-ns", type=float, default=2000.0)
     ap.add_argument("--seed", type=int, default=20261121)
     ap.add_argument("--out", type=Path, default=None)
-    ap.add_argument("--checks", action="store_true", help="add flagged X/Z checks on R and E (encoded arms)")
-    ap.add_argument("--verify", action="store_true", help="verified |00>/|++> preparation (encoded arms)")
+    ap.add_argument("--mode", choices=("r", "full"), default="r",
+                    help="r: encode only the quarantined reference (heavy-hex design); full: all four blocks")
+    ap.add_argument("--checks", action="store_true", help="full mode: flagged X/Z checks on R and E")
+    ap.add_argument("--verify", action="store_true", help="full mode: verified |00>/|++> preparation")
     a = ap.parse_args(argv)
-    rep = run(tuple(int(x) for x in a.depths.split(",")), a.shots, a.idle_ns, a.seed, a.out, a.checks, a.verify)
+    rep = run(tuple(int(x) for x in a.depths.split(",")), a.shots,
+              tuple(float(x) for x in a.idles_ns.split(",")), a.seed, a.out, a.mode, a.checks, a.verify)
     print("receipt", rep["receipt"]["sha256"], "wall", rep["wall_s"], "s")
 
 
