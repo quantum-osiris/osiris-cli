@@ -2822,6 +2822,14 @@ def main(argv: Optional[List[str]] = None) -> None:
     """Main entry point for 'osiris' universal command line."""
     if argv is None:
         argv = sys.argv[1:]
+    if argv and argv[0] == "sync" and len(argv) > 1 and argv[1] in ("pull", "push", "-h", "--help"):
+        from osiris_cli import cli as osiris_exec_cli
+        sys.exit(osiris_exec_cli.main(argv))
+    if argv and argv[0] in ("verify", "run", "bench", "ledger") and (
+        "--dry-run" in argv or "--tket-opt-level" in argv or "--no-opt" in argv or "--no-reduce" in argv or "--max-shots" in argv
+    ):
+        from osiris_cli import cli as osiris_exec_cli
+        sys.exit(osiris_exec_cli.main(argv))
     if argv and argv[0] in ("propose", "compile", "verify", "bench", "grant-tier3", "nexus-sign", "run", "ledger", "quantinuum", "/quantinuum"):
         from osiris_cli.quantinuum_cli import dispatch_quantinuum_argv
         q_rc = dispatch_quantinuum_argv(list(argv))

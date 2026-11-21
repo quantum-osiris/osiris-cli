@@ -375,6 +375,7 @@ class TopologyBenchmarkReport:
     def to_dict(self) -> Dict[str, Any]:
         return {
             "schema": self.schema,
+            "hardware_executed": False,
             "circuit_sha256": self.circuit_sha256,
             "source_format": self.source_format,
             "shots_reference": self.shots_reference,

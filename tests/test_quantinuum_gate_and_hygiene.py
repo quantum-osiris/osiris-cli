@@ -62,6 +62,7 @@ def test_repo_root_hygiene_and_payload_gate_clean() -> None:
 def test_examples_quantinuum_all_pass_h2_1sc_and_qccd_feedforward() -> None:
     expected_files = (
         "bitflip_qec.qasm",
+        "bitflip_qec_2round.qasm",
         "code422_syndrome_detect.qasm",
         "steane_7q_x_syndrome.qasm",
     )
@@ -86,7 +87,7 @@ def test_examples_quantinuum_all_pass_h2_1sc_and_qccd_feedforward() -> None:
         assert sum(rep.emulation.raw_counts.values()) == 256
 
     # Ideal feedforward check: bitflip_qec injects X on q[0] of |111>; feedforward restores |111> 100%
-    bf_parsed = parse_quantum_source((EXAMPLES_DIR / "bitflip_qec.qasm").read_text(encoding="utf-8"))
+    bf_parsed = parse_quantum_source((EXAMPLES_DIR / "bitflip_qec_2round.qasm").read_text(encoding="utf-8"))
     ideal_bf = emulate_qccd(bf_parsed, noise_model=QCCDNoiseModel.ideal(), shots=128, seed=3)
     assert ideal_bf.register_counts["data"] == {"111": 128}
     assert ideal_bf.register_counts["syn_r2"] == {"00": 128}
@@ -232,7 +233,7 @@ def test_tier3_hqc_budget_and_signed_approval_guard_fail_closed(
     assert token.startswith("osiris-t3-ed25519.")
 
     # 3. Mutate circuit by 1 gate after token minting -> BLOCKED_APPROVAL_TOKEN
-    mutated_src = qasm_src + "\nx q[0];\n"
+    mutated_src = qasm_src + "\nx data[0];\n"
     with pytest.raises(QuantinuumGateError) as e_mut:
         run_tier3_governed(
             mutated_src, target="H2-1", shots=500, budget_hqc="25", approval_token=token, osiris_home=home_dir

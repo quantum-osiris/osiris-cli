@@ -90,6 +90,13 @@ from .quantinuum import (
 )
 
 __all__.extend([
+    "verify_disposition_receipt",
+    "record_disposition",
+    "get_target_tier",
+    "compute_disposition_receipt_sha256",
+    "resolve_qubit_cap",
+    "lower_qasm3_to_quantinuum_qasm2",
+    "canonicalize_quantinuum_target",
     "ParsedCircuit",
     "QCCDCircuitError",
     "QCCDEmulationResult",
@@ -108,6 +115,10 @@ __all__.extend([
 ])
 
 from .quantinuum_nexus import (
+    verify_disposition_receipt,
+    record_disposition,
+    get_target_tier,
+    compute_disposition_receipt_sha256,
     GovernanceError,
     NexusConfig,
     NexusDisposition,
@@ -117,6 +128,9 @@ from .quantinuum_nexus import (
     verify_tier3_approval_token,
 )
 from .tket_wrapper import (
+    resolve_qubit_cap,
+    lower_qasm3_to_quantinuum_qasm2,
+    canonicalize_quantinuum_target,
     QuantinuumCompilerOptions,
     QuantinuumTarget,
     TketCircuitMetrics,
