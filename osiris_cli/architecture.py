@@ -73,7 +73,9 @@ LAYERS = (
         ("experiment brief, simulator first", "/experiment"),
         ("tool loop: confined reads, writes proposed for /apply, commands approved one by one",
          "osiris_cli/code_agent.py · /code"),
-    ), ("baseline, alternative and conservative candidates side by side",)),
+        ("baseline, alternative and conservative candidates side by side",
+         "osiris_cli/multi_candidate.py · /candidates · /propose"),
+    ), ()),
     Layer("L5", "Verify", (
         ("sandboxed test run after a static AST check", "osiris_termux_console._run_sandboxed_test · /why"),
         ("placeholder gate rejects stub code", "payload_gate.py"),
