@@ -1,0 +1,291 @@
+{
+ "bare_hp004_compiled_h2": {
+  "XX": {
+   "ibm_cz": 32,
+   "n1": 38,
+   "n2": 18,
+   "measure": 4,
+   "reset": 0,
+   "qubits": 8,
+   "nm_for_hqc": 12
+  },
+  "XY": {
+   "ibm_cz": 32,
+   "n1": 37,
+   "n2": 18,
+   "measure": 4,
+   "reset": 0,
+   "qubits": 8,
+   "nm_for_hqc": 12
+  },
+  "XZ": {
+   "ibm_cz": 32,
+   "n1": 38,
+   "n2": 18,
+   "measure": 4,
+   "reset": 0,
+   "qubits": 8,
+   "nm_for_hqc": 12
+  },
+  "YX": {
+   "ibm_cz": 32,
+   "n1": 39,
+   "n2": 18,
+   "measure": 4,
+   "reset": 0,
+   "qubits": 8,
+   "nm_for_hqc": 12
+  },
+  "YY": {
+   "ibm_cz": 32,
+   "n1": 38,
+   "n2": 18,
+   "measure": 4,
+   "reset": 0,
+   "qubits": 8,
+   "nm_for_hqc": 12
+  },
+  "YZ": {
+   "ibm_cz": 32,
+   "n1": 39,
+   "n2": 18,
+   "measure": 4,
+   "reset": 0,
+   "qubits": 8,
+   "nm_for_hqc": 12
+  },
+  "ZX": {
+   "ibm_cz": 32,
+   "n1": 39,
+   "n2": 18,
+   "measure": 4,
+   "reset": 0,
+   "qubits": 8,
+   "nm_for_hqc": 12
+  },
+  "ZY": {
+   "ibm_cz": 32,
+   "n1": 38,
+   "n2": 18,
+   "measure": 4,
+   "reset": 0,
+   "qubits": 8,
+   "nm_for_hqc": 12
+  },
+  "ZZ": {
+   "ibm_cz": 32,
+   "n1": 39,
+   "n2": 18,
+   "measure": 4,
+   "reset": 0,
+   "qubits": 8,
+   "nm_for_hqc": 12
+  }
+ },
+ "encoded_layer_compiled_h2": {
+  "XX": {
+   "builder_counts": {
+    "one_qubit": 24,
+    "two_qubit": 38,
+    "measure": 18,
+    "reset": 10
+   },
+   "n1": 57,
+   "n2": 38,
+   "measure": 18,
+   "reset": 10,
+   "qubits": 10,
+   "nm_for_hqc": 38
+  },
+  "XY": {
+   "builder_counts": {
+    "one_qubit": 24,
+    "two_qubit": 38,
+    "measure": 18,
+    "reset": 10
+   },
+   "n1": 55,
+   "n2": 38,
+   "measure": 18,
+   "reset": 10,
+   "qubits": 10,
+   "nm_for_hqc": 38
+  },
+  "XZ": {
+   "builder_counts": {
+    "one_qubit": 20,
+    "two_qubit": 38,
+    "measure": 18,
+    "reset": 10
+   },
+   "n1": 53,
+   "n2": 38,
+   "measure": 18,
+   "reset": 10,
+   "qubits": 10,
+   "nm_for_hqc": 38
+  },
+  "YX": {
+   "builder_counts": {
+    "one_qubit": 24,
+    "two_qubit": 38,
+    "measure": 18,
+    "reset": 10
+   },
+   "n1": 55,
+   "n2": 38,
+   "measure": 18,
+   "reset": 10,
+   "qubits": 10,
+   "nm_for_hqc": 38
+  },
+  "YY": {
+   "builder_counts": {
+    "one_qubit": 26,
+    "two_qubit": 38,
+    "measure": 18,
+    "reset": 10
+   },
+   "n1": 55,
+   "n2": 38,
+   "measure": 18,
+   "reset": 10,
+   "qubits": 10,
+   "nm_for_hqc": 38
+  },
+  "YZ": {
+   "builder_counts": {
+    "one_qubit": 22,
+    "two_qubit": 38,
+    "measure": 18,
+    "reset": 10
+   },
+   "n1": 53,
+   "n2": 38,
+   "measure": 18,
+   "reset": 10,
+   "qubits": 10,
+   "nm_for_hqc": 38
+  },
+  "ZX": {
+   "builder_counts": {
+    "one_qubit": 20,
+    "two_qubit": 38,
+    "measure": 18,
+    "reset": 10
+   },
+   "n1": 53,
+   "n2": 38,
+   "measure": 18,
+   "reset": 10,
+   "qubits": 10,
+   "nm_for_hqc": 38
+  },
+  "ZY": {
+   "builder_counts": {
+    "one_qubit": 22,
+    "two_qubit": 38,
+    "measure": 18,
+    "reset": 10
+   },
+   "n1": 53,
+   "n2": 38,
+   "measure": 18,
+   "reset": 10,
+   "qubits": 10,
+   "nm_for_hqc": 38
+  },
+  "ZZ": {
+   "builder_counts": {
+    "one_qubit": 16,
+    "two_qubit": 38,
+    "measure": 18,
+    "reset": 10
+   },
+   "n1": 49,
+   "n2": 38,
+   "measure": 18,
+   "reset": 10,
+   "qubits": 10,
+   "nm_for_hqc": 38
+  }
+ },
+ "encoded_layer_avg": {
+  "n1": 53.7,
+  "n2": 38.0,
+  "measure": 18.0,
+  "reset": 10.0,
+  "qubits": 10.0
+ },
+ "hqc_rows": [
+  {
+   "shots_ibm": 4096,
+   "shots_quantinuum": 1000,
+   "arm": "A",
+   "hqc_per_depth_9_bases": 546.0,
+   "hqc_all_3_depths": 1638.0
+  },
+  {
+   "shots_ibm": 4096,
+   "shots_quantinuum": 1000,
+   "arm": "B",
+   "hqc_per_depth_9_bases": 546.0,
+   "hqc_all_3_depths": 1638.0
+  },
+  {
+   "shots_ibm": 4096,
+   "shots_quantinuum": 1000,
+   "arm": "C",
+   "hqc_per_depth_9_bases": 1560.6,
+   "hqc_all_3_depths": 4681.8
+  },
+  {
+   "shots_ibm": 4096,
+   "shots_quantinuum": 1000,
+   "arm": "D",
+   "hqc_per_depth_9_bases": 1560.6,
+   "hqc_all_3_depths": 4681.8
+  },
+  {
+   "shots_ibm": 2048,
+   "shots_quantinuum": 500,
+   "arm": "A",
+   "hqc_per_depth_9_bases": 295.5,
+   "hqc_all_3_depths": 886.5
+  },
+  {
+   "shots_ibm": 2048,
+   "shots_quantinuum": 500,
+   "arm": "B",
+   "hqc_per_depth_9_bases": 295.5,
+   "hqc_all_3_depths": 886.5
+  },
+  {
+   "shots_ibm": 2048,
+   "shots_quantinuum": 500,
+   "arm": "C",
+   "hqc_per_depth_9_bases": 802.8,
+   "hqc_all_3_depths": 2408.4
+  },
+  {
+   "shots_ibm": 2048,
+   "shots_quantinuum": 500,
+   "arm": "D",
+   "hqc_per_depth_9_bases": 802.8,
+   "hqc_all_3_depths": 2408.4
+  }
+ ],
+ "ibm_seconds": {
+  "4096": {
+   "pubs_per_backend": 108,
+   "seconds_per_backend": 135.7,
+   "seconds_two_backends": 271.4
+  },
+  "2048": {
+   "pubs_per_backend": 108,
+   "seconds_per_backend": 69.4,
+   "seconds_two_backends": 138.7
+  }
+ },
+ "caveat": "encoded-arm totals are lower bounds until the code-space scrambler/decoder exist"
+}
