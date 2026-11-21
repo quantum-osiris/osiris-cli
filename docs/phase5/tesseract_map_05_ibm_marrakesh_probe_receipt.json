@@ -1,0 +1,8 @@
+{
+  "job_id": "dc0c1kqnj2vs73ddq040",
+  "backend": "ibm_marrakesh",
+  "submitted_utc": "2026-11-20T21:51:17.934291+00:00",
+  "quota_remaining_before_s": 477.0,
+  "stage": "probe",
+  "experiment": "TESSERACT-MAP-05"
+}

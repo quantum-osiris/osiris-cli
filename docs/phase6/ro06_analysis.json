@@ -1,0 +1,303 @@
+{
+ "experiment_id": "TESSERACT-RO-06",
+ "rounds_completed": {
+  "ibm_marrakesh": 8,
+  "ibm_fez": 8,
+  "ibm_kingston": 8
+ },
+ "H1_hidden_faults_per_round": {
+  "ibm_marrakesh": {
+   "counts": [
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    1,
+    3
+   ],
+   "mean": 0.5,
+   "min": 0,
+   "max": 3
+  },
+  "ibm_fez": {
+   "counts": [
+    0,
+    1,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0
+   ],
+   "mean": 0.125,
+   "min": 0,
+   "max": 1
+  },
+  "ibm_kingston": {
+   "counts": [
+    1,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0
+   ],
+   "mean": 0.125,
+   "min": 0,
+   "max": 1
+  }
+ },
+ "H1_devices_with_fault_in_majority_of_rounds": 0,
+ "H1_supported": false,
+ "H2_qubits_ever_hidden": 6,
+ "H2_of_which_recovered_in_another_round": 6,
+ "H2_fraction": 1.0,
+ "H2_supported": true,
+ "H3_transition_table_[fault_r][fault_r+1]": [
+  [
+   3169,
+   20
+  ],
+  [
+   11,
+   76
+  ]
+ ],
+ "H3_fisher_odds_ratio": 1094.7454545454545,
+ "H3_fisher_p": 1.747831098417952e-122,
+ "H3_p_fault_next_given_fault": 0.8735632183908046,
+ "H3_p_fault_next_given_ok": 0.006271558482282847,
+ "H4_spearman_median": {
+  "ibm_marrakesh": 0.7145695198255622,
+  "ibm_fez": 0.8333494977770711,
+  "ibm_kingston": 0.7105649612065501
+ },
+ "noise_floor_within_round_range_median": 0.005859375,
+ "between_round_abs_change_median_flagged": 0.01668294270833337,
+ "rounds": {
+  "ibm_marrakesh": [
+   {
+    "round": 0,
+    "time": "2026-11-20T22:28:20.905261Z",
+    "job_id": "dc0ciulhdvas73bjaft0",
+    "hidden_faults": {},
+    "ibm_of_hidden": {},
+    "spearman": 0.8568075526363691
+   },
+   {
+    "round": 1,
+    "time": "2026-11-21T12:08:38.230965Z",
+    "job_id": "dc0ojf5s2omc7389jkn0",
+    "hidden_faults": {},
+    "ibm_of_hidden": {},
+    "spearman": 0.7442720403160542
+   },
+   {
+    "round": 2,
+    "time": "2026-11-21T12:30:19.306928Z",
+    "job_id": "dc0otkds2omc7389k5n0",
+    "hidden_faults": {},
+    "ibm_of_hidden": {},
+    "spearman": 0.7020240816791671
+   },
+   {
+    "round": 3,
+    "time": "2026-11-21T12:45:22.92431Z",
+    "job_id": "dc0p4llhdvas73bjr6o0",
+    "hidden_faults": {},
+    "ibm_of_hidden": {},
+    "spearman": 0.6766235090698677
+   },
+   {
+    "round": 4,
+    "time": "2026-11-21T13:00:20.188441Z",
+    "job_id": "dc0pbmlhdvas73bjrfh0",
+    "hidden_faults": {},
+    "ibm_of_hidden": {},
+    "spearman": 0.7271149579719572
+   },
+   {
+    "round": 5,
+    "time": "2026-11-21T13:15:21.861989Z",
+    "job_id": "dc0pinlhdvas73bjro8g",
+    "hidden_faults": {},
+    "ibm_of_hidden": {},
+    "spearman": 0.7508179465324795
+   },
+   {
+    "round": 6,
+    "time": "2026-11-21T13:30:18.931579Z",
+    "job_id": "dc0ppoeq4uuc73a2vcag",
+    "hidden_faults": {
+     "85": 0.1653
+    },
+    "ibm_of_hidden": {
+     "85": 0.02734375
+    },
+    "spearman": 0.6737613090649169
+   },
+   {
+    "round": 7,
+    "time": "2026-11-21T13:46:23.789031Z",
+    "job_id": "dc0q18thdvas73bjsdkg",
+    "hidden_faults": {
+     "16": 0.2461,
+     "111": 0.3169,
+     "126": 0.1562
+    },
+    "ibm_of_hidden": {
+     "16": 0.0091552734375,
+     "111": 0.024658203125,
+     "126": 0.007568359375
+    },
+    "spearman": 0.6900936956646996
+   }
+  ],
+  "ibm_fez": [
+   {
+    "round": 0,
+    "time": "2026-11-20T22:28:20.887825Z",
+    "job_id": "dc0civ2nj2vs73ddqkq0",
+    "hidden_faults": {},
+    "ibm_of_hidden": {},
+    "spearman": 0.8688635113082723
+   },
+   {
+    "round": 1,
+    "time": "2026-11-21T12:08:38.854415Z",
+    "job_id": "dc0ojfanj2vs73deaq7g",
+    "hidden_faults": {
+     "93": 0.1776
+    },
+    "ibm_of_hidden": {
+     "93": 0.0213623046875
+    },
+    "spearman": 0.8566291593012869
+   },
+   {
+    "round": 2,
+    "time": "2026-11-21T12:30:19.833593Z",
+    "job_id": "dc0otkmq4uuc73a2u9n0",
+    "hidden_faults": {},
+    "ibm_of_hidden": {},
+    "spearman": 0.8406540344266267
+   },
+   {
+    "round": 3,
+    "time": "2026-11-21T12:45:20.217927Z",
+    "job_id": "dc0p4linj2vs73debm00",
+    "hidden_faults": {},
+    "ibm_of_hidden": {},
+    "spearman": 0.8392411469977057
+   },
+   {
+    "round": 4,
+    "time": "2026-11-21T13:00:54.760445Z",
+    "job_id": "dc0pbmuq4uuc73a2urg0",
+    "hidden_faults": {},
+    "ibm_of_hidden": {},
+    "spearman": 0.8274578485564366
+   },
+   {
+    "round": 5,
+    "time": "2026-11-21T13:15:22.583701Z",
+    "job_id": "dc0pinlhdvas73bjro9g",
+    "hidden_faults": {},
+    "ibm_of_hidden": {},
+    "spearman": 0.8092765176110446
+   },
+   {
+    "round": 6,
+    "time": "2026-11-21T13:30:19.202614Z",
+    "job_id": "dc0ppolhdvas73bjs0ng",
+    "hidden_faults": {},
+    "ibm_of_hidden": {},
+    "spearman": 0.8126731299935972
+   },
+   {
+    "round": 7,
+    "time": "2026-11-21T13:48:03.099568Z",
+    "job_id": "dc0q195hdvas73bjsdl0",
+    "hidden_faults": {},
+    "ibm_of_hidden": {},
+    "spearman": 0.8132925850724881
+   }
+  ],
+  "ibm_kingston": [
+   {
+    "round": 0,
+    "time": "2026-11-20T22:28:34.533893Z",
+    "job_id": "dc0civanj2vs73ddqkrg",
+    "hidden_faults": {
+     "107": 0.2217
+    },
+    "ibm_of_hidden": {
+     "107": 0.01025390625
+    },
+    "spearman": 0.7061317689152967
+   },
+   {
+    "round": 1,
+    "time": "2026-11-21T12:08:39.079241Z",
+    "job_id": "dc0ojfeq4uuc73a2to7g",
+    "hidden_faults": {},
+    "ibm_of_hidden": {},
+    "spearman": 0.7026014811239635
+   },
+   {
+    "round": 2,
+    "time": "2026-11-21T12:30:21.191561Z",
+    "job_id": "dc0otkuq4uuc73a2u9o0",
+    "hidden_faults": {},
+    "ibm_of_hidden": {},
+    "spearman": 0.7351612027677162
+   },
+   {
+    "round": 3,
+    "time": "2026-11-21T12:45:21.291485Z",
+    "job_id": "dc0p4lqnj2vs73debm0g",
+    "hidden_faults": {},
+    "ibm_of_hidden": {},
+    "spearman": 0.7250804852797457
+   },
+   {
+    "round": 4,
+    "time": "2026-11-21T13:00:22.362875Z",
+    "job_id": "dc0pbn5hdvas73bjrfi0",
+    "hidden_faults": {},
+    "ibm_of_hidden": {},
+    "spearman": 0.7402345157761243
+   },
+   {
+    "round": 5,
+    "time": "2026-11-21T13:15:19.971888Z",
+    "job_id": "dc0pints2omc7389l0ig",
+    "hidden_faults": {},
+    "ibm_of_hidden": {},
+    "spearman": 0.7085650193054552
+   },
+   {
+    "round": 6,
+    "time": "2026-11-21T13:30:20.122445Z",
+    "job_id": "dc0ppothdvas73bjs0o0",
+    "hidden_faults": {},
+    "ibm_of_hidden": {},
+    "spearman": 0.7125649031076449
+   },
+   {
+    "round": 7,
+    "time": "2026-11-21T13:47:38.834933Z",
+    "job_id": "dc0q196q4uuc73a2vpr0",
+    "hidden_faults": {},
+    "ibm_of_hidden": {},
+    "spearman": 0.6916941612175532
+   }
+  ]
+ },
+ "min_rounds_any_device": 8
+}

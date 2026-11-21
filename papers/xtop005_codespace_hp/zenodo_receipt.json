@@ -1,0 +1,38 @@
+{
+  "paper": "xtop005",
+  "deposition_id": 24426216,
+  "state": "published",
+  "files": {
+    "xtop005_codespace_hp.pdf": "b11825fc141cf9679888c4d5a8bd517b30c72de4e41f2577ff255913b23715f9",
+    "xtop005_codespace_hp.tex": "9928ef436e3be333354f6545f0efe591f738fddf4703c8e53a822bf8c7c48355",
+    "generated.tex": "c98136d5ecb60082d777d56ed8ce4e63ec97ade8e67db4420ac28624e76bd990",
+    "generate_tables.py": "ad005554f527194bb897158d9733a879a22d869beb68675109080f14ab99bbe4",
+    "xtop005_data.zip": "ccb73db1e99193be5d34af4582c9b74d16cf9f101c2baa8c6f43cd6c4ab786ee",
+    "osiris_xtop_005.py": "630124652e494f23b9257f6945cf89cf54a2caeefba878db098b2d25c320c984",
+    "xtop005_qpu.py": "d40020f1d7002b5634514601675eaa286e215cd0779519707ad8dbeba73e385a",
+    "quantinuum.py": "9e08e81e84418351d181014d8dcf416915cb8c15ebc0a35dfc7e13b07bf05b33",
+    "code422.py": "c979bc98e93ddd759eaebb3e025e0dd563aa22494bbaf4ed03ff546cc7c84fc2",
+    "XTOP_005_PREREGISTRATION.md": "174644cfde08515e86a1cdee0bf4b1c296aee87e9b6a3480efba990394cfd4f6",
+    "SHA256SUMS.txt": "4217756d0a4fc7516c56c15e4334c956a0f2c527d997e1bb93c00454a933114e"
+  },
+  "sources": {
+    "xtop005_codespace_hp.pdf": "papers/xtop005_codespace_hp/xtop005_codespace_hp.pdf",
+    "xtop005_codespace_hp.tex": "papers/xtop005_codespace_hp/xtop005_codespace_hp.tex",
+    "generated.tex": "papers/xtop005_codespace_hp/generated.tex",
+    "generate_tables.py": "papers/xtop005_codespace_hp/generate_tables.py",
+    "xtop005_data.zip": "papers/xtop005_codespace_hp/xtop005_data.zip",
+    "osiris_xtop_005.py": "xtop005/osiris_xtop_005.py",
+    "xtop005_qpu.py": "xtop005/xtop005_qpu.py",
+    "quantinuum.py": "xtop005/quantinuum.py",
+    "code422.py": "xtop005/code422.py",
+    "XTOP_005_PREREGISTRATION.md": "xtop005/XTOP_005_PREREGISTRATION.md",
+    "SHA256SUMS.txt": "papers/xtop005_codespace_hp/SHA256SUMS.txt"
+  },
+  "version": "1.1.0",
+  "draft_html": "https://zenodo.org/deposit/24426216",
+  "prereserved_doi": "10.5281/zenodo.24426216",
+  "drafted_utc": "2026-11-21T19:29:48.185867+00:00",
+  "doi": "10.5281/zenodo.24426216",
+  "record_url": "https://zenodo.org/record/24426216",
+  "published_utc": "2026-11-21T19:30:11.972292+00:00"
+}

@@ -1,0 +1,204 @@
+{
+ "experiment_id": "TESSERACT-RO-07",
+ "backend": "ibm_fez",
+ "locked_utc": "2026-11-21T14:26:26.470964+00:00",
+ "selection": {
+  "ro06_round": 7,
+  "ro06_job_id": "dc0q195hdvas73bjsdl0",
+  "ro06_time": "2026-11-21T13:48:03.099568Z",
+  "targets": [
+   11,
+   71,
+   33,
+   148
+  ],
+  "controls": [
+   134,
+   23
+  ],
+  "disagree": [
+   11,
+   71,
+   33
+  ],
+  "agree": [
+   148
+  ],
+  "e_probe": {
+   "11": 0.10148111979166667,
+   "71": 0.050699869791666664,
+   "33": 0.07356770833333333,
+   "148": 0.193603515625,
+   "134": 0.002766927083333333,
+   "23": 0.0030110677083333335
+  },
+  "e_ibm": {
+   "11": 0.02734375,
+   "71": 0.00341796875,
+   "33": 0.03564453125,
+   "148": 0.206787109375,
+   "134": 0.005859375,
+   "23": 0.0113525390625
+  }
+ },
+ "measured_set": [
+  11,
+  71,
+  33,
+  148,
+  134,
+  23
+ ],
+ "schedule": [
+  {
+   "repeat": 0,
+   "type": "ALL1"
+  },
+  {
+   "repeat": 0,
+   "type": "FLIP1"
+  },
+  {
+   "repeat": 0,
+   "type": "ALL0"
+  },
+  {
+   "repeat": 0,
+   "type": "ISO0"
+  },
+  {
+   "repeat": 0,
+   "type": "ISO1"
+  },
+  {
+   "repeat": 0,
+   "type": "FLIP0"
+  },
+  {
+   "repeat": 1,
+   "type": "ISO0"
+  },
+  {
+   "repeat": 1,
+   "type": "ALL0"
+  },
+  {
+   "repeat": 1,
+   "type": "ALL1"
+  },
+  {
+   "repeat": 1,
+   "type": "FLIP0"
+  },
+  {
+   "repeat": 1,
+   "type": "ISO1"
+  },
+  {
+   "repeat": 1,
+   "type": "FLIP1"
+  },
+  {
+   "repeat": 2,
+   "type": "FLIP0"
+  },
+  {
+   "repeat": 2,
+   "type": "ISO0"
+  },
+  {
+   "repeat": 2,
+   "type": "ISO1"
+  },
+  {
+   "repeat": 2,
+   "type": "ALL1"
+  },
+  {
+   "repeat": 2,
+   "type": "ALL0"
+  },
+  {
+   "repeat": 2,
+   "type": "FLIP1"
+  },
+  {
+   "repeat": 3,
+   "type": "ISO1"
+  },
+  {
+   "repeat": 3,
+   "type": "ALL0"
+  },
+  {
+   "repeat": 3,
+   "type": "ALL1"
+  },
+  {
+   "repeat": 3,
+   "type": "ISO0"
+  },
+  {
+   "repeat": 3,
+   "type": "FLIP1"
+  },
+  {
+   "repeat": 3,
+   "type": "FLIP0"
+  },
+  {
+   "repeat": 4,
+   "type": "ISO0"
+  },
+  {
+   "repeat": 4,
+   "type": "ALL0"
+  },
+  {
+   "repeat": 4,
+   "type": "ALL1"
+  },
+  {
+   "repeat": 4,
+   "type": "ISO1"
+  },
+  {
+   "repeat": 4,
+   "type": "FLIP1"
+  },
+  {
+   "repeat": 4,
+   "type": "FLIP0"
+  },
+  {
+   "repeat": 5,
+   "type": "ALL0"
+  },
+  {
+   "repeat": 5,
+   "type": "ISO0"
+  },
+  {
+   "repeat": 5,
+   "type": "ISO1"
+  },
+  {
+   "repeat": 5,
+   "type": "ALL1"
+  },
+  {
+   "repeat": 5,
+   "type": "FLIP0"
+  },
+  {
+   "repeat": 5,
+   "type": "FLIP1"
+  }
+ ],
+ "repeats": 6,
+ "shots": 2048,
+ "qpy_sha256": "5a4b3ca1a4f49bcb64dc2e2f6f5d4f62b00d8b2fd2159253b98018e9c35b62bb",
+ "calibration_sha256": "1fdba7b8715fad62aa6b3c769aba847a6c915df8dea1c4b1517eb18850b2b25d",
+ "code_sha256": "c1ea0de85189ff2316ae1f60c4c29792ec7f2fcac8ffecbb52045d2a7218aa2f",
+ "estimated_qpu_seconds": 22.3
+}

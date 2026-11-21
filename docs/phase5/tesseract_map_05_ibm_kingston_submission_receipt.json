@@ -1,0 +1,8 @@
+{
+  "job_id": "dc0c7dmq4uuc73a2dbr0",
+  "backend": "ibm_kingston",
+  "submitted_utc": "2026-11-20T22:03:36.898394+00:00",
+  "quota_remaining_before_s": 392.0,
+  "prereg_lock_sha256": "89985bbb4e2971f8c3382b480d8f3aebe31352bba6f5cc3422f60535f198728e",
+  "qpy_sha256": "3774623f398366531e0a15e1a9d4e61cfc84f8a7c0916f04fc6b0b2166436f4c"
+}

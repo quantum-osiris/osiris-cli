@@ -1,0 +1,25 @@
+{
+  "paper": "tmap05pre",
+  "deposition_id": 24407538,
+  "state": "published",
+  "files": {
+    "TESSERACT_MAP_05_PREREGISTRATION.md": "2870ad8fed3f22732dfc9a6dd9cabc27a086c2d5726e69247e66249078325afd",
+    "tesseract_map_05.py": "abb8e9747d10b169a0f582824e0698a49d631fe73918f07c7aac717a9c0d5fc1",
+    "tesseract_map_04.py": "4c6da0a04cac44f87e3f4be2802fcbc9b9de07eb8630e092e64ae03014a2575b",
+    "tesseract_map_03.py": "20beb4e3a9cc982f2eed05b6eaa6809c2bf20458111e375c777bef580169f8ff",
+    "SHA256SUMS.txt": "57c4338a5500781d78879b999014bde77605230930ca1bb5e60ea967d863c61d"
+  },
+  "sources": {
+    "TESSERACT_MAP_05_PREREGISTRATION.md": "phase3/TESSERACT_MAP_05_PREREGISTRATION.md",
+    "tesseract_map_05.py": "phase3/tesseract_map_05.py",
+    "tesseract_map_04.py": "phase3/tesseract_map_04.py",
+    "tesseract_map_03.py": "phase3/tesseract_map_03.py",
+    "SHA256SUMS.txt": "papers/tmap05_prereg/SHA256SUMS.txt"
+  },
+  "draft_html": "https://zenodo.org/deposit/24407538",
+  "prereserved_doi": "10.5281/zenodo.24407538",
+  "drafted_utc": "2026-11-20T21:50:32.739574+00:00",
+  "doi": "10.5281/zenodo.24407538",
+  "record_url": "https://zenodo.org/record/24407538",
+  "published_utc": "2026-11-20T21:50:50.520365+00:00"
+}

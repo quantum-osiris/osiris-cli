@@ -1,0 +1,8 @@
+{
+  "job_id": "dc0c3ceq4uuc73a2d62g",
+  "backend": "ibm_fez",
+  "submitted_utc": "2026-11-20T21:55:00.609067+00:00",
+  "quota_remaining_before_s": 436.0,
+  "stage": "probe",
+  "experiment": "TESSERACT-MAP-05"
+}
