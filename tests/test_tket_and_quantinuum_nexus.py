@@ -32,7 +32,7 @@ from osiris_cli.providers.tket_wrapper import (
 from osiris_cli.quantinuum_cli import dispatch_quantinuum_argv
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
-BITFLIP_QASM = (REPO_ROOT / "examples" / "quantinuum" / "bitflip_qec.qasm").read_text(
+BITFLIP_QASM = (REPO_ROOT / "examples" / "quantinuum" / "bitflip_qec_2round.qasm").read_text(
     encoding="utf-8"
 )
 
@@ -265,7 +265,7 @@ def test_nexus_audit_ledger_and_receipt_upload_flow(
 
     # CLI compile, nexus-sign, and ledger upload --dry-run
     monkeypatch.setenv("OSIRIS_APPROVAL_SECRET", "cli-signing-secret")
-    qasm_path = REPO_ROOT / "examples" / "quantinuum" / "bitflip_qec.qasm"
+    qasm_path = REPO_ROOT / "examples" / "quantinuum" / "bitflip_qec_2round.qasm"
     assert dispatch_quantinuum_argv(["compile", str(qasm_path), "--target", "H2-1", "--json"]) == 0
     comp_out = json.loads(capsys.readouterr().out.strip())
     assert comp_out["compiled_sha256"] == compiled.compiled_sha256
@@ -277,7 +277,7 @@ def test_nexus_audit_ledger_and_receipt_upload_flow(
         == 0
     )
     tok = capsys.readouterr().out.strip()
-    assert len(tok) == 64
+    assert tok.startswith("osiris-t3.")
 
     assert (
         dispatch_quantinuum_argv(

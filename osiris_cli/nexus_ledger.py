@@ -8,7 +8,6 @@ deterministic offline verification plus opt-in upload to Quantum Agent Lab
 
 from __future__ import annotations
 
-import hashlib
 import json
 import os
 import time
@@ -18,7 +17,11 @@ from pathlib import Path
 from typing import Any, Dict, List, Optional, Union
 
 from .exec_kernel import ExecJournal
-from .providers.quantinuum_nexus import GovernanceError, NexusDisposition
+from .providers.quantinuum_nexus import (
+    GovernanceError,
+    NexusDisposition,
+    compute_disposition_receipt_sha256,
+)
 from .quantinuum_gate import _verify_canon_chain_file
 from .quantum_readiness import _canon_safe, default_osiris_home
 
@@ -110,33 +113,11 @@ class NexusAuditLedger:
 
 
 def compute_receipt_sha256(receipt_payload: Dict[str, Any]) -> str:
-    """Recompute the canonical `receipt_sha256` over a ledger payload (excluding metadata keys)."""
-    core_keys = (
-        "calibration_snapshot",
-        "compiled_sha256",
-        "compiler_options",
-        "counts",
-        "diagnostics",
-        "disposition",
-        "estimated_hqc",
-        "hardware",
-        "job_id",
-        "shots",
-        "source_sha256",
-        "status",
-        "target",
-        "tier",
-    )
-    normalized: Dict[str, Any] = {}
-    for k in core_keys:
-        if k not in receipt_payload:
-            raise ValueError(f"Receipt payload missing required field {k!r}")
-        val = receipt_payload[k]
-        if k == "estimated_hqc":
-            val = float(val)
-        normalized[k] = val
-    canonical = json.dumps(normalized, sort_keys=True, separators=(",", ":")).encode("utf-8")
-    return hashlib.sha256(canonical).hexdigest()
+    """Recompute the canonical `receipt_sha256` over a ledger payload."""
+    normalized = dict(receipt_payload)
+    if "estimated_hqc" in normalized:
+        normalized["estimated_hqc"] = float(normalized["estimated_hqc"])
+    return compute_disposition_receipt_sha256(normalized)
 
 
 def upload_disposition_receipt(
