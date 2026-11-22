@@ -422,7 +422,7 @@ SUGGESTION 1: <ID> -- <one short reason>
 SUGGESTION 2: <ID> -- <one short reason, or omit this line>
 """
     print(f"\n[*] Thinking of suggestions based on recent activity (Engine 1 · {suggest_model})...")
-    raw = query_model(prompt, suggest_model, stream=False, timeout=420)
+    raw = query_model(prompt, suggest_model, stream=False)
     _pending_suggestions.clear()
     found = re.findall(r"^SUGGESTION\s+(\d+):\s*(.+)$", raw, re.MULTILINE)
     if not found:
@@ -5680,8 +5680,35 @@ def sanitize_input(text: str) -> str:
     clean = clean.replace('', '')
     return clean.strip()
 
-def query_model(prompt: str, model: str, stream: bool = True, timeout: int = 420,
+INFERENCE_TIMEOUT_CEILING_S = 420
+
+
+def inference_timeout_s() -> float:
+    """Default per-call model timeout: 420 s, never longer than this substrate's horizon.
+
+    Node Alpha's horizon is 300 s, so a hung local model there gives up at 300 s rather than
+    420 s. ``OSIRIS_INFERENCE_TIMEOUT`` overrides both (the operator's explicit choice).
+    """
+    env = os.environ.get("OSIRIS_INFERENCE_TIMEOUT")
+    if env:
+        try:
+            v = float(env)
+            if v > 0:
+                return v
+        except ValueError:
+            pass
+    try:
+        import osiris_hardware_mesh
+        horizon = float(osiris_hardware_mesh.get_current_profile().execution_timeout_s)
+    except Exception:
+        horizon = float(INFERENCE_TIMEOUT_CEILING_S)
+    return min(float(INFERENCE_TIMEOUT_CEILING_S), horizon)
+
+
+def query_model(prompt: str, model: str, stream: bool = True, timeout: float = None,
                 fmt: dict = None) -> str:
+    if timeout is None:
+        timeout = inference_timeout_s()
     _last_backend.update(name=None, requested_model=model, model=None, substituted=False, is_mock=False, error=None)
     # First: attempt through OSIRIS BaseModelProvider when live (or when mock is explicitly opted in)
     try:

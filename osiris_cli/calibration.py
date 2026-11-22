@@ -463,9 +463,13 @@ def sync_from_bench_candidates(
 
     Maps each candidate's self-test gate (`own_ok`) as empirical self-verification confidence
     (`1.000000` if `own_ok` else `0.000000`) against `hidden_ok` (`1` or `0`), skipping
-    infrastructure/artifact `integrity` exclusions. Returns count of newly appended rows.
+    infrastructure/artifact `integrity` exclusions and `no_output` attempts (a timeout or an empty
+    or malformed reply). A model that produced nothing made no prediction: scoring it as
+    "confidence 0, wrong" would give it a perfect Brier score for failing. Those attempts stay
+    counted as failures in the bench scorecard; they are availability failures, not calibration
+    evidence. Returns count of newly appended rows.
     """
-    valid = [c for c in cands if isinstance(c, dict) and not c.get("integrity")]
+    valid = [c for c in cands if isinstance(c, dict) and not c.get("integrity") and not c.get("no_output")]
     if not valid:
         return 0
 
