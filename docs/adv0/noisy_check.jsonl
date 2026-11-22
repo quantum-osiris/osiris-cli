@@ -1,0 +1,5 @@
+{"n": 12, "depth": 2, "n_cz": 20, "pred": 0.883151341140941, "sim": 0.8735, "modal_is_secret": true, "duration_us": 3.2640000000000002}
+{"n": 12, "depth": 4, "n_cz": 32, "pred": 0.8581244852576082, "sim": 0.8505, "modal_is_secret": true, "duration_us": 3.7760000000000002}
+{"n": 12, "depth": 6, "n_cz": 44, "pred": 0.8305993991837733, "sim": 0.809, "modal_is_secret": true, "duration_us": 4.335999999999999}
+{"n": 12, "depth": 8, "n_cz": 64, "pred": 0.7935111558298049, "sim": 0.774, "modal_is_secret": true, "duration_us": 4.920000000000001}
+{"n": 12, "depth": 12, "n_cz": 88, "pred": 0.7459378173459188, "sim": 0.694, "modal_is_secret": true, "duration_us": 6.016000000000004}
