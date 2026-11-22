@@ -10,6 +10,10 @@ Subcommands:
   - `osiris run <circuit> --target H2-1 --shots 500 --budget-hqc 25 --approval-token TOKEN`
   - `osiris ledger verify [--home DIR] [--json]`
   - `osiris ledger upload <receipt_id_or_file> [--url URL] [--dry-run] [--home DIR] [--json]`
+  - `osiris nexus preflight <circuits> --target H2-1 --shots 500 [-O 0] [--out FILE]`   (qnexus SDK, Tier 1)
+  - `osiris nexus run <circuits> --target H2-1E --compile-for H2-1 --shots 100 [--max-emulator-hqc 200]`
+  - `osiris nexus grant --compiled-sha SHA --target H2-1 --shots 500 --budget-hqc 1400`
+  - `osiris nexus run <circuits> --target H2-1 --shots 500 --approval-token TOKEN`      (live QPU, Tier 3)
 """
 
 from __future__ import annotations
@@ -453,6 +457,75 @@ def cmd_ledger(argv: Sequence[str]) -> int:
     return 0 if summary["valid"] else 2
 
 
+def cmd_nexus(argv: Sequence[str]) -> int:
+    """Quantinuum Nexus via the official qnexus SDK (see osiris_cli/providers/nexus_sdk.py)."""
+    parser = argparse.ArgumentParser(prog="osiris nexus", description="Quantinuum Nexus via the qnexus SDK")
+    sub = parser.add_subparsers(dest="action", required=True)
+    pre = sub.add_parser("preflight", help="Compile on Nexus and price with the H2 syntax checker (free)")
+    run = sub.add_parser("run", help="Preflight, then execute on an emulator (H2-1E) or QPU (H2-1, token required)")
+    for sp in (pre, run):
+        sp.add_argument("circuits", help=".qasm (OpenQASM 2.0), pytket JSON, or a JSON list of {name, tket}")
+        sp.add_argument("--shots", type=int, default=500)
+        sp.add_argument("-O", "--optimisation-level", type=int, default=0)
+        sp.add_argument("--project", default="OSIRIS")
+        sp.add_argument("--limit", type=int, default=None, help="Use only the first N circuits")
+        sp.add_argument("--match", default=None, help="Keep circuits whose name matches this regex")
+        sp.add_argument("--out", default=None, help="Write the JSON summary here")
+    pre.add_argument("--target", default="H2-1", help="H2 QPU to compile and price for (H2-1, H2-2)")
+    run.add_argument("--target", required=True, help="H2-1E / H2-2E emulator, or H2-1 / H2-2 hardware")
+    run.add_argument("--compile-for", default=None, help="QPU to compile for (default: target without the E)")
+    run.add_argument("--max-emulator-hqc", type=float, default=200.0)
+    run.add_argument("--approval-token", default=None)
+    gr = sub.add_parser("grant", help="Mint a Tier 3 token bound to a compiled batch SHA-256 from preflight")
+    gr.add_argument("--compiled-sha", required=True)
+    gr.add_argument("--target", required=True)
+    gr.add_argument("--shots", type=int, required=True)
+    gr.add_argument("--budget-hqc", required=True)
+    gr.add_argument("--ttl", type=int, default=3600)
+    st = sub.add_parser("status", help="Verify the Nexus disposition ledger and list recent entries")
+    st.add_argument("--last", type=int, default=5)
+    args = parser.parse_args(list(argv))
+
+    try:
+        if args.action == "grant":
+            print(mint_tier3_token(circuit_sha256=args.compiled_sha, target=args.target, max_shots=args.shots,
+                                   max_hqc=args.budget_hqc, ttl_seconds=args.ttl))
+            return 0
+        if args.action == "status":
+            led = NexusAuditLedger()
+            rows = led.list_entries()[-args.last:]
+            print(json.dumps({"ledger": str(led.path), "verify": led.verify(),
+                              "recent": [r.get("body", {}) for r in rows]}, indent=2, default=str))
+            return 0
+        from .providers.nexus_sdk import NexusSdkRunner, load_circuits
+        circuits = load_circuits(Path(args.circuits))
+        if args.match:
+            import re
+            circuits = [c for c in circuits if re.search(args.match, c.name or "")]
+        if args.limit:
+            circuits = circuits[: args.limit]
+        runner = NexusSdkRunner(project_name=args.project)
+        if args.action == "preflight":
+            res = runner.preflight(circuits, target=args.target, shots=args.shots,
+                                   optimisation_level=args.optimisation_level)
+            out = res.summary()
+        else:
+            compile_for = args.compile_for or (args.target[:-1] if args.target.upper().endswith("E") else args.target)
+            res = runner.preflight(circuits, target=compile_for, shots=args.shots,
+                                   optimisation_level=args.optimisation_level)
+            out = {"preflight": res.summary(),
+                   "run": runner.run(res, target=args.target, shots=args.shots, approval_token=args.approval_token,
+                                     max_emulator_hqc=args.max_emulator_hqc)}
+    except Exception as exc:
+        print(f"NEXUS_ERROR: {type(exc).__name__}: {exc}", file=sys.stderr)
+        return 2
+    body = json.dumps(out, indent=2, default=str)
+    if args.out:
+        Path(args.out).write_text(body + "\n", encoding="utf-8")
+    print(body)
+    return 0
+
+
 def handle_repl_quantinuum(arg_str: str = "", osiris_home: Optional[str] = None) -> str:
     """Read-only `/quantinuum` REPL summary and deterministic pre-flight dispatcher."""
     tokens = shlex.split(arg_str.strip()) if arg_str.strip() else ["targets"]
@@ -518,6 +591,8 @@ def dispatch_quantinuum_argv(argv: List[str]) -> Optional[int]:
         return cmd_run(rest)
     if head == "ledger":
         return cmd_ledger(rest)
+    if head == "nexus":
+        return cmd_nexus(rest)
     if head in ("quantinuum", "/quantinuum"):
         try:
             print(handle_repl_quantinuum(" ".join(rest)))

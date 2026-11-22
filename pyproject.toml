@@ -51,6 +51,10 @@ quantum = [
 quantinuum = [
     "pytket>=1.28.0",
 ]
+# Quantinuum Nexus via the official SDK (osiris nexus ...); pinned to the version the adapter was checked against.
+nexus = [
+    "qnexus==0.51.4",
+]
 tui = [
     "textual>=0.40.0",
 ]
