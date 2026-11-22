@@ -1,6 +1,11 @@
 import numpy as np
 import pytest
 
+# ADV-0 needs the IBM stack (FakeMarrakesh calibration, Aer MPS); CI installs neither, so skip there.
+pytest.importorskip("qiskit")
+pytest.importorskip("qiskit_aer")
+pytest.importorskip("qiskit_ibm_runtime")
+
 from adv0 import attacks as A
 from adv0 import peaked as P
 
