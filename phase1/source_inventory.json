@@ -147,7 +147,7 @@
  "inaccessible": [
   {
    "source": "IBM Quantum job dc0uhdts2omc7389tmt0 server metadata (creation_date, timestamps)",
-   "reason": "no default saved account; use of the owner's key file was blocked by the session permission system",
+   "reason": "no default saved account; use of the owner's key file was blocked by the session permission system; update 2026-11-22: the owner reports they no longer have access to that IBM account, so this gap is expected to persist",
    "prevents": "a provider-clock comparison of job creation with the Zenodo preregistration time"
   },
   {
