@@ -69,6 +69,33 @@ jobs:
           /tmp/wv/bin/osiris --help > /dev/null
           /tmp/wv/bin/python -c "import osiris_cli, osiris_termux_console, protege, osiris_bench; print('console', osiris_cli.__version__); print('bench tasks', len(osiris_bench.load_tasks()))"
 
+  quantinuum:
+    # Runs the real pytket compile path and the qnexus-SDK adapter, which the matrix above skips or
+    # sends to the static fallback because it installs neither. Any skip here fails the job.
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install osiris-cli with the quantinuum and nexus extras
+        run: |
+          python -m pip install --upgrade pip
+          pip install numpy scipy requests PyYAML rich networkx cryptography pytest
+          pip install -e ".[quantinuum,nexus]"
+          python -c "import pytket, qnexus; print('pytket', pytket.__version__, '| qnexus', qnexus.__version__ if hasattr(qnexus, '__version__') else 'installed')"
+
+      - name: Quantinuum and Nexus tests (no skips allowed)
+        run: |
+          set -o pipefail
+          pytest tests/test_nexus_sdk.py tests/test_quantinuum_client.py tests/test_tket_and_quantinuum_nexus.py \
+            -v --tb=short --strict-markers -rfEs | tee /tmp/quantinuum.log
+          if grep -E "^SKIPPED|[0-9]+ skipped" /tmp/quantinuum.log; then echo "::error::a Quantinuum/Nexus test was skipped"; exit 1; fi
+
   lint:
     runs-on: ubuntu-24.04  # 26.04 has no Python 3.9
     steps:

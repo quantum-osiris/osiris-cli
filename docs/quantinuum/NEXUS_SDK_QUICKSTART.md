@@ -11,6 +11,10 @@ pip install 'osiris-cli[nexus]'          # installs qnexus==0.51.4
 qnx login                                # interactive; tokens are stored by qnexus, not by OSIRIS
 ```
 
+## Approval
+
+Nothing is sent to Nexus until the operator approves it. Every `preflight` and `run` shows what it will upload and run (circuits, project, target, estimated HQC) and asks `[y/N]`. In scripts, pass `--approve-remote`. Without a terminal and without the flag, the command refuses. Hardware runs also need the signed token described below.
+
 ## 1. Preflight (Tier 1, free)
 
 ```bash
@@ -24,7 +28,7 @@ This command:
 2. compiles them for H2-1 on Nexus at `-O 0`;
 3. prices each compiled circuit with Quantinuum's syntax checker (`circuits.cost(..., syntax_checker="H2-1SC")`);
 4. cross-checks that price against the local HQC formula;
-5. writes a Tier 1 receipt to `$OSIRIS_HOME/quantum/nexus_dispositions.jsonl`.
+5. writes a Tier 1 `PREFLIGHT_CHECKED` receipt to `$OSIRIS_HOME/quantum/nexus_dispositions.jsonl`.
 
 The preflight output includes the compiled-batch SHA-256. A hardware approval token is bound to that hash.
 
@@ -54,7 +58,13 @@ The run refuses to start in any of these cases:
 - the token was signed for a different compiled batch, target, shot count or HQC budget;
 - Nexus compiles the circuits to a different batch than the one the token names.
 
-`HARDWARE_ATTESTED` is written only for a completed Tier 3 job with a real job ID.
+`HARDWARE_ATTESTED` is written only after an attestation step that asks Nexus again how the job ran, separately from the submit call. All three checks must pass:
+
+- `jobs.status` reports `COMPLETED`;
+- the job record, fetched again by ID, names the requested QPU;
+- every result's backend info names the same QPU.
+
+If any check fails, the run is recorded as `HARDWARE_UNVERIFIED` with `hardware=false`, and the diagnostics say why.
 
 ## Ledger
 

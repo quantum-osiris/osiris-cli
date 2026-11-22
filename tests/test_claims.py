@@ -209,7 +209,7 @@ def test_legit_command():
 
 NEW_V452 = {"F_MAX": "REFUTED", "COHERENCE_QUANTIZATION": "OVERCLAIM", "NCLM_MECHANICS": "NOT_MEASURED",
             "NCLM_PC_CORRECTOR": "NOT_MEASURED", "QUANTUM_LM": "NO_EVIDENCE", "QEC_LLM_SAFETY": "RULED_OUT",
-            "CRSM_ARCH": "UNTESTED"}
+            "CRSM_ARCH": "REFUTED"}
 
 
 def test_v452_entries_and_verdicts():
@@ -345,9 +345,25 @@ def test_the_users_own_framing_gets_the_verdict():
 
 def test_crsm_arch_points_at_its_pre_registration():
     c = claims.by_id("CRSM_ARCH")
-    [(kind, ref, _)] = c.evidence
-    assert kind == "file" and ref == "osiris-cli/experiments/nclm_arch1/PRE_REGISTRATION.md"
-    assert (Path(__file__).resolve().parents[1] / "experiments" / "nclm_arch1" / "PRE_REGISTRATION.md").exists()
+    assert c.evidence[0] == ("file", "osiris-cli/experiments/nclm_arch1/PRE_REGISTRATION.md",
+                             "NCLM-ARCH-1 pre-registration")
+    assert c.verdict == "REFUTED" and c.finding.startswith("FAIL under Amendment 3 (N=2, adopted after seed 200)")
+    root = Path(__file__).resolve().parents[1]
+    for kind, ref, _ in c.evidence:
+        assert kind == "file" and (root / ref.removeprefix("osiris-cli/")).exists(), ref
+
+
+def test_xtop005_and_adv0_are_registered_with_their_records():
+    root = Path(__file__).resolve().parents[1]
+    assert claims.by_id("XTOP005_DD").verdict == "SUPPORTED"
+    assert claims.by_id("XTOP005_ENCODING").verdict == "NULL"
+    assert claims.by_id("ADV0_PEAKED").verdict == "REFUTED"
+    for cid in ("XTOP005_DD", "XTOP005_ENCODING", "ADV0_PEAKED"):
+        for kind, ref, _ in claims.by_id(cid).evidence:
+            if kind == "file":
+                assert (root / ref.removeprefix("osiris-cli/")).exists(), ref
+    assert {c.id for c in claims.match("what did XTOP-005 find?")} >= {"XTOP005_DD"}
+    assert "ADV0_PEAKED" in {c.id for c in claims.match("are peaked circuits beyond classical simulation?")}
 
 
 def test_the_chsh_shell_command_is_not_the_chsh_test():
