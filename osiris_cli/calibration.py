@@ -17,7 +17,7 @@ import uuid
 from dataclasses import dataclass
 from decimal import ROUND_HALF_EVEN, Decimal, InvalidOperation
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Sequence, Tuple, Union
+from typing import Any, Dict, FrozenSet, List, Optional, Sequence, Tuple, Union
 
 from .exec_kernel import ExecJournal, canon
 
@@ -454,6 +454,22 @@ class CalibrationLedger:
         return report, receipt_hash
 
 
+def _bench_prediction_id(c: Dict[str, Any]) -> str:
+    run_id = str(c.get("run") or c.get("entry") or "run")
+    task_id = str(c.get("task") or "task")
+    attempt_n = c.get("n") if c.get("n") is not None else 1
+    return f"bench-{run_id}-{task_id}-{attempt_n}"
+
+
+def no_output_prediction_ids(cands: Sequence[Dict[str, Any]]) -> FrozenSet[str]:
+    """Prediction IDs of bench attempts that produced no output (timeouts, empty or malformed replies).
+
+    Used at read time so rows a ledger recorded before such attempts were skipped on ingest are
+    left out of the scores too. The append-only ledger itself is never rewritten.
+    """
+    return frozenset(_bench_prediction_id(c) for c in cands if isinstance(c, dict) and c.get("no_output"))
+
+
 def sync_from_bench_candidates(
     cands: Sequence[Dict[str, Any]],
     *,
@@ -463,9 +479,13 @@ def sync_from_bench_candidates(
 
     Maps each candidate's self-test gate (`own_ok`) as empirical self-verification confidence
     (`1.000000` if `own_ok` else `0.000000`) against `hidden_ok` (`1` or `0`), skipping
-    infrastructure/artifact `integrity` exclusions. Returns count of newly appended rows.
+    infrastructure/artifact `integrity` exclusions and `no_output` attempts (a timeout or an empty
+    or malformed reply). A model that produced nothing made no prediction: scoring it as
+    "confidence 0, wrong" would give it a perfect Brier score for failing. Those attempts stay
+    counted as failures in the bench scorecard; they are availability failures, not calibration
+    evidence. Returns count of newly appended rows.
     """
-    valid = [c for c in cands if isinstance(c, dict) and not c.get("integrity")]
+    valid = [c for c in cands if isinstance(c, dict) and not c.get("integrity") and not c.get("no_output")]
     if not valid:
         return 0
 
@@ -475,8 +495,7 @@ def sync_from_bench_candidates(
     for c in valid:
         run_id = str(c.get("run") or c.get("entry") or "run")
         task_id = str(c.get("task") or "task")
-        attempt_n = c.get("n") if c.get("n") is not None else 1
-        pid = f"bench-{run_id}-{task_id}-{attempt_n}"
+        pid = _bench_prediction_id(c)
         if pid in existing_ids:
             continue
         mentor = str(c.get("mentor") or "unknown")
@@ -497,42 +516,59 @@ def sync_from_bench_candidates(
     return added
 
 
-def sync_bench_ledger(
-    *,
-    bench_dir: PathArg = None,
-    path: PathArg = None,
-) -> int:
-    """Load `~/.osiris/bench/results.ledger.jsonl` via `protege` and sync comparable candidates."""
+def load_bench_candidates(*, bench_dir: PathArg = None) -> List[Dict[str, Any]]:
+    """Comparable `protege` candidates from `~/.osiris/bench/results.ledger.jsonl` (empty if unavailable)."""
     try:
         import protege
     except ImportError:
-        return 0
+        return []
     bdir = str(Path(bench_dir).expanduser().resolve()) if bench_dir is not None else protege.BENCH_DIR
     entries, problem = protege.load_ledger(bdir)
     if problem or not entries:
-        return 0
+        return []
     cands, _skipped = protege.candidates(
         entries,
         protege.current_suite(),
         protege.current_runner(),
         bench_dir=bdir,
     )
-    return sync_from_bench_candidates(cands, path=path)
+    return list(cands)
+
+
+def sync_bench_ledger(
+    *,
+    bench_dir: PathArg = None,
+    path: PathArg = None,
+) -> int:
+    """Load `~/.osiris/bench/results.ledger.jsonl` via `protege` and sync comparable candidates."""
+    return sync_from_bench_candidates(load_bench_candidates(bench_dir=bench_dir), path=path)
+
+
+def _drop_excluded(obs: List[CalibrationObservation], exclude_ids: FrozenSet[str]):
+    kept = [o for o in obs if o.prediction_id not in exclude_ids]
+    return kept, len(obs) - len(kept)
+
+
+def _excluded_note(n: int) -> str:
+    return (f" · {n} attempt(s) with no output left out (availability failures, not predictions)"
+            if n else "")
 
 
 def format_summary(
     path: PathArg = None,
     *,
     model_filter: str = "",
+    exclude_ids: FrozenSet[str] = frozenset(),
 ) -> str:
     """Compact one-block summary surfaced in ``/mentors`` and ``/bench`` (<100 cols)."""
     ledger = CalibrationLedger(path)
     ok, _cnt, err = ledger.verify()
     if not ok:
         return f"Calibration ledger TAMPERED ({err}) -- inspect /bench calibration"
-    obs = ledger.observations(model_filter=model_filter)
+    obs, n_excluded = _drop_excluded(ledger.observations(model_filter=model_filter), exclude_ids)
     if not obs:
-        return "Calibration: 0 confidence-tagged predictions recorded (use /bench calibration)"
+        return ("Calibration: 0 confidence-tagged predictions recorded (use /bench calibration)"
+                + _excluded_note(n_excluded))
     rep = compute_calibration(obs, num_bins=10, model_filter=model_filter)
     models = sorted({o.model_id for o in obs})
     by_model: List[str] = []
@@ -542,6 +578,7 @@ def format_summary(
     head = (
         f"Calibration ({rep.num_samples} scored): Brier={rep.brier_score_str} · "
         f"ECE={rep.ece_str} · conf={rep.mean_confidence_str} vs acc={rep.mean_accuracy_str}"
+        + _excluded_note(n_excluded)
     )
     if len(models) > 1 or (models and not model_filter):
         return head + "\n  " + " | ".join(by_model)
@@ -553,13 +590,14 @@ def format_detailed(
     *,
     model_filter: str = "",
     num_bins: int = 10,
+    exclude_ids: FrozenSet[str] = frozenset(),
 ) -> str:
     """Full reliability-bin table (<100 cols) for ``/bench calibration`` and ``/calibration``."""
     ledger = CalibrationLedger(path)
     ok, total_rows, err = ledger.verify()
     if not ok:
         return f"L6 CALIBRATION · TAMPERED ({err})"
-    obs = ledger.observations(model_filter=model_filter)
+    obs, n_excluded = _drop_excluded(ledger.observations(model_filter=model_filter), exclude_ids)
     rep = compute_calibration(obs, num_bins=num_bins, model_filter=model_filter)
     label = model_filter or "all models"
     lines = [
@@ -568,6 +606,8 @@ def format_detailed(
         f"  Mean conf:   {rep.mean_confidence_str}   Empirical acc: {rep.mean_accuracy_str}   "
         f"Overconf: {rep.overconfidence_str}",
     ]
+    if n_excluded:
+        lines.append(" " + _excluded_note(n_excluded).lstrip(" ·").rstrip())
     if rep.num_samples == 0:
         lines.append("  No paired confidence/outcome observations recorded yet.")
         return "\n".join(lines)
@@ -591,12 +631,15 @@ def run_command(args: str = "", *, osiris_home: PathArg = None) -> str:
     if from_bench_cmd:
         parts = parts[1:]
     path = default_calibration_path(osiris_home)
+    bdir = (default_osiris_home(osiris_home) / "bench") if osiris_home is not None else None
+    cands = load_bench_candidates(bench_dir=bdir)
+    exclude = no_output_prediction_ids(cands)
     if parts and parts[0].lower() == "sync":
-        bdir = (default_osiris_home(osiris_home) / "bench") if osiris_home is not None else None
-        added = sync_bench_ledger(bench_dir=bdir, path=path)
-        return f"Synced {added} new benchmark attempt(s) into calibration ledger.\n" + format_detailed(path)
+        added = sync_from_bench_candidates(cands, path=path)
+        return (f"Synced {added} new benchmark attempt(s) into calibration ledger.\n"
+                + format_detailed(path, exclude_ids=exclude))
     if from_bench_cmd and osiris_home is None and "OSIRIS_CALIBRATION_LOG" not in os.environ:
-        sync_bench_ledger(path=path)
+        sync_from_bench_candidates(cands, path=path)
     if parts and parts[0].lower() == "verify":
         ledger = CalibrationLedger(path)
         ok, count, err = ledger.verify()
@@ -604,4 +647,4 @@ def run_command(args: str = "", *, osiris_home: PathArg = None) -> str:
         status = "INTACT" if (ok and tail.intact) else "TAMPERED"
         return f"L6 calibration chain {status}: {count} entries, tail={tail.status}" + (f" ({err})" if err else "")
     model_filter = parts[0] if parts else ""
-    return format_detailed(path, model_filter=model_filter)
+    return format_detailed(path, model_filter=model_filter, exclude_ids=exclude)
