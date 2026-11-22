@@ -5,6 +5,7 @@ from __future__ import annotations
 import hashlib
 import io
 import json
+import re
 import stat
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Tuple
@@ -178,9 +179,14 @@ def test_lower_example_bitflip_qec_qasm() -> None:
     assert res.metrics.has_mid_circuit_measurement is True
     assert res.metrics.has_reset is True
     assert res.metrics.has_classical_control is True
-    assert "if(syn==1) x data[0];" in res.qasm2
-    assert "if(syn==3) x data[1];" in res.qasm2
-    assert "if(syn==2) x data[2];" in res.qasm2
+    lowered = lower_qasm3_to_quantinuum_qasm2(source)
+    assert "if(syn==1) x data[0];" in lowered
+    assert "if(syn==3) x data[1];" in lowered
+    assert "if(syn==2) x data[2];" in lowered
+    assert "reset anc[0];" in lowered
+    # pytket may rewrite x as u3; the compiled circuit must keep every correction and its condition.
+    assert res.metrics.feedforward_conditionals == 3
+    assert sorted(re.findall(r"if\(syn==(\d)\) \S+ data\[(\d)\]", res.qasm2)) == [("1", "0"), ("2", "2"), ("3", "1")]
     assert "reset anc[0];" in res.qasm2
 
 
@@ -197,14 +203,19 @@ def test_lower_dnalang_minimal_circuit() -> None:
         MEASURE(1, 1)
     }
     """
+    lowered = lower_qasm3_to_quantinuum_qasm2(dna)
+    assert "qreg q[2];" in lowered
+    assert "creg c[2];" in lowered
+    assert "h q[0];" in lowered
+    assert "cx q[0], q[1];" in lowered
+    assert "measure q[0] -> c[0];" in lowered
+    assert "reset q[0];" in lowered
+    assert "if(c[0]==1) x q[1];" in lowered
     res = compile_for_quantinuum(dna, target="H2-1SC")
-    assert "qreg q[2];" in res.qasm2
-    assert "creg c[2];" in res.qasm2
-    assert "h q[0];" in res.qasm2
-    assert "cx q[0], q[1];" in res.qasm2
     assert "measure q[0] -> c[0];" in res.qasm2
     assert "reset q[0];" in res.qasm2
-    assert "if(c[0]==1) x q[1];" in res.qasm2
+    assert re.search(r"if\(c\[0\]==1\) \S+ q\[1\];", res.qasm2)
+    assert res.metrics.feedforward_conditionals == 1
     assert res.metrics.has_mid_circuit_measurement is True
     assert res.metrics.has_reset is True
     assert res.metrics.has_classical_control is True
@@ -895,3 +906,20 @@ def test_osiris_repl_main_dispatches_new_subcommands_preserving_legacy(
     monkeypatch.setattr(osiris_repl, "execute_sync", lambda subargs=None: seen.append(subargs))
     osiris_repl.main(["sync", "status"])
     assert seen == [["status"]]
+
+
+def test_pytket_path_handles_single_bit_conditions_and_keeps_feedforward() -> None:
+    """With pytket installed, single-bit conditions used to raise QASMUnsupportedError at export."""
+    pytest.importorskip("pytket")
+    res = compile_for_quantinuum(SAMPLE_QASM3_MID_CIRCUIT, target="H2-1SC")
+    assert res.ok and res.compiler_backend == "pytket"
+    assert res.metrics.feedforward_conditionals == 2
+    assert res.metrics.mid_circuit_measurements == compile_for_quantinuum(
+        SAMPLE_QASM3_MID_CIRCUIT, target="H2-1SC", options=QuantinuumCompilerOptions(no_opt=True)
+    ).metrics.mid_circuit_measurements
+
+
+def test_static_and_pytket_paths_honour_no_reduce() -> None:
+    src = 'OPENQASM 2.0;\ninclude "qelib1.inc";\nqreg q[1];\ncreg c[1];\nx q[0];\nx q[0];\nmeasure q[0] -> c[0];\n'
+    res = compile_for_quantinuum(src, target="H2-1SC", options=QuantinuumCompilerOptions(no_reduce=True))
+    assert res.metrics.total_gates == 2
