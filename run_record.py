@@ -32,6 +32,7 @@ import hashlib
 from collections import Counter
 import json
 import os
+import re
 import secrets
 import time
 
@@ -89,13 +90,33 @@ def load(run_id: str, runs_dir: str = None) -> dict:
         return json.load(f)
 
 
+_SPRINT_RUN_ID = re.compile(r"^run-\d{8}T\d{6}Z-[0-9a-f]{6}$")
+
+
+def is_sprint_run_id(name: str) -> bool:
+    """new_run_id() format. Execution-kernel artifacts in the same directory are run-<32 hex>."""
+    return bool(_SPRINT_RUN_ID.match(name))
+
+
+_KERNEL_ARTIFACT_ID = re.compile(r"^run-[0-9a-f]{32}$")  # exec_kernel: "run-" + uuid4().hex
+
+
+def _is_sprint_run_dir(d: str, name: str) -> bool:
+    """Every directory except execution-kernel artifacts (run-<32 hex> without a run.json).
+    An empty or partial sprint directory still counts: it is evidence of a failed write."""
+    path = os.path.join(d, name)
+    if not os.path.isdir(path):
+        return False
+    return not (_KERNEL_ARTIFACT_ID.match(name) and not os.path.isfile(os.path.join(path, "run.json")))
+
+
 def orphans(ledger_entries, runs_dir: str = None) -> list:
     """Run ids on disk with no "sprint_run" ledger entry naming them -- a
     record or ledger append that failed part-way. Never valid input for
     /apply or /replay; kept, not deleted, as evidence of what was tried."""
     d = runs_dir or RUNS_DIR
     try:
-        on_disk = sorted(n for n in os.listdir(d) if os.path.isdir(os.path.join(d, n)))
+        on_disk = sorted(n for n in os.listdir(d) if _is_sprint_run_dir(d, n))
     except FileNotFoundError:
         return []
     known = {(e.get("payload") or {}).get("run_id") for e in ledger_entries if e.get("kind") == "sprint_run"}
@@ -135,13 +156,25 @@ def verify(run_id: str, record_sha256: str = None, runs_dir: str = None):
     return None
 
 
+def has_runs(runs_dir: str = None) -> bool:
+    """True when at least one sprint run (a directory with run.json) is recorded."""
+    try:
+        resolve(None, runs_dir)
+        return True
+    except LookupError:
+        return False
+
+
 def resolve(ref: str = None, runs_dir: str = None) -> str:
     """The run id for ref: the newest run when ref is empty, else the exact id
     or the one id containing ref (e.g. its last 6 characters). LookupError
     otherwise."""
     d = runs_dir or RUNS_DIR
+    # Only directories holding a run.json are sprint runs. The execution kernel writes its own
+    # run-<hex>/output.jsonl artifacts into the same directory; those sort after every
+    # run-<timestamp> id and must not be taken for "the newest run".
     try:
-        ids = sorted(n for n in os.listdir(d) if os.path.isdir(os.path.join(d, n)))
+        ids = sorted(n for n in os.listdir(d) if os.path.isfile(os.path.join(d, n, "run.json")))
     except FileNotFoundError:
         ids = []
     if not ids:
