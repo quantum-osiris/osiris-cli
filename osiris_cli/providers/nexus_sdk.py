@@ -164,11 +164,18 @@ class NexusSdkRunner:
 
     def preflight(self, circuits: Sequence[Any], target: str = "H2-1", shots: int = 500,
                   optimisation_level: int = 0, job_name: str = "osiris-preflight",
-                  timeout: float = 900.0) -> PreflightResult:
-        """Compile on Nexus for ``target`` (an H2 QPU name) and price it with that QPU's syntax checker."""
+                  timeout: float = 900.0, approve_remote: bool = False) -> PreflightResult:
+        """Compile on Nexus for ``target`` (an H2 QPU name) and price it with that QPU's syntax checker.
+
+        This uploads circuits and starts a compile job on Nexus, so it needs ``approve_remote=True``
+        (the CLI asks the operator, or takes ``--approve-remote``). Nothing is sent before that check.
+        """
         spec = resolve_quantinuum_target(target)
         if spec.family != "H2" or spec.role != "qpu":
             raise GovernanceError(f"preflight takes an H2 QPU name (H2-1, H2-2) to compile and price for; got {target}")
+        if not approve_remote:
+            raise GovernanceError("preflight uploads and compiles on Quantinuum Nexus: explicit operator approval "
+                                  "is required (approve_remote=True / --approve-remote)")
         checker = f"{spec.name}SC"
         proj = self.project()
         src = [tket_sha256(c) for c in circuits]
@@ -184,7 +191,7 @@ class NexusSdkRunner:
         nexus_cost: List[Optional[float]] = []
         for r in compiled_refs:
             v = self._call("circuits.cost", circuit_ref=r, n_shots=shots,
-                           backend_config=self._config(spec.name), syntax_checker=checker)
+                           backend_config=self._config(spec.name), syntax_checker=checker, project=proj)
             nexus_cost.append(None if v is None else float(v))
         local = [str(local_hqc(c, shots)) for c in compiled]
         job_id = str(getattr(job, "id", ""))
@@ -192,7 +199,7 @@ class NexusSdkRunner:
                               compile_job_id=job_id, compiled_refs=compiled_refs, compiled_sha256=comp_sha,
                               source_sha256=src, nexus_hqc=nexus_cost, local_hqc=local)
         res.receipt = self._record(
-            target=checker, tier=1, disposition="SIMULATED", hardware=False, status="COMPLETED",
+            target=checker, tier=1, disposition="PREFLIGHT_CHECKED", hardware=False, status="COMPLETED",
             job_id=job_id, shots=shots,
             estimated_hqc=float(res.total_nexus_hqc if res.total_nexus_hqc is not None else res.total_local_hqc),
             source_sha256=batch_sha256(src), compiled_sha256=batch_sha256(comp_sha), compiler_backend="nexus-sdk",
@@ -205,11 +212,19 @@ class NexusSdkRunner:
     def run(self, pre: PreflightResult, target: str, shots: Optional[int] = None,
             approval_token: Optional[str] = None, max_emulator_hqc: float = 200.0,
             job_name: str = "osiris-run", timeout: float = 3600.0,
-            verify_token: Optional[Callable[..., Any]] = None) -> Dict[str, Any]:
-        """Execute the pre-flighted circuits on ``target`` (H2-1E/H2-2E emulator, or H2-1/H2-2 hardware)."""
+            verify_token: Optional[Callable[..., Any]] = None, approve_remote: bool = False) -> Dict[str, Any]:
+        """Execute the pre-flighted circuits on ``target`` (H2-1E/H2-2E emulator, or H2-1/H2-2 hardware).
+
+        Emulator jobs need ``approve_remote=True``; hardware jobs need a signed Tier 3 token, which is
+        itself the operator's approval. ``HARDWARE_ATTESTED`` is written only after Nexus confirms the job
+        completed on the requested QPU (see ``_attest_hardware``).
+        """
         spec = resolve_quantinuum_target(target)
         if spec.tier == 1:
             raise GovernanceError("run needs an emulator or QPU target; the syntax checker ran in preflight")
+        if spec.tier == 2 and not approve_remote:
+            raise GovernanceError(f"{spec.name} jobs use the Nexus emulator quota: explicit operator approval is "
+                                  "required (approve_remote=True / --approve-remote)")
         shots = int(shots or pre.shots)
         if shots == pre.shots and pre.total_nexus_hqc is not None:
             per_circ = [Decimal(str(v)) for v in pre.nexus_hqc]
@@ -238,13 +253,50 @@ class NexusSdkRunner:
             c = br.get_counts()
             counts.append({"".join(str(b) for b in k): int(v) for k, v in sorted(c.items())})
         job_id = str(getattr(job, "id", ""))
-        hw = spec.tier == 3
+        metrics: Dict[str, Any] = {"circuits": len(counts), "max_cost_per_circuit": caps}
+        diagnostics: List[str] = []
+        if spec.tier == 3:
+            attestation, problems = self._attest_hardware(job, spec, results)
+            metrics["attestation"] = attestation
+            diagnostics.extend(problems)
+            disposition, hw = ("HARDWARE_ATTESTED", True) if not problems else ("HARDWARE_UNVERIFIED", False)
+        else:
+            disposition, hw = "SIMULATED", False
         receipt = self._record(
-            target=spec.name, tier=spec.tier, disposition="HARDWARE_ATTESTED" if hw else "SIMULATED",
+            target=spec.name, tier=spec.tier, disposition=disposition,
             hardware=hw, status="COMPLETED", job_id=job_id, shots=shots, estimated_hqc=float(total),
             source_sha256=batch_sha256(pre.source_sha256), compiled_sha256=compiled_batch,
             compiler_backend="nexus-sdk", preflight_target=f"{pre.target}SC", preflight_job_id=pre.compile_job_id,
-            preflight_passed=True, metrics={"circuits": len(counts), "max_cost_per_circuit": caps},
+            preflight_passed=True, metrics=metrics, diagnostics=diagnostics,
             compiler_options={"qnexus": QNEXUS_VERSION})
         return {"target": spec.name, "job_id": job_id, "shots": shots, "hqc_estimate": str(total),
-                "counts": counts, "receipt": receipt}
+                "disposition": disposition, "diagnostics": diagnostics, "counts": counts, "receipt": receipt}
+
+    def _attest_hardware(self, job: Any, spec: Any, results: Sequence[Any]) -> Tuple[Dict[str, Any], List[str]]:
+        """Ask Nexus, independently of the submit call, where and how the job ran.
+
+        Checks: the job status is COMPLETED; the job record fetched again by id names ``spec.name`` as its
+        device; every result's backend info names the same device. Any failure is returned as a problem and
+        the run is recorded as HARDWARE_UNVERIFIED, never HARDWARE_ATTESTED.
+        """
+        problems: List[str] = []
+        st = self._call("jobs.status", job=job)
+        status = str(getattr(getattr(st, "status", None), "value", getattr(st, "status", "")))
+        if status != "COMPLETED":
+            problems.append(f"Nexus job status is {status or 'unknown'}, not COMPLETED")
+        fresh = self._call("jobs.get", id=getattr(job, "id", None))
+        cfg = getattr(fresh, "backend_config_store", None)
+        job_device = getattr(cfg, "device_name", None)
+        if job_device != spec.name:
+            problems.append(f"Nexus job record names device {job_device!r}, expected {spec.name!r}")
+        result_devices = []
+        for r in results:
+            bi = r.download_backend_info()
+            result_devices.append(getattr(bi, "device_name", None))
+        if not result_devices or any(d != spec.name for d in result_devices):
+            problems.append(f"result backend devices {sorted(set(map(str, result_devices)))} != {spec.name!r}")
+        completed = getattr(st, "completed_time", None)
+        evidence = {"job_status": status, "job_device": job_device, "result_devices": result_devices,
+                    "completed_time": completed.isoformat() if hasattr(completed, "isoformat") else completed,
+                    "nexus_cost": getattr(st, "cost", None)}
+        return evidence, problems

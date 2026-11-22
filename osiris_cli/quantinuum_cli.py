@@ -457,6 +457,19 @@ def cmd_ledger(argv: Sequence[str]) -> int:
     return 0 if summary["valid"] else 2
 
 
+def _approve_remote(what: str, flag: bool) -> bool:
+    """Operator approval for Nexus side effects: the --approve-remote flag, or an interactive [y/N]."""
+    if flag:
+        return True
+    if not sys.stdin.isatty():
+        return False
+    try:
+        answer = input(f"osiris nexus will {what}. Proceed? [y/N] ")
+    except EOFError:
+        return False
+    return answer.strip().lower() in ("y", "yes")
+
+
 def cmd_nexus(argv: Sequence[str]) -> int:
     """Quantinuum Nexus via the official qnexus SDK (see osiris_cli/providers/nexus_sdk.py)."""
     parser = argparse.ArgumentParser(prog="osiris nexus", description="Quantinuum Nexus via the qnexus SDK")
@@ -471,6 +484,8 @@ def cmd_nexus(argv: Sequence[str]) -> int:
         sp.add_argument("--limit", type=int, default=None, help="Use only the first N circuits")
         sp.add_argument("--match", default=None, help="Keep circuits whose name matches this regex")
         sp.add_argument("--out", default=None, help="Write the JSON summary here")
+        sp.add_argument("--approve-remote", action="store_true",
+                        help="Approve uploading, compiling and (for run) emulator jobs on Nexus without a prompt")
     pre.add_argument("--target", default="H2-1", help="H2 QPU to compile and price for (H2-1, H2-2)")
     run.add_argument("--target", required=True, help="H2-1E / H2-2E emulator, or H2-1 / H2-2 hardware")
     run.add_argument("--compile-for", default=None, help="QPU to compile for (default: target without the E)")
@@ -504,18 +519,26 @@ def cmd_nexus(argv: Sequence[str]) -> int:
             circuits = [c for c in circuits if re.search(args.match, c.name or "")]
         if args.limit:
             circuits = circuits[: args.limit]
+        if not circuits:
+            raise ValueError("no circuits selected")
+        from .providers.nexus_sdk import local_hqc
+        est = sum(local_hqc(c, args.shots) for c in circuits)
+        what = (f"upload {len(circuits)} circuit(s) to Nexus project {args.project!r}, compile and price them"
+                + (f", then run {args.shots} shots each on {args.target} (local estimate ~{est} HQC)"
+                   if args.action == "run" else ""))
+        approved = _approve_remote(what, args.approve_remote)
         runner = NexusSdkRunner(project_name=args.project)
         if args.action == "preflight":
             res = runner.preflight(circuits, target=args.target, shots=args.shots,
-                                   optimisation_level=args.optimisation_level)
+                                   optimisation_level=args.optimisation_level, approve_remote=approved)
             out = res.summary()
         else:
             compile_for = args.compile_for or (args.target[:-1] if args.target.upper().endswith("E") else args.target)
             res = runner.preflight(circuits, target=compile_for, shots=args.shots,
-                                   optimisation_level=args.optimisation_level)
+                                   optimisation_level=args.optimisation_level, approve_remote=approved)
             out = {"preflight": res.summary(),
                    "run": runner.run(res, target=args.target, shots=args.shots, approval_token=args.approval_token,
-                                     max_emulator_hqc=args.max_emulator_hqc)}
+                                     max_emulator_hqc=args.max_emulator_hqc, approve_remote=approved)}
     except Exception as exc:
         print(f"NEXUS_ERROR: {type(exc).__name__}: {exc}", file=sys.stderr)
         return 2

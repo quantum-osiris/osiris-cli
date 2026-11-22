@@ -478,7 +478,7 @@ REGISTER: Tuple[Claim, ...] = (
            r"(attention|torsion)[^.\n]{0,40}?\bt-lock\b", r"phase[\s-]*conjugat\w*[\s-]+positional",
            r"non[\s-]*local[\s,]+non[\s-]*causal|non[\s-]*causal[\s-]+living|\bncllm\b|\bnc-lm\b",
            r"information[\s-]*manifold collapse|non[\s-]*local correlation factor"),
-          testable="Whether these parts help as architecture is CRSM_ARCH (NCLM-ARCH-1, pre-registered); the "
+          testable="Whether these parts help as architecture is CRSM_ARCH (NCLM-ARCH-1: FAIL under Amendment 3, N=2); the "
                    "physics names would need a measured physical quantity, which none of them has.",
           checks=(("phi_positional", (128, 51.843, 0.946)),)),
     Claim("NCLM_PC_CORRECTOR", "The core's phase-conjugate error correction detects decoherence (Γ > 0.3) and "
@@ -500,16 +500,55 @@ REGISTER: Tuple[Claim, ...] = (
                    "the rest of the CRSM block); alone it needs a leave-one-out follow-up."),
     Claim("CRSM_ARCH", "The CRSM components (torsion-locked attention, pilot-wave factor, phase-conjugate corrector, "
           "1/φ FFN scale, φ position table) make the core a better byte model than a standard transformer of "
-          "the same size", "UNTESTED",
-          "Pre-registered 2026-10-08 as NCLM-ARCH-1, not run: the live core against pre-norm blocks with base-10000 "
-          "positions and the FFN widened to 384 (725,760 vs 726,304 parameters), 8 paired seeds, best held-out "
-          "documents bits/byte, minimum effect 0.05, PASS / FAIL / NO-DIFFERENCE fixed in advance. It compares the "
-          "bundle, not single components. One-seed checks made before registration (in the pre-registration) "
-          "hint that the corrector may not help; they are not a result.",
-          (("file", "osiris-cli/experiments/nclm_arch1/PRE_REGISTRATION.md", "NCLM-ARCH-1 pre-registration"),),
+          "the same size", "REFUTED",
+          "FAIL under Amendment 3 (N=2, adopted after seed 200); incomplete against 8-seed pre-registration. "
+          "NCLM-ARCH-1 was registered 2026-10-08 with 8 paired seeds (200-207), best held-out documents "
+          "bits/byte, minimum effect 0.05. Amendment 3 (2026-11-01, recorded before seed 201 finished) bounded "
+          "the run to seeds 200 and 201. On those two pairs the standard arm won both: mean paired gain "
+          "(standard - crsm) -0.595 bits/byte, SD 0.026, one-sided 95 % bounds [-0.712, -0.478]; held-out chat "
+          "+0.728 bpb worse for crsm. All four runs hit the 12,000-step cap before early stopping. Seeds 202-207 "
+          "were never run, so the registered 8-seed test is incomplete; the direction and size of the gap on the "
+          "two pairs run are not in doubt.",
+          (("file", "osiris-cli/experiments/nclm_arch1/PRE_REGISTRATION.md", "NCLM-ARCH-1 pre-registration"),
+           ("file", "osiris-cli/experiments/nclm_arch1/RESULT.md", "NCLM-ARCH-1 result, seeds 200-201"),
+           ("file", "osiris-cli/experiments/nclm_arch1/EXECUTION.md", "Amendment 3: scope bounded to N=2")),
           (r"\bcrsm[\s-]+(architecture|components?|blocks?|mechanics)\b", r"\bnclm[\s-]*arch[\s-]*1\b",
            r"sovereign[\s-]*(block|mechanics)\b[^.\n]{0,40}?(better|improv\w*|helps?|beats?|outperform\w*)"),
-          testable="Run NCLM-ARCH-1 as registered: experiments/nclm_arch1/run.py."),
+          testable="Seeds 202-207 of NCLM-ARCH-1 as registered (experiments/nclm_arch1/run.py) would complete "
+                   "the 8-seed test.",
+          caveats=("N=2 of 8 registered seed pairs (Amendment 3)", "all runs hit the step cap")),
+    Claim("XTOP005_DD", "Dynamical decoupling protects an idle code-space register on IBM Heron r2 "
+          "(XTOP-005 H2, H3)", "SUPPORTED",
+          "Pre-registered (10.5281/zenodo.24425416) and run on ibm_marrakesh, job dc0uhdts2omc7389tmt0, 216 "
+          "circuits x 1,000 shots. H2 and H3 (decoupling against bare idling) are supported at both depths, "
+          "Holm-adjusted p = 0.002: H2 +0.122 (depth 1) and +0.176 (depth 3), H3 +0.135 and +0.102.",
+          (("doi", "10.5281/zenodo.24425416", "XTOP-005 pre-registration"),
+           ("doi", "10.5281/zenodo.24425627", "XTOP-005 paper"),
+           ("file", "osiris-cli/docs/xtop005/qpu/results.json", "XTOP-005 hypothesis tests, job dc0uhdts2omc7389tmt0")),
+          (r"\bxtop[\s-]*0*05\b", r"\bdynamical[\s-]+decoupling\b[^.\n]{0,60}?\b(heron|marrakesh|heavy[\s-]*hex)\b"),
+          testable="Scope: one device (ibm_marrakesh), one session, depths 1 and 3."),
+    Claim("XTOP005_ENCODING", "[[4,2,2]] error-detection encoding protects the register on heavy-hex "
+          "(XTOP-005 H1, H4)", "NULL",
+          "Pre-registered with H2 and H3 on the same job (dc0uhdts2omc7389tmt0). H1 is not supported at either "
+          "depth (+0.021, Holm p = 0.34; +0.043, Holm p = 0.031, above the registered threshold); H4 is not "
+          "supported (-0.054 at depth 1, CI entirely below zero; +0.015 at depth 3, Holm p = 0.34). On heavy-hex "
+          "the routing the code needs costs more than the detection gains.",
+          (("doi", "10.5281/zenodo.24425416", "XTOP-005 pre-registration"),
+           ("doi", "10.5281/zenodo.24425627", "XTOP-005 paper"),
+           ("file", "osiris-cli/docs/xtop005/qpu/results.json", "XTOP-005 hypothesis tests, job dc0uhdts2omc7389tmt0")),
+          (r"\[\[\s*4\s*,\s*2\s*,\s*2\s*\]\][^.\n]{0,60}?\b(heron|marrakesh|heavy[\s-]*hex|protect\w*)\b",),
+          testable="The H2-1 design (docs/xtop005/quantinuum) tests the same code with all-to-all connectivity; "
+                   "not yet run."),
+    Claim("ADV0_PEAKED", "Twirled-mirror peaked circuits on a heavy-hex region (up to 56 qubits, depth 16) are "
+          "beyond classical simulation", "REFUTED",
+          "ADV-0 (offline, no QPU, not pre-registered) scanned 30 cells, n = 12-56, depth 2-16, on FakeMarrakesh "
+          "regions. In every cell at least one laptop-scale attack (Pauli propagation, exact light-cone "
+          "statevector, or MPS sampling) recovered the hidden string. At n = 56, depth 16 the predicted hardware "
+          "peak is 0.041; MPS at bond dimension 64 fails (0.005) but bond dimension 256 wins (0.165 in 1,274 s).",
+          (("file", "osiris-cli/docs/adv0/ADV0_REPORT.md", "ADV-0 report and 30-cell scan"),),
+          (r"\badv[\s-]*0\b", r"\bpeaked[\s-]+circuits?\b[^.\n]{0,60}?\b(advantage|classical(ly)?|simulat\w*)\b"),
+          testable="ADV-1 (looped regions, non-mirror construction, structure-aware attack) with the gate in the "
+                   "ADV-0 report: MPS at bond dimension 1024, Pauli propagation and light-cone must all fail."),
     Claim("RQC_ADVANTAGE", "Recursive Quantum Circuits with adaptive feedback outperform random circuit sampling "
           "(p < 0.05); research-grade and ready for peer review", "UNTESTED",
           "RQC_RESEARCH_METHODOLOGY.md is a proposal: its p-values (0.024, 0.018, 0.009) are listed under "
