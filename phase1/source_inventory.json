@@ -1,0 +1,174 @@
+{
+ "record": "phase1/source_inventory.json",
+ "review_date": "2026-11-22",
+ "cutoff_utc": "2026-11-22T06:00:00Z",
+ "reviewer": "Claude (AI agent, Claude Code session); self-review only, no independent reviewer ran",
+ "workspace": "Node Beta (Linux/WSL2) ~/osiris-assessment/work",
+ "repositories": [
+  {
+   "remote": "github.com/quantum-osiris/osiris-cli",
+   "pinned": "8e963c77 (origin/main)",
+   "inspected_branch": "claude/phase1-bt2t (from 8e963c77)",
+   "dirty_at_review": "only this Phase 1 work"
+  },
+  {
+   "remote": "github.com/quantum-osiris/dnalang-core",
+   "pinned": "90b6805 (origin/main)",
+   "local_checkout": "31f16bf3 main, clean (not fast-forwarded)",
+   "inspected": "dnalang/passes/wen_plaquette_pass.py, CI run 44989084645"
+  },
+  {
+   "remote": "github.com/quantum-osiris/quantum-ide",
+   "pinned": "190c326 (origin/main)",
+   "inspected": "git grep for CAGE strings at 190c326; rendered /, /verify, /osiris-bridge"
+  },
+  {
+   "remote": "github.com/quantum-osiris/quantumosiris-site (private)",
+   "pinned": "7ae1104 (main)"
+  },
+  {
+   "remote": "github.com/quantum-osiris/osiris-governance",
+   "pinned": "78b1fbe4 (local main, clean)",
+   "inspected": "searched for a SYS-026 definition: none found"
+  }
+ ],
+ "files_osiris_cli_at_8e963c77": [
+  {
+   "path": "falsifiable_predictions.md",
+   "sha256": "978108c6638e0f9e8c125e44c329282cc2ccb37c809453a5256ebcca83dc4ffc"
+  },
+  {
+   "path": "physics/QBYTE_PHYSICS_WHITEPAPER.md",
+   "sha256": "09728de517a4641f58b20a21525d91b9334463136ac932916fab567c7d346e10"
+  },
+  {
+   "path": "research/a_field_study/experiments/falsification_harness.py",
+   "sha256": "f498afd4406a4c90d97356cc6ea1fb9161fcc46f88f6f50d7af5f1f562d652c5"
+  },
+  {
+   "path": "experiments/nclm_arch1/PRE_REGISTRATION.md",
+   "sha256": "6b14645c793d0e9ef388e88b388ac1ece4f833a74d9991d41f917f2af728c77e"
+  },
+  {
+   "path": "experiments/nclm_arch1/EXECUTION.md",
+   "sha256": "8d1e0081ae6e8965df38e86dc6fd84e8af8589e8f91ba8e61f2beacb81492fa1"
+  },
+  {
+   "path": "experiments/nclm_arch1/results.json",
+   "sha256": "5242b6be88cb5ebe62e6fdd69d8cceb9dd763d6180f1f58eb7761c79c768493f"
+  },
+  {
+   "path": "experiments/nclm_arch1/RESULT.md",
+   "sha256": "1e7602c6967fe061b0709a144971df970d1585c486c1681ddc341e42ccc4e529"
+  },
+  {
+   "path": "docs/xtop005/qpu/job_receipt.json",
+   "sha256": "7a7d36f3c8203719afa223254bb93b757bea01389af7f0bda7762794e536c073"
+  },
+  {
+   "path": "docs/xtop005/qpu/results.json",
+   "sha256": "4ab747abbac0f259d947ddc09e2b52bbffbe656e4b5bd3907af9cf79cab422b6"
+  },
+  {
+   "path": "docs/xtop005/qpu/raw_counts.json",
+   "sha256": "bb838862751795d90c7b8d77a6660aa26ce5c31544e4e0cbd3ebf29762dd9d28"
+  },
+  {
+   "path": "docs/xtop005/qpu/lock.json",
+   "sha256": "77492c195c78aec048f8a0a3b920c8dee8fa241df9cfb8a12373456907a36a3c"
+  },
+  {
+   "path": "docs/adv0/scan.jsonl",
+   "sha256": "81cce04cedaeeef84406803f6d7f7d8cfa8ff949315d4e264f741eae784ca43a"
+  },
+  {
+   "path": "docs/adv0/ADV0_REPORT.md",
+   "sha256": "06a4a80faf1312b73b2682a6794f7af317544b4144257b2b905b50079b2e2dde"
+  },
+  {
+   "path": "osiris_cli/claims.py",
+   "sha256": "ebc742d297772d93f4328dc7dac7038a2b04c09544037d0cd174fc44bde92751"
+  },
+  {
+   "path": "docs/research/crsm_claim_audit.md",
+   "sha256": "dc38e478743f5c6f0abc3ed0ed3e24f1b0e20b517465d28382a053845155eac4"
+  }
+ ],
+ "external_records": [
+  {
+   "type": "github_actions_run",
+   "id": "44989410176",
+   "repo": "osiris-cli",
+   "head": "8e963c77",
+   "observed": "jobs lint, test 3.9-3.12, quantinuum: success; quantinuum log shows pytket-2.18.5, qnexus-0.51.4 installed and 'collected 38 items'",
+   "retrieved": "2026-11-22"
+  },
+  {
+   "type": "github_actions_run",
+   "id": "44989084645",
+   "repo": "dnalang-core",
+   "head": "90b6805",
+   "observed": "conclusion success",
+   "retrieved": "2026-11-22"
+  },
+  {
+   "type": "vercel_deployment",
+   "id": "dpl_6gdekc1Cc1FjwPRDnjhPBmCT4CQ6",
+   "project": "quantum-ide",
+   "observed": "READY 2026-11-22T05:22:15Z; alias www.quantumagentlab.com -> this id; meta.sourceCommit=190c32695be220bb5469c09d7292dbde8c1addc3 (operator-supplied CLI metadata, not a Vercel Git binding)"
+  },
+  {
+   "type": "vercel_deployment",
+   "id": "dpl_2Vqd7pCGnX8Da9MiGJaVkLCW4hzY",
+   "project": "quantumosiris-site",
+   "observed": "READY 2026-11-22T05:17:53Z; alias www.quantumosiris.com -> this id; meta.sourceCommit=7ae1104d026e8d557da17e5ca3c599261668a412 (operator-supplied)"
+  },
+  {
+   "type": "vercel_project_link",
+   "projects": [
+    "quantum-ide",
+    "quantumosiris-site"
+   ],
+   "observed": "link = null for both (no Git integration); linking to quantum-osiris repos failed: Vercel GitHub App has no access to the org"
+  },
+  {
+   "type": "zenodo_record",
+   "id": "24425416",
+   "observed": "XTOP-005 preregistration; created 2026-11-21T18:53:24.064843Z; metadata.publication_date '2026-11-20'",
+   "retrieved": "2026-11-22"
+  },
+  {
+   "type": "zenodo_record",
+   "id": "24425628",
+   "observed": "XTOP-005 paper version; concept DOI 10.5281/zenodo.24425627; created 2026-11-21T19:06:02.677496Z",
+   "retrieved": "2026-11-22"
+  }
+ ],
+ "inaccessible": [
+  {
+   "source": "IBM Quantum job dc0uhdts2omc7389tmt0 server metadata (creation_date, timestamps)",
+   "reason": "no default saved account; use of the owner's key file was blocked by the session permission system",
+   "prevents": "a provider-clock comparison of job creation with the Zenodo preregistration time"
+  },
+  {
+   "source": "$OSIRIS_HOME/experiments/nclm_arch1 run directories",
+   "reason": "absent on this machine (~/.osiris/experiments/nclm_arch1 does not exist)",
+   "prevents": "checking evaluation logs for when held-out scores were first computed or viewed"
+  },
+  {
+   "source": "canonical SYS-ID governance specification",
+   "reason": "not found in osiris-governance or osiris-cli (AGENTS.md names SYS-021, SYS-024, SYS-025, SYS-026 without a spec file)",
+   "prevents": "mapping Phase 1 execution classes onto official SYS labels; left unresolved"
+  },
+  {
+   "source": "Quantinuum Nexus service",
+   "reason": "no credentials",
+   "prevents": "any live-service compatibility claim"
+  },
+  {
+   "source": "Pasted 'Falsifiable Predictions v2.2.0' text",
+   "reason": "not present in the repository; repo file is v2.1.0",
+   "prevents": "treating v2.2.0 as the project's recorded position"
+  }
+ ]
+}
