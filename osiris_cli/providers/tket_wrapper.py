@@ -877,19 +877,35 @@ def _try_pytket_compile(
     except Exception:
         return None
 
-    if not options.no_opt:
-        if not options.no_reduce and options.tket_opt_level >= 1:
+    # Same switches as the static optimizer: no_opt, no_reduce or level 0 means "leave the circuit alone".
+    if options.no_opt or options.no_reduce or options.tket_opt_level == 0:
+        diags.append("pytket optimization disabled by compiler options")
+    else:
+        if options.tket_opt_level >= 1:
             RemoveRedundancies().apply(circ)
             diags.append("Applied pytket.passes.RemoveRedundancies")
         if options.tket_opt_level >= 2:
             FullPeepholeOptimise().apply(circ)
             diags.append("Applied pytket.passes.FullPeepholeOptimise")
-    else:
-        diags.append("pytket optimization disabled via no_opt=True")
 
-    compiled = circuit_to_qasm_str(circ)
+    # qelib1 only allows conditions on a whole register; Quantinuum's hqslib1 dialect also allows
+    # single-bit conditions such as if(c[0]==1), which mid-circuit feed-forward needs.
+    try:
+        compiled = circuit_to_qasm_str(circ, header="qelib1")
+    except Exception:
+        try:
+            compiled = circuit_to_qasm_str(circ, header="hqslib1")
+            diags.append("Exported with the hqslib1 header (single-bit conditions)")
+        except Exception:
+            return None
     if not compiled.endswith("\n"):
         compiled += "\n"
+
+    # Refuse output that changed the classical structure (measure, reset, conditional counts).
+    before, after = _analyze_qasm2(qasm2), _analyze_qasm2(compiled)
+    for field in ("measurements", "resets", "feedforward_conditionals"):
+        if getattr(before, field) != getattr(after, field):
+            return None
     return compiled, diags
 
 
