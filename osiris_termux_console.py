@@ -3465,7 +3465,7 @@ def _mentors(command: str = ""):
         from osiris_cli import calibration as _cal_mod
         if cands:
             _cal_mod.sync_from_bench_candidates(cands)
-        cal_block = "\n\n" + _cal_mod.format_summary()
+        cal_block = "\n\n" + _cal_mod.format_summary(exclude_ids=_cal_mod.no_output_prediction_ids(cands))
     except Exception:
         cal_block = ""
     print("\n" + protege.format_scorecard(card, skipped, suite) + runs + "\n\n" + protege.format_route(card) + cal_block + "\n")
