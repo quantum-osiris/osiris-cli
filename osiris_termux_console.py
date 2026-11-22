@@ -1792,7 +1792,7 @@ def _home(command: str = "", quiet: bool = False):
                                       ui.dim(f"will: {nb['will']}"), ui.dim(f"won't: {nb['wont']}")], tone="rich"))
 
     options = []
-    has_runs = os.path.isdir(run_record.RUNS_DIR) and bool(os.listdir(run_record.RUNS_DIR))
+    has_runs = run_record.has_runs()
     if pending:
         options += [("This proposal's run: every candidate", "/run show"),
                     ("Why did the last sandbox run pass or fail", "/why"), ("Full status", "/status")]
@@ -3958,7 +3958,8 @@ def _status():
         entries = None
         rows.append(("Genome ledger", f"unavailable: {type(e).__name__}: {e}"))
     if os.path.isdir(run_record.RUNS_DIR):
-        n_runs = len(os.listdir(run_record.RUNS_DIR))
+        n_runs = sum(1 for n in os.listdir(run_record.RUNS_DIR)
+                     if run_record._is_sprint_run_dir(run_record.RUNS_DIR, n))
         if entries is None:
             rows.append(("Runs", f"{n_runs} on disk · ledger unreadable, not checked"))
         else:
