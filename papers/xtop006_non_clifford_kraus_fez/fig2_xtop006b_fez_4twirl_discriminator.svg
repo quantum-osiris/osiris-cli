@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="680" height="340" viewBox="0 0 680 340">
+<rect width="100%" height="100%" fill="#ffffff"/>
+<text x="340.0" y="22" text-anchor="middle" font-family="DejaVu Sans,Arial" font-size="12.5" font-weight="bold">OSIRIS-XTOP-006B-FEZ: Confirmatory Intra-Block 4-Twirl Scrambling vs Decoherence</text>
+<rect x="70" y="42" width="580" height="243" fill="none" stroke="#333333" stroke-width="1.2"/>
+<line x1="70" y1="285.00" x2="650" y2="285.00" stroke="#e0e0e0" stroke-width="1"/>
+<text x="62" y="289.00" text-anchor="end" font-family="DejaVu Sans,Arial" font-size="10">0.00</text>
+<line x1="70" y1="224.25" x2="650" y2="224.25" stroke="#e0e0e0" stroke-width="1"/>
+<text x="62" y="228.25" text-anchor="end" font-family="DejaVu Sans,Arial" font-size="10">0.25</text>
+<line x1="70" y1="163.50" x2="650" y2="163.50" stroke="#e0e0e0" stroke-width="1"/>
+<text x="62" y="167.50" text-anchor="end" font-family="DejaVu Sans,Arial" font-size="10">0.50</text>
+<line x1="70" y1="122.99" x2="650" y2="122.99" stroke="#aa4444" stroke-width="1" stroke-dasharray="5,4"/>
+<text x="62" y="126.99" text-anchor="end" font-family="DejaVu Sans,Arial" font-size="10">2/3</text>
+<line x1="70" y1="78.45" x2="650" y2="78.45" stroke="#e0e0e0" stroke-width="1"/>
+<text x="62" y="82.45" text-anchor="end" font-family="DejaVu Sans,Arial" font-size="10">0.85</text>
+<line x1="70" y1="42.00" x2="650" y2="42.00" stroke="#e0e0e0" stroke-width="1"/>
+<text x="62" y="46.00" text-anchor="end" font-family="DejaVu Sans,Arial" font-size="10">1.00</text>
+<rect x="172.00" y="105.48" width="66.0" height="179.52" fill="#1f77b4"/>
+<rect x="250.00" y="141.47" width="66.0" height="143.53" fill="#bdbdbd"/>
+<text x="205.00" y="99.48" text-anchor="middle" font-family="DejaVu Sans,Arial" font-size="10" font-weight="bold">0.739</text>
+<text x="283.00" y="135.47" text-anchor="middle" font-family="DejaVu Sans,Arial" font-size="10">0.591</text>
+<text x="244.00" y="307" text-anchor="middle" font-family="DejaVu Sans,Arial" font-size="11">θ = 3π/8 (+14.8 pp, 14.6σ)</text>
+<rect x="415.60" y="79.04" width="66.0" height="205.96" fill="#1f77b4"/>
+<rect x="493.60" y="134.52" width="66.0" height="150.48" fill="#bdbdbd"/>
+<text x="448.60" y="73.04" text-anchor="middle" font-family="DejaVu Sans,Arial" font-size="10" font-weight="bold">0.848</text>
+<text x="526.60" y="128.52" text-anchor="middle" font-family="DejaVu Sans,Arial" font-size="10">0.619</text>
+<text x="487.60" y="307" text-anchor="middle" font-family="DejaVu Sans,Arial" font-size="11">θ = π/2 (+22.8 pp, 15.3σ)</text>
+</svg>

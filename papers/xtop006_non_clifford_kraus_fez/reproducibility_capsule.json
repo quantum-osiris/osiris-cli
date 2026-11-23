@@ -1,0 +1,18 @@
+{
+  "backend": "ibm_fez",
+  "combined_qpu_seconds": 54,
+  "combined_shots": 184320,
+  "execution_tier": "HARDWARE_ATTESTED",
+  "paper_id": "OSIRIS-XTOP-006-FEZ-LETTER",
+  "provider_job_ids": [
+    "dc1tqaanj2vs73dfrt40",
+    "dc23ouqnj2vs73dg3bog"
+  ],
+  "rfc8785_canonical_sha256": "73915b7934d80678b50e19269026565c99681d3c5408c249859db1bb840252bc",
+  "schema": "osiris.reproducibility_capsule/1",
+  "source_artifacts": {
+    "physical_xtop006_fez_results.json": "2ec221c1598f27c6bcc119c92fb4e07ba3046ecacd149dab67295da9ab36fbf1",
+    "physical_xtop006b_fez_results.json": "5e74a32d7c1dad84a29508d13c837861e1bb21786c6bd718467c64ae69b00311",
+    "xtop006_h2_manifest.json": "1af448f37e4f0637da84408f5ef5c36094646731b3c81ca16904c0756dda3858"
+  }
+}
