@@ -45,8 +45,16 @@ import time
 from dataclasses import dataclass
 from typing import Callable, Dict, List, Optional
 
-from osiris_cli.living import (CHAT_MARKER, CHAT_QUIET_SECONDS, HELDOUT_EVERY, LIVING_HOME, SCORER,
-                               OllamaMentor, Osiris, core_scorer)
+from osiris_cli.living import (
+    CHAT_MARKER,
+    CHAT_QUIET_SECONDS,
+    HELDOUT_EVERY,
+    LIVING_HOME,
+    SCORER,
+    OllamaMentor,
+    Osiris,
+    core_scorer,
+)
 
 HOME = os.path.expanduser("~")
 RUNS_HOME = os.path.join(LIVING_HOME, "train_runs")
@@ -120,11 +128,15 @@ def looks_like_transcript(text: str) -> bool:
 
 
 def build_corpus(roots: List[str], extensions: List[str], base: str = HOME,
-                 seen: Optional[set] = None) -> Dict[str, list]:
+                 seen: Optional[set] = None, *, enforce_sys024: bool = True) -> Dict[str, list]:
     """Returns {"docs": [Doc], "skipped": [(path, reason)]}. Files whose bytes
     were already taken (``seen``) are skipped, so copies are learned once."""
     docs, skipped = [], []
     seen = set() if seen is None else seen
+    sys024_fn = None
+    if enforce_sys024:
+        from osiris_cli.evolution_engine import filter_training_doc_sys024
+        sys024_fn = filter_training_doc_sys024
     for root in roots:
         top = os.path.join(base, root)
         if not os.path.isdir(top):
@@ -155,6 +167,11 @@ def build_corpus(roots: List[str], extensions: List[str], base: str = HOME,
                 if looks_like_transcript(text):
                     skipped.append((rel, "console transcript"))
                     continue
+                if sys024_fn is not None:
+                    ok_sys024, bad_ids = sys024_fn(text)
+                    if not ok_sys024:
+                        skipped.append((rel, f"sys024-quarantined:{','.join(bad_ids)}"))
+                        continue
                 if len(text.strip()) < 64:
                     continue
                 digest = hashlib.sha256(raw).hexdigest()
@@ -186,14 +203,18 @@ def code_provenance() -> dict:
 
 
 def freeze_corpus(path: str, living_home: str = LIVING_HOME, base: str = HOME,
-                  archive_roots: Optional[List[str]] = None) -> dict:
+                  archive_roots: Optional[List[str]] = None, *, enforce_sys024: bool = True) -> dict:
     """Build the corpus once and save it, so every run of an experiment reads the same
     documents even while files under $HOME keep changing."""
     cfg = load_corpus_config(os.path.join(living_home, "corpus.json"))
     exts = cfg.get("extensions", DEFAULT_EXTENSIONS)
     seen: set = set()
-    corpus = build_corpus(cfg["roots"], exts, base, seen)
-    archive = build_corpus(archive_roots, exts, base, seen) if archive_roots else {"docs": [], "skipped": []}
+    corpus = build_corpus(cfg["roots"], exts, base, seen, enforce_sys024=enforce_sys024)
+    archive = (
+        build_corpus(archive_roots, exts, base, seen, enforce_sys024=enforce_sys024)
+        if archive_roots
+        else {"docs": [], "skipped": []}
+    )
     out = {"archive_roots": archive_roots or [],
            "docs": [d.__dict__ for d in corpus["docs"]], "skipped": corpus["skipped"],
            "archive": [d.__dict__ for d in archive["docs"]], "archive_skipped": archive["skipped"]}
@@ -225,6 +246,10 @@ def chat_lessons(log_path: str) -> Dict[str, List[str]]:
     except Exception:  # noqa: BLE001 - without the register, train as before
         claims_mod = None
     try:
+        from osiris_cli.evolution_engine import filter_training_doc_sys024 as _sys024_filter
+    except Exception:  # noqa: BLE001
+        _sys024_filter = None
+    try:
         with open(log_path, encoding="utf-8") as f:
             for line in f:
                 try:
@@ -244,6 +269,9 @@ def chat_lessons(log_path: str) -> Dict[str, List[str]]:
                     continue
                 if claims_mod is not None and claims_mod.flagged_in_reply(
                         r["reply"], claims_mod.match(r["user"])):
+                    flagged.append(r.get("hash", ""))
+                    continue
+                if _sys024_filter is not None and not _sys024_filter(r["reply"])[0]:
                     flagged.append(r.get("hash", ""))
                     continue
                 train.append(lesson)
@@ -457,7 +485,7 @@ def run(core, *, hours: float, batch: int = 8, max_steps: Optional[int] = None, 
     if len(doc_train) <= SEQ:
         progress({"kind": "end", "reason": "empty corpus (check ~/.osiris/living/corpus.json)", "steps": 0, "hours": 0.0})
         try:
-            os.remove(lock)
+            os.remove(core.lock_path())
         except OSError:
             pass
         raise SystemExit("OSIRIS train: the corpus is empty -- check ~/.osiris/living/corpus.json")

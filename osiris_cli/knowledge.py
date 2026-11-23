@@ -178,6 +178,16 @@ def scorecard_verdicts(readme_text: str) -> List[str]:
 
 
 NOTE_PREFIX = "approved-note:"
+_DOI_REF_RE = re.compile(
+    r"(?:10\.5281/zenodo\.|zenodo(?:\.org/records?/|[\s.:/_-]+)|(?:\bzenodo\s+)?\brecord\s+)(\d{7,9})\b",
+    re.IGNORECASE,
+)
+
+
+def _default_doi_lineage_path() -> str:
+    env_home = os.environ.get("OSIRIS_HOME", "").strip()
+    base_home = os.path.expanduser(env_home) if env_home else os.path.join(os.path.expanduser("~"), ".osiris")
+    return os.path.join(base_home, "evidence", "doi_lineage.json")
 
 
 def active_notes(living_home: str) -> List[dict]:
@@ -385,7 +395,42 @@ class Knowledge:
         )
 
     @staticmethod
-    def format_notes(hits: List[dict]) -> str:
+    def lookup_doi_warnings(text: str, lineage_path: Optional[str] = None) -> List[str]:
+        """Return deterministic erratum/supersession warnings for any Zenodo DOIs cited in ``text``."""
+        if not text:
+            return []
+        target_path = lineage_path or _default_doi_lineage_path()
+        if not os.path.isfile(target_path):
+            return []
+        try:
+            with open(target_path, encoding="utf-8") as fh:
+                lineage_doc = json.load(fh)
+        except (OSError, ValueError):
+            return []
+        records = lineage_doc.get("records") if isinstance(lineage_doc, dict) else None
+        if not isinstance(records, dict):
+            return []
+
+        seen_ids: List[str] = []
+        for match_obj in _DOI_REF_RE.finditer(text):
+            rec_id = match_obj.group(1)
+            if rec_id and rec_id not in seen_ids:
+                seen_ids.append(rec_id)
+
+        warnings: List[str] = []
+        for rec_id in seen_ids:
+            doi_key = f"10.5281/zenodo.{rec_id}"
+            entry = records.get(doi_key) or records.get(rec_id)
+            if not isinstance(entry, dict):
+                continue
+            status = str(entry.get("status") or "ACTIVE")
+            warn_msg = str(entry.get("warning") or "").strip()
+            if status != "ACTIVE" and warn_msg:
+                warnings.append(f"[DOI LINEAGE WARNING — {doi_key} ({status})]: {warn_msg}")
+        return warnings
+
+    @staticmethod
+    def format_notes(hits: List[dict], lineage_path: Optional[str] = None) -> str:
         def label(h: dict) -> str:
             tag = (
                 "  (approved by Devin; user-provided, unverified -- not a measurement record)"
@@ -394,4 +439,12 @@ class Knowledge:
             )
             return f"[{h['source']}" + (f" § {h['heading']}" if h["heading"] else "") + "]" + tag
 
-        return "\n\n".join(label(h) + "\n" + h["text"] for h in hits)
+        rendered: List[str] = []
+        for h in hits:
+            body_text = str(h.get("text") or "")
+            doi_warnings = Knowledge.lookup_doi_warnings(body_text, lineage_path=lineage_path)
+            if doi_warnings:
+                rendered.append(label(h) + "\n" + "\n".join(doi_warnings) + "\n" + body_text)
+            else:
+                rendered.append(label(h) + "\n" + body_text)
+        return "\n\n".join(rendered)

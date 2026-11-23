@@ -140,6 +140,15 @@ TOOLS: List[Dict[str, Any]] = [
             "path": {"type": "string"}, "content": {"type": "string"}},
             "required": ["path", "content"]}}},
     {"type": "function", "function": {
+        "name": "write_patch",
+        "description": "Propose a precondition-hashed surgical hunk replacement in an existing file. Fails closed on SHA-256 mismatch or non-unique old_string; applied only by the user's /apply.",
+        "parameters": {"type": "object", "properties": {
+            "path": {"type": "string"},
+            "expected_sha256": {"type": "string"},
+            "old_string": {"type": "string"},
+            "new_string": {"type": "string"}},
+            "required": ["path", "expected_sha256", "old_string", "new_string"]}}},
+    {"type": "function", "function": {
         "name": "run_command",
         "description": "Run one program with arguments (no shell). The user approves each call.",
         "parameters": {"type": "object", "properties": {
@@ -425,10 +434,9 @@ class CodeAgent:
         return "MODEL_UNAVAILABLE", "MODEL_NOT_INSTALLED: Ollama has 0 installed models"
 
     def _ollama_chat(self, messages, tools, model):
+        from osiris.substrate import execution_timeout_s
         from osiris_cli.providers.base import Message, ProviderRequest
         from osiris_cli.providers.ollama_compat import OllamaCompatibilityProvider
-
-        from osiris.substrate import execution_timeout_s
 
         provider = OllamaCompatibilityProvider(model=model)
         request = ProviderRequest(
@@ -892,13 +900,18 @@ class CodeAgent:
         try:
             handler = {
                 "read_file": self._read_file, "list_dir": self._list_dir, "grep_code": self._grep,
-                "write_file": self._write_file, "run_command": self._run_command,
+                "write_file": self._write_file, "write_patch": self._write_patch,
+                "run_command": self._run_command,
             }.get(name)
             if handler is None:
                 raise Denied(f"unknown tool {name!r}")
-            if self._context is not None and not self._context.permissions.allows_tool(name):
-                raise Denied(f"this task run ({self._context.run_id}) does not permit {name}; "
-                             f"it may use: {', '.join(self._context.permissions.tools) or 'no tools'}")
+            if self._context is not None:
+                permitted = self._context.permissions.allows_tool(name) or (
+                    name == "write_patch" and self._context.permissions.propose_writes
+                )
+                if not permitted:
+                    raise Denied(f"this task run ({self._context.run_id}) does not permit {name}; "
+                                 f"it may use: {', '.join(self._context.permissions.tools) or 'no tools'}")
             result, extra = handler(**args)
             decision.update(decision="GRANTED", **extra)
         except Denied as exc:
@@ -1126,6 +1139,69 @@ class CodeAgent:
                 "do not say the file was written."), {
             "path": str(path), "chars": len(new_text), "before_sha256": before_sha, "after_sha256": after_sha}
 
+    def _write_patch(self, path, expected_sha256, old_string, new_string):
+        from osiris_cli import evolution_engine
+
+        abs_path = self._confine(path)
+        rel_path = os.path.relpath(abs_path, self.root)
+        self._check_confined_regular_target(rel_path)
+        if not os.path.isfile(abs_path):
+            raise Denied(f"'{path}' does not exist; write_patch requires an existing regular file")
+        if self.max_writes == 1:
+            if self._wrote or self._has_pending_write():
+                raise Denied("a write is already pending; the user must /apply or discard it first")
+        else:
+            if not self._wrote and self._has_pending_write():
+                raise Denied("a write is already pending; the user must /apply or discard it first")
+            if rel_path not in self._pending_proposals and len(self._pending_proposals) >= self.max_writes:
+                raise Denied(f"maximum staged writes ({self.max_writes}) reached for this task")
+
+        try:
+            patch_res = evolution_engine.apply_preconditioned_patch(
+                abs_path,
+                expected_sha256=str(expected_sha256),
+                old_string=str(old_string),
+                new_string=str(new_string),
+                dry_run=True,
+            )
+        except (FileNotFoundError, ValueError, UnicodeDecodeError) as exc:
+            raise Denied(str(exc)) from exc
+
+        with open(abs_path, "rb") as fh:
+            old_bytes = fh.read()
+        old_text = old_bytes.decode("utf-8")
+        new_text = old_text.replace(str(old_string), str(new_string), 1)
+        diff = "".join(difflib.unified_diff(
+            old_text.splitlines(keepends=True),
+            new_text.splitlines(keepends=True),
+            fromfile=f"a/{rel_path}",
+            tofile=f"b/{rel_path}",
+        ))
+        if not self._propose_write(str(path), new_text):
+            raise Denied("the REPL's write check refused this path")
+        self._wrote = True
+        prop = {
+            "abs_path": abs_path,
+            "rel_path": rel_path,
+            "content": new_text,
+            "existed_at_proposal": True,
+            "before_sha256": patch_res["before_sha256"],
+            "after_sha256": patch_res["after_sha256"],
+            "diff": diff,
+        }
+        self._pending_proposal = prop
+        self._pending_proposals[rel_path] = prop
+        return (
+            "PROPOSED: surgical patch verified against SHA-256 precondition and shown as a diff. "
+            "It is applied only if the user types /apply; do not say the file was written."
+        ), {
+            "path": str(path),
+            "chars": len(new_text),
+            "bytes_delta": patch_res["bytes_delta"],
+            "before_sha256": patch_res["before_sha256"],
+            "after_sha256": patch_res["after_sha256"],
+        }
+
     def _resolve_command_binary(self, prog: str, work: str) -> Optional[str]:
         if prog.startswith(("./", "../")) or (os.sep in prog and not os.path.isabs(prog)):
             cand = self._confine(os.path.join(work, prog))
@@ -1184,7 +1260,8 @@ class CodeAgent:
             )
 
         from osiris_cli import exec_kernel
-        from osiris_cli.exec_policy import CommandRequest as _ExecRequest, classify as _exec_classify
+        from osiris_cli.exec_policy import CommandRequest as _ExecRequest
+        from osiris_cli.exec_policy import classify as _exec_classify
 
         pre_req = _ExecRequest(argv=tuple([resolved_bin, *argv[1:]]), cwd=work, origin="model", root=self.root)
         pre_cls = _exec_classify(pre_req)
@@ -1202,8 +1279,8 @@ class CodeAgent:
         digest = _digest(payload)
         cmd_scope = ["SUBPROCESS_EXEC", work]
         enclave = self._get_enclave()
-        from osiris_cli.pqc_enclave import ApprovalDeniedError, GrantVerificationError
         from osiris_cli import session_approval as sa
+        from osiris_cli.pqc_enclave import ApprovalDeniedError, GrantVerificationError
         pqc_grant = None
         if self._session_grant is not None:
             ok_s, _why, scope = sa.verify_session_grant(enclave, self._session_grant)
@@ -1599,6 +1676,28 @@ def after_console_apply() -> Optional[Dict[str, Any]]:
     v = agent.verify(pending["command"])
     _print_verification(v)
     return v
+
+
+def compile_and_audit_agent_plan(
+    intent: str,
+    target_files: List[str],
+    pytest_targets: Optional[List[str]] = None,
+    record_receipt: bool = False,
+    plan_ledger_path: Optional[str] = None,
+    *,
+    root: Optional[str] = None,
+) -> Dict[str, Any]:
+    """Build a canonical ``plan_v1`` artifact, validate G-10..G-12, and optionally record a receipt."""
+    from osiris_cli import evolution_engine
+
+    return evolution_engine.compile_and_audit_agent_plan(
+        intent=intent,
+        target_files=target_files,
+        pytest_targets=pytest_targets,
+        record_receipt=record_receipt,
+        plan_ledger_path=plan_ledger_path,
+        root=root,
+    )
 
 
 def discard_repl_acceptance() -> None:

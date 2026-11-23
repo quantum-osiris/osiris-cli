@@ -433,6 +433,71 @@ def filter_training_doc_sys024(text: str) -> Tuple[bool, Tuple[str, ...]]:
     return True, ()
 
 
+def compile_and_audit_agent_plan(
+    intent: str,
+    target_files: List[str],
+    pytest_targets: Optional[List[str]] = None,
+    record_receipt: bool = False,
+    plan_ledger_path: Optional[str] = None,
+    *,
+    root: PathArg = None,
+) -> Dict[str, Any]:
+    """Build a canonical ``plan_v1`` artifact for ``/code`` agent tasks, audit G-10..G-12,
+    and optionally persist an ``exec-canon-1`` receipt via ``plan_gates.record_plan_receipt()``."""
+    steps: List[Dict[str, Any]] = []
+    for idx, rel_file in enumerate(target_files):
+        steps.append(
+            {
+                "id": f"step-patch-{idx + 1}",
+                "type": "apply_patch",
+                "description": f"Apply preconditioned change to {rel_file}",
+                "path": str(rel_file),
+            }
+        )
+    if pytest_targets is not None or not steps:
+        steps.append(plan_gates.default_pytest_verify_step(pytest_targets or ()))
+
+    plan = plan_gates.build_plan_v1(
+        intent=intent,
+        steps=steps,
+        domain="code",
+        execution_level="modify" if target_files else "read",
+        execution_mode="dry_run",
+        confirmed=False,
+        preconditions=["ledger_chains_intact", "clean_git_worktree"],
+        postconditions=["pytest_zero_failures", "zero_sys024_violations"],
+        root=root,
+    )
+    receipt_hash: Optional[str] = None
+    resolved_ledger: Optional[str] = None
+    if record_receipt:
+        target_ledger = (
+            Path(plan_ledger_path).expanduser().resolve()
+            if plan_ledger_path is not None
+            else plan_gates.default_plan_receipts_path()
+        )
+        audit, receipt_hash = plan_gates.record_plan_receipt(
+            plan,
+            ledger_path=target_ledger,
+            root=root,
+        )
+        resolved_ledger = str(target_ledger)
+    else:
+        audit = plan_gates.validate_plan_v1(plan, root=root)
+
+    return {
+        "errors": list(audit.errors),
+        "gates": audit.gates,
+        "gates_passed": audit.gates_passed,
+        "ledger_path": resolved_ledger,
+        "plan": plan,
+        "plan_id": str(plan["meta"]["plan_id"]),
+        "plan_sha256": audit.plan_sha256,
+        "receipt_hash": receipt_hash,
+        "valid": audit.valid,
+    }
+
+
 # ---------------------------------------------------------------------------
 # 6-Dimension Telemetry Monitor & 4-Step Improvement Synthesis
 # ---------------------------------------------------------------------------

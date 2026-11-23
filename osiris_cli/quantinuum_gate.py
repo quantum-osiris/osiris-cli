@@ -26,7 +26,7 @@ import urllib.request
 from dataclasses import dataclass
 from decimal import Decimal, InvalidOperation
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Tuple, Union
+from typing import Any, Dict, List, Mapping, Optional, Tuple, Union
 
 from cryptography.exceptions import InvalidSignature
 from cryptography.hazmat.primitives import serialization
@@ -61,7 +61,40 @@ from .quantum_readiness import _canon_safe, default_osiris_home, default_readine
 
 NEXUS_RECEIPT_SCHEMA = "osiris.quantinuum_nexus_receipt/1"
 TIER3_TOKEN_SCHEMA = "osiris.tier3_approval/1"
+QUANTUM_PROTOCOL_SCHEMA = "osiris.quantum_protocol/1"
+PREGATE_SCHEMA = "osiris.quantum_protocol_pregate/1"
 _GENESIS = "0" * 64
+
+_CLASSICAL_BASELINE_TOKENS = (
+    "mps",
+    "tensor",
+    "pauli",
+    "bp+osd",
+    "bposd",
+    "mwpm",
+    "blossom",
+    "statevector",
+    "light-cone",
+    "classical",
+)
+_COLORED_NOISE_TOKENS = (
+    "1/f",
+    "colored",
+    "coloured",
+    "ou ",
+    "ornstein",
+    "local-noise",
+    "local noise",
+    "non-markovian",
+    "correlated-noise",
+)
+_DRIFT_CONTROL_TOKENS = (
+    "a/a",
+    "a-a",
+    "sentinel",
+    "drift",
+    "interleaved",
+)
 
 DISPOSITIONS = frozenset({"SIMULATED", "PREVIEW_COMPLETE", "HARDWARE_ATTESTED", "QUARANTINED"})
 PathArg = Optional[Union[os.PathLike, str]]
@@ -762,6 +795,92 @@ class GovernedRunResult:
         }
 
 
+def validate_quantum_protocol_pregate(manifest: Mapping[str, Any]) -> Dict[str, Any]:
+    """Enforce ``osiris.quantum_protocol/1``, classical-attack baseline, and colored-noise/drift
+    controls before live Tier 3 HQC budget allocation (WK-RW-002)."""
+    from .plan_gates import check_no_quarantined_constants
+
+    if not isinstance(manifest, Mapping):
+        return {
+            "classical_baseline_ok": False,
+            "colored_noise_and_drift_ok": False,
+            "manifest_sha256": "",
+            "passed": False,
+            "protocol_schema": "",
+            "schema": PREGATE_SCHEMA,
+            "violations": ["INVALID_PROTOCOL_SCHEMA"],
+        }
+
+    violations: List[str] = []
+    proto_schema = str(manifest.get("schema") or "")
+    if proto_schema != QUANTUM_PROTOCOL_SCHEMA:
+        violations.append("INVALID_PROTOCOL_SCHEMA")
+
+    if check_no_quarantined_constants(dict(manifest)):
+        violations.append("SYS024_QUARANTINED_CONSTANT")
+
+    shots_val = int(manifest.get("shots_per_circuit", 0) or 0)
+    blocks_val = int(manifest.get("num_blocks", 0) or 0)
+    if shots_val < 100 or blocks_val < 3:
+        violations.append("INSUFFICIENT_REPLICATION")
+
+    controls_raw = manifest.get("control_experiments") or manifest.get("controls") or ()
+    if isinstance(controls_raw, str):
+        controls_list = [controls_raw]
+    elif isinstance(controls_raw, (list, tuple)):
+        controls_list = [str(item) for item in controls_raw]
+    else:
+        controls_list = []
+    controls_blob = " ".join(controls_list).lower()
+
+    cb_flag = manifest.get("classical_baseline_passed")
+    cb_field = str(manifest.get("classical_baseline") or "").strip().lower()
+    if cb_flag is False:
+        classical_ok = False
+        violations.append("CLASSICAL_BASELINE_FAILED")
+    else:
+        classical_ok = bool(
+            cb_flag is True
+            or cb_field
+            or any(tok in controls_blob for tok in _CLASSICAL_BASELINE_TOKENS)
+        )
+        if not classical_ok:
+            violations.append("MISSING_CLASSICAL_BASELINE")
+
+    cn_flag = manifest.get("colored_noise_control_passed")
+    drift_flag = manifest.get("drift_sentinel_passed")
+    cn_field = str(manifest.get("colored_noise_null") or "").strip().lower()
+    drift_field = str(manifest.get("aa_drift_sentinel") or "").strip().lower()
+    if cn_flag is False or drift_flag is False:
+        controls_ok = False
+        violations.append("COLORED_NOISE_OR_DRIFT_CONTROL_FAILED")
+    else:
+        has_colored = bool(
+            cn_flag is True
+            or cn_field
+            or any(tok in controls_blob for tok in _COLORED_NOISE_TOKENS)
+        )
+        has_drift = bool(
+            drift_flag is True
+            or drift_field
+            or any(tok in controls_blob for tok in _DRIFT_CONTROL_TOKENS)
+        )
+        controls_ok = has_colored and has_drift
+        if not controls_ok:
+            violations.append("MISSING_COLORED_NOISE_OR_DRIFT_CONTROL")
+
+    manifest_sha = hashlib.sha256(canon(_canon_safe(dict(manifest))).encode("utf-8")).hexdigest()
+    return {
+        "classical_baseline_ok": classical_ok,
+        "colored_noise_and_drift_ok": controls_ok,
+        "manifest_sha256": manifest_sha,
+        "passed": len(violations) == 0,
+        "protocol_schema": proto_schema,
+        "schema": PREGATE_SCHEMA,
+        "violations": violations,
+    }
+
+
 def run_tier3_governed(
     source: str,
     target: str = "H2-1",
@@ -770,8 +889,16 @@ def run_tier3_governed(
     approval_token: str = "",
     osiris_home: PathArg = None,
     filename: str = "",
+    protocol_manifest: Optional[Mapping[str, Any]] = None,
 ) -> GovernedRunResult:
     """Execute governed Tier 3 Quantinuum Nexus workflow with mandatory fail-closed preflight."""
+    if protocol_manifest is not None:
+        pregate = validate_quantum_protocol_pregate(protocol_manifest)
+        if not pregate["passed"]:
+            raise QuantinuumGateError(
+                "BLOCKED_PROTOCOL_PREGATE",
+                f"Quantum protocol pre-gate failed: {', '.join(pregate['violations'])}",
+            )
     spec = resolve_quantinuum_target(target)
     try:
         budget_dec = Decimal(str(budget_hqc))
