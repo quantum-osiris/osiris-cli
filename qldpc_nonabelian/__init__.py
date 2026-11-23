@@ -1,0 +1,43 @@
+"""Direction 5: Non-Abelian Two-Block Group-Algebra (2BGA) Odd-k qLDPC Discovery."""
+
+from .nonabelian_2bga import (
+    FiniteGroup,
+    NonAbelianCodeCandidate,
+    alternating_group_a4,
+    benchmark_css_bposd_depolarizing,
+    build_2bga_css,
+    build_coset_2bga_css,
+    build_odd_k_pinned_2bga,
+    compute_css_distance,
+    css_logical_bases,
+    decode_bp_osd_cs,
+    dihedral_group,
+    frobenius_metacyclic_group,
+    gf2_rank,
+    left_regular_matrix,
+    quaternion_group_q8,
+    right_regular_matrix,
+    run_nonabelian_2bga_discovery,
+    symmetric_group_s4,
+)
+
+__all__ = [
+    "FiniteGroup",
+    "NonAbelianCodeCandidate",
+    "alternating_group_a4",
+    "benchmark_css_bposd_depolarizing",
+    "build_2bga_css",
+    "build_coset_2bga_css",
+    "build_odd_k_pinned_2bga",
+    "compute_css_distance",
+    "css_logical_bases",
+    "decode_bp_osd_cs",
+    "dihedral_group",
+    "frobenius_metacyclic_group",
+    "gf2_rank",
+    "left_regular_matrix",
+    "quaternion_group_q8",
+    "right_regular_matrix",
+    "run_nonabelian_2bga_discovery",
+    "symmetric_group_s4",
+]
