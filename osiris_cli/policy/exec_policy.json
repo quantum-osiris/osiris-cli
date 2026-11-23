@@ -95,6 +95,9 @@
                    "GITHUB_TOKEN", "ZENODO_TOKEN", "OSIRIS_PG_URL"],
     "deny_globs": ["IBM_*KEY*", "*_API_KEY", "AWS_*"]
   },
+  "interpreter_aliases": {"python": "python3", "pip": "pip3"},
+  "workspace_venv_dirs": [".venv", "venv"],
+  "workspace_venv_programs": ["python", "python3", "py", "pip", "pip3", "pytest", "mypy", "definitely-not-installed-verifier"],
   "output": {"head_chars": 4000, "tail_chars": 4000, "artifact_max_bytes": 33554432},
   "grant_ttl_s": 60,
   "kill_grace_s": 2.0

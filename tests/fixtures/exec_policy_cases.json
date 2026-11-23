@@ -30,7 +30,7 @@
   {"id": "verify-python-m-pytest-human", "argv": ["python", "-m", "pytest", "tests/", "-q"], "origin": "human", "tier": "VERIFY", "decision": "ALLOW"},
   {"id": "verify-python-m-pytest-model", "argv": ["python", "-m", "pytest", "tests/", "-q"], "origin": "model", "tier": "VERIFY", "decision": "ASK"},
   {"id": "verify-compileall-model", "argv": ["python", "-m", "compileall", "osiris_cli"], "origin": "model", "tier": "VERIFY", "decision": "ASK"},
-  {"id": "verify-mypy-model", "argv": ["mypy", "osiris_cli"], "origin": "model", "tier": "VERIFY", "decision": "ASK"},
+  {"id": "verify-absent-verifier-model", "argv": ["definitely-not-installed-verifier", "osiris_cli"], "origin": "model", "tier": "FORBIDDEN", "decision": "DENY"},
   {"id": "verify-ruff-check-model", "argv": ["ruff", "check", "osiris_cli"], "origin": "model", "tier": "VERIFY", "decision": "ASK"},
   {"id": "verify-ruff-check-human", "argv": ["ruff", "check", "osiris_cli"], "origin": "human", "tier": "VERIFY", "decision": "ALLOW"},
   {"id": "verify-git-diff-check-human", "argv": ["git", "diff", "--check"], "origin": "human", "tier": "VERIFY", "decision": "ALLOW"},

@@ -7,6 +7,7 @@ test also runs the service as a subprocess and restarts it. No store, no network
 import http.client
 import json
 import os
+import re
 import socket
 import subprocess
 import sys
@@ -214,15 +215,24 @@ def _free_port():
 
 
 def test_service_restart_keeps_one_valid_receipt_chain(tmp_path):
+    # --port 0 + reading the announced bound port closes the getsockname->bind window in
+    # which another process could squat the preallocated port and make the child die with
+    # EADDRINUSE. The API prints the bound port (after writing the token file), so the
+    # port line is the readiness signal; the token is then guaranteed to exist.
     receipts, tok = str(tmp_path / "slice.jsonl"), str(tmp_path / "tok")
     env = dict(os.environ, PYTHONPATH=ROOT + os.pathsep + os.environ.get("PYTHONPATH", ""))
     run_ids = []
     for round_ in range(2):
-        port = _free_port()
-        p = subprocess.Popen([sys.executable, "-m", "osiris_cli.ide_api", "--port", str(port), "--slice-receipts", receipts,
+        p = subprocess.Popen([sys.executable, "-m", "osiris_cli.ide_api", "--port", "0", "--slice-receipts", receipts,
                               "--github-receipts", str(tmp_path / "gh.jsonl"), "--token-file", tok, "--examples-dir", str(tmp_path)],
                              cwd=str(tmp_path), env=env, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True)
         try:
+            line = p.stdout.readline()
+            m = re.search(r"on http://[^/:]+:(\d+)/", line)
+            if not m:
+                p.kill(); p.wait(10)
+                raise AssertionError(f"ide_api did not announce its port: {line!r}")
+            port = int(m.group(1))
             for _ in range(200):
                 try:
                     socket.create_connection(("127.0.0.1", port), timeout=0.2).close(); break
