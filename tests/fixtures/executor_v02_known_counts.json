@@ -1,0 +1,43 @@
+{
+  "fixture_version": 1,
+  "wire_format": "executor_v02",
+  "schema_version": "v0.2",
+  "bit_order": "little",
+  "purpose": "canonical executor v0.2 decoder and Qiskit parity regression",
+  "data": [
+    {
+      "results": {
+        "c": {
+          "data": "EA/x8A==",
+          "shape": [8, 4],
+          "dtype": "bool"
+        }
+      },
+      "metadata": {
+        "scheduler_timing": null,
+        "stretch_values": null
+      }
+    }
+  ],
+  "metadata": {
+    "chunk_timing": [
+      {
+        "start": "2026-03-31T09:37:22.769379",
+        "stop": "2026-03-31T09:37:49.743507",
+        "parts": [
+          {
+            "idx_item": 0,
+            "size": 1
+          }
+        ]
+      }
+    ]
+  },
+  "passthrough_data": {
+    "post_processor": {
+      "context": "sampler_v2",
+      "pub_shapes": [1],
+      "version": "v1"
+    }
+  }
+}
