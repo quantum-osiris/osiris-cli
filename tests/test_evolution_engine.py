@@ -180,7 +180,7 @@ def test_monitor_and_generate_four_part_improvements_and_record_cycle(
     )
 
     snap = evolution_engine.monitor_evolution(osiris_home=ohome)
-    assert len(snap.dimensions) == 6
+    assert len(snap.dimensions) == 9
     assert {d.dimension for d in snap.dimensions} == set(evolution_engine.DIMENSIONS)
 
     props = evolution_engine.generate_improvements(snap, root=tmp_path)

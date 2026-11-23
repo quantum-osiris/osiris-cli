@@ -49,6 +49,9 @@ DIMENSIONS: Tuple[str, ...] = (
     "tool_use",
     "autonomy",
     "knowledge_retention",
+    "research_workflows",
+    "agent_collaboration",
+    "experiment_management",
 )
 
 PathArg = Optional[Union[os.PathLike, str]]
@@ -627,6 +630,61 @@ def monitor_evolution(*, osiris_home: PathArg = None) -> EvolutionSnapshot:
         },
     )
 
+    # 8. Research Workflows, Agent Collaboration & Experiment Management dimensions
+    doi_lineage_path = home / "evidence" / "doi_lineage.json"
+    rw_ok = doi_lineage_path.is_file() and knowledge_ok
+    rw_status = DimensionStatus(
+        dimension="research_workflows",
+        healthy=rw_ok,
+        headline_metric_str="1.000000" if rw_ok else "0.000000",
+        threshold_str="1.000000",
+        summary=(
+            f"doi_lineage_indexed={doi_lineage_path.is_file()} "
+            f"claim_grounding_healthy={knowledge_ok}"
+        ),
+        metrics={
+            "claim_grounding_healthy": knowledge_ok,
+            "doi_lineage_indexed": doi_lineage_path.is_file(),
+        },
+    )
+
+    collab_receipts = _count_jsonl_rows(home / "proposals" / "multi_candidate.jsonl")
+    ac_ok = collab_receipts > 0 and task_receipt_rows > 0
+    ac_status = DimensionStatus(
+        dimension="agent_collaboration",
+        healthy=ac_ok,
+        headline_metric_str="1.000000" if ac_ok else "0.000000",
+        threshold_str="1.000000",
+        summary=(
+            f"multi_candidate_receipts={collab_receipts} "
+            f"typed_task_receipts={task_receipt_rows}"
+        ),
+        metrics={
+            "multi_candidate_receipts": collab_receipts,
+            "typed_task_receipts": task_receipt_rows,
+        },
+    )
+
+    nexus_rows = _count_jsonl_rows(home / "nexus_ledger.jsonl")
+    capsules_rows = _count_jsonl_rows(home / "evidence" / "reproducibility_capsules.jsonl")
+    em_total = nexus_rows + capsules_rows
+    em_ok = em_total > 0 and fc_report.all_chains_intact
+    em_status = DimensionStatus(
+        dimension="experiment_management",
+        healthy=em_ok,
+        headline_metric_str="1.000000" if em_ok else "0.000000",
+        threshold_str="1.000000",
+        summary=(
+            f"registered_capsules_or_nexus_rows={em_total} "
+            f"all_chains_intact={fc_report.all_chains_intact}"
+        ),
+        metrics={
+            "all_chains_intact": fc_report.all_chains_intact,
+            "nexus_ledger_rows": nexus_rows,
+            "reproducibility_capsule_rows": capsules_rows,
+        },
+    )
+
     return EvolutionSnapshot(
         osiris_home=str(home),
         captured_at_utc=ts_utc,
@@ -638,6 +696,9 @@ def monitor_evolution(*, osiris_home: PathArg = None) -> EvolutionSnapshot:
             tool_status,
             autonomy_status,
             knowledge_status,
+            rw_status,
+            ac_status,
+            em_status,
         ),
         model_rankings=tuple(rankings),
     )
