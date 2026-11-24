@@ -1,0 +1,680 @@
+{
+  "controls": {
+    "control_1_no_workload_identity_echo": {
+      "cells_where_identity_exceeds_workload_echo": 160,
+      "cz_count": 0,
+      "mean_identity_return": 0.918773,
+      "mean_workload_echo_return": 0.825476,
+      "passed": true,
+      "total_placement_window_cells": 160
+    },
+    "control_2_deliberate_overrotation_perturbation": {
+      "ideal_return_curve": [
+        1.0,
+        0.98576,
+        0.944385,
+        0.879656,
+        0.797209
+      ],
+      "mean_noisy_return_curve": [
+        0.825933,
+        0.811491,
+        0.778085,
+        0.725873,
+        0.659365
+      ],
+      "monotone_drop_verified": true,
+      "passed": true,
+      "perturbation_deltas_rad": [
+        0.0,
+        0.08,
+        0.16,
+        0.24,
+        0.32
+      ]
+    },
+    "control_3_compiled_artifact_inspection": {
+      "adjacent_cancellable_cz_pairs": 0,
+      "echo_compiled_cz_count": 16,
+      "echo_nobarrier_opt1_cz_count": 16,
+      "echo_nobarrier_opt3_cz_count": 16,
+      "echo_unitary_abs_trace": 0.0,
+      "forward_cz_count": 8,
+      "global_unitary_is_non_identity_reflection": true,
+      "ideal_noiseless_return_prob": 1.0,
+      "naive_palindrome_with_barrier_cz_count": 16,
+      "naive_palindrome_without_barrier_cz_count": 0,
+      "non_cancelled_cz_verified": true
+    }
+  },
+  "design": {
+    "bootstrap_replicates_B": 2000,
+    "calibration_windows_M": 16,
+    "candidate_placements": [
+      {
+        "external_spectator_couplers": 4,
+        "mean_harmonic_centrality": 18.366477,
+        "mean_lattice_eccentricity": 26.6,
+        "physical_qubits": [
+          21,
+          22,
+          23,
+          16,
+          24
+        ],
+        "placement_id": 0,
+        "topology_degree_score": -4.65232384
+      },
+      {
+        "external_spectator_couplers": 3,
+        "mean_harmonic_centrality": 17.509761,
+        "mean_lattice_eccentricity": 29.6,
+        "physical_qubits": [
+          5,
+          6,
+          7,
+          8,
+          17
+        ],
+        "placement_id": 1,
+        "topology_degree_score": -3.57948803
+      },
+      {
+        "external_spectator_couplers": 3,
+        "mean_harmonic_centrality": 17.103733,
+        "mean_lattice_eccentricity": 29.6,
+        "physical_qubits": [
+          9,
+          10,
+          11,
+          12,
+          18
+        ],
+        "placement_id": 2,
+        "topology_degree_score": -3.55918664
+      },
+      {
+        "external_spectator_couplers": 4,
+        "mean_harmonic_centrality": 20.563813,
+        "mean_lattice_eccentricity": 25.6,
+        "physical_qubits": [
+          27,
+          28,
+          29,
+          30,
+          38
+        ],
+        "placement_id": 3,
+        "topology_degree_score": -4.77219063
+      },
+      {
+        "external_spectator_couplers": 4,
+        "mean_harmonic_centrality": 18.858168,
+        "mean_lattice_eccentricity": 25.6,
+        "physical_qubits": [
+          31,
+          32,
+          33,
+          34,
+          39
+        ],
+        "placement_id": 4,
+        "topology_degree_score": -4.68690839
+      },
+      {
+        "external_spectator_couplers": 3,
+        "mean_harmonic_centrality": 18.378703,
+        "mean_lattice_eccentricity": 23.8,
+        "physical_qubits": [
+          43,
+          42,
+          41,
+          36,
+          40
+        ],
+        "placement_id": 5,
+        "topology_degree_score": -3.68093516
+      },
+      {
+        "external_spectator_couplers": 4,
+        "mean_harmonic_centrality": 21.136387,
+        "mean_lattice_eccentricity": 23.2,
+        "physical_qubits": [
+          25,
+          37,
+          45,
+          44,
+          46
+        ],
+        "placement_id": 6,
+        "topology_degree_score": -4.82481937
+      },
+      {
+        "external_spectator_couplers": 4,
+        "mean_harmonic_centrality": 21.393878,
+        "mean_lattice_eccentricity": 21.6,
+        "physical_qubits": [
+          49,
+          50,
+          51,
+          52,
+          58
+        ],
+        "placement_id": 7,
+        "topology_degree_score": -4.85369392
+      },
+      {
+        "external_spectator_couplers": 3,
+        "mean_harmonic_centrality": 19.016344,
+        "mean_lattice_eccentricity": 21.4,
+        "physical_qubits": [
+          63,
+          62,
+          61,
+          60,
+          76
+        ],
+        "placement_id": 8,
+        "topology_degree_score": -3.73681721
+      },
+      {
+        "external_spectator_couplers": 4,
+        "mean_harmonic_centrality": 22.260517,
+        "mean_lattice_eccentricity": 18.2,
+        "physical_qubits": [
+          67,
+          66,
+          65,
+          64,
+          77
+        ],
+        "placement_id": 9,
+        "topology_degree_score": -4.93102585
+      }
+    ],
+    "candidate_t5_placements_K": 10,
+    "echo_shots_per_placement": 1024,
+    "heldout_reference_circuits": {
+      "bt2t_72cz": {
+        "cz_count": 72,
+        "depth": 218,
+        "description": "Structured 5Q Binary Tetrahedral (2T) exact group inversion over 24 valid inputs"
+      },
+      "non_clifford_mirror_24cz": {
+        "cz_count": 24,
+        "depth": 46,
+        "description": "Held-out 5Q non-Clifford stabilizer-twisted peaked circuit on T5"
+      },
+      "random_clifford_30cz": {
+        "cz_count": 30,
+        "depth": 81,
+        "description": "Held-out 5Q random Clifford survival circuit on T5"
+      }
+    },
+    "substrate_model": "156-qubit IBM Heron r2 (ibm_fez) heavy-hex coupling lattice",
+    "unit_of_inference": "calibration_window"
+  },
+  "execution_tier": "SIMULATED",
+  "experiment_card": "Card B: OSIRIS-ECHO",
+  "hardware_execution_authorized": false,
+  "mechanism_inferred": "none",
+  "provider_job_id": null,
+  "qpu_seconds": 0,
+  "ranking_comparison": {
+    "best_non_echo_comparator": "CALIBRATION_RANKED",
+    "delta_spearman_ci95": [
+      0.459375,
+      0.628815
+    ],
+    "delta_spearman_lcl95": 0.459375,
+    "delta_spearman_lcl95_one_sided": 0.474376,
+    "delta_spearman_point": 0.54618,
+    "delta_spearman_vs_calibration_ci95": [
+      0.459375,
+      0.628815
+    ],
+    "per_heldout_circuit_class": {
+      "bt2t_72cz": {
+        "calibration_mean_spearman": 0.356818,
+        "delta_echo_minus_cal_ci95": [
+          0.457453,
+          0.628372
+        ],
+        "delta_echo_minus_cal_mean": 0.54502,
+        "echo_mean_spearman": 0.901838,
+        "random_mean_spearman": -0.015909,
+        "topology_mean_spearman": -0.103788
+      },
+      "composite": {
+        "calibration_mean_spearman": 0.387121,
+        "delta_echo_minus_cal_ci95": [
+          0.459375,
+          0.628815
+        ],
+        "delta_echo_minus_cal_mean": 0.54618,
+        "echo_mean_spearman": 0.933302,
+        "random_mean_spearman": -0.038636,
+        "topology_mean_spearman": -0.114394
+      },
+      "non_clifford_mirror_24cz": {
+        "calibration_mean_spearman": 0.388636,
+        "delta_echo_minus_cal_ci95": [
+          0.477076,
+          0.637135
+        ],
+        "delta_echo_minus_cal_mean": 0.559062,
+        "echo_mean_spearman": 0.947698,
+        "random_mean_spearman": -0.068182,
+        "topology_mean_spearman": -0.109091
+      },
+      "random_clifford_30cz": {
+        "calibration_mean_spearman": 0.387121,
+        "delta_echo_minus_cal_ci95": [
+          0.475888,
+          0.636927
+        ],
+        "delta_echo_minus_cal_mean": 0.558302,
+        "echo_mean_spearman": 0.945423,
+        "random_mean_spearman": -0.047727,
+        "topology_mean_spearman": -0.124242
+      }
+    },
+    "rankers": {
+      "CALIBRATION_RANKED": {
+        "mean_spearman": 0.387121,
+        "mean_top1_heldout_fidelity": 0.78315,
+        "mean_top1_regret": 0.090983,
+        "spearman_window_ci95": [
+          0.31589,
+          0.464394
+        ],
+        "zero_regret_window_fraction": 0.6875
+      },
+      "ECHO_RANKED": {
+        "mean_spearman": 0.933302,
+        "mean_top1_heldout_fidelity": 0.869858,
+        "mean_top1_regret": 0.004274,
+        "spearman_window_ci95": [
+          0.915286,
+          0.951316
+        ],
+        "zero_regret_window_fraction": 0.6875
+      },
+      "RANDOM_PLACEMENT": {
+        "mean_spearman": -0.038636,
+        "mean_top1_heldout_fidelity": 0.713109,
+        "mean_top1_regret": 0.161023,
+        "spearman_window_ci95": [
+          -0.167462,
+          0.084091
+        ],
+        "zero_regret_window_fraction": 0.125
+      },
+      "TOPOLOGY_DEGREE_ONLY": {
+        "mean_spearman": -0.114394,
+        "mean_top1_heldout_fidelity": 0.712333,
+        "mean_top1_regret": 0.1618,
+        "spearman_window_ci95": [
+          -0.280322,
+          0.053807
+        ],
+        "zero_regret_window_fraction": 0.0625
+      }
+    },
+    "top1_regret_reduction_vs_best_comparator": {
+      "ci95": [
+        0.022911,
+        0.128141
+      ],
+      "point": 0.078605
+    }
+  },
+  "schema": "osiris.card_b.echo_stopgo_report/1",
+  "seed": 20261124,
+  "stop_go_decision": {
+    "all_mandatory_controls_passed": true,
+    "delta_spearman_lcl95_gt_zero": true,
+    "echo_recovers_ranking": true,
+    "mechanism_inferred": "none",
+    "scope_note": "Offline SIMULATED stop/go gate only (0 QPU seconds). Demonstrates that a 16-CZ non-cancelling echo probe recovers placement ranking on unseen 5Q circuits under post-calibration single-qubit/coupler drift where stale calibration tables degrade. No physical mechanism is inferred from return curves, and live hardware execution requires separate preregistration and owner authorization.",
+    "verdict": "PASS_OFFLINE_STOPGO_GATE"
+  },
+  "windows": [
+    {
+      "mean_echo_16cz_return": 0.830371,
+      "mean_heldout_fidelity": 0.735209,
+      "mean_identity_0cz_return": 0.925076,
+      "min_heldout_fidelity": 0.470973,
+      "oracle_best_heldout_fidelity": 0.869806,
+      "oracle_best_placement_id": 2,
+      "spearman_composite_by_ranker": {
+        "CALIBRATION_RANKED": 0.309091,
+        "ECHO_RANKED": 0.915152,
+        "RANDOM_PLACEMENT": -0.454545,
+        "TOPOLOGY_DEGREE_ONLY": 0.090909
+      },
+      "top1_regret_by_ranker": {
+        "CALIBRATION_RANKED": 0.391539,
+        "ECHO_RANKED": 0.021309,
+        "RANDOM_PLACEMENT": 0.030116,
+        "TOPOLOGY_DEGREE_ONLY": 0.0
+      },
+      "window_id": 0
+    },
+    {
+      "mean_echo_16cz_return": 0.80625,
+      "mean_heldout_fidelity": 0.695495,
+      "mean_identity_0cz_return": 0.929836,
+      "min_heldout_fidelity": 0.327926,
+      "oracle_best_heldout_fidelity": 0.863101,
+      "oracle_best_placement_id": 3,
+      "spearman_composite_by_ranker": {
+        "CALIBRATION_RANKED": 0.406061,
+        "ECHO_RANKED": 0.975758,
+        "RANDOM_PLACEMENT": 0.248485,
+        "TOPOLOGY_DEGREE_ONLY": 0.224242
+      },
+      "top1_regret_by_ranker": {
+        "CALIBRATION_RANKED": 0.317808,
+        "ECHO_RANKED": 0.0,
+        "RANDOM_PLACEMENT": 0.028652,
+        "TOPOLOGY_DEGREE_ONLY": 0.016041
+      },
+      "window_id": 1
+    },
+    {
+      "mean_echo_16cz_return": 0.837207,
+      "mean_heldout_fidelity": 0.742506,
+      "mean_identity_0cz_return": 0.930239,
+      "min_heldout_fidelity": 0.425281,
+      "oracle_best_heldout_fidelity": 0.875629,
+      "oracle_best_placement_id": 0,
+      "spearman_composite_by_ranker": {
+        "CALIBRATION_RANKED": 0.284848,
+        "ECHO_RANKED": 0.951515,
+        "RANDOM_PLACEMENT": -0.393939,
+        "TOPOLOGY_DEGREE_ONLY": 0.321212
+      },
+      "top1_regret_by_ranker": {
+        "CALIBRATION_RANKED": 0.215838,
+        "ECHO_RANKED": 0.007218,
+        "RANDOM_PLACEMENT": 0.450348,
+        "TOPOLOGY_DEGREE_ONLY": 0.020389
+      },
+      "window_id": 2
+    },
+    {
+      "mean_echo_16cz_return": 0.822656,
+      "mean_heldout_fidelity": 0.727022,
+      "mean_identity_0cz_return": 0.918862,
+      "min_heldout_fidelity": 0.499897,
+      "oracle_best_heldout_fidelity": 0.849211,
+      "oracle_best_placement_id": 3,
+      "spearman_composite_by_ranker": {
+        "CALIBRATION_RANKED": 0.369697,
+        "ECHO_RANKED": 0.915152,
+        "RANDOM_PLACEMENT": 0.2,
+        "TOPOLOGY_DEGREE_ONLY": -0.466667
+      },
+      "top1_regret_by_ranker": {
+        "CALIBRATION_RANKED": 0.0,
+        "ECHO_RANKED": 0.0,
+        "RANDOM_PLACEMENT": 0.0,
+        "TOPOLOGY_DEGREE_ONLY": 0.012933
+      },
+      "window_id": 3
+    },
+    {
+      "mean_echo_16cz_return": 0.842383,
+      "mean_heldout_fidelity": 0.759587,
+      "mean_identity_0cz_return": 0.91932,
+      "min_heldout_fidelity": 0.512792,
+      "oracle_best_heldout_fidelity": 0.897512,
+      "oracle_best_placement_id": 3,
+      "spearman_composite_by_ranker": {
+        "CALIBRATION_RANKED": 0.466667,
+        "ECHO_RANKED": 0.890909,
+        "RANDOM_PLACEMENT": -0.309091,
+        "TOPOLOGY_DEGREE_ONLY": -0.187879
+      },
+      "top1_regret_by_ranker": {
+        "CALIBRATION_RANKED": 0.0,
+        "ECHO_RANKED": 0.025682,
+        "RANDOM_PLACEMENT": 0.072537,
+        "TOPOLOGY_DEGREE_ONLY": 0.359689
+      },
+      "window_id": 4
+    },
+    {
+      "mean_echo_16cz_return": 0.825879,
+      "mean_heldout_fidelity": 0.740672,
+      "mean_identity_0cz_return": 0.902823,
+      "min_heldout_fidelity": 0.439767,
+      "oracle_best_heldout_fidelity": 0.876809,
+      "oracle_best_placement_id": 6,
+      "spearman_composite_by_ranker": {
+        "CALIBRATION_RANKED": 0.139394,
+        "ECHO_RANKED": 0.951515,
+        "RANDOM_PLACEMENT": 0.078788,
+        "TOPOLOGY_DEGREE_ONLY": -0.381818
+      },
+      "top1_regret_by_ranker": {
+        "CALIBRATION_RANKED": 0.0,
+        "ECHO_RANKED": 0.0,
+        "RANDOM_PLACEMENT": 0.117563,
+        "TOPOLOGY_DEGREE_ONLY": 0.437042
+      },
+      "window_id": 5
+    },
+    {
+      "mean_echo_16cz_return": 0.84082,
+      "mean_heldout_fidelity": 0.746274,
+      "mean_identity_0cz_return": 0.934206,
+      "min_heldout_fidelity": 0.399837,
+      "oracle_best_heldout_fidelity": 0.868917,
+      "oracle_best_placement_id": 8,
+      "spearman_composite_by_ranker": {
+        "CALIBRATION_RANKED": 0.418182,
+        "ECHO_RANKED": 0.948333,
+        "RANDOM_PLACEMENT": -0.175758,
+        "TOPOLOGY_DEGREE_ONLY": 0.418182
+      },
+      "top1_regret_by_ranker": {
+        "CALIBRATION_RANKED": 0.0,
+        "ECHO_RANKED": 0.006513,
+        "RANDOM_PLACEMENT": 0.469079,
+        "TOPOLOGY_DEGREE_ONLY": 0.012643
+      },
+      "window_id": 6
+    },
+    {
+      "mean_echo_16cz_return": 0.841504,
+      "mean_heldout_fidelity": 0.745244,
+      "mean_identity_0cz_return": 0.930558,
+      "min_heldout_fidelity": 0.453153,
+      "oracle_best_heldout_fidelity": 0.884359,
+      "oracle_best_placement_id": 5,
+      "spearman_composite_by_ranker": {
+        "CALIBRATION_RANKED": 0.478788,
+        "ECHO_RANKED": 0.890909,
+        "RANDOM_PLACEMENT": -0.187879,
+        "TOPOLOGY_DEGREE_ONLY": 0.2
+      },
+      "top1_regret_by_ranker": {
+        "CALIBRATION_RANKED": 0.231191,
+        "ECHO_RANKED": 0.0,
+        "RANDOM_PLACEMENT": 0.022313,
+        "TOPOLOGY_DEGREE_ONLY": 0.031502
+      },
+      "window_id": 7
+    },
+    {
+      "mean_echo_16cz_return": 0.840625,
+      "mean_heldout_fidelity": 0.75348,
+      "mean_identity_0cz_return": 0.915042,
+      "min_heldout_fidelity": 0.479153,
+      "oracle_best_heldout_fidelity": 0.873542,
+      "oracle_best_placement_id": 3,
+      "spearman_composite_by_ranker": {
+        "CALIBRATION_RANKED": 0.272727,
+        "ECHO_RANKED": 0.963636,
+        "RANDOM_PLACEMENT": 0.309091,
+        "TOPOLOGY_DEGREE_ONLY": -0.454545
+      },
+      "top1_regret_by_ranker": {
+        "CALIBRATION_RANKED": 0.0,
+        "ECHO_RANKED": 0.0,
+        "RANDOM_PLACEMENT": 0.06145,
+        "TOPOLOGY_DEGREE_ONLY": 0.03136
+      },
+      "window_id": 8
+    },
+    {
+      "mean_echo_16cz_return": 0.80625,
+      "mean_heldout_fidelity": 0.704929,
+      "mean_identity_0cz_return": 0.911909,
+      "min_heldout_fidelity": 0.392886,
+      "oracle_best_heldout_fidelity": 0.880168,
+      "oracle_best_placement_id": 0,
+      "spearman_composite_by_ranker": {
+        "CALIBRATION_RANKED": 0.321212,
+        "ECHO_RANKED": 0.90303,
+        "RANDOM_PLACEMENT": 0.066667,
+        "TOPOLOGY_DEGREE_ONLY": -0.393939
+      },
+      "top1_regret_by_ranker": {
+        "CALIBRATION_RANKED": 0.0,
+        "ECHO_RANKED": 0.007662,
+        "RANDOM_PLACEMENT": 0.39594,
+        "TOPOLOGY_DEGREE_ONLY": 0.391641
+      },
+      "window_id": 9
+    },
+    {
+      "mean_echo_16cz_return": 0.784082,
+      "mean_heldout_fidelity": 0.689896,
+      "mean_identity_0cz_return": 0.902629,
+      "min_heldout_fidelity": 0.331193,
+      "oracle_best_heldout_fidelity": 0.869061,
+      "oracle_best_placement_id": 0,
+      "spearman_composite_by_ranker": {
+        "CALIBRATION_RANKED": 0.272727,
+        "ECHO_RANKED": 0.975758,
+        "RANDOM_PLACEMENT": 0.224242,
+        "TOPOLOGY_DEGREE_ONLY": -0.115152
+      },
+      "top1_regret_by_ranker": {
+        "CALIBRATION_RANKED": 0.0,
+        "ECHO_RANKED": 0.0,
+        "RANDOM_PLACEMENT": 0.537868,
+        "TOPOLOGY_DEGREE_ONLY": 0.048663
+      },
+      "window_id": 10
+    },
+    {
+      "mean_echo_16cz_return": 0.816504,
+      "mean_heldout_fidelity": 0.708965,
+      "mean_identity_0cz_return": 0.908582,
+      "min_heldout_fidelity": 0.449428,
+      "oracle_best_heldout_fidelity": 0.870492,
+      "oracle_best_placement_id": 5,
+      "spearman_composite_by_ranker": {
+        "CALIBRATION_RANKED": 0.175758,
+        "ECHO_RANKED": 0.987879,
+        "RANDOM_PLACEMENT": -0.042424,
+        "TOPOLOGY_DEGREE_ONLY": -0.078788
+      },
+      "top1_regret_by_ranker": {
+        "CALIBRATION_RANKED": 0.0,
+        "ECHO_RANKED": 0.0,
+        "RANDOM_PLACEMENT": 0.055881,
+        "TOPOLOGY_DEGREE_ONLY": 0.360337
+      },
+      "window_id": 11
+    },
+    {
+      "mean_echo_16cz_return": 0.801855,
+      "mean_heldout_fidelity": 0.709125,
+      "mean_identity_0cz_return": 0.893384,
+      "min_heldout_fidelity": 0.441936,
+      "oracle_best_heldout_fidelity": 0.879776,
+      "oracle_best_placement_id": 8,
+      "spearman_composite_by_ranker": {
+        "CALIBRATION_RANKED": 0.515152,
+        "ECHO_RANKED": 0.866667,
+        "RANDOM_PLACEMENT": -0.006061,
+        "TOPOLOGY_DEGREE_ONLY": 0.418182
+      },
+      "top1_regret_by_ranker": {
+        "CALIBRATION_RANKED": 0.29935,
+        "ECHO_RANKED": 0.0,
+        "RANDOM_PLACEMENT": 0.0,
+        "TOPOLOGY_DEGREE_ONLY": 0.404432
+      },
+      "window_id": 12
+    },
+    {
+      "mean_echo_16cz_return": 0.835938,
+      "mean_heldout_fidelity": 0.742003,
+      "mean_identity_0cz_return": 0.931747,
+      "min_heldout_fidelity": 0.362817,
+      "oracle_best_heldout_fidelity": 0.885072,
+      "oracle_best_placement_id": 9,
+      "spearman_composite_by_ranker": {
+        "CALIBRATION_RANKED": 0.684848,
+        "ECHO_RANKED": 0.881463,
+        "RANDOM_PLACEMENT": -0.442424,
+        "TOPOLOGY_DEGREE_ONLY": -0.442424
+      },
+      "top1_regret_by_ranker": {
+        "CALIBRATION_RANKED": 0.0,
+        "ECHO_RANKED": 0.0,
+        "RANDOM_PLACEMENT": 0.309108,
+        "TOPOLOGY_DEGREE_ONLY": 0.044696
+      },
+      "window_id": 13
+    },
+    {
+      "mean_echo_16cz_return": 0.832129,
+      "mean_heldout_fidelity": 0.740981,
+      "mean_identity_0cz_return": 0.918293,
+      "min_heldout_fidelity": 0.508831,
+      "oracle_best_heldout_fidelity": 0.874809,
+      "oracle_best_placement_id": 9,
+      "spearman_composite_by_ranker": {
+        "CALIBRATION_RANKED": 0.709091,
+        "ECHO_RANKED": 0.975758,
+        "RANDOM_PLACEMENT": 0.236364,
+        "TOPOLOGY_DEGREE_ONLY": -0.684848
+      },
+      "top1_regret_by_ranker": {
+        "CALIBRATION_RANKED": 0.0,
+        "ECHO_RANKED": 0.0,
+        "RANDOM_PLACEMENT": 0.015106,
+        "TOPOLOGY_DEGREE_ONLY": 0.365977
+      },
+      "window_id": 14
+    },
+    {
+      "mean_echo_16cz_return": 0.843164,
+      "mean_heldout_fidelity": 0.75546,
+      "mean_identity_0cz_return": 0.927868,
+      "min_heldout_fidelity": 0.574438,
+      "oracle_best_heldout_fidelity": 0.867855,
+      "oracle_best_placement_id": 0,
+      "spearman_composite_by_ranker": {
+        "CALIBRATION_RANKED": 0.369697,
+        "ECHO_RANKED": 0.939394,
+        "RANDOM_PLACEMENT": 0.030303,
+        "TOPOLOGY_DEGREE_ONLY": -0.29697
+      },
+      "top1_regret_by_ranker": {
+        "CALIBRATION_RANKED": 0.0,
+        "ECHO_RANKED": 0.0,
+        "RANDOM_PLACEMENT": 0.010407,
+        "TOPOLOGY_DEGREE_ONLY": 0.051452
+      },
+      "window_id": 15
+    }
+  ]
+}
