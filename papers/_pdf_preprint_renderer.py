@@ -369,7 +369,7 @@ class VectorCanvas:
         return ("\n".join(self.pdf) + "\n").encode("ascii")
 
     def save(self, stem_path: Path) -> None:
-        stem_path.with_suffix(".svg").write_text(self.to_svg(), encoding="utf-8", newline="\n")
+        stem_path.with_suffix(".svg").write_bytes(self.to_svg().encode("utf-8"))
         stem_path.with_suffix(".pdf").write_bytes(
             build_pdf_document([(self.w, self.h, self.pdf_stream())])
         )

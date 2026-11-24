@@ -347,7 +347,7 @@ def test_configured_project_interpreter_wins(tmp_path, monkeypatch):
 
 
 def test_version_pinned_interpreter_falls_back_to_installed_sibling(tmp_path, monkeypatch):
-    """python3.12 is not installed here; the documented sibling fallback keeps it runnable."""
+    """python3.99 is not installed here; the documented sibling fallback keeps it runnable."""
     monkeypatch.delenv("OSIRIS_PROJECT_PYTHON", raising=False)
     monkeypatch.setenv("PATH", str(tmp_path / "nothing"))
     bin = tmp_path / "bin"
@@ -355,9 +355,9 @@ def test_version_pinned_interpreter_falls_back_to_installed_sibling(tmp_path, mo
     os.symlink(sys.executable, bin / "python3")
     monkeypatch.setenv("PATH", str(bin))
     cls = exec_policy.classify(CommandRequest(
-        argv=("python3.12", "--version"), cwd=str(tmp_path), origin="model", root=str(tmp_path)))
+        argv=("python3.99", "--version"), cwd=str(tmp_path), origin="model", root=str(tmp_path)))
     assert os.path.basename(cls.normalized_argv[0]) == "python3", cls.normalized_argv
-    assert "python3.12" in cls.reasons[0], cls.reasons
+    assert "python3.99" in cls.reasons[0], cls.reasons
     # A pinned interpreter required a sibling: the receipt says so.
     assert "resolved to the installed" in cls.reasons[0], cls.reasons
 

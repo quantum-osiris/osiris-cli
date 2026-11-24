@@ -31,16 +31,16 @@
   "paper_id": "OSIRIS-ECHO-QEC-CARD-BC-2026",
   "provider_job_id": null,
   "qpu_seconds": 0,
-  "rfc8785_canonical_sha256": "08ea0021109153d4ebcf2c172dd58fe9ab713781ad3172ff68885fe338c4e24e",
+  "rfc8785_canonical_sha256": "e05e2af6fd52f05def3f0192d08b8cc7de617b720d7154b6ef7c3ef34121f58f",
   "schema": "osiris.reproducibility_capsule/1",
   "seed": 20261124,
   "source_artifacts": {
     "experiments/echo_placement/artifacts/echo_stopgo_report.json": "7cab344a6934958bd781a3b3686c860dec0d35bf0816750ab24b0053bb6ba4e0",
-    "experiments/echo_placement/echo_placement_gate.py": "d40bdcd9b7d48191472aaeba810be547a57bcebd7effcf995d3bf44703ee3ab8",
+    "experiments/echo_placement/echo_placement_gate.py": "5eb43f6f0605b9b3dd19a99ce9a9869b3725c273e178758b4102da941fd773cf",
     "experiments/qec_card_c/artifacts/card_c_qec_crossing_report.json": "8527279fe95e3547329a7ead876ab553ee3a13af24086107280654d0cab303a0",
     "experiments/qec_card_c/artifacts/card_c_qutrit_leakage_lru_report.json": "bb403f430c2f5a8faf88a3e2d04814ea85dc837cb86328468d655bb47b4cba45",
-    "experiments/qec_card_c/qec_crossing_gate.py": "59f791b6f041ccecf3e8f5245062dba93988241f4bccbe0ed3245ad840924ff8",
-    "experiments/qec_card_c/qec_leakage_lru.py": "80844f508fb67e0a84eef2c3162525c888f1a95451998191c663ff5e5f2e38ce"
+    "experiments/qec_card_c/qec_crossing_gate.py": "06241153798f1c4463294c174257059b5b9e790f3e4cbdcca4c5d546403016d9",
+    "experiments/qec_card_c/qec_leakage_lru.py": "450a25f51eeb54b9177a96997682e28da6e89ac879f680b630b8e459eb6fc5b2"
   },
   "unit_of_inference": {
     "card_b_calibration_windows_M": 16,

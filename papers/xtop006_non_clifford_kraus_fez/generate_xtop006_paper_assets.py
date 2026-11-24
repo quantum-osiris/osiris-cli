@@ -590,7 +590,7 @@ def generate_all() -> Dict[str, Any]:
     )
 
     gen_tex_path = HERE / "generated.tex"
-    gen_tex_path.write_text("\n".join(macros), encoding="utf-8", newline="\n")
+    gen_tex_path.write_bytes("\n".join(macros).encode("utf-8"))
 
     fig1 = _build_fig1(traj, ra)
     fig1.save(HERE / "fig1_xtop006_fez_kraus_trajectory")
@@ -615,8 +615,8 @@ def generate_all() -> Dict[str, Any]:
     capsule_sha = _sha256_bytes(canon)
     capsule_body["rfc8785_canonical_sha256"] = capsule_sha
     cap_path = HERE / "reproducibility_capsule.json"
-    cap_path.write_text(
-        json.dumps(capsule_body, indent=2, sort_keys=True) + "\n", encoding="utf-8", newline="\n"
+    cap_path.write_bytes(
+        (json.dumps(capsule_body, indent=2, sort_keys=True) + "\n").encode("utf-8")
     )
 
     pdf_bytes = _build_preprint_pdf(ra, rb, h2, capsule_sha, fig1, fig2)
@@ -624,7 +624,7 @@ def generate_all() -> Dict[str, Any]:
 
     tracked = sorted(p for p in HERE.iterdir() if p.is_file() and p.name != "SHA256SUMS.txt")
     sums_lines = [f"{_sha256_file(p)}  {p.name}" for p in tracked]
-    (HERE / "SHA256SUMS.txt").write_text("\n".join(sums_lines) + "\n", encoding="utf-8", newline="\n")
+    (HERE / "SHA256SUMS.txt").write_bytes(("\n".join(sums_lines) + "\n").encode("utf-8"))
     return capsule_body
 
 

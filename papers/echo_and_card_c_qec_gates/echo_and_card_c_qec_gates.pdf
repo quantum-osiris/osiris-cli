@@ -49,7 +49,7 @@ BT /F2 7.4 Tf 0.118 0.161 0.231 rg 57.00 611.90 Td (Card C Scope: ) Tj ET
 BT /F3 7.2 Tf 0.200 0.255 0.333 rg 109.01 611.90 Td (OSIRIS-QEC: [[3,1,3]] \(5Q Kraus & 3^5=243 5-qutrit\) + [[9,1,3]] \(17Q Tomita-Svore\) | R in) Tj ET
 BT /F3 7.2 Tf 0.200 0.255 0.333 rg 109.01 601.50 Td ({1,2,3,5,7,9} | Single distance d = 3 only) Tj ET
 BT /F2 7.4 Tf 0.118 0.161 0.231 rg 57.00 591.10 Td (RFC 8785 Capsule: ) Tj ET
-BT /F3 7.2 Tf 0.200 0.255 0.333 rg 127.10 591.10 Td (08ea0021109153d4ebcf2c172dd58fe9ab713781ad3172ff68885fe338c4e24e) Tj ET
+BT /F3 7.2 Tf 0.200 0.255 0.333 rg 127.10 591.10 Td (e05e2af6fd52f05def3f0192d08b8cc7de617b720d7154b6ef7c3ef34121f58f) Tj ET
 q 0.60 w 0.988 0.988 0.992 rg 0.796 0.835 0.882 RG 48.00 328.50 516.00 244.20 re B Q
 BT /F2 8.4 Tf 0.059 0.090 0.165 rg 58.00 561.20 Td (ABSTRACT) Tj ET
 BT /F4 9.0 Tf 0.122 0.161 0.216 rg 58.00 549.70 Td (Within-window calibration staleness and non-computational transmon |2> leakage can silently erase small-distance quantum) Tj ET
@@ -99,7 +99,7 @@ BT /F4 9.4 Tf 0.067 0.094 0.153 rg 48.00 90.20 Td (Repeated quantum error correc
 BT /F4 9.4 Tf 0.067 0.094 0.153 rg 48.00 77.70 Td (break-even margins where post-calibration parameter drift and non-computational state leakage can invert logical error scaling) Tj ET
 BT /F4 9.4 Tf 0.067 0.094 0.153 rg 48.00 65.20 Td ([1-4]. In our preceding hardware-attested 5-qubit binary tetrahedral group inversion benchmark on ibm_fez) Tj ET
 q [] 0 d 0.60 w 0.796 0.835 0.882 RG 48.00 42.00 m 564.00 42.00 l S Q
-BT /F3 7.0 Tf 0.392 0.455 0.545 rg 48.00 29.00 Td (TIER: SIMULATED \(provider_job_id: null, 0 s QPU\)  |  Card B & Card C  |  RFC8785 Capsule: 08ea0021109153d4...) Tj ET
+BT /F3 7.0 Tf 0.392 0.455 0.545 rg 48.00 29.00 Td (TIER: SIMULATED \(provider_job_id: null, 0 s QPU\)  |  Card B & Card C  |  RFC8785 Capsule: e05e2af6fd52f05d...) Tj ET
 BT /F2 7.6 Tf 0.200 0.255 0.333 rg 523.30 29.00 Td (Page 1 of 6) Tj ET
 endstream
 endobj
@@ -270,7 +270,7 @@ BT /F6 8.0 Tf 0.392 0.455 0.545 rg 48.00 762.00 Td (Echo Placement Screening, Ca
 BT /F1 7.5 Tf 0.392 0.455 0.545 rg 367.33 762.00 Td (Devin Phillip Davis  |  OSIRIS-ECHO-QEC-CARD-BC-2026) Tj ET
 q [] 0 d 0.60 w 0.796 0.835 0.882 RG 48.00 756.00 m 564.00 756.00 l S Q
 q [] 0 d 0.60 w 0.796 0.835 0.882 RG 48.00 42.00 m 564.00 42.00 l S Q
-BT /F3 7.0 Tf 0.392 0.455 0.545 rg 48.00 29.00 Td (TIER: SIMULATED \(provider_job_id: null, 0 s QPU\)  |  Card B & Card C  |  RFC8785 Capsule: 08ea0021109153d4...) Tj ET
+BT /F3 7.0 Tf 0.392 0.455 0.545 rg 48.00 29.00 Td (TIER: SIMULATED \(provider_job_id: null, 0 s QPU\)  |  Card B & Card C  |  RFC8785 Capsule: e05e2af6fd52f05d...) Tj ET
 BT /F2 7.6 Tf 0.200 0.255 0.333 rg 523.30 29.00 Td (Page 2 of 6) Tj ET
 endstream
 endobj
@@ -429,7 +429,7 @@ BT /F6 8.0 Tf 0.392 0.455 0.545 rg 48.00 762.00 Td (Echo Placement Screening, Ca
 BT /F1 7.5 Tf 0.392 0.455 0.545 rg 367.33 762.00 Td (Devin Phillip Davis  |  OSIRIS-ECHO-QEC-CARD-BC-2026) Tj ET
 q [] 0 d 0.60 w 0.796 0.835 0.882 RG 48.00 756.00 m 564.00 756.00 l S Q
 q [] 0 d 0.60 w 0.796 0.835 0.882 RG 48.00 42.00 m 564.00 42.00 l S Q
-BT /F3 7.0 Tf 0.392 0.455 0.545 rg 48.00 29.00 Td (TIER: SIMULATED \(provider_job_id: null, 0 s QPU\)  |  Card B & Card C  |  RFC8785 Capsule: 08ea0021109153d4...) Tj ET
+BT /F3 7.0 Tf 0.392 0.455 0.545 rg 48.00 29.00 Td (TIER: SIMULATED \(provider_job_id: null, 0 s QPU\)  |  Card B & Card C  |  RFC8785 Capsule: e05e2af6fd52f05d...) Tj ET
 BT /F2 7.6 Tf 0.200 0.255 0.333 rg 523.30 29.00 Td (Page 3 of 6) Tj ET
 endstream
 endobj
@@ -621,7 +621,7 @@ BT /F6 8.0 Tf 0.392 0.455 0.545 rg 48.00 762.00 Td (Echo Placement Screening, Ca
 BT /F1 7.5 Tf 0.392 0.455 0.545 rg 367.33 762.00 Td (Devin Phillip Davis  |  OSIRIS-ECHO-QEC-CARD-BC-2026) Tj ET
 q [] 0 d 0.60 w 0.796 0.835 0.882 RG 48.00 756.00 m 564.00 756.00 l S Q
 q [] 0 d 0.60 w 0.796 0.835 0.882 RG 48.00 42.00 m 564.00 42.00 l S Q
-BT /F3 7.0 Tf 0.392 0.455 0.545 rg 48.00 29.00 Td (TIER: SIMULATED \(provider_job_id: null, 0 s QPU\)  |  Card B & Card C  |  RFC8785 Capsule: 08ea0021109153d4...) Tj ET
+BT /F3 7.0 Tf 0.392 0.455 0.545 rg 48.00 29.00 Td (TIER: SIMULATED \(provider_job_id: null, 0 s QPU\)  |  Card B & Card C  |  RFC8785 Capsule: e05e2af6fd52f05d...) Tj ET
 BT /F2 7.6 Tf 0.200 0.255 0.333 rg 523.30 29.00 Td (Page 4 of 6) Tj ET
 endstream
 endobj
@@ -771,7 +771,7 @@ BT /F4 9.4 Tf 0.067 0.094 0.153 rg 48.00 216.70 Td (fault-tolerant suppression a
 BT /F4 9.4 Tf 0.067 0.094 0.153 rg 48.00 204.20 Td (remains open.) Tj ET
 BT /F4 9.4 Tf 0.067 0.094 0.153 rg 48.00 186.70 Td (Data & Code Availability: All simulation gates and JSON reports -- echo_stopgo_report.json \(7cab344a6934958b...\),) Tj ET
 BT /F4 9.4 Tf 0.067 0.094 0.153 rg 48.00 174.20 Td (card_c_qec_crossing_report.json \(8527279fe95e3547...\), card_c_qutrit_leakage_lru_report.json \(bb403f430c2f5a8f...\), and the) Tj ET
-BT /F4 9.4 Tf 0.067 0.094 0.153 rg 48.00 161.70 Td (RFC 8785 JCS reproducibility capsule \(08ea0021109153d4...\) -- are deterministically reproducible and locked in) Tj ET
+BT /F4 9.4 Tf 0.067 0.094 0.153 rg 48.00 161.70 Td (RFC 8785 JCS reproducibility capsule \(e05e2af6fd52f05d...\) -- are deterministically reproducible and locked in) Tj ET
 BT /F4 9.4 Tf 0.067 0.094 0.153 rg 48.00 149.20 Td (SHA256SUMS.txt.) Tj ET
 BT /F2 10.4 Tf 0.059 0.090 0.165 rg 48.00 126.70 Td (References) Tj ET
 q [] 0 d 0.70 w 0.796 0.835 0.882 RG 48.00 121.70 m 564.00 121.70 l S Q
@@ -785,7 +785,7 @@ BT /F6 8.0 Tf 0.392 0.455 0.545 rg 48.00 762.00 Td (Echo Placement Screening, Ca
 BT /F1 7.5 Tf 0.392 0.455 0.545 rg 367.33 762.00 Td (Devin Phillip Davis  |  OSIRIS-ECHO-QEC-CARD-BC-2026) Tj ET
 q [] 0 d 0.60 w 0.796 0.835 0.882 RG 48.00 756.00 m 564.00 756.00 l S Q
 q [] 0 d 0.60 w 0.796 0.835 0.882 RG 48.00 42.00 m 564.00 42.00 l S Q
-BT /F3 7.0 Tf 0.392 0.455 0.545 rg 48.00 29.00 Td (TIER: SIMULATED \(provider_job_id: null, 0 s QPU\)  |  Card B & Card C  |  RFC8785 Capsule: 08ea0021109153d4...) Tj ET
+BT /F3 7.0 Tf 0.392 0.455 0.545 rg 48.00 29.00 Td (TIER: SIMULATED \(provider_job_id: null, 0 s QPU\)  |  Card B & Card C  |  RFC8785 Capsule: e05e2af6fd52f05d...) Tj ET
 BT /F2 7.6 Tf 0.200 0.255 0.333 rg 523.30 29.00 Td (Page 5 of 6) Tj ET
 endstream
 endobj
@@ -810,7 +810,7 @@ BT /F6 8.0 Tf 0.392 0.455 0.545 rg 48.00 762.00 Td (Echo Placement Screening, Ca
 BT /F1 7.5 Tf 0.392 0.455 0.545 rg 367.33 762.00 Td (Devin Phillip Davis  |  OSIRIS-ECHO-QEC-CARD-BC-2026) Tj ET
 q [] 0 d 0.60 w 0.796 0.835 0.882 RG 48.00 756.00 m 564.00 756.00 l S Q
 q [] 0 d 0.60 w 0.796 0.835 0.882 RG 48.00 42.00 m 564.00 42.00 l S Q
-BT /F3 7.0 Tf 0.392 0.455 0.545 rg 48.00 29.00 Td (TIER: SIMULATED \(provider_job_id: null, 0 s QPU\)  |  Card B & Card C  |  RFC8785 Capsule: 08ea0021109153d4...) Tj ET
+BT /F3 7.0 Tf 0.392 0.455 0.545 rg 48.00 29.00 Td (TIER: SIMULATED \(provider_job_id: null, 0 s QPU\)  |  Card B & Card C  |  RFC8785 Capsule: e05e2af6fd52f05d...) Tj ET
 BT /F2 7.6 Tf 0.200 0.255 0.333 rg 523.30 29.00 Td (Page 6 of 6) Tj ET
 endstream
 endobj

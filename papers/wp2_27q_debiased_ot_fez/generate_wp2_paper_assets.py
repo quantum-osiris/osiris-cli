@@ -203,7 +203,7 @@ class VectorCanvas:
         return ("\n".join(self.pdf) + "\n").encode("latin-1", errors="replace")
 
     def save(self, stem_path: Path) -> None:
-        stem_path.with_suffix(".svg").write_text(self.to_svg(), encoding="utf-8", newline="\n")
+        stem_path.with_suffix(".svg").write_bytes(self.to_svg().encode("utf-8"))
         stem_path.with_suffix(".pdf").write_bytes(
             build_pdf_document([(self.w, self.h, self.pdf_stream())])
         )
@@ -1508,7 +1508,7 @@ def generate_all() -> Dict[str, Any]:
 
     gen_tex = build_generated_tex(fez, manifest, cal, ot_rep)
     gen_tex_path = PAPER_DIR / "generated.tex"
-    gen_tex_path.write_text(gen_tex, encoding="utf-8", newline="\n")
+    gen_tex_path.write_bytes(gen_tex.encode("utf-8"))
 
     fig1 = make_fig1(fez, ot_rep)
     fig1.save(PAPER_DIR / FIG1_STEM)
@@ -1600,7 +1600,7 @@ def generate_all() -> Dict[str, Any]:
         + upstream_rels
     )
     sha_lines = [f"{_sha256_file(REPO_ROOT / rel)}  {rel}" for rel in sha_rels]
-    (PAPER_DIR / "SHA256SUMS.txt").write_text("\n".join(sha_lines) + "\n", encoding="utf-8", newline="\n")
+    (PAPER_DIR / "SHA256SUMS.txt").write_bytes(("\n".join(sha_lines) + "\n").encode("utf-8"))
     return capsule
 
 

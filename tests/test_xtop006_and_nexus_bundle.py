@@ -278,8 +278,12 @@ def test_e1_detects_every_single_qubit_storage_error(h2_offline_backend):
 
 def test_xtop006_manifest_jcs_and_encoded_advantage():
     """Verify xtop006_h2_manifest.json JCS canonicalization, SHA256SUMS, and E1 > P0 under storage noise."""
-    manifest_path = qc6.ARTIFACTS_DIR / qc6.MANIFEST_FILENAME
-    sums_path = qc6.ARTIFACTS_DIR / qc6.SHA256SUMS_FILENAME
+    import hashlib
+    from pathlib import Path
+
+    artifacts_dir = qc6.ARTIFACTS_DIR if qc6 is not None else (Path(__file__).resolve().parents[1] / "xtop006" / "artifacts")
+    manifest_path = artifacts_dir / (qc6.MANIFEST_FILENAME if qc6 is not None else "xtop006_h2_manifest.json")
+    sums_path = artifacts_dir / (qc6.SHA256SUMS_FILENAME if qc6 is not None else "SHA256SUMS.txt")
     raw_bytes = manifest_path.read_bytes()
     manifest = json.loads(raw_bytes.decode("utf-8"))
 
@@ -291,7 +295,7 @@ def test_xtop006_manifest_jcs_and_encoded_advantage():
 
     for line in sums_path.read_text(encoding="utf-8").splitlines():
         digest, rel = line.strip().split("  ", 1)
-        assert rnh._sha256_bytes((qc6.ARTIFACTS_DIR / rel).read_bytes()) == digest
+        assert hashlib.sha256((artifacts_dir / rel).read_bytes()).hexdigest() == digest
 
     pi2_cell = next(r for r in manifest["theta_sweep_results"] if r["theta_name"] == "pi_2")
     f_e1 = float(pi2_cell["arms"]["E1"]["h2_with_qccd_memory_dephasing"]["fidelity_6state_avg"])
@@ -306,7 +310,10 @@ def test_xtop006_manifest_jcs_and_encoded_advantage():
 
 def test_xtop005_decisive_manifest_jcs_and_hqc_budget_1336():
     """Verify 18-circuit L=3 decisive manifest JCS lock, HQC=1,336 budget, and Stage-1 predictions."""
-    m_path = rnh.BUNDLE_DIR / rnh.MANIFEST_NAME
+    from pathlib import Path
+
+    bundle_dir = rnh.BUNDLE_DIR if rnh is not None else (Path(__file__).resolve().parents[1] / "xtop005" / "decisive_h2_bundle")
+    m_path = bundle_dir / (rnh.MANIFEST_NAME if rnh is not None else "manifest_xtop005_h2_decisive.json")
     raw = m_path.read_bytes()
     m = json.loads(raw.decode("utf-8"))
 

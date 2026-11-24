@@ -1360,10 +1360,8 @@ def generate_all() -> Dict[str, Any]:
     }
     capsule_sha = _sha256_bytes(_canonical_jcs_bytes(capsule_body))
     capsule = {**capsule_body, "rfc8785_canonical_sha256": capsule_sha}
-    (HERE / "reproducibility_capsule.json").write_text(
-        json.dumps(capsule, indent=2, sort_keys=True) + "\n",
-        encoding="utf-8",
-        newline="\n",
+    (HERE / "reproducibility_capsule.json").write_bytes(
+        (json.dumps(capsule, indent=2, sort_keys=True) + "\n").encode("utf-8")
     )
 
     # 2. Extract Milestone 1 contextual anchor numbers & Milestone 2 exact macros for generated.tex
@@ -1716,7 +1714,7 @@ def generate_all() -> Dict[str, Any]:
         "}",
         "",
     ]
-    (HERE / "generated.tex").write_text("\n".join(macros), encoding="utf-8", newline="\n")
+    (HERE / "generated.tex").write_bytes("\n".join(macros).encode("utf-8"))
 
     # 3. Render dual SVG + PDF 1.4 vector figures
     fig1 = _build_fig1(manifest, inv_manifest, fez_results)
@@ -1746,7 +1744,7 @@ def generate_all() -> Dict[str, Any]:
     sums_lines = [
         f"{_sha256_file(p)}  {p.relative_to(ROOT).as_posix()}" for p in locked_paths
     ]
-    (HERE / "SHA256SUMS.txt").write_text("\n".join(sums_lines) + "\n", encoding="utf-8", newline="\n")
+    (HERE / "SHA256SUMS.txt").write_bytes(("\n".join(sums_lines) + "\n").encode("utf-8"))
     return capsule
 
 

@@ -53,7 +53,7 @@ from scipy import sparse
 from scipy.optimize import linprog
 
 PHI: float = (1.0 + math.sqrt(5.0)) / 2.0
-_POPCOUNT_LUT: np.ndarray = np.array([i.bit_count() for i in range(256)], dtype=np.float64)
+_POPCOUNT_LUT: np.ndarray = np.array([bin(i).count("1") for i in range(256)], dtype=np.float64)
 
 BitKey = Union[int, str]
 
@@ -128,7 +128,7 @@ def _infer_n_qubits(keys: Sequence[BitKey], n_qubits: Optional[int]) -> int:
 
 def hamming_distance_int(x: BitKey, y: BitKey) -> int:
     """Exact arbitrary-precision integer XOR popcount."""
-    return (_bitkey_to_int(x) ^ _bitkey_to_int(y)).bit_count()
+    return bin(_bitkey_to_int(x) ^ _bitkey_to_int(y)).count("1")
 
 
 def normalized_squared_hamming_cost(

@@ -1098,7 +1098,7 @@ def run_card_c_qutrit_leakage_lru_gate(
     if output_path is not None:
         output_path.parent.mkdir(parents=True, exist_ok=True)
         payload = json.dumps(report, indent=2, sort_keys=True) + "\n"
-        output_path.write_text(payload, encoding="utf-8", newline="\n")
+        output_path.write_bytes(payload.encode("utf-8"))
 
     return report
 
