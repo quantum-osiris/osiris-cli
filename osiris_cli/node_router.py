@@ -17,9 +17,11 @@ Rules, in order (the first that applies decides):
 """
 from __future__ import annotations
 
+import os
 import re
 from dataclasses import dataclass, field
-from typing import Dict, Optional, Tuple
+from decimal import Decimal
+from typing import Any, Dict, Optional, Sequence, Tuple, Union
 
 from osiris_cli.node_ids import NODE_ALPHA, NODE_BETA
 
@@ -91,3 +93,32 @@ def route_task(text: str) -> RouteDecision:
                              "(explain, answer, summarise, classify, translate)", matched=matched)
     return RouteDecision(True, "N4-default-workstation", "no node was named; the workstation is the default",
                          "workstation_task", NODE_BETA, matched)
+
+
+_MULTI_CANDIDATE_UTILITY_FLOOR = Decimal("0.250000")
+
+
+def route_task_calibrated(
+    text: str,
+    candidate_models: Sequence[str] = ("ollama/gemma4:e4b", "ollama/qwen2.5-coder:7b"),
+    calibration_path: Optional[Union[str, os.PathLike]] = None,
+) -> Dict[str, Any]:
+    """Combine deterministic substrate routing with calibration-weighted model selection."""
+    from osiris_cli import evolution_engine
+
+    decision = route_task(text)
+    selected_model, score = evolution_engine.select_calibrated_model(
+        candidate_models,
+        calibration_path=calibration_path,
+    )
+    escalate = (
+        True
+        if score is None
+        else Decimal(score.utility_str) < _MULTI_CANDIDATE_UTILITY_FLOOR
+    )
+    return {
+        "escalate_multi_candidate": escalate,
+        "model_score": score.to_dict() if score is not None else None,
+        "route": decision.as_dict(),
+        "selected_model": selected_model,
+    }

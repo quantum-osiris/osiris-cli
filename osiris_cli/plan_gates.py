@@ -497,11 +497,17 @@ def record_plan_receipt(
     *,
     thresholds: PlanGateThresholds = PlanGateThresholds(),
     osiris_home: PathArg = None,
+    ledger_path: PathArg = None,
     root: PathArg = None,
 ) -> Tuple[PlanAuditResult, str]:
     """Audit ``plan`` and append an ``exec-canon-1`` receipt under ``$OSIRIS_HOME/plans/``."""
     audit = validate_plan_v1(dict(plan), thresholds=thresholds, root=root)
-    path = default_plan_receipts_path(osiris_home)
+    path = (
+        Path(ledger_path).expanduser().resolve()
+        if ledger_path is not None
+        else default_plan_receipts_path(osiris_home)
+    )
+    path.parent.mkdir(parents=True, exist_ok=True)
     journal = ExecJournal(path)
     meta = plan.get("meta") if isinstance(plan.get("meta"), Mapping) else {}
     body = {

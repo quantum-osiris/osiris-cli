@@ -569,6 +569,38 @@ def audit_mentor_reply(
     )
 
 
+def assemble_stratified_working_memory(
+    recent_turns: Sequence[Dict[str, str]],
+    grounded_facts: Sequence[str],
+    quarantined_warnings: Sequence[str] = (),
+    max_tokens: int = 2048,
+) -> Dict[str, Any]:
+    """Assemble an epistemically stratified, token-budgeted working memory context
+    delegating to ``evolution_engine.stratify_memory_context()`` while reserving
+    explicit mentor output headroom (``MENTOR_MAX_TOKENS``)."""
+    from osiris_cli import evolution_engine
+
+    stratified = evolution_engine.stratify_memory_context(
+        recent_turns=recent_turns,
+        grounded_facts=grounded_facts,
+        quarantined_warnings=quarantined_warnings,
+        max_tokens=max_tokens,
+    )
+    sys_parts: List[str] = []
+    if stratified["sys024_guardrails"]:
+        sys_parts.append("[SYS-024 Guardrails]\n" + "\n".join(stratified["sys024_guardrails"]))
+    if stratified["grounded_semantic_facts"]:
+        sys_parts.append("[Grounded Facts]\n" + "\n".join(stratified["grounded_semantic_facts"]))
+    messages: List[Dict[str, str]] = []
+    if sys_parts:
+        messages.append({"role": "system", "content": "\n\n".join(sys_parts)})
+    messages.extend(stratified["episodic_turns"])
+    out = dict(stratified)
+    out["messages"] = messages
+    out["output_headroom_tokens"] = MENTOR_MAX_TOKENS
+    return out
+
+
 def drain_input(read: Callable[[], bytes], ready: Callable[[float], bool], clock: Callable[[], float] = time.time,
                 idle: float = PASTE_IDLE, wait_max: float = PASTE_WAIT_MAX) -> bytes:
     """Everything waiting on input now; and if a bracketed paste has started but not ended, keep
@@ -846,6 +878,7 @@ class NclmCore:
 
     def learn(self, text: str, steps: int) -> Optional[float]:
         import random
+
         from osiris.nclm import cross_entropy_loss
         from osiris.nclm.autograd import clip_grad_norm
         windows = self._windows(text, 64)
@@ -880,6 +913,7 @@ class NclmCore:
 
     def train_batch(self, x, y) -> float:
         import gc
+
         from osiris.nclm import cross_entropy_loss
         from osiris.nclm.autograd import clip_grad_norm
         with self._otc._organism_lock:
