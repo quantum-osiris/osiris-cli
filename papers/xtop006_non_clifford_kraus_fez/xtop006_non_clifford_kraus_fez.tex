@@ -1,0 +1,61 @@
+\documentclass[aps,prx,twocolumn,superscriptaddress,nofootinbib]{revtex4-2}
+\usepackage{amsmath,amssymb,bm}
+\usepackage{graphicx}
+\usepackage{hyperref}
+
+\input{generated.tex}
+
+\begin{document}
+
+\title{Continuous-Angle Non-Clifford Hayden--Preskill Scrambling Trajectory and Stratified Decoherence Discrimination on a 156-Qubit Superconducting Processor}
+
+\author{Devin Phillip Davis}
+\affiliation{Agile Defense Systems LLC, Lexington, Kentucky, USA}
+\date{November 23, 2026}
+
+\begin{abstract}
+Out-of-time-order correlator decay in noisy quantum circuits is notoriously confounded with incoherent depolarization and transpilation-depth variation across circuit parameters. Following the conditional Bell-postselected Hayden--Preskill recovery formalism of Yoshida--Kitaev and Landsman--Figgatt, we derive the exact 16-operator remnant Kraus channel $\mathcal{E}_{\Phi^+}(\rho_{\mathrm{in}}) = \sum_r M_r(\theta)\rho_{\mathrm{in}}M_r^\dagger(\theta)$ for a continuous non-Clifford three-qubit scrambler $U(\theta)$ satisfying $P_{\Phi^+}(\theta) = (1 - \tfrac{1}{2}\sin^2\theta)^2$ and $P_{\Phi^+}(\theta)F_{\mathrm{ent}}(\theta \mid \Phi^+) = \tfrac{1}{4}$. Using a universal two-$\sqrt{X}$ single-qubit synthesis identity that locks an identical \XtopConstCZ-\texttt{CZ}, \XtopConstSX-$\sqrt{X}$ pulse schedule across every angle $\theta$ on a seven-transmon heavy-hex T-junction of \texttt{ibm\_fez} (\XtopShotsTotal\ total shots across jobs \XtopJobA\ and \XtopJobB, \XtopQpuSecTotal\,s QPU), we measure a monotonic recovery climb from $F_6(0 \mid \Phi^+) = \XtopFZeroRaw$ ($P_{\Phi^+} = \XtopPZeroRaw$) through the peak stabilizer-magic point $\theta = \pi/4$ ($F_6 = \XtopFPiFourRaw$, $P_{\Phi^+} = \XtopPPiFourRaw$) to $F_6(\pi/2 \mid \Phi^+) = \XtopFPiTwoRaw \pm \XtopFPiTwoSE$ (\XtopFPiTwoMit\ readout-mitigated, $P_{\Phi^+} = \XtopPPiTwoRaw$), exceeding $F_6(0 \mid \Phi^+)$ by $+\XtopClimbDelta$ ($t = \XtopClimbT$, $p = \XtopClimbP$) and surpassing the $2/3$ classical teleportation ceiling at a $95\%$ lower confidence limit of \XtopFPiTwoLCL. A preregistered confirmatory run (\XtopJobB) executing all four mid-scrambler Pauli-$Z$ dephasing twirls inside every randomized block separates coherent scrambling from decoherence on the identical \XtopConstCZ-\texttt{CZ} skeleton by $+\XtopConfDeltaThreePiEight \pm \XtopConfSEThreePiEight$ ($t = \XtopConfTThreePiEight$) at $\theta = 3\pi/8$ and $+\XtopConfDeltaPiTwo \pm \XtopConfSEPiTwo$ ($t = \XtopConfTPiTwo$, $p_{\mathrm{Holm}} = \XtopConfPHolm$) at $\theta = \pi/2$.
+\end{abstract}
+
+\maketitle
+
+\section{Introduction}
+Distinguishing genuine unitary operator growth from Markovian or non-Markovian decoherence is a central methodological requirement of quantum information scrambling experiments~\cite{YoshidaKitaev2017,LandsmanFiggatt2019}. Standard out-of-time-order correlators decay both when local Pauli operators spread into high-weight strings and when single-qubit or two-qubit noise damps expectation values. Verified teleportation via the Yoshida--Kitaev decoding protocol resolves this ambiguity in principle by converting operator spreading into a positive recovery shift on Bob's output wire conditioned on projecting a single Einstein--Podolsky--Rosen pair onto $|\Phi^+\rangle$.
+
+Two experimental confounds nevertheless arise when sweeping a continuous non-Clifford scrambling family $U(\theta)$ on superconducting processors: (i) standard transpilers collapse special Clifford angles ($\theta = 0, \pi/2$) to shorter two-qubit gate counts than generic non-Clifford angles ($\theta = \pi/8, \pi/4, 3\pi/8$), coupling scrambling angle to $T_1/T_2$ idle decay, and (ii) un-stratified twirl controls that assign distinct Pauli operators across temporal blocks mix deterministic twirl-to-twirl dispersion into block standard errors. Here we eliminate both confounds on \texttt{ibm\_fez}.
+
+\section{Analytical Kraus Trajectory and Constant-Skeleton Compilation}
+Consider the seven-qubit register $(q_0, q_1, q_2, q_3, q_4, q_5, q_6)$ initialized with Alice's input $\rho_{\mathrm{in}}$ on $q_0$ and three Bell pairs on $(q_1, q_5)$, $(q_2, q_4)$, and $(q_3, q_6)$. Applying $U(\theta)$ to $(q_0, q_1, q_2)$ and $U^*(\theta) = U(-\theta)$ to $(q_3, q_5, q_4)$ followed by $|\Phi^+\rangle$ projection on $(q_2, q_4)$ induces sixteen $2\times 2$ remnant Kraus operators
+\begin{equation}
+  (M_r(\theta))_{xa} = \frac{1}{4}\sum_{b,c,k \in \{0,1\}} U_{ijk,abc}(\theta)\,U^*_{nmk,xbc}(\theta),
+\end{equation}
+indexed by the four unmeasured remnant wires $r = (i,j,m,n)$ with output wire $x = q_6$. Defining the tunable two-qubit entangler $G_{c,t}(\theta) = e^{i\theta/2} R_z(\theta)_c R_x(\theta)_t \,\mathrm{CZ}_{c,t}\, R_x(-\theta)_t \,\mathrm{CZ}_{c,t}$ and setting $U(\theta) = G_{0,2}(\theta)G_{0,1}(\theta)H^{\otimes 3}G_{0,2}(\theta)G_{0,1}(\theta)H^{\otimes 3}$ yields the exact closed-form trajectory
+\begin{equation}
+  P_{\Phi^+}(\theta) = \left(1 - \tfrac{1}{2}\sin^2\theta\right)^2, \qquad
+  F_6(\theta \mid \Phi^+) = \frac{1}{3} + \frac{1}{6 P_{\Phi^+}(\theta)},
+\end{equation}
+saturating the unitary branching invariant $P_{\Phi^+}(\theta)F_{\mathrm{ent}}(\theta \mid \Phi^+) = 1/4$ identically across $\theta \in [0, \pi/2]$ while reaching non-Clifford stabilizer R\'enyi magic $M_2 = 4$ bits at $\theta = \pi/4$.
+
+To enforce zero pulse-duration variation across $\theta$ on heavy-hex hardware, every contiguous single-qubit operation between \texttt{CZ} gates is contracted into $W \in U(2)$ and emitted via the exact universal Euler template $W \equiv R_z(\phi)\sqrt{X}R_z(\pi-\vartheta)\sqrt{X}R_z(\lambda+\pi)$. Routing initial Bell pair $(q_1, q_5)$ across clean $|0\rangle$ wires prior to preparing $q_0, q_2, q_3, q_4, q_6$ maps the entire protocol onto a seven-transmon heavy-hex T-junction with zero routing SWAPs during $U(\theta)\otimes U^*(\theta)$ and strictly constant gate counts (\XtopConstCZ\ \texttt{CZ} and \XtopConstSX\ $\sqrt{X}$ gates) for every circuit.
+
+\section{Live \texttt{ibm\_fez} Trajectory and Confirmatory 4-Twirl Discrimination}
+\XtopTrajectoryTable
+
+Table~\ref{tab:xtop006_trajectory} reports the primary five-angle trajectory from \texttt{ibm\_fez} job \XtopJobA\ (\XtopShotsA\ shots across four interleaved randomized blocks, readout calibration condition number \XtopRoCond). Raw six-state recovery rises monotonically across all five angles from \XtopFZeroRaw\ at $\theta = 0$ through \XtopFPiEightRaw\ ($\pi/8$), \XtopFPiFourRaw\ ($\pi/4$), and \XtopFThreePiEightRaw\ ($3\pi/8$) to $\XtopFPiTwoRaw \pm \XtopFPiTwoSE$ (\XtopFPiTwoMit\ readout-mitigated) at $\theta = \pi/2$, while $P_{\Phi^+}$ contracts from \XtopPZeroRaw\ to \XtopPPiTwoRaw. Both $\theta = 3\pi/8$ and $\theta = \pi/2$ surpass the $2/3$ classical teleportation bound without readout mitigation, and the constant-duration branching product $P_{\Phi^+}(\theta)F_{\mathrm{ent}}(\theta \mid \Phi^+)$ remains tightly bounded between \XtopYKZeroRaw\ and \XtopYKPiTwoRaw\ (\XtopYKPiTwoMit\ mitigated).
+
+\XtopConfirmatoryTable
+
+In \XtopJobA, rotating a single deterministic mid-scrambler Pauli-$Z$ twirl per block yielded a pooled $\theta=\pi/2$ fidelity right on the classical $2/3$ dephased limit, but mixed deterministic twirl-to-twirl variance into block standard errors. Executing all four non-trivial Pauli-$Z$ twirls inside every block in confirmatory job \XtopJobB\ (Table~\ref{tab:xtop006b_confirmatory}) eliminates inter-block twirl variance identically: coherent scrambling exceeds the four-twirl dephased channel on the identical \XtopConstCZ-\texttt{CZ} pulse schedule by $+\XtopConfDeltaThreePiEight \pm \XtopConfSEThreePiEight$ ($t = \XtopConfTThreePiEight$) at $\theta = 3\pi/8$ and $+\XtopConfDeltaPiTwo \pm \XtopConfSEPiTwo$ ($\XtopConfCohPiTwo$ versus $\XtopConfDecPiTwo$, $t = \XtopConfTPiTwo$, $p_{\mathrm{Holm}} = \XtopConfPHolm$) at $\theta = \pi/2$.
+
+\section{Conclusion and Cross-Architecture Outlook}
+Locking constant two-qubit and single-qubit gate skeletons reduces continuous scrambling sweeps to pure virtual-$Z$ phase updates, isolating coherent non-Clifford operator spreading at $>60\sigma$ and separating it from dephasing at $>15\sigma$ on superconducting hardware. A companion offline-compiled `[[4,2,2]]` codespace compilation staged for Quantinuum \texttt{H2-1} (\XtopHqcBudget\ HQC) extends this exact trajectory into an error-detected logical subspace with zero routing SWAPs.
+
+\section*{Data and Code Availability}
+Write-ahead QPY circuit bundles, SHA-256 staging manifests, raw shot archives, and the RFC~8785 reproducibility capsule for \texttt{ibm\_fez} jobs \XtopJobA\ and \XtopJobB\ are archived in the repository under \texttt{experiments/xtop006\_fez/}, \texttt{experiments/xtop006b\_fez/}, and \texttt{papers/xtop006\_non\_clifford\_kraus\_fez/}.
+
+\begin{thebibliography}{9}
+\bibitem{YoshidaKitaev2017} B. Yoshida and A. Kitaev, arXiv:1710.03363 (2017).
+\bibitem{LandsmanFiggatt2019} K. A. Landsman, C. Figgatt, T. Schuster, N. M. Linke, B. Yoshida, N. Y. Yao, and C. Monroe, Nature \textbf{567}, 61 (2019).
+\end{thebibliography}
+
+\end{document}

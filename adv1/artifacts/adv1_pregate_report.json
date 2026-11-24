@@ -1,0 +1,1044 @@
+{
+  "adv0_twirled_mirror_controls": [
+    {
+      "attack1_bounded_mps": {
+        "any_win": true,
+        "chi_curves": [
+          {
+            "chi": 8,
+            "modal_prob": 0.992188,
+            "p_peak_est": 0.992188,
+            "seconds": 0.039,
+            "truncation_fidelity_ratio": 0.992188,
+            "tvd_vs_exact": 0.007812,
+            "win": true
+          },
+          {
+            "chi": 16,
+            "modal_prob": 1.0,
+            "p_peak_est": 1.0,
+            "seconds": 0.006,
+            "truncation_fidelity_ratio": 1.0,
+            "tvd_vs_exact": 0.0,
+            "win": true
+          },
+          {
+            "chi": 32,
+            "modal_prob": 1.0,
+            "p_peak_est": 1.0,
+            "seconds": 0.004,
+            "truncation_fidelity_ratio": 1.0,
+            "tvd_vs_exact": 0.0,
+            "win": true
+          },
+          {
+            "chi": 64,
+            "modal_prob": 1.0,
+            "p_peak_est": 1.0,
+            "seconds": 0.005,
+            "truncation_fidelity_ratio": 1.0,
+            "tvd_vs_exact": 0.0,
+            "win": true
+          },
+          {
+            "chi": 128,
+            "modal_prob": 1.0,
+            "p_peak_est": 1.0,
+            "seconds": 0.007,
+            "truncation_fidelity_ratio": 1.0,
+            "tvd_vs_exact": 0.0,
+            "win": true
+          }
+        ],
+        "shots_per_chi": 256,
+        "total_seconds": 0.062
+      },
+      "attack2_pauli_path": {
+        "any_win": true,
+        "total_seconds": 0.093,
+        "w_max_curves": [
+          {
+            "bit_accuracy": 1.0,
+            "bits_correct": 12,
+            "mean_abs_z": 0.390608,
+            "mean_dropped_l2_weight": 0.643227,
+            "min_signed_z": 0.006823,
+            "seconds": 0.026,
+            "w_max": 2,
+            "win": true
+          },
+          {
+            "bit_accuracy": 1.0,
+            "bits_correct": 12,
+            "mean_abs_z": 0.633437,
+            "mean_dropped_l2_weight": 0.42983,
+            "min_signed_z": 0.045714,
+            "seconds": 0.031,
+            "w_max": 3,
+            "win": true
+          },
+          {
+            "bit_accuracy": 1.0,
+            "bits_correct": 12,
+            "mean_abs_z": 0.73599,
+            "mean_dropped_l2_weight": 0.273363,
+            "min_signed_z": 0.155849,
+            "seconds": 0.036,
+            "w_max": 4,
+            "win": true
+          }
+        ]
+      },
+      "attack3_light_cone": {
+        "cone_bits_correct": 12,
+        "cone_tractable": true,
+        "exact_cone_recovered_secret": true,
+        "max_cone_size": 10,
+        "mean_cone_size": 8.0,
+        "min_cone_size": 6,
+        "seconds": 0.033,
+        "tractable_cone_limit": 20,
+        "treewidth_upper_bound": 1,
+        "win": true
+      },
+      "candidate_id": "adv0_ctrl_n12_d4",
+      "depth_layers": 4,
+      "exact_noiseless_peak_prob": 1.0,
+      "family": "adv0_twirled_mirror",
+      "helios1_hqc_1000_shots": 121.4,
+      "helios1_predicted_peak_prob": 0.959296,
+      "mirror_audit": {
+        "cz_count": 32,
+        "cz_edge_palindrome": false,
+        "mean_block_mirror_overlap": 1.0,
+        "mirror_structure_detected": true
+      },
+      "n_1q_phys": 142,
+      "n_cz": 32,
+      "n_qubits": 12,
+      "n_rz_virtual": 204,
+      "qpu_allocation_permitted": false,
+      "rejection_reasons": [
+        "MIRROR_CANCELLATION_STRUCTURE_DETECTED",
+        "DEFEATED_BY_BOUNDED_MPS_CHI_8",
+        "DEFEATED_BY_TRUNCATED_PAULI_PATH_W_2",
+        "TRACTABLE_CAUSAL_LIGHT_CONE_MAX_10_LE_20"
+      ],
+      "topology": "heavy_hex_greedy_region",
+      "uniform_baseline_prob": 0.000244140625
+    },
+    {
+      "attack1_bounded_mps": {
+        "any_win": true,
+        "chi_curves": [
+          {
+            "chi": 8,
+            "modal_prob": 0.886719,
+            "p_peak_est": 0.886719,
+            "seconds": 0.045,
+            "truncation_fidelity_ratio": 0.886719,
+            "tvd_vs_exact": 0.113281,
+            "win": true
+          },
+          {
+            "chi": 16,
+            "modal_prob": 0.984375,
+            "p_peak_est": 0.984375,
+            "seconds": 0.047,
+            "truncation_fidelity_ratio": 0.984375,
+            "tvd_vs_exact": 0.015625,
+            "win": true
+          },
+          {
+            "chi": 32,
+            "modal_prob": 1.0,
+            "p_peak_est": 1.0,
+            "seconds": 0.021,
+            "truncation_fidelity_ratio": 1.0,
+            "tvd_vs_exact": 0.0,
+            "win": true
+          },
+          {
+            "chi": 64,
+            "modal_prob": 1.0,
+            "p_peak_est": 1.0,
+            "seconds": 0.021,
+            "truncation_fidelity_ratio": 1.0,
+            "tvd_vs_exact": 0.0,
+            "win": true
+          },
+          {
+            "chi": 128,
+            "modal_prob": 1.0,
+            "p_peak_est": 1.0,
+            "seconds": 0.025,
+            "truncation_fidelity_ratio": 1.0,
+            "tvd_vs_exact": 0.0,
+            "win": true
+          }
+        ],
+        "shots_per_chi": 256,
+        "total_seconds": 0.161
+      },
+      "attack2_pauli_path": {
+        "any_win": true,
+        "total_seconds": 0.556,
+        "w_max_curves": [
+          {
+            "bit_accuracy": 0.85,
+            "bits_correct": 17,
+            "mean_abs_z": 0.191468,
+            "mean_dropped_l2_weight": 0.844993,
+            "min_signed_z": -0.027829,
+            "seconds": 0.104,
+            "w_max": 2,
+            "win": false
+          },
+          {
+            "bit_accuracy": 0.9,
+            "bits_correct": 18,
+            "mean_abs_z": 0.317219,
+            "mean_dropped_l2_weight": 0.727382,
+            "min_signed_z": -0.029935,
+            "seconds": 0.149,
+            "w_max": 3,
+            "win": false
+          },
+          {
+            "bit_accuracy": 1.0,
+            "bits_correct": 20,
+            "mean_abs_z": 0.524888,
+            "mean_dropped_l2_weight": 0.510069,
+            "min_signed_z": 0.181259,
+            "seconds": 0.302,
+            "w_max": 4,
+            "win": true
+          }
+        ]
+      },
+      "attack3_light_cone": {
+        "cone_bits_correct": 20,
+        "cone_tractable": true,
+        "exact_cone_recovered_secret": true,
+        "max_cone_size": 16,
+        "mean_cone_size": 12.1,
+        "min_cone_size": 8,
+        "seconds": 0.235,
+        "tractable_cone_limit": 20,
+        "treewidth_upper_bound": 1,
+        "win": true
+      },
+      "candidate_id": "adv0_ctrl_n20_d6",
+      "depth_layers": 6,
+      "exact_noiseless_peak_prob": 1.0,
+      "family": "adv0_twirled_mirror",
+      "helios1_hqc_1000_shots": 261.8,
+      "helios1_predicted_peak_prob": 0.91412,
+      "mirror_audit": {
+        "cz_count": 76,
+        "cz_edge_palindrome": false,
+        "mean_block_mirror_overlap": 1.0,
+        "mirror_structure_detected": true
+      },
+      "n_1q_phys": 324,
+      "n_cz": 76,
+      "n_qubits": 20,
+      "n_rz_virtual": 476,
+      "qpu_allocation_permitted": false,
+      "rejection_reasons": [
+        "MIRROR_CANCELLATION_STRUCTURE_DETECTED",
+        "DEFEATED_BY_BOUNDED_MPS_CHI_8",
+        "DEFEATED_BY_TRUNCATED_PAULI_PATH_W_4",
+        "TRACTABLE_CAUSAL_LIGHT_CONE_MAX_16_LE_20"
+      ],
+      "topology": "heavy_hex_greedy_region",
+      "uniform_baseline_prob": 9.5367431640625e-07
+    },
+    {
+      "attack1_bounded_mps": {
+        "any_win": true,
+        "chi_curves": [
+          {
+            "chi": 8,
+            "modal_prob": 0.105469,
+            "p_peak_est": 0.105469,
+            "seconds": 0.063,
+            "truncation_fidelity_ratio": 0.105469,
+            "tvd_vs_exact": null,
+            "win": true
+          },
+          {
+            "chi": 16,
+            "modal_prob": 0.253906,
+            "p_peak_est": 0.253906,
+            "seconds": 0.122,
+            "truncation_fidelity_ratio": 0.253906,
+            "tvd_vs_exact": null,
+            "win": true
+          },
+          {
+            "chi": 32,
+            "modal_prob": 0.582031,
+            "p_peak_est": 0.582031,
+            "seconds": 0.517,
+            "truncation_fidelity_ratio": 0.582031,
+            "tvd_vs_exact": null,
+            "win": true
+          },
+          {
+            "chi": 64,
+            "modal_prob": 0.84375,
+            "p_peak_est": 0.84375,
+            "seconds": 3.365,
+            "truncation_fidelity_ratio": 0.84375,
+            "tvd_vs_exact": null,
+            "win": true
+          },
+          {
+            "chi": 128,
+            "modal_prob": 0.980469,
+            "p_peak_est": 0.980469,
+            "seconds": 24.309,
+            "truncation_fidelity_ratio": 0.980469,
+            "tvd_vs_exact": null,
+            "win": true
+          }
+        ],
+        "shots_per_chi": 256,
+        "total_seconds": 28.379
+      },
+      "attack2_pauli_path": {
+        "any_win": false,
+        "total_seconds": 2.327,
+        "w_max_curves": [
+          {
+            "bit_accuracy": 0.7857,
+            "bits_correct": 22,
+            "mean_abs_z": 0.041759,
+            "mean_dropped_l2_weight": 0.984234,
+            "min_signed_z": -0.007136,
+            "seconds": 0.32,
+            "w_max": 2,
+            "win": false
+          },
+          {
+            "bit_accuracy": 0.8929,
+            "bits_correct": 25,
+            "mean_abs_z": 0.130481,
+            "mean_dropped_l2_weight": 0.923147,
+            "min_signed_z": -0.018629,
+            "seconds": 0.511,
+            "w_max": 3,
+            "win": false
+          },
+          {
+            "bit_accuracy": 0.9643,
+            "bits_correct": 27,
+            "mean_abs_z": 0.285884,
+            "mean_dropped_l2_weight": 0.784223,
+            "min_signed_z": -0.021031,
+            "seconds": 1.495,
+            "w_max": 4,
+            "win": false
+          }
+        ]
+      },
+      "attack3_light_cone": {
+        "cone_bits_correct": null,
+        "cone_tractable": false,
+        "exact_cone_recovered_secret": false,
+        "max_cone_size": 28,
+        "mean_cone_size": 24.43,
+        "min_cone_size": 15,
+        "seconds": 0.005,
+        "tractable_cone_limit": 20,
+        "treewidth_upper_bound": 2,
+        "win": false
+      },
+      "candidate_id": "adv0_ctrl_n28_d8",
+      "depth_layers": 8,
+      "exact_noiseless_peak_prob": null,
+      "family": "adv0_twirled_mirror",
+      "helios1_hqc_1000_shots": 510.6,
+      "helios1_predicted_peak_prob": 0.841202,
+      "mirror_audit": {
+        "cz_count": 158,
+        "cz_edge_palindrome": false,
+        "mean_block_mirror_overlap": 1.0,
+        "mirror_structure_detected": true
+      },
+      "n_1q_phys": 668,
+      "n_cz": 158,
+      "n_qubits": 28,
+      "n_rz_virtual": 976,
+      "qpu_allocation_permitted": false,
+      "rejection_reasons": [
+        "MIRROR_CANCELLATION_STRUCTURE_DETECTED",
+        "DEFEATED_BY_BOUNDED_MPS_CHI_8"
+      ],
+      "topology": "heavy_hex_greedy_region",
+      "uniform_baseline_prob": 3.725290298461914e-09
+    }
+  ],
+  "adv1_looped_non_mirror_candidates": [
+    {
+      "attack1_bounded_mps": {
+        "any_win": true,
+        "chi_curves": [
+          {
+            "chi": 8,
+            "modal_prob": 0.285156,
+            "p_peak_est": 0.285156,
+            "seconds": 0.047,
+            "truncation_fidelity_ratio": 0.828245,
+            "tvd_vs_exact": null,
+            "win": true
+          },
+          {
+            "chi": 16,
+            "modal_prob": 0.175781,
+            "p_peak_est": 0.175781,
+            "seconds": 0.111,
+            "truncation_fidelity_ratio": 0.510562,
+            "tvd_vs_exact": null,
+            "win": true
+          },
+          {
+            "chi": 32,
+            "modal_prob": 0.203125,
+            "p_peak_est": 0.203125,
+            "seconds": 0.477,
+            "truncation_fidelity_ratio": 0.589983,
+            "tvd_vs_exact": null,
+            "win": true
+          },
+          {
+            "chi": 64,
+            "modal_prob": 0.226562,
+            "p_peak_est": 0.226562,
+            "seconds": 2.875,
+            "truncation_fidelity_ratio": 0.658058,
+            "tvd_vs_exact": null,
+            "win": true
+          },
+          {
+            "chi": 128,
+            "modal_prob": 0.1875,
+            "p_peak_est": 0.1875,
+            "seconds": 18.448,
+            "truncation_fidelity_ratio": 0.5446,
+            "tvd_vs_exact": null,
+            "win": true
+          }
+        ],
+        "shots_per_chi": 256,
+        "total_seconds": 21.962
+      },
+      "attack2_pauli_path": {
+        "any_win": true,
+        "total_seconds": 0.666,
+        "w_max_curves": [
+          {
+            "bit_accuracy": 1.0,
+            "bits_correct": 24,
+            "mean_abs_z": 0.887365,
+            "mean_dropped_l2_weight": 0.16575,
+            "min_signed_z": 0.851646,
+            "seconds": 0.199,
+            "w_max": 2,
+            "win": true
+          },
+          {
+            "bit_accuracy": 1.0,
+            "bits_correct": 24,
+            "mean_abs_z": 0.812512,
+            "mean_dropped_l2_weight": 0.165809,
+            "min_signed_z": 0.723808,
+            "seconds": 0.224,
+            "w_max": 3,
+            "win": true
+          },
+          {
+            "bit_accuracy": 1.0,
+            "bits_correct": 24,
+            "mean_abs_z": 0.750275,
+            "mean_dropped_l2_weight": 0.010377,
+            "min_signed_z": 0.718479,
+            "seconds": 0.243,
+            "w_max": 4,
+            "win": true
+          }
+        ]
+      },
+      "attack3_light_cone": {
+        "cone_bits_correct": null,
+        "cone_tractable": false,
+        "exact_cone_recovered_secret": false,
+        "max_cone_size": 24,
+        "mean_cone_size": 24.0,
+        "min_cone_size": 24,
+        "seconds": 0.004,
+        "tractable_cone_limit": 20,
+        "treewidth_upper_bound": 8,
+        "win": false
+      },
+      "candidate_id": "adv1_commuting_phase_n24_L3",
+      "depth_layers": 3,
+      "exact_noiseless_peak_prob": null,
+      "family": "looped_commuting_phase",
+      "helios1_hqc_1000_shots": 518.4,
+      "helios1_predicted_peak_prob": 0.285294,
+      "mirror_audit": {
+        "cz_count": 192,
+        "cz_edge_palindrome": false,
+        "mean_block_mirror_overlap": 0.12,
+        "mirror_structure_detected": false
+      },
+      "n_1q_phys": 407,
+      "n_cz": 192,
+      "n_qubits": 24,
+      "n_rz_virtual": 670,
+      "qpu_allocation_permitted": false,
+      "rejection_reasons": [
+        "DEFEATED_BY_BOUNDED_MPS_CHI_8",
+        "DEFEATED_BY_TRUNCATED_PAULI_PATH_W_2"
+      ],
+      "topology": "2d_torus_commuting_phase_non_mirror",
+      "uniform_baseline_prob": 5.960464477539063e-08
+    },
+    {
+      "attack1_bounded_mps": {
+        "any_win": false,
+        "chi_curves": [
+          {
+            "chi": 8,
+            "modal_prob": 0.003906,
+            "p_peak_est": 0.0,
+            "seconds": 0.089,
+            "truncation_fidelity_ratio": 0.0,
+            "tvd_vs_exact": null,
+            "win": false
+          },
+          {
+            "chi": 16,
+            "modal_prob": 0.003906,
+            "p_peak_est": 0.0,
+            "seconds": 0.282,
+            "truncation_fidelity_ratio": 0.0,
+            "tvd_vs_exact": null,
+            "win": false
+          },
+          {
+            "chi": 32,
+            "modal_prob": 0.003906,
+            "p_peak_est": 0.0,
+            "seconds": 1.479,
+            "truncation_fidelity_ratio": 0.0,
+            "tvd_vs_exact": null,
+            "win": false
+          },
+          {
+            "chi": 64,
+            "modal_prob": 0.003906,
+            "p_peak_est": 0.0,
+            "seconds": 10.737,
+            "truncation_fidelity_ratio": 0.0,
+            "tvd_vs_exact": null,
+            "win": false
+          },
+          {
+            "chi": 128,
+            "modal_prob": 0.003906,
+            "p_peak_est": 0.0,
+            "seconds": 95.454,
+            "truncation_fidelity_ratio": 0.0,
+            "tvd_vs_exact": null,
+            "win": false
+          }
+        ],
+        "shots_per_chi": 256,
+        "total_seconds": 108.049
+      },
+      "attack2_pauli_path": {
+        "any_win": true,
+        "total_seconds": 2.825,
+        "w_max_curves": [
+          {
+            "bit_accuracy": 0.6429,
+            "bits_correct": 18,
+            "mean_abs_z": 0.000458,
+            "mean_dropped_l2_weight": 0.748703,
+            "min_signed_z": -0.001655,
+            "seconds": 0.519,
+            "w_max": 2,
+            "win": false
+          },
+          {
+            "bit_accuracy": 1.0,
+            "bits_correct": 28,
+            "mean_abs_z": 0.82348,
+            "mean_dropped_l2_weight": 0.181705,
+            "min_signed_z": 0.075245,
+            "seconds": 0.758,
+            "w_max": 3,
+            "win": true
+          },
+          {
+            "bit_accuracy": 1.0,
+            "bits_correct": 28,
+            "mean_abs_z": 0.743725,
+            "mean_dropped_l2_weight": 0.086658,
+            "min_signed_z": 0.663604,
+            "seconds": 1.549,
+            "w_max": 4,
+            "win": true
+          }
+        ]
+      },
+      "attack3_light_cone": {
+        "cone_bits_correct": null,
+        "cone_tractable": false,
+        "exact_cone_recovered_secret": false,
+        "max_cone_size": 28,
+        "mean_cone_size": 28.0,
+        "min_cone_size": 28,
+        "seconds": 0.01,
+        "tractable_cone_limit": 20,
+        "treewidth_upper_bound": 12,
+        "win": false
+      },
+      "candidate_id": "adv1_chorded_2q_n28_L5_no_m6",
+      "depth_layers": 5,
+      "exact_noiseless_peak_prob": null,
+      "family": "looped_chorded_gadget",
+      "helios1_hqc_1000_shots": 985.0,
+      "helios1_predicted_peak_prob": 0.363524,
+      "mirror_audit": {
+        "cz_count": 364,
+        "cz_edge_palindrome": false,
+        "mean_block_mirror_overlap": 0.320543,
+        "mirror_structure_detected": false
+      },
+      "n_1q_phys": 980,
+      "n_cz": 364,
+      "n_qubits": 28,
+      "n_rz_virtual": 1526,
+      "qpu_allocation_permitted": false,
+      "rejection_reasons": [
+        "DEFEATED_BY_TRUNCATED_PAULI_PATH_W_3"
+      ],
+      "topology": "qccd_chorded_torus_flat_schmidt_non_mirror",
+      "uniform_baseline_prob": 3.725290298461914e-09
+    },
+    {
+      "attack1_bounded_mps": {
+        "any_win": true,
+        "chi_curves": [
+          {
+            "chi": 8,
+            "modal_prob": 0.007812,
+            "p_peak_est": 0.0,
+            "seconds": 0.06,
+            "truncation_fidelity_ratio": 0.0,
+            "tvd_vs_exact": 0.999781,
+            "win": false
+          },
+          {
+            "chi": 16,
+            "modal_prob": 0.007812,
+            "p_peak_est": 0.0,
+            "seconds": 0.126,
+            "truncation_fidelity_ratio": 0.0,
+            "tvd_vs_exact": 0.986568,
+            "win": false
+          },
+          {
+            "chi": 32,
+            "modal_prob": 0.011719,
+            "p_peak_est": 0.011719,
+            "seconds": 0.568,
+            "truncation_fidelity_ratio": 0.026812,
+            "tvd_vs_exact": 0.980721,
+            "win": true
+          },
+          {
+            "chi": 64,
+            "modal_prob": 0.011719,
+            "p_peak_est": 0.011719,
+            "seconds": 3.343,
+            "truncation_fidelity_ratio": 0.026812,
+            "tvd_vs_exact": 0.935981,
+            "win": false
+          },
+          {
+            "chi": 128,
+            "modal_prob": 0.1875,
+            "p_peak_est": 0.1875,
+            "seconds": 21.087,
+            "truncation_fidelity_ratio": 0.428991,
+            "tvd_vs_exact": 0.707003,
+            "win": true
+          }
+        ],
+        "shots_per_chi": 256,
+        "total_seconds": 25.188
+      },
+      "attack2_pauli_path": {
+        "any_win": false,
+        "total_seconds": 0.329,
+        "w_max_curves": [
+          {
+            "bit_accuracy": 0.5556,
+            "bits_correct": 10,
+            "mean_abs_z": 0.0,
+            "mean_dropped_l2_weight": 1.0,
+            "min_signed_z": -0.0,
+            "seconds": 0.099,
+            "w_max": 2,
+            "win": false
+          },
+          {
+            "bit_accuracy": 0.5556,
+            "bits_correct": 10,
+            "mean_abs_z": 0.0,
+            "mean_dropped_l2_weight": 1.0,
+            "min_signed_z": -0.0,
+            "seconds": 0.098,
+            "w_max": 3,
+            "win": false
+          },
+          {
+            "bit_accuracy": 0.5556,
+            "bits_correct": 10,
+            "mean_abs_z": 1e-06,
+            "mean_dropped_l2_weight": 0.999552,
+            "min_signed_z": -1.1e-05,
+            "seconds": 0.132,
+            "w_max": 4,
+            "win": false
+          }
+        ]
+      },
+      "attack3_light_cone": {
+        "cone_bits_correct": 18,
+        "cone_tractable": true,
+        "exact_cone_recovered_secret": true,
+        "max_cone_size": 18,
+        "mean_cone_size": 18.0,
+        "min_cone_size": 18,
+        "seconds": 0.888,
+        "tractable_cone_limit": 20,
+        "treewidth_upper_bound": 9,
+        "win": true
+      },
+      "candidate_id": "adv1_chorded_m6_n18_L4_small_cone",
+      "depth_layers": 4,
+      "exact_noiseless_peak_prob": 0.437072,
+      "family": "looped_chorded_m6_gadget",
+      "helios1_hqc_1000_shots": 644.6,
+      "helios1_predicted_peak_prob": 0.34807,
+      "mirror_audit": {
+        "cz_count": 243,
+        "cz_edge_palindrome": false,
+        "mean_block_mirror_overlap": 0.351496,
+        "mirror_structure_detected": false
+      },
+      "n_1q_phys": 588,
+      "n_cz": 243,
+      "n_qubits": 18,
+      "n_rz_virtual": 944,
+      "qpu_allocation_permitted": false,
+      "rejection_reasons": [
+        "DEFEATED_BY_BOUNDED_MPS_CHI_32",
+        "TRACTABLE_CAUSAL_LIGHT_CONE_MAX_18_LE_20"
+      ],
+      "topology": "qccd_chorded_torus_flat_schmidt_m6_weight5_non_mirror",
+      "uniform_baseline_prob": 3.814697265625e-06
+    },
+    {
+      "attack1_bounded_mps": {
+        "any_win": false,
+        "chi_curves": [
+          {
+            "chi": 8,
+            "modal_prob": 0.003906,
+            "p_peak_est": 0.0,
+            "seconds": 0.1,
+            "truncation_fidelity_ratio": 0.0,
+            "tvd_vs_exact": null,
+            "win": false
+          },
+          {
+            "chi": 16,
+            "modal_prob": 0.003906,
+            "p_peak_est": 0.0,
+            "seconds": 0.286,
+            "truncation_fidelity_ratio": 0.0,
+            "tvd_vs_exact": null,
+            "win": false
+          },
+          {
+            "chi": 32,
+            "modal_prob": 0.003906,
+            "p_peak_est": 0.0,
+            "seconds": 1.447,
+            "truncation_fidelity_ratio": 0.0,
+            "tvd_vs_exact": null,
+            "win": false
+          },
+          {
+            "chi": 64,
+            "modal_prob": 0.003906,
+            "p_peak_est": 0.0,
+            "seconds": 9.92,
+            "truncation_fidelity_ratio": 0.0,
+            "tvd_vs_exact": null,
+            "win": false
+          },
+          {
+            "chi": 128,
+            "modal_prob": 0.003906,
+            "p_peak_est": 0.0,
+            "seconds": 81.134,
+            "truncation_fidelity_ratio": 0.0,
+            "tvd_vs_exact": null,
+            "win": false
+          }
+        ],
+        "shots_per_chi": 256,
+        "total_seconds": 92.891
+      },
+      "attack2_pauli_path": {
+        "any_win": false,
+        "total_seconds": 0.742,
+        "w_max_curves": [
+          {
+            "bit_accuracy": 0.4583,
+            "bits_correct": 11,
+            "mean_abs_z": 0.0,
+            "mean_dropped_l2_weight": 1.0,
+            "min_signed_z": 0.0,
+            "seconds": 0.191,
+            "w_max": 2,
+            "win": false
+          },
+          {
+            "bit_accuracy": 0.4583,
+            "bits_correct": 11,
+            "mean_abs_z": 0.0,
+            "mean_dropped_l2_weight": 1.0,
+            "min_signed_z": 0.0,
+            "seconds": 0.203,
+            "w_max": 3,
+            "win": false
+          },
+          {
+            "bit_accuracy": 0.4167,
+            "bits_correct": 10,
+            "mean_abs_z": 3.2e-05,
+            "mean_dropped_l2_weight": 0.999757,
+            "min_signed_z": -0.000293,
+            "seconds": 0.347,
+            "w_max": 4,
+            "win": false
+          }
+        ]
+      },
+      "attack3_light_cone": {
+        "cone_bits_correct": null,
+        "cone_tractable": false,
+        "exact_cone_recovered_secret": false,
+        "max_cone_size": 24,
+        "mean_cone_size": 24.0,
+        "min_cone_size": 24,
+        "seconds": 0.007,
+        "tractable_cone_limit": 20,
+        "treewidth_upper_bound": 12,
+        "win": false
+      },
+      "candidate_id": "adv1_chorded_m6_n24_L5",
+      "depth_layers": 5,
+      "exact_noiseless_peak_prob": null,
+      "family": "looped_chorded_m6_gadget",
+      "helios1_hqc_1000_shots": 975.4,
+      "helios1_predicted_peak_prob": 0.390805,
+      "mirror_audit": {
+        "cz_count": 372,
+        "cz_edge_palindrome": false,
+        "mean_block_mirror_overlap": 0.316189,
+        "mirror_structure_detected": false
+      },
+      "n_1q_phys": 892,
+      "n_cz": 372,
+      "n_qubits": 24,
+      "n_rz_virtual": 1432,
+      "qpu_allocation_permitted": true,
+      "rejection_reasons": [],
+      "topology": "qccd_chorded_torus_flat_schmidt_m6_weight5_non_mirror",
+      "uniform_baseline_prob": 5.960464477539063e-08
+    },
+    {
+      "attack1_bounded_mps": {
+        "any_win": false,
+        "chi_curves": [
+          {
+            "chi": 8,
+            "modal_prob": 0.003906,
+            "p_peak_est": 0.0,
+            "seconds": 0.128,
+            "truncation_fidelity_ratio": 0.0,
+            "tvd_vs_exact": null,
+            "win": false
+          },
+          {
+            "chi": 16,
+            "modal_prob": 0.003906,
+            "p_peak_est": 0.0,
+            "seconds": 0.392,
+            "truncation_fidelity_ratio": 0.0,
+            "tvd_vs_exact": null,
+            "win": false
+          },
+          {
+            "chi": 32,
+            "modal_prob": 0.003906,
+            "p_peak_est": 0.0,
+            "seconds": 2.212,
+            "truncation_fidelity_ratio": 0.0,
+            "tvd_vs_exact": null,
+            "win": false
+          },
+          {
+            "chi": 64,
+            "modal_prob": 0.003906,
+            "p_peak_est": 0.0,
+            "seconds": 16.027,
+            "truncation_fidelity_ratio": 0.0,
+            "tvd_vs_exact": null,
+            "win": false
+          },
+          {
+            "chi": 128,
+            "modal_prob": 0.003906,
+            "p_peak_est": 0.0,
+            "seconds": 135.101,
+            "truncation_fidelity_ratio": 0.0,
+            "tvd_vs_exact": null,
+            "win": false
+          }
+        ],
+        "shots_per_chi": 256,
+        "total_seconds": 153.867
+      },
+      "attack2_pauli_path": {
+        "any_win": false,
+        "total_seconds": 1.102,
+        "w_max_curves": [
+          {
+            "bit_accuracy": 0.4667,
+            "bits_correct": 14,
+            "mean_abs_z": 0.0,
+            "mean_dropped_l2_weight": 1.0,
+            "min_signed_z": -0.0,
+            "seconds": 0.296,
+            "w_max": 2,
+            "win": false
+          },
+          {
+            "bit_accuracy": 0.4667,
+            "bits_correct": 14,
+            "mean_abs_z": 0.0,
+            "mean_dropped_l2_weight": 1.0,
+            "min_signed_z": -0.0,
+            "seconds": 0.294,
+            "w_max": 3,
+            "win": false
+          },
+          {
+            "bit_accuracy": 0.4667,
+            "bits_correct": 14,
+            "mean_abs_z": 3.2e-05,
+            "mean_dropped_l2_weight": 0.999589,
+            "min_signed_z": -0.000118,
+            "seconds": 0.511,
+            "w_max": 4,
+            "win": false
+          }
+        ]
+      },
+      "attack3_light_cone": {
+        "cone_bits_correct": null,
+        "cone_tractable": false,
+        "exact_cone_recovered_secret": false,
+        "max_cone_size": 30,
+        "mean_cone_size": 30.0,
+        "min_cone_size": 30,
+        "seconds": 0.013,
+        "tractable_cone_limit": 20,
+        "treewidth_upper_bound": 12,
+        "win": false
+      },
+      "candidate_id": "adv1_chorded_m6_n30_L5",
+      "depth_layers": 5,
+      "exact_noiseless_peak_prob": null,
+      "family": "looped_chorded_m6_gadget",
+      "helios1_hqc_1000_shots": 1218.0,
+      "helios1_predicted_peak_prob": 0.350828,
+      "mirror_audit": {
+        "cz_count": 465,
+        "cz_edge_palindrome": false,
+        "mean_block_mirror_overlap": 0.288027,
+        "mirror_structure_detected": false
+      },
+      "n_1q_phys": 1115,
+      "n_cz": 465,
+      "n_qubits": 30,
+      "n_rz_virtual": 1791,
+      "qpu_allocation_permitted": true,
+      "rejection_reasons": [],
+      "topology": "qccd_chorded_torus_flat_schmidt_m6_weight5_non_mirror",
+      "uniform_baseline_prob": 9.313225746154785e-10
+    }
+  ],
+  "canonicalization": "RFC8785-JCS",
+  "evidence_class": "SIMULATED",
+  "hardware_executed": false,
+  "pregate_policy": {
+    "fail_closed_invariant": "qpu_allocation_permitted is True iff mirror_structure_detected is False AND all three classical attacks (Bounded-chi MPS, Truncated Pauli-Path, Causal Light-Cone) fail to recover the heavy peak.",
+    "min_snr_over_uniform": 10.0,
+    "mps_chi_sweep": [
+      8,
+      16,
+      32,
+      64,
+      128
+    ],
+    "pauli_weight_cutoff_sweep": [
+      2,
+      3,
+      4
+    ],
+    "tractable_light_cone_limit": 20
+  },
+  "protocol_id": "OSIRIS-ADV-1-PREGATE",
+  "provider_job_id": null,
+  "schema": "osiris.quantum_protocol/1",
+  "seed": 20261123,
+  "summary": {
+    "adv0_100pct_rejected": true,
+    "adv0_controls_evaluated": 3,
+    "adv0_controls_rejected": 3,
+    "adv1_non_mirror_evaluated": 5,
+    "adv1_permitted_candidates": [
+      "adv1_chorded_m6_n24_L5",
+      "adv1_chorded_m6_n30_L5"
+    ],
+    "adv1_rejected_candidates": [
+      "adv1_commuting_phase_n24_L3",
+      "adv1_chorded_2q_n28_L5_no_m6",
+      "adv1_chorded_m6_n18_L4_small_cone"
+    ]
+  },
+  "target_architecture": "Quantinuum Helios-1 (98Q QCCD All-to-All)",
+  "title": "ADV-1 Fail-Closed 3-Attack Classical-Hardness Pre-Gate for Looped Non-Mirror Peaked Circuits"
+}

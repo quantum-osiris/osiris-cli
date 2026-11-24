@@ -1,0 +1,55 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="760" height="360" viewBox="0 0 760 360">
+<rect width="100%" height="100%" fill="#ffffff"/>
+<text x="380.0" y="22" text-anchor="middle" font-family="DejaVu Sans,Arial" font-size="13" font-weight="bold">OSIRIS-XTOP-006-FEZ (ibm_fez, 28 CZ Constant Skeleton): Continuous Kraus Scrambling Trajectory</text>
+<rect x="70" y="40" width="660" height="265" fill="none" stroke="#333333" stroke-width="1.2"/>
+<line x1="70" y1="305.00" x2="730" y2="305.00" stroke="#dddddd" stroke-width="1"/>
+<text x="62" y="309.00" text-anchor="end" font-family="DejaVu Sans,Arial" font-size="10">0.00</text>
+<line x1="70" y1="241.90" x2="730" y2="241.90" stroke="#dddddd" stroke-width="1" stroke-dasharray="5,4"/>
+<text x="62" y="245.90" text-anchor="end" font-family="DejaVu Sans,Arial" font-size="10">0.25</text>
+<line x1="70" y1="178.81" x2="730" y2="178.81" stroke="#dddddd" stroke-width="1"/>
+<text x="62" y="182.81" text-anchor="end" font-family="DejaVu Sans,Arial" font-size="10">0.50</text>
+<line x1="70" y1="136.74" x2="730" y2="136.74" stroke="#aa4444" stroke-width="1" stroke-dasharray="5,4"/>
+<text x="62" y="140.74" text-anchor="end" font-family="DejaVu Sans,Arial" font-size="10">2/3</text>
+<line x1="70" y1="115.71" x2="730" y2="115.71" stroke="#dddddd" stroke-width="1"/>
+<text x="62" y="119.71" text-anchor="end" font-family="DejaVu Sans,Arial" font-size="10">0.75</text>
+<line x1="70" y1="52.62" x2="730" y2="52.62" stroke="#dddddd" stroke-width="1"/>
+<text x="62" y="56.62" text-anchor="end" font-family="DejaVu Sans,Arial" font-size="10">1.00</text>
+<line x1="70.00" y1="305" x2="70.00" y2="310" stroke="#333"/>
+<text x="70.00" y="325" text-anchor="middle" font-family="DejaVu Sans,Arial" font-size="11">0</text>
+<line x1="235.00" y1="305" x2="235.00" y2="310" stroke="#333"/>
+<text x="235.00" y="325" text-anchor="middle" font-family="DejaVu Sans,Arial" font-size="11">π/8</text>
+<line x1="400.00" y1="305" x2="400.00" y2="310" stroke="#333"/>
+<text x="400.00" y="325" text-anchor="middle" font-family="DejaVu Sans,Arial" font-size="11">π/4</text>
+<line x1="565.00" y1="305" x2="565.00" y2="310" stroke="#333"/>
+<text x="565.00" y="325" text-anchor="middle" font-family="DejaVu Sans,Arial" font-size="11">3π/8</text>
+<line x1="730.00" y1="305" x2="730.00" y2="310" stroke="#333"/>
+<text x="730.00" y="325" text-anchor="middle" font-family="DejaVu Sans,Arial" font-size="11">π/2</text>
+<text x="400.0" y="350" text-anchor="middle" font-family="DejaVu Sans,Arial" font-size="11">Scrambling Angle θ (rad)</text>
+<polyline fill="none" stroke="#1f77b4" stroke-width="2.2" stroke-dasharray="6,4" points="70.00,178.81 235.00,171.90 400.00,146.09 565.00,92.86 730.00,52.62"/>
+<polyline fill="none" stroke="#1f77b4" stroke-width="2.2" points="70.00,179.71 235.00,173.27 400.00,153.62 565.00,113.77 730.00,88.77"/>
+<polyline fill="none" stroke="#0b4f7c" stroke-width="2.2" points="70.00,179.73 235.00,172.97 400.00,152.58 565.00,110.81 730.00,83.65"/>
+<polyline fill="none" stroke="#d95f02" stroke-width="2.2" stroke-dasharray="6,4" points="70.00,52.62 235.00,88.23 400.00,163.04 565.00,222.07 730.00,241.90"/>
+<polyline fill="none" stroke="#d95f02" stroke-width="2.2" points="70.00,80.06 235.00,111.91 400.00,173.82 565.00,224.82 730.00,243.05"/>
+<polyline fill="none" stroke="#2ca02c" stroke-width="2.2" points="70.00,249.97 235.00,250.37 400.00,252.56 565.00,253.96 730.00,256.36"/>
+<circle cx="70.00" cy="179.71" r="4" fill="#1f77b4"/>
+<circle cx="70.00" cy="80.06" r="4" fill="#d95f02"/>
+<circle cx="70.00" cy="249.97" r="3.5" fill="#2ca02c"/>
+<circle cx="235.00" cy="173.27" r="4" fill="#1f77b4"/>
+<circle cx="235.00" cy="111.91" r="4" fill="#d95f02"/>
+<circle cx="235.00" cy="250.37" r="3.5" fill="#2ca02c"/>
+<circle cx="400.00" cy="153.62" r="4" fill="#1f77b4"/>
+<circle cx="400.00" cy="173.82" r="4" fill="#d95f02"/>
+<circle cx="400.00" cy="252.56" r="3.5" fill="#2ca02c"/>
+<circle cx="565.00" cy="113.77" r="4" fill="#1f77b4"/>
+<circle cx="565.00" cy="224.82" r="4" fill="#d95f02"/>
+<circle cx="565.00" cy="253.96" r="3.5" fill="#2ca02c"/>
+<circle cx="730.00" cy="88.77" r="4" fill="#1f77b4"/>
+<circle cx="730.00" cy="243.05" r="4" fill="#d95f02"/>
+<circle cx="730.00" cy="256.36" r="3.5" fill="#2ca02c"/>
+<line x1="88" y1="53" x2="106" y2="53" stroke="#1f77b4" stroke-width="2.4"/>
+<text x="112" y="56" font-family="DejaVu Sans,Arial" font-size="10">Live Raw F_6state(θ | Φ+)  [0.496 → 0.857, +62.4σ]</text>
+<line x1="88" y1="69" x2="106" y2="69" stroke="#d95f02" stroke-width="2.4"/>
+<text x="112" y="72" font-family="DejaVu Sans,Arial" font-size="10">Live Raw P_{Φ+}(θ)  [0.891 → 0.245]</text>
+<line x1="88" y1="85" x2="106" y2="85" stroke="#2ca02c" stroke-width="2.4"/>
+<text x="112" y="88" font-family="DejaVu Sans,Arial" font-size="10">Live Branching Product P_{Φ+}·F_ent  [0.218 → 0.193]</text>
+</svg>

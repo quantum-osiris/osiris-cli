@@ -1,0 +1,102 @@
+{
+  "backend": "ibm_fez",
+  "constant_cz_count": 28,
+  "constant_sx_count": 126,
+  "execution_tier": "HARDWARE_ATTESTED",
+  "hypotheses": {
+    "H2_confirmatory_intra_block_4twirl_discriminator": {
+      "verdict": "SUPPORTED"
+    }
+  },
+  "intra_block_4twirl_contrasts": [
+    {
+      "analytic_coherent_f_6state": 0.840559,
+      "analytic_coherent_p_phi_plus": 0.328585,
+      "block_coherent_f": [
+        0.734341,
+        0.749503,
+        0.75,
+        0.721174
+      ],
+      "block_decoh_4twirl_f": [
+        0.592138,
+        0.574613,
+        0.600985,
+        0.594982
+      ],
+      "coherent_block_se": 0.006895,
+      "coherent_mean_p_phi_plus": 0.315592,
+      "coherent_mean_raw_f": 0.738755,
+      "decoh_4twirl_block_se": 0.005664,
+      "decoh_4twirl_mean_p_phi_plus": 0.266154,
+      "decoh_4twirl_mean_raw_f": 0.590679,
+      "delta_f_block_se": 0.010138,
+      "delta_f_coherent_minus_decoh_4twirl": 0.148075,
+      "p_holm_adjusted": 0.00060883,
+      "p_one_sided": 0.00034796,
+      "paired_t_stat": 14.6064,
+      "theta_name": "3pi_8",
+      "theta_rad": 1.17809725
+    },
+    {
+      "analytic_coherent_f_6state": 1.0,
+      "analytic_coherent_p_phi_plus": 0.25,
+      "block_coherent_f": [
+        0.867209,
+        0.829333,
+        0.889706,
+        0.80402
+      ],
+      "block_decoh_4twirl_f": [
+        0.620779,
+        0.631345,
+        0.62925,
+        0.595663
+      ],
+      "coherent_block_se": 0.019127,
+      "coherent_mean_p_phi_plus": 0.252279,
+      "coherent_mean_raw_f": 0.847567,
+      "decoh_4twirl_block_se": 0.00819,
+      "decoh_4twirl_mean_p_phi_plus": 0.254028,
+      "decoh_4twirl_mean_raw_f": 0.619259,
+      "delta_f_block_se": 0.014942,
+      "delta_f_coherent_minus_decoh_4twirl": 0.228308,
+      "p_holm_adjusted": 0.00060883,
+      "p_one_sided": 0.00030442,
+      "paired_t_stat": 15.2793,
+      "theta_name": "pi_2",
+      "theta_rad": 1.57079633
+    }
+  ],
+  "job_metadata": {
+    "backend": "ibm_fez",
+    "creation_date": "2026-11-23T08:15:39.804641-05:00",
+    "job_id": "dc23ouqnj2vs73dg3bog",
+    "qiskit_version": "qiskit_ibm_runtime-0.52.1,qiskit-2.6.2*,qiskit_aer-0.18.2",
+    "status": "DONE",
+    "timestamps": {
+      "created": "2026-11-23T13:15:39.804641Z",
+      "finished": "2026-11-23T13:26:26.107293Z",
+      "running": "2026-11-23T13:15:41.500765Z"
+    },
+    "usage": {
+      "qpu_charge_time_seconds": 20,
+      "resource_units": 0.32164,
+      "status": "complete"
+    }
+  },
+  "layout_7q": [
+    99,
+    115,
+    95,
+    93,
+    94,
+    92,
+    79
+  ],
+  "protocol_id": "OSIRIS-XTOP-006B-FEZ",
+  "provider_job_id": "dc23ouqnj2vs73dg3bog",
+  "qpy_sha256": "4e127f993f8040922e21222a6dd96603316ff82d6a9bda8fb2d7c0609fea7cae",
+  "raw_counts_gz_sha256": "530cecbbc38a93c1290c28d47632ede5f31726c146ade9325f8c0b413a9b4ef4",
+  "schema": "osiris.xtop006b_fez.results/1"
+}

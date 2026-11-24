@@ -1,0 +1,4492 @@
+{
+  "backend": "ibm_fez",
+  "constant_cz_count": 28,
+  "constant_sx_count": 126,
+  "credential_provenance": {
+    "channel": "ibm_quantum_platform",
+    "credential_basename": "troykey.json",
+    "credential_source": "enclave_troykey",
+    "instance_alias": "open-instance",
+    "key_created_at": "2026-11-20T11:28+0000",
+    "key_file_sha256_prefix16": "796a765c3ef02e9d"
+  },
+  "layout_7q_q0_to_q6": [
+    99,
+    115,
+    95,
+    93,
+    94,
+    92,
+    79
+  ],
+  "measured_phys_c0c1c2": [
+    95,
+    94,
+    79
+  ],
+  "n_blocks": 4,
+  "noiseless_verification": {
+    "angles": [
+      {
+        "noiseless_4twirl_decoh_f_6state": 0.62408681,
+        "noiseless_coherent_f_6state": 0.84055883,
+        "noiseless_delta_f": 0.21647202,
+        "noiseless_inter_block_twirl_sd": 0.0,
+        "theta_name": "3pi_8",
+        "theta_rad": 1.17809725
+      },
+      {
+        "noiseless_4twirl_decoh_f_6state": 0.66666667,
+        "noiseless_coherent_f_6state": 1.0,
+        "noiseless_delta_f": 0.33333333,
+        "noiseless_inter_block_twirl_sd": 0.0,
+        "theta_name": "pi_2",
+        "theta_rad": 1.57079633
+      }
+    ]
+  },
+  "preregistration_md_sha256": "33159c4851347a4977cf4e18369e79cf62acf24d559e00628b49f76df6e7dc10",
+  "protocol_id": "OSIRIS-XTOP-006B-FEZ",
+  "pubs_per_block": 64,
+  "qpy_filename": "xtop006b_fez_staged_circuits.qpy",
+  "qpy_sha256": "4e127f993f8040922e21222a6dd96603316ff82d6a9bda8fb2d7c0609fea7cae",
+  "schedule": [
+    {
+      "arm": "DECOH_4TWIRL",
+      "block": 0,
+      "circuit_name": "b0_dec4_tw2_3pi_8_in_-",
+      "cz_count": 28,
+      "decoh_twirl": [
+        0,
+        1,
+        1
+      ],
+      "input_label": "-",
+      "pub_index": 0,
+      "sx_count": 126,
+      "theta_idx": 3,
+      "theta_name": "3pi_8",
+      "theta_rad": 1.1780972450961724,
+      "twirl_idx": 2
+    },
+    {
+      "arm": "DECOH_4TWIRL",
+      "block": 0,
+      "circuit_name": "b0_dec4_tw3_pi_2_in_1",
+      "cz_count": 28,
+      "decoh_twirl": [
+        1,
+        1,
+        1
+      ],
+      "input_label": "1",
+      "pub_index": 1,
+      "sx_count": 126,
+      "theta_idx": 4,
+      "theta_name": "pi_2",
+      "theta_rad": 1.5707963267948966,
+      "twirl_idx": 3
+    },
+    {
+      "arm": "DECOH_4TWIRL",
+      "block": 0,
+      "circuit_name": "b0_dec4_tw2_pi_2_in_-",
+      "cz_count": 28,
+      "decoh_twirl": [
+        0,
+        1,
+        1
+      ],
+      "input_label": "-",
+      "pub_index": 2,
+      "sx_count": 126,
+      "theta_idx": 4,
+      "theta_name": "pi_2",
+      "theta_rad": 1.5707963267948966,
+      "twirl_idx": 2
+    },
+    {
+      "arm": "DECOH_4TWIRL",
+      "block": 0,
+      "circuit_name": "b0_dec4_tw1_3pi_8_in_-",
+      "cz_count": 28,
+      "decoh_twirl": [
+        1,
+        0,
+        1
+      ],
+      "input_label": "-",
+      "pub_index": 3,
+      "sx_count": 126,
+      "theta_idx": 3,
+      "theta_name": "3pi_8",
+      "theta_rad": 1.1780972450961724,
+      "twirl_idx": 1
+    },
+    {
+      "arm": "DECOH_4TWIRL",
+      "block": 0,
+      "circuit_name": "b0_dec4_tw3_3pi_8_in_-i",
+      "cz_count": 28,
+      "decoh_twirl": [
+        1,
+        1,
+        1
+      ],
+      "input_label": "-i",
+      "pub_index": 4,
+      "sx_count": 126,
+      "theta_idx": 3,
+      "theta_name": "3pi_8",
+      "theta_rad": 1.1780972450961724,
+      "twirl_idx": 3
+    },
+    {
+      "arm": "COHERENT",
+      "block": 0,
+      "circuit_name": "b0_coh_3pi_8_in_+",
+      "cz_count": 28,
+      "decoh_twirl": [
+        0,
+        0,
+        0
+      ],
+      "input_label": "+",
+      "pub_index": 5,
+      "sx_count": 126,
+      "theta_idx": 3,
+      "theta_name": "3pi_8",
+      "theta_rad": 1.1780972450961724
+    },
+    {
+      "arm": "COHERENT",
+      "block": 0,
+      "circuit_name": "b0_coh_pi_2_in_0",
+      "cz_count": 28,
+      "decoh_twirl": [
+        0,
+        0,
+        0
+      ],
+      "input_label": "0",
+      "pub_index": 6,
+      "sx_count": 126,
+      "theta_idx": 4,
+      "theta_name": "pi_2",
+      "theta_rad": 1.5707963267948966
+    },
+    {
+      "arm": "RO_SENTINEL",
+      "block": 0,
+      "circuit_name": "b0_ro_000",
+      "cz_count": 0,
+      "prep_bits_c2c1c0": "000",
+      "pub_index": 7,
+      "sx_count": 6
+    },
+    {
+      "arm": "DECOH_4TWIRL",
+      "block": 0,
+      "circuit_name": "b0_dec4_tw0_pi_2_in_0",
+      "cz_count": 28,
+      "decoh_twirl": [
+        1,
+        1,
+        0
+      ],
+      "input_label": "0",
+      "pub_index": 8,
+      "sx_count": 126,
+      "theta_idx": 4,
+      "theta_name": "pi_2",
+      "theta_rad": 1.5707963267948966,
+      "twirl_idx": 0
+    },
+    {
+      "arm": "DECOH_4TWIRL",
+      "block": 0,
+      "circuit_name": "b0_dec4_tw1_pi_2_in_-i",
+      "cz_count": 28,
+      "decoh_twirl": [
+        1,
+        0,
+        1
+      ],
+      "input_label": "-i",
+      "pub_index": 9,
+      "sx_count": 126,
+      "theta_idx": 4,
+      "theta_name": "pi_2",
+      "theta_rad": 1.5707963267948966,
+      "twirl_idx": 1
+    },
+    {
+      "arm": "DECOH_4TWIRL",
+      "block": 0,
+      "circuit_name": "b0_dec4_tw1_pi_2_in_-",
+      "cz_count": 28,
+      "decoh_twirl": [
+        1,
+        0,
+        1
+      ],
+      "input_label": "-",
+      "pub_index": 10,
+      "sx_count": 126,
+      "theta_idx": 4,
+      "theta_name": "pi_2",
+      "theta_rad": 1.5707963267948966,
+      "twirl_idx": 1
+    },
+    {
+      "arm": "DECOH_4TWIRL",
+      "block": 0,
+      "circuit_name": "b0_dec4_tw1_pi_2_in_+",
+      "cz_count": 28,
+      "decoh_twirl": [
+        1,
+        0,
+        1
+      ],
+      "input_label": "+",
+      "pub_index": 11,
+      "sx_count": 126,
+      "theta_idx": 4,
+      "theta_name": "pi_2",
+      "theta_rad": 1.5707963267948966,
+      "twirl_idx": 1
+    },
+    {
+      "arm": "RO_SENTINEL",
+      "block": 0,
+      "circuit_name": "b0_ro_111",
+      "cz_count": 0,
+      "prep_bits_c2c1c0": "111",
+      "pub_index": 12,
+      "sx_count": 6
+    },
+    {
+      "arm": "DECOH_4TWIRL",
+      "block": 0,
+      "circuit_name": "b0_dec4_tw0_3pi_8_in_0",
+      "cz_count": 28,
+      "decoh_twirl": [
+        1,
+        1,
+        0
+      ],
+      "input_label": "0",
+      "pub_index": 13,
+      "sx_count": 126,
+      "theta_idx": 3,
+      "theta_name": "3pi_8",
+      "theta_rad": 1.1780972450961724,
+      "twirl_idx": 0
+    },
+    {
+      "arm": "DECOH_4TWIRL",
+      "block": 0,
+      "circuit_name": "b0_dec4_tw0_pi_2_in_+i",
+      "cz_count": 28,
+      "decoh_twirl": [
+        1,
+        1,
+        0
+      ],
+      "input_label": "+i",
+      "pub_index": 14,
+      "sx_count": 126,
+      "theta_idx": 4,
+      "theta_name": "pi_2",
+      "theta_rad": 1.5707963267948966,
+      "twirl_idx": 0
+    },
+    {
+      "arm": "COHERENT",
+      "block": 0,
+      "circuit_name": "b0_coh_3pi_8_in_-i",
+      "cz_count": 28,
+      "decoh_twirl": [
+        0,
+        0,
+        0
+      ],
+      "input_label": "-i",
+      "pub_index": 15,
+      "sx_count": 126,
+      "theta_idx": 3,
+      "theta_name": "3pi_8",
+      "theta_rad": 1.1780972450961724
+    },
+    {
+      "arm": "DECOH_4TWIRL",
+      "block": 0,
+      "circuit_name": "b0_dec4_tw2_3pi_8_in_+",
+      "cz_count": 28,
+      "decoh_twirl": [
+        0,
+        1,
+        1
+      ],
+      "input_label": "+",
+      "pub_index": 16,
+      "sx_count": 126,
+      "theta_idx": 3,
+      "theta_name": "3pi_8",
+      "theta_rad": 1.1780972450961724,
+      "twirl_idx": 2
+    },
+    {
+      "arm": "DECOH_4TWIRL",
+      "block": 0,
+      "circuit_name": "b0_dec4_tw1_pi_2_in_0",
+      "cz_count": 28,
+      "decoh_twirl": [
+        1,
+        0,
+        1
+      ],
+      "input_label": "0",
+      "pub_index": 17,
+      "sx_count": 126,
+      "theta_idx": 4,
+      "theta_name": "pi_2",
+      "theta_rad": 1.5707963267948966,
+      "twirl_idx": 1
+    },
+    {
+      "arm": "DECOH_4TWIRL",
+      "block": 0,
+      "circuit_name": "b0_dec4_tw1_3pi_8_in_1",
+      "cz_count": 28,
+      "decoh_twirl": [
+        1,
+        0,
+        1
+      ],
+      "input_label": "1",
+      "pub_index": 18,
+      "sx_count": 126,
+      "theta_idx": 3,
+      "theta_name": "3pi_8",
+      "theta_rad": 1.1780972450961724,
+      "twirl_idx": 1
+    },
+    {
+      "arm": "AA_SENTINEL",
+      "block": 0,
+      "circuit_name": "b0_aa_sent_0",
+      "cz_count": 28,
+      "input_label": "+",
+      "pub_index": 19,
+      "sentinel_rep": 0,
+      "sx_count": 126,
+      "theta_name": "pi_2"
+    },
+    {
+      "arm": "COHERENT",
+      "block": 0,
+      "circuit_name": "b0_coh_3pi_8_in_+i",
+      "cz_count": 28,
+      "decoh_twirl": [
+        0,
+        0,
+        0
+      ],
+      "input_label": "+i",
+      "pub_index": 20,
+      "sx_count": 126,
+      "theta_idx": 3,
+      "theta_name": "3pi_8",
+      "theta_rad": 1.1780972450961724
+    },
+    {
+      "arm": "DECOH_4TWIRL",
+      "block": 0,
+      "circuit_name": "b0_dec4_tw0_3pi_8_in_1",
+      "cz_count": 28,
+      "decoh_twirl": [
+        1,
+        1,
+        0
+      ],
+      "input_label": "1",
+      "pub_index": 21,
+      "sx_count": 126,
+      "theta_idx": 3,
+      "theta_name": "3pi_8",
+      "theta_rad": 1.1780972450961724,
+      "twirl_idx": 0
+    },
+    {
+      "arm": "DECOH_4TWIRL",
+      "block": 0,
+      "circuit_name": "b0_dec4_tw2_3pi_8_in_-i",
+      "cz_count": 28,
+      "decoh_twirl": [
+        0,
+        1,
+        1
+      ],
+      "input_label": "-i",
+      "pub_index": 22,
+      "sx_count": 126,
+      "theta_idx": 3,
+      "theta_name": "3pi_8",
+      "theta_rad": 1.1780972450961724,
+      "twirl_idx": 2
+    },
+    {
+      "arm": "DECOH_4TWIRL",
+      "block": 0,
+      "circuit_name": "b0_dec4_tw2_pi_2_in_1",
+      "cz_count": 28,
+      "decoh_twirl": [
+        0,
+        1,
+        1
+      ],
+      "input_label": "1",
+      "pub_index": 23,
+      "sx_count": 126,
+      "theta_idx": 4,
+      "theta_name": "pi_2",
+      "theta_rad": 1.5707963267948966,
+      "twirl_idx": 2
+    },
+    {
+      "arm": "DECOH_4TWIRL",
+      "block": 0,
+      "circuit_name": "b0_dec4_tw3_3pi_8_in_1",
+      "cz_count": 28,
+      "decoh_twirl": [
+        1,
+        1,
+        1
+      ],
+      "input_label": "1",
+      "pub_index": 24,
+      "sx_count": 126,
+      "theta_idx": 3,
+      "theta_name": "3pi_8",
+      "theta_rad": 1.1780972450961724,
+      "twirl_idx": 3
+    },
+    {
+      "arm": "DECOH_4TWIRL",
+      "block": 0,
+      "circuit_name": "b0_dec4_tw2_3pi_8_in_+i",
+      "cz_count": 28,
+      "decoh_twirl": [
+        0,
+        1,
+        1
+      ],
+      "input_label": "+i",
+      "pub_index": 25,
+      "sx_count": 126,
+      "theta_idx": 3,
+      "theta_name": "3pi_8",
+      "theta_rad": 1.1780972450961724,
+      "twirl_idx": 2
+    },
+    {
+      "arm": "DECOH_4TWIRL",
+      "block": 0,
+      "circuit_name": "b0_dec4_tw1_pi_2_in_1",
+      "cz_count": 28,
+      "decoh_twirl": [
+        1,
+        0,
+        1
+      ],
+      "input_label": "1",
+      "pub_index": 26,
+      "sx_count": 126,
+      "theta_idx": 4,
+      "theta_name": "pi_2",
+      "theta_rad": 1.5707963267948966,
+      "twirl_idx": 1
+    },
+    {
+      "arm": "DECOH_4TWIRL",
+      "block": 0,
+      "circuit_name": "b0_dec4_tw2_3pi_8_in_1",
+      "cz_count": 28,
+      "decoh_twirl": [
+        0,
+        1,
+        1
+      ],
+      "input_label": "1",
+      "pub_index": 27,
+      "sx_count": 126,
+      "theta_idx": 3,
+      "theta_name": "3pi_8",
+      "theta_rad": 1.1780972450961724,
+      "twirl_idx": 2
+    },
+    {
+      "arm": "DECOH_4TWIRL",
+      "block": 0,
+      "circuit_name": "b0_dec4_tw0_3pi_8_in_-i",
+      "cz_count": 28,
+      "decoh_twirl": [
+        1,
+        1,
+        0
+      ],
+      "input_label": "-i",
+      "pub_index": 28,
+      "sx_count": 126,
+      "theta_idx": 3,
+      "theta_name": "3pi_8",
+      "theta_rad": 1.1780972450961724,
+      "twirl_idx": 0
+    },
+    {
+      "arm": "DECOH_4TWIRL",
+      "block": 0,
+      "circuit_name": "b0_dec4_tw1_3pi_8_in_0",
+      "cz_count": 28,
+      "decoh_twirl": [
+        1,
+        0,
+        1
+      ],
+      "input_label": "0",
+      "pub_index": 29,
+      "sx_count": 126,
+      "theta_idx": 3,
+      "theta_name": "3pi_8",
+      "theta_rad": 1.1780972450961724,
+      "twirl_idx": 1
+    },
+    {
+      "arm": "DECOH_4TWIRL",
+      "block": 0,
+      "circuit_name": "b0_dec4_tw0_pi_2_in_-i",
+      "cz_count": 28,
+      "decoh_twirl": [
+        1,
+        1,
+        0
+      ],
+      "input_label": "-i",
+      "pub_index": 30,
+      "sx_count": 126,
+      "theta_idx": 4,
+      "theta_name": "pi_2",
+      "theta_rad": 1.5707963267948966,
+      "twirl_idx": 0
+    },
+    {
+      "arm": "DECOH_4TWIRL",
+      "block": 0,
+      "circuit_name": "b0_dec4_tw2_pi_2_in_-i",
+      "cz_count": 28,
+      "decoh_twirl": [
+        0,
+        1,
+        1
+      ],
+      "input_label": "-i",
+      "pub_index": 31,
+      "sx_count": 126,
+      "theta_idx": 4,
+      "theta_name": "pi_2",
+      "theta_rad": 1.5707963267948966,
+      "twirl_idx": 2
+    },
+    {
+      "arm": "DECOH_4TWIRL",
+      "block": 0,
+      "circuit_name": "b0_dec4_tw1_pi_2_in_+i",
+      "cz_count": 28,
+      "decoh_twirl": [
+        1,
+        0,
+        1
+      ],
+      "input_label": "+i",
+      "pub_index": 32,
+      "sx_count": 126,
+      "theta_idx": 4,
+      "theta_name": "pi_2",
+      "theta_rad": 1.5707963267948966,
+      "twirl_idx": 1
+    },
+    {
+      "arm": "DECOH_4TWIRL",
+      "block": 0,
+      "circuit_name": "b0_dec4_tw2_pi_2_in_0",
+      "cz_count": 28,
+      "decoh_twirl": [
+        0,
+        1,
+        1
+      ],
+      "input_label": "0",
+      "pub_index": 33,
+      "sx_count": 126,
+      "theta_idx": 4,
+      "theta_name": "pi_2",
+      "theta_rad": 1.5707963267948966,
+      "twirl_idx": 2
+    },
+    {
+      "arm": "DECOH_4TWIRL",
+      "block": 0,
+      "circuit_name": "b0_dec4_tw3_3pi_8_in_+",
+      "cz_count": 28,
+      "decoh_twirl": [
+        1,
+        1,
+        1
+      ],
+      "input_label": "+",
+      "pub_index": 34,
+      "sx_count": 126,
+      "theta_idx": 3,
+      "theta_name": "3pi_8",
+      "theta_rad": 1.1780972450961724,
+      "twirl_idx": 3
+    },
+    {
+      "arm": "DECOH_4TWIRL",
+      "block": 0,
+      "circuit_name": "b0_dec4_tw1_3pi_8_in_+i",
+      "cz_count": 28,
+      "decoh_twirl": [
+        1,
+        0,
+        1
+      ],
+      "input_label": "+i",
+      "pub_index": 35,
+      "sx_count": 126,
+      "theta_idx": 3,
+      "theta_name": "3pi_8",
+      "theta_rad": 1.1780972450961724,
+      "twirl_idx": 1
+    },
+    {
+      "arm": "DECOH_4TWIRL",
+      "block": 0,
+      "circuit_name": "b0_dec4_tw0_pi_2_in_+",
+      "cz_count": 28,
+      "decoh_twirl": [
+        1,
+        1,
+        0
+      ],
+      "input_label": "+",
+      "pub_index": 36,
+      "sx_count": 126,
+      "theta_idx": 4,
+      "theta_name": "pi_2",
+      "theta_rad": 1.5707963267948966,
+      "twirl_idx": 0
+    },
+    {
+      "arm": "DECOH_4TWIRL",
+      "block": 0,
+      "circuit_name": "b0_dec4_tw0_pi_2_in_1",
+      "cz_count": 28,
+      "decoh_twirl": [
+        1,
+        1,
+        0
+      ],
+      "input_label": "1",
+      "pub_index": 37,
+      "sx_count": 126,
+      "theta_idx": 4,
+      "theta_name": "pi_2",
+      "theta_rad": 1.5707963267948966,
+      "twirl_idx": 0
+    },
+    {
+      "arm": "DECOH_4TWIRL",
+      "block": 0,
+      "circuit_name": "b0_dec4_tw1_3pi_8_in_-i",
+      "cz_count": 28,
+      "decoh_twirl": [
+        1,
+        0,
+        1
+      ],
+      "input_label": "-i",
+      "pub_index": 38,
+      "sx_count": 126,
+      "theta_idx": 3,
+      "theta_name": "3pi_8",
+      "theta_rad": 1.1780972450961724,
+      "twirl_idx": 1
+    },
+    {
+      "arm": "COHERENT",
+      "block": 0,
+      "circuit_name": "b0_coh_3pi_8_in_0",
+      "cz_count": 28,
+      "decoh_twirl": [
+        0,
+        0,
+        0
+      ],
+      "input_label": "0",
+      "pub_index": 39,
+      "sx_count": 126,
+      "theta_idx": 3,
+      "theta_name": "3pi_8",
+      "theta_rad": 1.1780972450961724
+    },
+    {
+      "arm": "DECOH_4TWIRL",
+      "block": 0,
+      "circuit_name": "b0_dec4_tw3_pi_2_in_+i",
+      "cz_count": 28,
+      "decoh_twirl": [
+        1,
+        1,
+        1
+      ],
+      "input_label": "+i",
+      "pub_index": 40,
+      "sx_count": 126,
+      "theta_idx": 4,
+      "theta_name": "pi_2",
+      "theta_rad": 1.5707963267948966,
+      "twirl_idx": 3
+    },
+    {
+      "arm": "DECOH_4TWIRL",
+      "block": 0,
+      "circuit_name": "b0_dec4_tw3_pi_2_in_-",
+      "cz_count": 28,
+      "decoh_twirl": [
+        1,
+        1,
+        1
+      ],
+      "input_label": "-",
+      "pub_index": 41,
+      "sx_count": 126,
+      "theta_idx": 4,
+      "theta_name": "pi_2",
+      "theta_rad": 1.5707963267948966,
+      "twirl_idx": 3
+    },
+    {
+      "arm": "AA_SENTINEL",
+      "block": 0,
+      "circuit_name": "b0_aa_sent_1",
+      "cz_count": 28,
+      "input_label": "+",
+      "pub_index": 42,
+      "sentinel_rep": 1,
+      "sx_count": 126,
+      "theta_name": "pi_2"
+    },
+    {
+      "arm": "DECOH_4TWIRL",
+      "block": 0,
+      "circuit_name": "b0_dec4_tw0_3pi_8_in_+",
+      "cz_count": 28,
+      "decoh_twirl": [
+        1,
+        1,
+        0
+      ],
+      "input_label": "+",
+      "pub_index": 43,
+      "sx_count": 126,
+      "theta_idx": 3,
+      "theta_name": "3pi_8",
+      "theta_rad": 1.1780972450961724,
+      "twirl_idx": 0
+    },
+    {
+      "arm": "DECOH_4TWIRL",
+      "block": 0,
+      "circuit_name": "b0_dec4_tw2_pi_2_in_+i",
+      "cz_count": 28,
+      "decoh_twirl": [
+        0,
+        1,
+        1
+      ],
+      "input_label": "+i",
+      "pub_index": 44,
+      "sx_count": 126,
+      "theta_idx": 4,
+      "theta_name": "pi_2",
+      "theta_rad": 1.5707963267948966,
+      "twirl_idx": 2
+    },
+    {
+      "arm": "DECOH_4TWIRL",
+      "block": 0,
+      "circuit_name": "b0_dec4_tw0_3pi_8_in_+i",
+      "cz_count": 28,
+      "decoh_twirl": [
+        1,
+        1,
+        0
+      ],
+      "input_label": "+i",
+      "pub_index": 45,
+      "sx_count": 126,
+      "theta_idx": 3,
+      "theta_name": "3pi_8",
+      "theta_rad": 1.1780972450961724,
+      "twirl_idx": 0
+    },
+    {
+      "arm": "COHERENT",
+      "block": 0,
+      "circuit_name": "b0_coh_3pi_8_in_1",
+      "cz_count": 28,
+      "decoh_twirl": [
+        0,
+        0,
+        0
+      ],
+      "input_label": "1",
+      "pub_index": 46,
+      "sx_count": 126,
+      "theta_idx": 3,
+      "theta_name": "3pi_8",
+      "theta_rad": 1.1780972450961724
+    },
+    {
+      "arm": "DECOH_4TWIRL",
+      "block": 0,
+      "circuit_name": "b0_dec4_tw3_pi_2_in_-i",
+      "cz_count": 28,
+      "decoh_twirl": [
+        1,
+        1,
+        1
+      ],
+      "input_label": "-i",
+      "pub_index": 47,
+      "sx_count": 126,
+      "theta_idx": 4,
+      "theta_name": "pi_2",
+      "theta_rad": 1.5707963267948966,
+      "twirl_idx": 3
+    },
+    {
+      "arm": "DECOH_4TWIRL",
+      "block": 0,
+      "circuit_name": "b0_dec4_tw0_pi_2_in_-",
+      "cz_count": 28,
+      "decoh_twirl": [
+        1,
+        1,
+        0
+      ],
+      "input_label": "-",
+      "pub_index": 48,
+      "sx_count": 126,
+      "theta_idx": 4,
+      "theta_name": "pi_2",
+      "theta_rad": 1.5707963267948966,
+      "twirl_idx": 0
+    },
+    {
+      "arm": "DECOH_4TWIRL",
+      "block": 0,
+      "circuit_name": "b0_dec4_tw3_pi_2_in_+",
+      "cz_count": 28,
+      "decoh_twirl": [
+        1,
+        1,
+        1
+      ],
+      "input_label": "+",
+      "pub_index": 49,
+      "sx_count": 126,
+      "theta_idx": 4,
+      "theta_name": "pi_2",
+      "theta_rad": 1.5707963267948966,
+      "twirl_idx": 3
+    },
+    {
+      "arm": "COHERENT",
+      "block": 0,
+      "circuit_name": "b0_coh_pi_2_in_-i",
+      "cz_count": 28,
+      "decoh_twirl": [
+        0,
+        0,
+        0
+      ],
+      "input_label": "-i",
+      "pub_index": 50,
+      "sx_count": 126,
+      "theta_idx": 4,
+      "theta_name": "pi_2",
+      "theta_rad": 1.5707963267948966
+    },
+    {
+      "arm": "DECOH_4TWIRL",
+      "block": 0,
+      "circuit_name": "b0_dec4_tw3_3pi_8_in_-",
+      "cz_count": 28,
+      "decoh_twirl": [
+        1,
+        1,
+        1
+      ],
+      "input_label": "-",
+      "pub_index": 51,
+      "sx_count": 126,
+      "theta_idx": 3,
+      "theta_name": "3pi_8",
+      "theta_rad": 1.1780972450961724,
+      "twirl_idx": 3
+    },
+    {
+      "arm": "DECOH_4TWIRL",
+      "block": 0,
+      "circuit_name": "b0_dec4_tw0_3pi_8_in_-",
+      "cz_count": 28,
+      "decoh_twirl": [
+        1,
+        1,
+        0
+      ],
+      "input_label": "-",
+      "pub_index": 52,
+      "sx_count": 126,
+      "theta_idx": 3,
+      "theta_name": "3pi_8",
+      "theta_rad": 1.1780972450961724,
+      "twirl_idx": 0
+    },
+    {
+      "arm": "COHERENT",
+      "block": 0,
+      "circuit_name": "b0_coh_pi_2_in_-",
+      "cz_count": 28,
+      "decoh_twirl": [
+        0,
+        0,
+        0
+      ],
+      "input_label": "-",
+      "pub_index": 53,
+      "sx_count": 126,
+      "theta_idx": 4,
+      "theta_name": "pi_2",
+      "theta_rad": 1.5707963267948966
+    },
+    {
+      "arm": "COHERENT",
+      "block": 0,
+      "circuit_name": "b0_coh_pi_2_in_+",
+      "cz_count": 28,
+      "decoh_twirl": [
+        0,
+        0,
+        0
+      ],
+      "input_label": "+",
+      "pub_index": 54,
+      "sx_count": 126,
+      "theta_idx": 4,
+      "theta_name": "pi_2",
+      "theta_rad": 1.5707963267948966
+    },
+    {
+      "arm": "COHERENT",
+      "block": 0,
+      "circuit_name": "b0_coh_pi_2_in_+i",
+      "cz_count": 28,
+      "decoh_twirl": [
+        0,
+        0,
+        0
+      ],
+      "input_label": "+i",
+      "pub_index": 55,
+      "sx_count": 126,
+      "theta_idx": 4,
+      "theta_name": "pi_2",
+      "theta_rad": 1.5707963267948966
+    },
+    {
+      "arm": "DECOH_4TWIRL",
+      "block": 0,
+      "circuit_name": "b0_dec4_tw3_3pi_8_in_+i",
+      "cz_count": 28,
+      "decoh_twirl": [
+        1,
+        1,
+        1
+      ],
+      "input_label": "+i",
+      "pub_index": 56,
+      "sx_count": 126,
+      "theta_idx": 3,
+      "theta_name": "3pi_8",
+      "theta_rad": 1.1780972450961724,
+      "twirl_idx": 3
+    },
+    {
+      "arm": "COHERENT",
+      "block": 0,
+      "circuit_name": "b0_coh_pi_2_in_1",
+      "cz_count": 28,
+      "decoh_twirl": [
+        0,
+        0,
+        0
+      ],
+      "input_label": "1",
+      "pub_index": 57,
+      "sx_count": 126,
+      "theta_idx": 4,
+      "theta_name": "pi_2",
+      "theta_rad": 1.5707963267948966
+    },
+    {
+      "arm": "COHERENT",
+      "block": 0,
+      "circuit_name": "b0_coh_3pi_8_in_-",
+      "cz_count": 28,
+      "decoh_twirl": [
+        0,
+        0,
+        0
+      ],
+      "input_label": "-",
+      "pub_index": 58,
+      "sx_count": 126,
+      "theta_idx": 3,
+      "theta_name": "3pi_8",
+      "theta_rad": 1.1780972450961724
+    },
+    {
+      "arm": "DECOH_4TWIRL",
+      "block": 0,
+      "circuit_name": "b0_dec4_tw3_3pi_8_in_0",
+      "cz_count": 28,
+      "decoh_twirl": [
+        1,
+        1,
+        1
+      ],
+      "input_label": "0",
+      "pub_index": 59,
+      "sx_count": 126,
+      "theta_idx": 3,
+      "theta_name": "3pi_8",
+      "theta_rad": 1.1780972450961724,
+      "twirl_idx": 3
+    },
+    {
+      "arm": "DECOH_4TWIRL",
+      "block": 0,
+      "circuit_name": "b0_dec4_tw2_pi_2_in_+",
+      "cz_count": 28,
+      "decoh_twirl": [
+        0,
+        1,
+        1
+      ],
+      "input_label": "+",
+      "pub_index": 60,
+      "sx_count": 126,
+      "theta_idx": 4,
+      "theta_name": "pi_2",
+      "theta_rad": 1.5707963267948966,
+      "twirl_idx": 2
+    },
+    {
+      "arm": "DECOH_4TWIRL",
+      "block": 0,
+      "circuit_name": "b0_dec4_tw1_3pi_8_in_+",
+      "cz_count": 28,
+      "decoh_twirl": [
+        1,
+        0,
+        1
+      ],
+      "input_label": "+",
+      "pub_index": 61,
+      "sx_count": 126,
+      "theta_idx": 3,
+      "theta_name": "3pi_8",
+      "theta_rad": 1.1780972450961724,
+      "twirl_idx": 1
+    },
+    {
+      "arm": "DECOH_4TWIRL",
+      "block": 0,
+      "circuit_name": "b0_dec4_tw3_pi_2_in_0",
+      "cz_count": 28,
+      "decoh_twirl": [
+        1,
+        1,
+        1
+      ],
+      "input_label": "0",
+      "pub_index": 62,
+      "sx_count": 126,
+      "theta_idx": 4,
+      "theta_name": "pi_2",
+      "theta_rad": 1.5707963267948966,
+      "twirl_idx": 3
+    },
+    {
+      "arm": "DECOH_4TWIRL",
+      "block": 0,
+      "circuit_name": "b0_dec4_tw2_3pi_8_in_0",
+      "cz_count": 28,
+      "decoh_twirl": [
+        0,
+        1,
+        1
+      ],
+      "input_label": "0",
+      "pub_index": 63,
+      "sx_count": 126,
+      "theta_idx": 3,
+      "theta_name": "3pi_8",
+      "theta_rad": 1.1780972450961724,
+      "twirl_idx": 2
+    },
+    {
+      "arm": "DECOH_4TWIRL",
+      "block": 1,
+      "circuit_name": "b1_dec4_tw2_3pi_8_in_-",
+      "cz_count": 28,
+      "decoh_twirl": [
+        0,
+        1,
+        1
+      ],
+      "input_label": "-",
+      "pub_index": 64,
+      "sx_count": 126,
+      "theta_idx": 3,
+      "theta_name": "3pi_8",
+      "theta_rad": 1.1780972450961724,
+      "twirl_idx": 2
+    },
+    {
+      "arm": "RO_SENTINEL",
+      "block": 1,
+      "circuit_name": "b1_ro_000",
+      "cz_count": 0,
+      "prep_bits_c2c1c0": "000",
+      "pub_index": 65,
+      "sx_count": 6
+    },
+    {
+      "arm": "COHERENT",
+      "block": 1,
+      "circuit_name": "b1_coh_3pi_8_in_1",
+      "cz_count": 28,
+      "decoh_twirl": [
+        0,
+        0,
+        0
+      ],
+      "input_label": "1",
+      "pub_index": 66,
+      "sx_count": 126,
+      "theta_idx": 3,
+      "theta_name": "3pi_8",
+      "theta_rad": 1.1780972450961724
+    },
+    {
+      "arm": "DECOH_4TWIRL",
+      "block": 1,
+      "circuit_name": "b1_dec4_tw2_3pi_8_in_+i",
+      "cz_count": 28,
+      "decoh_twirl": [
+        0,
+        1,
+        1
+      ],
+      "input_label": "+i",
+      "pub_index": 67,
+      "sx_count": 126,
+      "theta_idx": 3,
+      "theta_name": "3pi_8",
+      "theta_rad": 1.1780972450961724,
+      "twirl_idx": 2
+    },
+    {
+      "arm": "DECOH_4TWIRL",
+      "block": 1,
+      "circuit_name": "b1_dec4_tw3_pi_2_in_+",
+      "cz_count": 28,
+      "decoh_twirl": [
+        1,
+        1,
+        1
+      ],
+      "input_label": "+",
+      "pub_index": 68,
+      "sx_count": 126,
+      "theta_idx": 4,
+      "theta_name": "pi_2",
+      "theta_rad": 1.5707963267948966,
+      "twirl_idx": 3
+    },
+    {
+      "arm": "DECOH_4TWIRL",
+      "block": 1,
+      "circuit_name": "b1_dec4_tw1_pi_2_in_1",
+      "cz_count": 28,
+      "decoh_twirl": [
+        1,
+        0,
+        1
+      ],
+      "input_label": "1",
+      "pub_index": 69,
+      "sx_count": 126,
+      "theta_idx": 4,
+      "theta_name": "pi_2",
+      "theta_rad": 1.5707963267948966,
+      "twirl_idx": 1
+    },
+    {
+      "arm": "DECOH_4TWIRL",
+      "block": 1,
+      "circuit_name": "b1_dec4_tw3_3pi_8_in_-i",
+      "cz_count": 28,
+      "decoh_twirl": [
+        1,
+        1,
+        1
+      ],
+      "input_label": "-i",
+      "pub_index": 70,
+      "sx_count": 126,
+      "theta_idx": 3,
+      "theta_name": "3pi_8",
+      "theta_rad": 1.1780972450961724,
+      "twirl_idx": 3
+    },
+    {
+      "arm": "COHERENT",
+      "block": 1,
+      "circuit_name": "b1_coh_pi_2_in_1",
+      "cz_count": 28,
+      "decoh_twirl": [
+        0,
+        0,
+        0
+      ],
+      "input_label": "1",
+      "pub_index": 71,
+      "sx_count": 126,
+      "theta_idx": 4,
+      "theta_name": "pi_2",
+      "theta_rad": 1.5707963267948966
+    },
+    {
+      "arm": "AA_SENTINEL",
+      "block": 1,
+      "circuit_name": "b1_aa_sent_0",
+      "cz_count": 28,
+      "input_label": "+",
+      "pub_index": 72,
+      "sentinel_rep": 0,
+      "sx_count": 126,
+      "theta_name": "pi_2"
+    },
+    {
+      "arm": "DECOH_4TWIRL",
+      "block": 1,
+      "circuit_name": "b1_dec4_tw2_pi_2_in_-i",
+      "cz_count": 28,
+      "decoh_twirl": [
+        0,
+        1,
+        1
+      ],
+      "input_label": "-i",
+      "pub_index": 73,
+      "sx_count": 126,
+      "theta_idx": 4,
+      "theta_name": "pi_2",
+      "theta_rad": 1.5707963267948966,
+      "twirl_idx": 2
+    },
+    {
+      "arm": "COHERENT",
+      "block": 1,
+      "circuit_name": "b1_coh_pi_2_in_+i",
+      "cz_count": 28,
+      "decoh_twirl": [
+        0,
+        0,
+        0
+      ],
+      "input_label": "+i",
+      "pub_index": 74,
+      "sx_count": 126,
+      "theta_idx": 4,
+      "theta_name": "pi_2",
+      "theta_rad": 1.5707963267948966
+    },
+    {
+      "arm": "DECOH_4TWIRL",
+      "block": 1,
+      "circuit_name": "b1_dec4_tw0_pi_2_in_0",
+      "cz_count": 28,
+      "decoh_twirl": [
+        1,
+        1,
+        0
+      ],
+      "input_label": "0",
+      "pub_index": 75,
+      "sx_count": 126,
+      "theta_idx": 4,
+      "theta_name": "pi_2",
+      "theta_rad": 1.5707963267948966,
+      "twirl_idx": 0
+    },
+    {
+      "arm": "DECOH_4TWIRL",
+      "block": 1,
+      "circuit_name": "b1_dec4_tw3_pi_2_in_-",
+      "cz_count": 28,
+      "decoh_twirl": [
+        1,
+        1,
+        1
+      ],
+      "input_label": "-",
+      "pub_index": 76,
+      "sx_count": 126,
+      "theta_idx": 4,
+      "theta_name": "pi_2",
+      "theta_rad": 1.5707963267948966,
+      "twirl_idx": 3
+    },
+    {
+      "arm": "DECOH_4TWIRL",
+      "block": 1,
+      "circuit_name": "b1_dec4_tw1_3pi_8_in_+i",
+      "cz_count": 28,
+      "decoh_twirl": [
+        1,
+        0,
+        1
+      ],
+      "input_label": "+i",
+      "pub_index": 77,
+      "sx_count": 126,
+      "theta_idx": 3,
+      "theta_name": "3pi_8",
+      "theta_rad": 1.1780972450961724,
+      "twirl_idx": 1
+    },
+    {
+      "arm": "COHERENT",
+      "block": 1,
+      "circuit_name": "b1_coh_3pi_8_in_-i",
+      "cz_count": 28,
+      "decoh_twirl": [
+        0,
+        0,
+        0
+      ],
+      "input_label": "-i",
+      "pub_index": 78,
+      "sx_count": 126,
+      "theta_idx": 3,
+      "theta_name": "3pi_8",
+      "theta_rad": 1.1780972450961724
+    },
+    {
+      "arm": "DECOH_4TWIRL",
+      "block": 1,
+      "circuit_name": "b1_dec4_tw2_pi_2_in_0",
+      "cz_count": 28,
+      "decoh_twirl": [
+        0,
+        1,
+        1
+      ],
+      "input_label": "0",
+      "pub_index": 79,
+      "sx_count": 126,
+      "theta_idx": 4,
+      "theta_name": "pi_2",
+      "theta_rad": 1.5707963267948966,
+      "twirl_idx": 2
+    },
+    {
+      "arm": "COHERENT",
+      "block": 1,
+      "circuit_name": "b1_coh_3pi_8_in_+",
+      "cz_count": 28,
+      "decoh_twirl": [
+        0,
+        0,
+        0
+      ],
+      "input_label": "+",
+      "pub_index": 80,
+      "sx_count": 126,
+      "theta_idx": 3,
+      "theta_name": "3pi_8",
+      "theta_rad": 1.1780972450961724
+    },
+    {
+      "arm": "DECOH_4TWIRL",
+      "block": 1,
+      "circuit_name": "b1_dec4_tw0_3pi_8_in_-",
+      "cz_count": 28,
+      "decoh_twirl": [
+        1,
+        1,
+        0
+      ],
+      "input_label": "-",
+      "pub_index": 81,
+      "sx_count": 126,
+      "theta_idx": 3,
+      "theta_name": "3pi_8",
+      "theta_rad": 1.1780972450961724,
+      "twirl_idx": 0
+    },
+    {
+      "arm": "AA_SENTINEL",
+      "block": 1,
+      "circuit_name": "b1_aa_sent_1",
+      "cz_count": 28,
+      "input_label": "+",
+      "pub_index": 82,
+      "sentinel_rep": 1,
+      "sx_count": 126,
+      "theta_name": "pi_2"
+    },
+    {
+      "arm": "DECOH_4TWIRL",
+      "block": 1,
+      "circuit_name": "b1_dec4_tw0_pi_2_in_1",
+      "cz_count": 28,
+      "decoh_twirl": [
+        1,
+        1,
+        0
+      ],
+      "input_label": "1",
+      "pub_index": 83,
+      "sx_count": 126,
+      "theta_idx": 4,
+      "theta_name": "pi_2",
+      "theta_rad": 1.5707963267948966,
+      "twirl_idx": 0
+    },
+    {
+      "arm": "DECOH_4TWIRL",
+      "block": 1,
+      "circuit_name": "b1_dec4_tw1_pi_2_in_-i",
+      "cz_count": 28,
+      "decoh_twirl": [
+        1,
+        0,
+        1
+      ],
+      "input_label": "-i",
+      "pub_index": 84,
+      "sx_count": 126,
+      "theta_idx": 4,
+      "theta_name": "pi_2",
+      "theta_rad": 1.5707963267948966,
+      "twirl_idx": 1
+    },
+    {
+      "arm": "RO_SENTINEL",
+      "block": 1,
+      "circuit_name": "b1_ro_111",
+      "cz_count": 0,
+      "prep_bits_c2c1c0": "111",
+      "pub_index": 85,
+      "sx_count": 6
+    },
+    {
+      "arm": "DECOH_4TWIRL",
+      "block": 1,
+      "circuit_name": "b1_dec4_tw2_pi_2_in_+",
+      "cz_count": 28,
+      "decoh_twirl": [
+        0,
+        1,
+        1
+      ],
+      "input_label": "+",
+      "pub_index": 86,
+      "sx_count": 126,
+      "theta_idx": 4,
+      "theta_name": "pi_2",
+      "theta_rad": 1.5707963267948966,
+      "twirl_idx": 2
+    },
+    {
+      "arm": "DECOH_4TWIRL",
+      "block": 1,
+      "circuit_name": "b1_dec4_tw2_3pi_8_in_+",
+      "cz_count": 28,
+      "decoh_twirl": [
+        0,
+        1,
+        1
+      ],
+      "input_label": "+",
+      "pub_index": 87,
+      "sx_count": 126,
+      "theta_idx": 3,
+      "theta_name": "3pi_8",
+      "theta_rad": 1.1780972450961724,
+      "twirl_idx": 2
+    },
+    {
+      "arm": "DECOH_4TWIRL",
+      "block": 1,
+      "circuit_name": "b1_dec4_tw2_pi_2_in_1",
+      "cz_count": 28,
+      "decoh_twirl": [
+        0,
+        1,
+        1
+      ],
+      "input_label": "1",
+      "pub_index": 88,
+      "sx_count": 126,
+      "theta_idx": 4,
+      "theta_name": "pi_2",
+      "theta_rad": 1.5707963267948966,
+      "twirl_idx": 2
+    },
+    {
+      "arm": "DECOH_4TWIRL",
+      "block": 1,
+      "circuit_name": "b1_dec4_tw1_pi_2_in_-",
+      "cz_count": 28,
+      "decoh_twirl": [
+        1,
+        0,
+        1
+      ],
+      "input_label": "-",
+      "pub_index": 89,
+      "sx_count": 126,
+      "theta_idx": 4,
+      "theta_name": "pi_2",
+      "theta_rad": 1.5707963267948966,
+      "twirl_idx": 1
+    },
+    {
+      "arm": "DECOH_4TWIRL",
+      "block": 1,
+      "circuit_name": "b1_dec4_tw1_3pi_8_in_-i",
+      "cz_count": 28,
+      "decoh_twirl": [
+        1,
+        0,
+        1
+      ],
+      "input_label": "-i",
+      "pub_index": 90,
+      "sx_count": 126,
+      "theta_idx": 3,
+      "theta_name": "3pi_8",
+      "theta_rad": 1.1780972450961724,
+      "twirl_idx": 1
+    },
+    {
+      "arm": "COHERENT",
+      "block": 1,
+      "circuit_name": "b1_coh_pi_2_in_0",
+      "cz_count": 28,
+      "decoh_twirl": [
+        0,
+        0,
+        0
+      ],
+      "input_label": "0",
+      "pub_index": 91,
+      "sx_count": 126,
+      "theta_idx": 4,
+      "theta_name": "pi_2",
+      "theta_rad": 1.5707963267948966
+    },
+    {
+      "arm": "DECOH_4TWIRL",
+      "block": 1,
+      "circuit_name": "b1_dec4_tw3_pi_2_in_0",
+      "cz_count": 28,
+      "decoh_twirl": [
+        1,
+        1,
+        1
+      ],
+      "input_label": "0",
+      "pub_index": 92,
+      "sx_count": 126,
+      "theta_idx": 4,
+      "theta_name": "pi_2",
+      "theta_rad": 1.5707963267948966,
+      "twirl_idx": 3
+    },
+    {
+      "arm": "DECOH_4TWIRL",
+      "block": 1,
+      "circuit_name": "b1_dec4_tw0_3pi_8_in_+",
+      "cz_count": 28,
+      "decoh_twirl": [
+        1,
+        1,
+        0
+      ],
+      "input_label": "+",
+      "pub_index": 93,
+      "sx_count": 126,
+      "theta_idx": 3,
+      "theta_name": "3pi_8",
+      "theta_rad": 1.1780972450961724,
+      "twirl_idx": 0
+    },
+    {
+      "arm": "COHERENT",
+      "block": 1,
+      "circuit_name": "b1_coh_3pi_8_in_0",
+      "cz_count": 28,
+      "decoh_twirl": [
+        0,
+        0,
+        0
+      ],
+      "input_label": "0",
+      "pub_index": 94,
+      "sx_count": 126,
+      "theta_idx": 3,
+      "theta_name": "3pi_8",
+      "theta_rad": 1.1780972450961724
+    },
+    {
+      "arm": "DECOH_4TWIRL",
+      "block": 1,
+      "circuit_name": "b1_dec4_tw1_3pi_8_in_0",
+      "cz_count": 28,
+      "decoh_twirl": [
+        1,
+        0,
+        1
+      ],
+      "input_label": "0",
+      "pub_index": 95,
+      "sx_count": 126,
+      "theta_idx": 3,
+      "theta_name": "3pi_8",
+      "theta_rad": 1.1780972450961724,
+      "twirl_idx": 1
+    },
+    {
+      "arm": "DECOH_4TWIRL",
+      "block": 1,
+      "circuit_name": "b1_dec4_tw3_3pi_8_in_+",
+      "cz_count": 28,
+      "decoh_twirl": [
+        1,
+        1,
+        1
+      ],
+      "input_label": "+",
+      "pub_index": 96,
+      "sx_count": 126,
+      "theta_idx": 3,
+      "theta_name": "3pi_8",
+      "theta_rad": 1.1780972450961724,
+      "twirl_idx": 3
+    },
+    {
+      "arm": "DECOH_4TWIRL",
+      "block": 1,
+      "circuit_name": "b1_dec4_tw1_3pi_8_in_+",
+      "cz_count": 28,
+      "decoh_twirl": [
+        1,
+        0,
+        1
+      ],
+      "input_label": "+",
+      "pub_index": 97,
+      "sx_count": 126,
+      "theta_idx": 3,
+      "theta_name": "3pi_8",
+      "theta_rad": 1.1780972450961724,
+      "twirl_idx": 1
+    },
+    {
+      "arm": "DECOH_4TWIRL",
+      "block": 1,
+      "circuit_name": "b1_dec4_tw3_3pi_8_in_1",
+      "cz_count": 28,
+      "decoh_twirl": [
+        1,
+        1,
+        1
+      ],
+      "input_label": "1",
+      "pub_index": 98,
+      "sx_count": 126,
+      "theta_idx": 3,
+      "theta_name": "3pi_8",
+      "theta_rad": 1.1780972450961724,
+      "twirl_idx": 3
+    },
+    {
+      "arm": "DECOH_4TWIRL",
+      "block": 1,
+      "circuit_name": "b1_dec4_tw1_pi_2_in_+i",
+      "cz_count": 28,
+      "decoh_twirl": [
+        1,
+        0,
+        1
+      ],
+      "input_label": "+i",
+      "pub_index": 99,
+      "sx_count": 126,
+      "theta_idx": 4,
+      "theta_name": "pi_2",
+      "theta_rad": 1.5707963267948966,
+      "twirl_idx": 1
+    },
+    {
+      "arm": "DECOH_4TWIRL",
+      "block": 1,
+      "circuit_name": "b1_dec4_tw3_3pi_8_in_-",
+      "cz_count": 28,
+      "decoh_twirl": [
+        1,
+        1,
+        1
+      ],
+      "input_label": "-",
+      "pub_index": 100,
+      "sx_count": 126,
+      "theta_idx": 3,
+      "theta_name": "3pi_8",
+      "theta_rad": 1.1780972450961724,
+      "twirl_idx": 3
+    },
+    {
+      "arm": "DECOH_4TWIRL",
+      "block": 1,
+      "circuit_name": "b1_dec4_tw1_3pi_8_in_-",
+      "cz_count": 28,
+      "decoh_twirl": [
+        1,
+        0,
+        1
+      ],
+      "input_label": "-",
+      "pub_index": 101,
+      "sx_count": 126,
+      "theta_idx": 3,
+      "theta_name": "3pi_8",
+      "theta_rad": 1.1780972450961724,
+      "twirl_idx": 1
+    },
+    {
+      "arm": "COHERENT",
+      "block": 1,
+      "circuit_name": "b1_coh_pi_2_in_-",
+      "cz_count": 28,
+      "decoh_twirl": [
+        0,
+        0,
+        0
+      ],
+      "input_label": "-",
+      "pub_index": 102,
+      "sx_count": 126,
+      "theta_idx": 4,
+      "theta_name": "pi_2",
+      "theta_rad": 1.5707963267948966
+    },
+    {
+      "arm": "DECOH_4TWIRL",
+      "block": 1,
+      "circuit_name": "b1_dec4_tw1_pi_2_in_+",
+      "cz_count": 28,
+      "decoh_twirl": [
+        1,
+        0,
+        1
+      ],
+      "input_label": "+",
+      "pub_index": 103,
+      "sx_count": 126,
+      "theta_idx": 4,
+      "theta_name": "pi_2",
+      "theta_rad": 1.5707963267948966,
+      "twirl_idx": 1
+    },
+    {
+      "arm": "DECOH_4TWIRL",
+      "block": 1,
+      "circuit_name": "b1_dec4_tw2_pi_2_in_+i",
+      "cz_count": 28,
+      "decoh_twirl": [
+        0,
+        1,
+        1
+      ],
+      "input_label": "+i",
+      "pub_index": 104,
+      "sx_count": 126,
+      "theta_idx": 4,
+      "theta_name": "pi_2",
+      "theta_rad": 1.5707963267948966,
+      "twirl_idx": 2
+    },
+    {
+      "arm": "DECOH_4TWIRL",
+      "block": 1,
+      "circuit_name": "b1_dec4_tw2_3pi_8_in_1",
+      "cz_count": 28,
+      "decoh_twirl": [
+        0,
+        1,
+        1
+      ],
+      "input_label": "1",
+      "pub_index": 105,
+      "sx_count": 126,
+      "theta_idx": 3,
+      "theta_name": "3pi_8",
+      "theta_rad": 1.1780972450961724,
+      "twirl_idx": 2
+    },
+    {
+      "arm": "DECOH_4TWIRL",
+      "block": 1,
+      "circuit_name": "b1_dec4_tw0_3pi_8_in_-i",
+      "cz_count": 28,
+      "decoh_twirl": [
+        1,
+        1,
+        0
+      ],
+      "input_label": "-i",
+      "pub_index": 106,
+      "sx_count": 126,
+      "theta_idx": 3,
+      "theta_name": "3pi_8",
+      "theta_rad": 1.1780972450961724,
+      "twirl_idx": 0
+    },
+    {
+      "arm": "DECOH_4TWIRL",
+      "block": 1,
+      "circuit_name": "b1_dec4_tw2_3pi_8_in_0",
+      "cz_count": 28,
+      "decoh_twirl": [
+        0,
+        1,
+        1
+      ],
+      "input_label": "0",
+      "pub_index": 107,
+      "sx_count": 126,
+      "theta_idx": 3,
+      "theta_name": "3pi_8",
+      "theta_rad": 1.1780972450961724,
+      "twirl_idx": 2
+    },
+    {
+      "arm": "COHERENT",
+      "block": 1,
+      "circuit_name": "b1_coh_pi_2_in_+",
+      "cz_count": 28,
+      "decoh_twirl": [
+        0,
+        0,
+        0
+      ],
+      "input_label": "+",
+      "pub_index": 108,
+      "sx_count": 126,
+      "theta_idx": 4,
+      "theta_name": "pi_2",
+      "theta_rad": 1.5707963267948966
+    },
+    {
+      "arm": "DECOH_4TWIRL",
+      "block": 1,
+      "circuit_name": "b1_dec4_tw1_pi_2_in_0",
+      "cz_count": 28,
+      "decoh_twirl": [
+        1,
+        0,
+        1
+      ],
+      "input_label": "0",
+      "pub_index": 109,
+      "sx_count": 126,
+      "theta_idx": 4,
+      "theta_name": "pi_2",
+      "theta_rad": 1.5707963267948966,
+      "twirl_idx": 1
+    },
+    {
+      "arm": "DECOH_4TWIRL",
+      "block": 1,
+      "circuit_name": "b1_dec4_tw0_3pi_8_in_+i",
+      "cz_count": 28,
+      "decoh_twirl": [
+        1,
+        1,
+        0
+      ],
+      "input_label": "+i",
+      "pub_index": 110,
+      "sx_count": 126,
+      "theta_idx": 3,
+      "theta_name": "3pi_8",
+      "theta_rad": 1.1780972450961724,
+      "twirl_idx": 0
+    },
+    {
+      "arm": "DECOH_4TWIRL",
+      "block": 1,
+      "circuit_name": "b1_dec4_tw0_pi_2_in_+i",
+      "cz_count": 28,
+      "decoh_twirl": [
+        1,
+        1,
+        0
+      ],
+      "input_label": "+i",
+      "pub_index": 111,
+      "sx_count": 126,
+      "theta_idx": 4,
+      "theta_name": "pi_2",
+      "theta_rad": 1.5707963267948966,
+      "twirl_idx": 0
+    },
+    {
+      "arm": "DECOH_4TWIRL",
+      "block": 1,
+      "circuit_name": "b1_dec4_tw2_3pi_8_in_-i",
+      "cz_count": 28,
+      "decoh_twirl": [
+        0,
+        1,
+        1
+      ],
+      "input_label": "-i",
+      "pub_index": 112,
+      "sx_count": 126,
+      "theta_idx": 3,
+      "theta_name": "3pi_8",
+      "theta_rad": 1.1780972450961724,
+      "twirl_idx": 2
+    },
+    {
+      "arm": "DECOH_4TWIRL",
+      "block": 1,
+      "circuit_name": "b1_dec4_tw2_pi_2_in_-",
+      "cz_count": 28,
+      "decoh_twirl": [
+        0,
+        1,
+        1
+      ],
+      "input_label": "-",
+      "pub_index": 113,
+      "sx_count": 126,
+      "theta_idx": 4,
+      "theta_name": "pi_2",
+      "theta_rad": 1.5707963267948966,
+      "twirl_idx": 2
+    },
+    {
+      "arm": "COHERENT",
+      "block": 1,
+      "circuit_name": "b1_coh_3pi_8_in_-",
+      "cz_count": 28,
+      "decoh_twirl": [
+        0,
+        0,
+        0
+      ],
+      "input_label": "-",
+      "pub_index": 114,
+      "sx_count": 126,
+      "theta_idx": 3,
+      "theta_name": "3pi_8",
+      "theta_rad": 1.1780972450961724
+    },
+    {
+      "arm": "DECOH_4TWIRL",
+      "block": 1,
+      "circuit_name": "b1_dec4_tw0_3pi_8_in_1",
+      "cz_count": 28,
+      "decoh_twirl": [
+        1,
+        1,
+        0
+      ],
+      "input_label": "1",
+      "pub_index": 115,
+      "sx_count": 126,
+      "theta_idx": 3,
+      "theta_name": "3pi_8",
+      "theta_rad": 1.1780972450961724,
+      "twirl_idx": 0
+    },
+    {
+      "arm": "DECOH_4TWIRL",
+      "block": 1,
+      "circuit_name": "b1_dec4_tw3_pi_2_in_1",
+      "cz_count": 28,
+      "decoh_twirl": [
+        1,
+        1,
+        1
+      ],
+      "input_label": "1",
+      "pub_index": 116,
+      "sx_count": 126,
+      "theta_idx": 4,
+      "theta_name": "pi_2",
+      "theta_rad": 1.5707963267948966,
+      "twirl_idx": 3
+    },
+    {
+      "arm": "DECOH_4TWIRL",
+      "block": 1,
+      "circuit_name": "b1_dec4_tw1_3pi_8_in_1",
+      "cz_count": 28,
+      "decoh_twirl": [
+        1,
+        0,
+        1
+      ],
+      "input_label": "1",
+      "pub_index": 117,
+      "sx_count": 126,
+      "theta_idx": 3,
+      "theta_name": "3pi_8",
+      "theta_rad": 1.1780972450961724,
+      "twirl_idx": 1
+    },
+    {
+      "arm": "DECOH_4TWIRL",
+      "block": 1,
+      "circuit_name": "b1_dec4_tw3_3pi_8_in_+i",
+      "cz_count": 28,
+      "decoh_twirl": [
+        1,
+        1,
+        1
+      ],
+      "input_label": "+i",
+      "pub_index": 118,
+      "sx_count": 126,
+      "theta_idx": 3,
+      "theta_name": "3pi_8",
+      "theta_rad": 1.1780972450961724,
+      "twirl_idx": 3
+    },
+    {
+      "arm": "DECOH_4TWIRL",
+      "block": 1,
+      "circuit_name": "b1_dec4_tw0_pi_2_in_-i",
+      "cz_count": 28,
+      "decoh_twirl": [
+        1,
+        1,
+        0
+      ],
+      "input_label": "-i",
+      "pub_index": 119,
+      "sx_count": 126,
+      "theta_idx": 4,
+      "theta_name": "pi_2",
+      "theta_rad": 1.5707963267948966,
+      "twirl_idx": 0
+    },
+    {
+      "arm": "COHERENT",
+      "block": 1,
+      "circuit_name": "b1_coh_pi_2_in_-i",
+      "cz_count": 28,
+      "decoh_twirl": [
+        0,
+        0,
+        0
+      ],
+      "input_label": "-i",
+      "pub_index": 120,
+      "sx_count": 126,
+      "theta_idx": 4,
+      "theta_name": "pi_2",
+      "theta_rad": 1.5707963267948966
+    },
+    {
+      "arm": "DECOH_4TWIRL",
+      "block": 1,
+      "circuit_name": "b1_dec4_tw0_3pi_8_in_0",
+      "cz_count": 28,
+      "decoh_twirl": [
+        1,
+        1,
+        0
+      ],
+      "input_label": "0",
+      "pub_index": 121,
+      "sx_count": 126,
+      "theta_idx": 3,
+      "theta_name": "3pi_8",
+      "theta_rad": 1.1780972450961724,
+      "twirl_idx": 0
+    },
+    {
+      "arm": "DECOH_4TWIRL",
+      "block": 1,
+      "circuit_name": "b1_dec4_tw3_pi_2_in_+i",
+      "cz_count": 28,
+      "decoh_twirl": [
+        1,
+        1,
+        1
+      ],
+      "input_label": "+i",
+      "pub_index": 122,
+      "sx_count": 126,
+      "theta_idx": 4,
+      "theta_name": "pi_2",
+      "theta_rad": 1.5707963267948966,
+      "twirl_idx": 3
+    },
+    {
+      "arm": "DECOH_4TWIRL",
+      "block": 1,
+      "circuit_name": "b1_dec4_tw0_pi_2_in_+",
+      "cz_count": 28,
+      "decoh_twirl": [
+        1,
+        1,
+        0
+      ],
+      "input_label": "+",
+      "pub_index": 123,
+      "sx_count": 126,
+      "theta_idx": 4,
+      "theta_name": "pi_2",
+      "theta_rad": 1.5707963267948966,
+      "twirl_idx": 0
+    },
+    {
+      "arm": "DECOH_4TWIRL",
+      "block": 1,
+      "circuit_name": "b1_dec4_tw3_pi_2_in_-i",
+      "cz_count": 28,
+      "decoh_twirl": [
+        1,
+        1,
+        1
+      ],
+      "input_label": "-i",
+      "pub_index": 124,
+      "sx_count": 126,
+      "theta_idx": 4,
+      "theta_name": "pi_2",
+      "theta_rad": 1.5707963267948966,
+      "twirl_idx": 3
+    },
+    {
+      "arm": "DECOH_4TWIRL",
+      "block": 1,
+      "circuit_name": "b1_dec4_tw0_pi_2_in_-",
+      "cz_count": 28,
+      "decoh_twirl": [
+        1,
+        1,
+        0
+      ],
+      "input_label": "-",
+      "pub_index": 125,
+      "sx_count": 126,
+      "theta_idx": 4,
+      "theta_name": "pi_2",
+      "theta_rad": 1.5707963267948966,
+      "twirl_idx": 0
+    },
+    {
+      "arm": "DECOH_4TWIRL",
+      "block": 1,
+      "circuit_name": "b1_dec4_tw3_3pi_8_in_0",
+      "cz_count": 28,
+      "decoh_twirl": [
+        1,
+        1,
+        1
+      ],
+      "input_label": "0",
+      "pub_index": 126,
+      "sx_count": 126,
+      "theta_idx": 3,
+      "theta_name": "3pi_8",
+      "theta_rad": 1.1780972450961724,
+      "twirl_idx": 3
+    },
+    {
+      "arm": "COHERENT",
+      "block": 1,
+      "circuit_name": "b1_coh_3pi_8_in_+i",
+      "cz_count": 28,
+      "decoh_twirl": [
+        0,
+        0,
+        0
+      ],
+      "input_label": "+i",
+      "pub_index": 127,
+      "sx_count": 126,
+      "theta_idx": 3,
+      "theta_name": "3pi_8",
+      "theta_rad": 1.1780972450961724
+    },
+    {
+      "arm": "DECOH_4TWIRL",
+      "block": 2,
+      "circuit_name": "b2_dec4_tw2_pi_2_in_+",
+      "cz_count": 28,
+      "decoh_twirl": [
+        0,
+        1,
+        1
+      ],
+      "input_label": "+",
+      "pub_index": 128,
+      "sx_count": 126,
+      "theta_idx": 4,
+      "theta_name": "pi_2",
+      "theta_rad": 1.5707963267948966,
+      "twirl_idx": 2
+    },
+    {
+      "arm": "RO_SENTINEL",
+      "block": 2,
+      "circuit_name": "b2_ro_111",
+      "cz_count": 0,
+      "prep_bits_c2c1c0": "111",
+      "pub_index": 129,
+      "sx_count": 6
+    },
+    {
+      "arm": "DECOH_4TWIRL",
+      "block": 2,
+      "circuit_name": "b2_dec4_tw2_3pi_8_in_+i",
+      "cz_count": 28,
+      "decoh_twirl": [
+        0,
+        1,
+        1
+      ],
+      "input_label": "+i",
+      "pub_index": 130,
+      "sx_count": 126,
+      "theta_idx": 3,
+      "theta_name": "3pi_8",
+      "theta_rad": 1.1780972450961724,
+      "twirl_idx": 2
+    },
+    {
+      "arm": "DECOH_4TWIRL",
+      "block": 2,
+      "circuit_name": "b2_dec4_tw0_3pi_8_in_+i",
+      "cz_count": 28,
+      "decoh_twirl": [
+        1,
+        1,
+        0
+      ],
+      "input_label": "+i",
+      "pub_index": 131,
+      "sx_count": 126,
+      "theta_idx": 3,
+      "theta_name": "3pi_8",
+      "theta_rad": 1.1780972450961724,
+      "twirl_idx": 0
+    },
+    {
+      "arm": "DECOH_4TWIRL",
+      "block": 2,
+      "circuit_name": "b2_dec4_tw0_pi_2_in_0",
+      "cz_count": 28,
+      "decoh_twirl": [
+        1,
+        1,
+        0
+      ],
+      "input_label": "0",
+      "pub_index": 132,
+      "sx_count": 126,
+      "theta_idx": 4,
+      "theta_name": "pi_2",
+      "theta_rad": 1.5707963267948966,
+      "twirl_idx": 0
+    },
+    {
+      "arm": "DECOH_4TWIRL",
+      "block": 2,
+      "circuit_name": "b2_dec4_tw3_pi_2_in_+",
+      "cz_count": 28,
+      "decoh_twirl": [
+        1,
+        1,
+        1
+      ],
+      "input_label": "+",
+      "pub_index": 133,
+      "sx_count": 126,
+      "theta_idx": 4,
+      "theta_name": "pi_2",
+      "theta_rad": 1.5707963267948966,
+      "twirl_idx": 3
+    },
+    {
+      "arm": "DECOH_4TWIRL",
+      "block": 2,
+      "circuit_name": "b2_dec4_tw1_pi_2_in_-",
+      "cz_count": 28,
+      "decoh_twirl": [
+        1,
+        0,
+        1
+      ],
+      "input_label": "-",
+      "pub_index": 134,
+      "sx_count": 126,
+      "theta_idx": 4,
+      "theta_name": "pi_2",
+      "theta_rad": 1.5707963267948966,
+      "twirl_idx": 1
+    },
+    {
+      "arm": "AA_SENTINEL",
+      "block": 2,
+      "circuit_name": "b2_aa_sent_1",
+      "cz_count": 28,
+      "input_label": "+",
+      "pub_index": 135,
+      "sentinel_rep": 1,
+      "sx_count": 126,
+      "theta_name": "pi_2"
+    },
+    {
+      "arm": "DECOH_4TWIRL",
+      "block": 2,
+      "circuit_name": "b2_dec4_tw1_3pi_8_in_+i",
+      "cz_count": 28,
+      "decoh_twirl": [
+        1,
+        0,
+        1
+      ],
+      "input_label": "+i",
+      "pub_index": 136,
+      "sx_count": 126,
+      "theta_idx": 3,
+      "theta_name": "3pi_8",
+      "theta_rad": 1.1780972450961724,
+      "twirl_idx": 1
+    },
+    {
+      "arm": "COHERENT",
+      "block": 2,
+      "circuit_name": "b2_coh_pi_2_in_1",
+      "cz_count": 28,
+      "decoh_twirl": [
+        0,
+        0,
+        0
+      ],
+      "input_label": "1",
+      "pub_index": 137,
+      "sx_count": 126,
+      "theta_idx": 4,
+      "theta_name": "pi_2",
+      "theta_rad": 1.5707963267948966
+    },
+    {
+      "arm": "DECOH_4TWIRL",
+      "block": 2,
+      "circuit_name": "b2_dec4_tw2_pi_2_in_-",
+      "cz_count": 28,
+      "decoh_twirl": [
+        0,
+        1,
+        1
+      ],
+      "input_label": "-",
+      "pub_index": 138,
+      "sx_count": 126,
+      "theta_idx": 4,
+      "theta_name": "pi_2",
+      "theta_rad": 1.5707963267948966,
+      "twirl_idx": 2
+    },
+    {
+      "arm": "DECOH_4TWIRL",
+      "block": 2,
+      "circuit_name": "b2_dec4_tw1_pi_2_in_-i",
+      "cz_count": 28,
+      "decoh_twirl": [
+        1,
+        0,
+        1
+      ],
+      "input_label": "-i",
+      "pub_index": 139,
+      "sx_count": 126,
+      "theta_idx": 4,
+      "theta_name": "pi_2",
+      "theta_rad": 1.5707963267948966,
+      "twirl_idx": 1
+    },
+    {
+      "arm": "DECOH_4TWIRL",
+      "block": 2,
+      "circuit_name": "b2_dec4_tw0_3pi_8_in_0",
+      "cz_count": 28,
+      "decoh_twirl": [
+        1,
+        1,
+        0
+      ],
+      "input_label": "0",
+      "pub_index": 140,
+      "sx_count": 126,
+      "theta_idx": 3,
+      "theta_name": "3pi_8",
+      "theta_rad": 1.1780972450961724,
+      "twirl_idx": 0
+    },
+    {
+      "arm": "RO_SENTINEL",
+      "block": 2,
+      "circuit_name": "b2_ro_000",
+      "cz_count": 0,
+      "prep_bits_c2c1c0": "000",
+      "pub_index": 141,
+      "sx_count": 6
+    },
+    {
+      "arm": "DECOH_4TWIRL",
+      "block": 2,
+      "circuit_name": "b2_dec4_tw0_3pi_8_in_-",
+      "cz_count": 28,
+      "decoh_twirl": [
+        1,
+        1,
+        0
+      ],
+      "input_label": "-",
+      "pub_index": 142,
+      "sx_count": 126,
+      "theta_idx": 3,
+      "theta_name": "3pi_8",
+      "theta_rad": 1.1780972450961724,
+      "twirl_idx": 0
+    },
+    {
+      "arm": "DECOH_4TWIRL",
+      "block": 2,
+      "circuit_name": "b2_dec4_tw2_pi_2_in_0",
+      "cz_count": 28,
+      "decoh_twirl": [
+        0,
+        1,
+        1
+      ],
+      "input_label": "0",
+      "pub_index": 143,
+      "sx_count": 126,
+      "theta_idx": 4,
+      "theta_name": "pi_2",
+      "theta_rad": 1.5707963267948966,
+      "twirl_idx": 2
+    },
+    {
+      "arm": "DECOH_4TWIRL",
+      "block": 2,
+      "circuit_name": "b2_dec4_tw2_pi_2_in_-i",
+      "cz_count": 28,
+      "decoh_twirl": [
+        0,
+        1,
+        1
+      ],
+      "input_label": "-i",
+      "pub_index": 144,
+      "sx_count": 126,
+      "theta_idx": 4,
+      "theta_name": "pi_2",
+      "theta_rad": 1.5707963267948966,
+      "twirl_idx": 2
+    },
+    {
+      "arm": "DECOH_4TWIRL",
+      "block": 2,
+      "circuit_name": "b2_dec4_tw0_pi_2_in_+",
+      "cz_count": 28,
+      "decoh_twirl": [
+        1,
+        1,
+        0
+      ],
+      "input_label": "+",
+      "pub_index": 145,
+      "sx_count": 126,
+      "theta_idx": 4,
+      "theta_name": "pi_2",
+      "theta_rad": 1.5707963267948966,
+      "twirl_idx": 0
+    },
+    {
+      "arm": "DECOH_4TWIRL",
+      "block": 2,
+      "circuit_name": "b2_dec4_tw1_3pi_8_in_-",
+      "cz_count": 28,
+      "decoh_twirl": [
+        1,
+        0,
+        1
+      ],
+      "input_label": "-",
+      "pub_index": 146,
+      "sx_count": 126,
+      "theta_idx": 3,
+      "theta_name": "3pi_8",
+      "theta_rad": 1.1780972450961724,
+      "twirl_idx": 1
+    },
+    {
+      "arm": "DECOH_4TWIRL",
+      "block": 2,
+      "circuit_name": "b2_dec4_tw2_3pi_8_in_0",
+      "cz_count": 28,
+      "decoh_twirl": [
+        0,
+        1,
+        1
+      ],
+      "input_label": "0",
+      "pub_index": 147,
+      "sx_count": 126,
+      "theta_idx": 3,
+      "theta_name": "3pi_8",
+      "theta_rad": 1.1780972450961724,
+      "twirl_idx": 2
+    },
+    {
+      "arm": "DECOH_4TWIRL",
+      "block": 2,
+      "circuit_name": "b2_dec4_tw3_pi_2_in_1",
+      "cz_count": 28,
+      "decoh_twirl": [
+        1,
+        1,
+        1
+      ],
+      "input_label": "1",
+      "pub_index": 148,
+      "sx_count": 126,
+      "theta_idx": 4,
+      "theta_name": "pi_2",
+      "theta_rad": 1.5707963267948966,
+      "twirl_idx": 3
+    },
+    {
+      "arm": "DECOH_4TWIRL",
+      "block": 2,
+      "circuit_name": "b2_dec4_tw1_pi_2_in_+i",
+      "cz_count": 28,
+      "decoh_twirl": [
+        1,
+        0,
+        1
+      ],
+      "input_label": "+i",
+      "pub_index": 149,
+      "sx_count": 126,
+      "theta_idx": 4,
+      "theta_name": "pi_2",
+      "theta_rad": 1.5707963267948966,
+      "twirl_idx": 1
+    },
+    {
+      "arm": "COHERENT",
+      "block": 2,
+      "circuit_name": "b2_coh_pi_2_in_-i",
+      "cz_count": 28,
+      "decoh_twirl": [
+        0,
+        0,
+        0
+      ],
+      "input_label": "-i",
+      "pub_index": 150,
+      "sx_count": 126,
+      "theta_idx": 4,
+      "theta_name": "pi_2",
+      "theta_rad": 1.5707963267948966
+    },
+    {
+      "arm": "DECOH_4TWIRL",
+      "block": 2,
+      "circuit_name": "b2_dec4_tw3_3pi_8_in_+i",
+      "cz_count": 28,
+      "decoh_twirl": [
+        1,
+        1,
+        1
+      ],
+      "input_label": "+i",
+      "pub_index": 151,
+      "sx_count": 126,
+      "theta_idx": 3,
+      "theta_name": "3pi_8",
+      "theta_rad": 1.1780972450961724,
+      "twirl_idx": 3
+    },
+    {
+      "arm": "AA_SENTINEL",
+      "block": 2,
+      "circuit_name": "b2_aa_sent_0",
+      "cz_count": 28,
+      "input_label": "+",
+      "pub_index": 152,
+      "sentinel_rep": 0,
+      "sx_count": 126,
+      "theta_name": "pi_2"
+    },
+    {
+      "arm": "COHERENT",
+      "block": 2,
+      "circuit_name": "b2_coh_3pi_8_in_+i",
+      "cz_count": 28,
+      "decoh_twirl": [
+        0,
+        0,
+        0
+      ],
+      "input_label": "+i",
+      "pub_index": 153,
+      "sx_count": 126,
+      "theta_idx": 3,
+      "theta_name": "3pi_8",
+      "theta_rad": 1.1780972450961724
+    },
+    {
+      "arm": "DECOH_4TWIRL",
+      "block": 2,
+      "circuit_name": "b2_dec4_tw3_pi_2_in_+i",
+      "cz_count": 28,
+      "decoh_twirl": [
+        1,
+        1,
+        1
+      ],
+      "input_label": "+i",
+      "pub_index": 154,
+      "sx_count": 126,
+      "theta_idx": 4,
+      "theta_name": "pi_2",
+      "theta_rad": 1.5707963267948966,
+      "twirl_idx": 3
+    },
+    {
+      "arm": "DECOH_4TWIRL",
+      "block": 2,
+      "circuit_name": "b2_dec4_tw1_3pi_8_in_0",
+      "cz_count": 28,
+      "decoh_twirl": [
+        1,
+        0,
+        1
+      ],
+      "input_label": "0",
+      "pub_index": 155,
+      "sx_count": 126,
+      "theta_idx": 3,
+      "theta_name": "3pi_8",
+      "theta_rad": 1.1780972450961724,
+      "twirl_idx": 1
+    },
+    {
+      "arm": "DECOH_4TWIRL",
+      "block": 2,
+      "circuit_name": "b2_dec4_tw3_3pi_8_in_1",
+      "cz_count": 28,
+      "decoh_twirl": [
+        1,
+        1,
+        1
+      ],
+      "input_label": "1",
+      "pub_index": 156,
+      "sx_count": 126,
+      "theta_idx": 3,
+      "theta_name": "3pi_8",
+      "theta_rad": 1.1780972450961724,
+      "twirl_idx": 3
+    },
+    {
+      "arm": "DECOH_4TWIRL",
+      "block": 2,
+      "circuit_name": "b2_dec4_tw0_pi_2_in_-i",
+      "cz_count": 28,
+      "decoh_twirl": [
+        1,
+        1,
+        0
+      ],
+      "input_label": "-i",
+      "pub_index": 157,
+      "sx_count": 126,
+      "theta_idx": 4,
+      "theta_name": "pi_2",
+      "theta_rad": 1.5707963267948966,
+      "twirl_idx": 0
+    },
+    {
+      "arm": "COHERENT",
+      "block": 2,
+      "circuit_name": "b2_coh_pi_2_in_-",
+      "cz_count": 28,
+      "decoh_twirl": [
+        0,
+        0,
+        0
+      ],
+      "input_label": "-",
+      "pub_index": 158,
+      "sx_count": 126,
+      "theta_idx": 4,
+      "theta_name": "pi_2",
+      "theta_rad": 1.5707963267948966
+    },
+    {
+      "arm": "DECOH_4TWIRL",
+      "block": 2,
+      "circuit_name": "b2_dec4_tw1_3pi_8_in_+",
+      "cz_count": 28,
+      "decoh_twirl": [
+        1,
+        0,
+        1
+      ],
+      "input_label": "+",
+      "pub_index": 159,
+      "sx_count": 126,
+      "theta_idx": 3,
+      "theta_name": "3pi_8",
+      "theta_rad": 1.1780972450961724,
+      "twirl_idx": 1
+    },
+    {
+      "arm": "COHERENT",
+      "block": 2,
+      "circuit_name": "b2_coh_3pi_8_in_-",
+      "cz_count": 28,
+      "decoh_twirl": [
+        0,
+        0,
+        0
+      ],
+      "input_label": "-",
+      "pub_index": 160,
+      "sx_count": 126,
+      "theta_idx": 3,
+      "theta_name": "3pi_8",
+      "theta_rad": 1.1780972450961724
+    },
+    {
+      "arm": "DECOH_4TWIRL",
+      "block": 2,
+      "circuit_name": "b2_dec4_tw3_3pi_8_in_-",
+      "cz_count": 28,
+      "decoh_twirl": [
+        1,
+        1,
+        1
+      ],
+      "input_label": "-",
+      "pub_index": 161,
+      "sx_count": 126,
+      "theta_idx": 3,
+      "theta_name": "3pi_8",
+      "theta_rad": 1.1780972450961724,
+      "twirl_idx": 3
+    },
+    {
+      "arm": "DECOH_4TWIRL",
+      "block": 2,
+      "circuit_name": "b2_dec4_tw2_pi_2_in_1",
+      "cz_count": 28,
+      "decoh_twirl": [
+        0,
+        1,
+        1
+      ],
+      "input_label": "1",
+      "pub_index": 162,
+      "sx_count": 126,
+      "theta_idx": 4,
+      "theta_name": "pi_2",
+      "theta_rad": 1.5707963267948966,
+      "twirl_idx": 2
+    },
+    {
+      "arm": "DECOH_4TWIRL",
+      "block": 2,
+      "circuit_name": "b2_dec4_tw1_pi_2_in_1",
+      "cz_count": 28,
+      "decoh_twirl": [
+        1,
+        0,
+        1
+      ],
+      "input_label": "1",
+      "pub_index": 163,
+      "sx_count": 126,
+      "theta_idx": 4,
+      "theta_name": "pi_2",
+      "theta_rad": 1.5707963267948966,
+      "twirl_idx": 1
+    },
+    {
+      "arm": "DECOH_4TWIRL",
+      "block": 2,
+      "circuit_name": "b2_dec4_tw2_3pi_8_in_1",
+      "cz_count": 28,
+      "decoh_twirl": [
+        0,
+        1,
+        1
+      ],
+      "input_label": "1",
+      "pub_index": 164,
+      "sx_count": 126,
+      "theta_idx": 3,
+      "theta_name": "3pi_8",
+      "theta_rad": 1.1780972450961724,
+      "twirl_idx": 2
+    },
+    {
+      "arm": "COHERENT",
+      "block": 2,
+      "circuit_name": "b2_coh_pi_2_in_+",
+      "cz_count": 28,
+      "decoh_twirl": [
+        0,
+        0,
+        0
+      ],
+      "input_label": "+",
+      "pub_index": 165,
+      "sx_count": 126,
+      "theta_idx": 4,
+      "theta_name": "pi_2",
+      "theta_rad": 1.5707963267948966
+    },
+    {
+      "arm": "COHERENT",
+      "block": 2,
+      "circuit_name": "b2_coh_3pi_8_in_1",
+      "cz_count": 28,
+      "decoh_twirl": [
+        0,
+        0,
+        0
+      ],
+      "input_label": "1",
+      "pub_index": 166,
+      "sx_count": 126,
+      "theta_idx": 3,
+      "theta_name": "3pi_8",
+      "theta_rad": 1.1780972450961724
+    },
+    {
+      "arm": "DECOH_4TWIRL",
+      "block": 2,
+      "circuit_name": "b2_dec4_tw0_3pi_8_in_-i",
+      "cz_count": 28,
+      "decoh_twirl": [
+        1,
+        1,
+        0
+      ],
+      "input_label": "-i",
+      "pub_index": 167,
+      "sx_count": 126,
+      "theta_idx": 3,
+      "theta_name": "3pi_8",
+      "theta_rad": 1.1780972450961724,
+      "twirl_idx": 0
+    },
+    {
+      "arm": "COHERENT",
+      "block": 2,
+      "circuit_name": "b2_coh_3pi_8_in_0",
+      "cz_count": 28,
+      "decoh_twirl": [
+        0,
+        0,
+        0
+      ],
+      "input_label": "0",
+      "pub_index": 168,
+      "sx_count": 126,
+      "theta_idx": 3,
+      "theta_name": "3pi_8",
+      "theta_rad": 1.1780972450961724
+    },
+    {
+      "arm": "DECOH_4TWIRL",
+      "block": 2,
+      "circuit_name": "b2_dec4_tw1_pi_2_in_+",
+      "cz_count": 28,
+      "decoh_twirl": [
+        1,
+        0,
+        1
+      ],
+      "input_label": "+",
+      "pub_index": 169,
+      "sx_count": 126,
+      "theta_idx": 4,
+      "theta_name": "pi_2",
+      "theta_rad": 1.5707963267948966,
+      "twirl_idx": 1
+    },
+    {
+      "arm": "DECOH_4TWIRL",
+      "block": 2,
+      "circuit_name": "b2_dec4_tw3_3pi_8_in_0",
+      "cz_count": 28,
+      "decoh_twirl": [
+        1,
+        1,
+        1
+      ],
+      "input_label": "0",
+      "pub_index": 170,
+      "sx_count": 126,
+      "theta_idx": 3,
+      "theta_name": "3pi_8",
+      "theta_rad": 1.1780972450961724,
+      "twirl_idx": 3
+    },
+    {
+      "arm": "COHERENT",
+      "block": 2,
+      "circuit_name": "b2_coh_3pi_8_in_-i",
+      "cz_count": 28,
+      "decoh_twirl": [
+        0,
+        0,
+        0
+      ],
+      "input_label": "-i",
+      "pub_index": 171,
+      "sx_count": 126,
+      "theta_idx": 3,
+      "theta_name": "3pi_8",
+      "theta_rad": 1.1780972450961724
+    },
+    {
+      "arm": "DECOH_4TWIRL",
+      "block": 2,
+      "circuit_name": "b2_dec4_tw2_3pi_8_in_-i",
+      "cz_count": 28,
+      "decoh_twirl": [
+        0,
+        1,
+        1
+      ],
+      "input_label": "-i",
+      "pub_index": 172,
+      "sx_count": 126,
+      "theta_idx": 3,
+      "theta_name": "3pi_8",
+      "theta_rad": 1.1780972450961724,
+      "twirl_idx": 2
+    },
+    {
+      "arm": "DECOH_4TWIRL",
+      "block": 2,
+      "circuit_name": "b2_dec4_tw0_pi_2_in_+i",
+      "cz_count": 28,
+      "decoh_twirl": [
+        1,
+        1,
+        0
+      ],
+      "input_label": "+i",
+      "pub_index": 173,
+      "sx_count": 126,
+      "theta_idx": 4,
+      "theta_name": "pi_2",
+      "theta_rad": 1.5707963267948966,
+      "twirl_idx": 0
+    },
+    {
+      "arm": "DECOH_4TWIRL",
+      "block": 2,
+      "circuit_name": "b2_dec4_tw3_pi_2_in_-i",
+      "cz_count": 28,
+      "decoh_twirl": [
+        1,
+        1,
+        1
+      ],
+      "input_label": "-i",
+      "pub_index": 174,
+      "sx_count": 126,
+      "theta_idx": 4,
+      "theta_name": "pi_2",
+      "theta_rad": 1.5707963267948966,
+      "twirl_idx": 3
+    },
+    {
+      "arm": "DECOH_4TWIRL",
+      "block": 2,
+      "circuit_name": "b2_dec4_tw1_3pi_8_in_-i",
+      "cz_count": 28,
+      "decoh_twirl": [
+        1,
+        0,
+        1
+      ],
+      "input_label": "-i",
+      "pub_index": 175,
+      "sx_count": 126,
+      "theta_idx": 3,
+      "theta_name": "3pi_8",
+      "theta_rad": 1.1780972450961724,
+      "twirl_idx": 1
+    },
+    {
+      "arm": "DECOH_4TWIRL",
+      "block": 2,
+      "circuit_name": "b2_dec4_tw1_3pi_8_in_1",
+      "cz_count": 28,
+      "decoh_twirl": [
+        1,
+        0,
+        1
+      ],
+      "input_label": "1",
+      "pub_index": 176,
+      "sx_count": 126,
+      "theta_idx": 3,
+      "theta_name": "3pi_8",
+      "theta_rad": 1.1780972450961724,
+      "twirl_idx": 1
+    },
+    {
+      "arm": "DECOH_4TWIRL",
+      "block": 2,
+      "circuit_name": "b2_dec4_tw0_pi_2_in_1",
+      "cz_count": 28,
+      "decoh_twirl": [
+        1,
+        1,
+        0
+      ],
+      "input_label": "1",
+      "pub_index": 177,
+      "sx_count": 126,
+      "theta_idx": 4,
+      "theta_name": "pi_2",
+      "theta_rad": 1.5707963267948966,
+      "twirl_idx": 0
+    },
+    {
+      "arm": "DECOH_4TWIRL",
+      "block": 2,
+      "circuit_name": "b2_dec4_tw2_pi_2_in_+i",
+      "cz_count": 28,
+      "decoh_twirl": [
+        0,
+        1,
+        1
+      ],
+      "input_label": "+i",
+      "pub_index": 178,
+      "sx_count": 126,
+      "theta_idx": 4,
+      "theta_name": "pi_2",
+      "theta_rad": 1.5707963267948966,
+      "twirl_idx": 2
+    },
+    {
+      "arm": "DECOH_4TWIRL",
+      "block": 2,
+      "circuit_name": "b2_dec4_tw3_3pi_8_in_+",
+      "cz_count": 28,
+      "decoh_twirl": [
+        1,
+        1,
+        1
+      ],
+      "input_label": "+",
+      "pub_index": 179,
+      "sx_count": 126,
+      "theta_idx": 3,
+      "theta_name": "3pi_8",
+      "theta_rad": 1.1780972450961724,
+      "twirl_idx": 3
+    },
+    {
+      "arm": "COHERENT",
+      "block": 2,
+      "circuit_name": "b2_coh_pi_2_in_0",
+      "cz_count": 28,
+      "decoh_twirl": [
+        0,
+        0,
+        0
+      ],
+      "input_label": "0",
+      "pub_index": 180,
+      "sx_count": 126,
+      "theta_idx": 4,
+      "theta_name": "pi_2",
+      "theta_rad": 1.5707963267948966
+    },
+    {
+      "arm": "DECOH_4TWIRL",
+      "block": 2,
+      "circuit_name": "b2_dec4_tw2_3pi_8_in_-",
+      "cz_count": 28,
+      "decoh_twirl": [
+        0,
+        1,
+        1
+      ],
+      "input_label": "-",
+      "pub_index": 181,
+      "sx_count": 126,
+      "theta_idx": 3,
+      "theta_name": "3pi_8",
+      "theta_rad": 1.1780972450961724,
+      "twirl_idx": 2
+    },
+    {
+      "arm": "DECOH_4TWIRL",
+      "block": 2,
+      "circuit_name": "b2_dec4_tw3_pi_2_in_-",
+      "cz_count": 28,
+      "decoh_twirl": [
+        1,
+        1,
+        1
+      ],
+      "input_label": "-",
+      "pub_index": 182,
+      "sx_count": 126,
+      "theta_idx": 4,
+      "theta_name": "pi_2",
+      "theta_rad": 1.5707963267948966,
+      "twirl_idx": 3
+    },
+    {
+      "arm": "DECOH_4TWIRL",
+      "block": 2,
+      "circuit_name": "b2_dec4_tw1_pi_2_in_0",
+      "cz_count": 28,
+      "decoh_twirl": [
+        1,
+        0,
+        1
+      ],
+      "input_label": "0",
+      "pub_index": 183,
+      "sx_count": 126,
+      "theta_idx": 4,
+      "theta_name": "pi_2",
+      "theta_rad": 1.5707963267948966,
+      "twirl_idx": 1
+    },
+    {
+      "arm": "COHERENT",
+      "block": 2,
+      "circuit_name": "b2_coh_3pi_8_in_+",
+      "cz_count": 28,
+      "decoh_twirl": [
+        0,
+        0,
+        0
+      ],
+      "input_label": "+",
+      "pub_index": 184,
+      "sx_count": 126,
+      "theta_idx": 3,
+      "theta_name": "3pi_8",
+      "theta_rad": 1.1780972450961724
+    },
+    {
+      "arm": "COHERENT",
+      "block": 2,
+      "circuit_name": "b2_coh_pi_2_in_+i",
+      "cz_count": 28,
+      "decoh_twirl": [
+        0,
+        0,
+        0
+      ],
+      "input_label": "+i",
+      "pub_index": 185,
+      "sx_count": 126,
+      "theta_idx": 4,
+      "theta_name": "pi_2",
+      "theta_rad": 1.5707963267948966
+    },
+    {
+      "arm": "DECOH_4TWIRL",
+      "block": 2,
+      "circuit_name": "b2_dec4_tw3_3pi_8_in_-i",
+      "cz_count": 28,
+      "decoh_twirl": [
+        1,
+        1,
+        1
+      ],
+      "input_label": "-i",
+      "pub_index": 186,
+      "sx_count": 126,
+      "theta_idx": 3,
+      "theta_name": "3pi_8",
+      "theta_rad": 1.1780972450961724,
+      "twirl_idx": 3
+    },
+    {
+      "arm": "DECOH_4TWIRL",
+      "block": 2,
+      "circuit_name": "b2_dec4_tw0_3pi_8_in_1",
+      "cz_count": 28,
+      "decoh_twirl": [
+        1,
+        1,
+        0
+      ],
+      "input_label": "1",
+      "pub_index": 187,
+      "sx_count": 126,
+      "theta_idx": 3,
+      "theta_name": "3pi_8",
+      "theta_rad": 1.1780972450961724,
+      "twirl_idx": 0
+    },
+    {
+      "arm": "DECOH_4TWIRL",
+      "block": 2,
+      "circuit_name": "b2_dec4_tw0_3pi_8_in_+",
+      "cz_count": 28,
+      "decoh_twirl": [
+        1,
+        1,
+        0
+      ],
+      "input_label": "+",
+      "pub_index": 188,
+      "sx_count": 126,
+      "theta_idx": 3,
+      "theta_name": "3pi_8",
+      "theta_rad": 1.1780972450961724,
+      "twirl_idx": 0
+    },
+    {
+      "arm": "DECOH_4TWIRL",
+      "block": 2,
+      "circuit_name": "b2_dec4_tw2_3pi_8_in_+",
+      "cz_count": 28,
+      "decoh_twirl": [
+        0,
+        1,
+        1
+      ],
+      "input_label": "+",
+      "pub_index": 189,
+      "sx_count": 126,
+      "theta_idx": 3,
+      "theta_name": "3pi_8",
+      "theta_rad": 1.1780972450961724,
+      "twirl_idx": 2
+    },
+    {
+      "arm": "DECOH_4TWIRL",
+      "block": 2,
+      "circuit_name": "b2_dec4_tw3_pi_2_in_0",
+      "cz_count": 28,
+      "decoh_twirl": [
+        1,
+        1,
+        1
+      ],
+      "input_label": "0",
+      "pub_index": 190,
+      "sx_count": 126,
+      "theta_idx": 4,
+      "theta_name": "pi_2",
+      "theta_rad": 1.5707963267948966,
+      "twirl_idx": 3
+    },
+    {
+      "arm": "DECOH_4TWIRL",
+      "block": 2,
+      "circuit_name": "b2_dec4_tw0_pi_2_in_-",
+      "cz_count": 28,
+      "decoh_twirl": [
+        1,
+        1,
+        0
+      ],
+      "input_label": "-",
+      "pub_index": 191,
+      "sx_count": 126,
+      "theta_idx": 4,
+      "theta_name": "pi_2",
+      "theta_rad": 1.5707963267948966,
+      "twirl_idx": 0
+    },
+    {
+      "arm": "DECOH_4TWIRL",
+      "block": 3,
+      "circuit_name": "b3_dec4_tw2_pi_2_in_0",
+      "cz_count": 28,
+      "decoh_twirl": [
+        0,
+        1,
+        1
+      ],
+      "input_label": "0",
+      "pub_index": 192,
+      "sx_count": 126,
+      "theta_idx": 4,
+      "theta_name": "pi_2",
+      "theta_rad": 1.5707963267948966,
+      "twirl_idx": 2
+    },
+    {
+      "arm": "COHERENT",
+      "block": 3,
+      "circuit_name": "b3_coh_pi_2_in_0",
+      "cz_count": 28,
+      "decoh_twirl": [
+        0,
+        0,
+        0
+      ],
+      "input_label": "0",
+      "pub_index": 193,
+      "sx_count": 126,
+      "theta_idx": 4,
+      "theta_name": "pi_2",
+      "theta_rad": 1.5707963267948966
+    },
+    {
+      "arm": "DECOH_4TWIRL",
+      "block": 3,
+      "circuit_name": "b3_dec4_tw2_3pi_8_in_0",
+      "cz_count": 28,
+      "decoh_twirl": [
+        0,
+        1,
+        1
+      ],
+      "input_label": "0",
+      "pub_index": 194,
+      "sx_count": 126,
+      "theta_idx": 3,
+      "theta_name": "3pi_8",
+      "theta_rad": 1.1780972450961724,
+      "twirl_idx": 2
+    },
+    {
+      "arm": "COHERENT",
+      "block": 3,
+      "circuit_name": "b3_coh_pi_2_in_1",
+      "cz_count": 28,
+      "decoh_twirl": [
+        0,
+        0,
+        0
+      ],
+      "input_label": "1",
+      "pub_index": 195,
+      "sx_count": 126,
+      "theta_idx": 4,
+      "theta_name": "pi_2",
+      "theta_rad": 1.5707963267948966
+    },
+    {
+      "arm": "DECOH_4TWIRL",
+      "block": 3,
+      "circuit_name": "b3_dec4_tw1_pi_2_in_+i",
+      "cz_count": 28,
+      "decoh_twirl": [
+        1,
+        0,
+        1
+      ],
+      "input_label": "+i",
+      "pub_index": 196,
+      "sx_count": 126,
+      "theta_idx": 4,
+      "theta_name": "pi_2",
+      "theta_rad": 1.5707963267948966,
+      "twirl_idx": 1
+    },
+    {
+      "arm": "DECOH_4TWIRL",
+      "block": 3,
+      "circuit_name": "b3_dec4_tw3_3pi_8_in_-i",
+      "cz_count": 28,
+      "decoh_twirl": [
+        1,
+        1,
+        1
+      ],
+      "input_label": "-i",
+      "pub_index": 197,
+      "sx_count": 126,
+      "theta_idx": 3,
+      "theta_name": "3pi_8",
+      "theta_rad": 1.1780972450961724,
+      "twirl_idx": 3
+    },
+    {
+      "arm": "DECOH_4TWIRL",
+      "block": 3,
+      "circuit_name": "b3_dec4_tw2_3pi_8_in_+",
+      "cz_count": 28,
+      "decoh_twirl": [
+        0,
+        1,
+        1
+      ],
+      "input_label": "+",
+      "pub_index": 198,
+      "sx_count": 126,
+      "theta_idx": 3,
+      "theta_name": "3pi_8",
+      "theta_rad": 1.1780972450961724,
+      "twirl_idx": 2
+    },
+    {
+      "arm": "COHERENT",
+      "block": 3,
+      "circuit_name": "b3_coh_3pi_8_in_+i",
+      "cz_count": 28,
+      "decoh_twirl": [
+        0,
+        0,
+        0
+      ],
+      "input_label": "+i",
+      "pub_index": 199,
+      "sx_count": 126,
+      "theta_idx": 3,
+      "theta_name": "3pi_8",
+      "theta_rad": 1.1780972450961724
+    },
+    {
+      "arm": "DECOH_4TWIRL",
+      "block": 3,
+      "circuit_name": "b3_dec4_tw3_3pi_8_in_1",
+      "cz_count": 28,
+      "decoh_twirl": [
+        1,
+        1,
+        1
+      ],
+      "input_label": "1",
+      "pub_index": 200,
+      "sx_count": 126,
+      "theta_idx": 3,
+      "theta_name": "3pi_8",
+      "theta_rad": 1.1780972450961724,
+      "twirl_idx": 3
+    },
+    {
+      "arm": "DECOH_4TWIRL",
+      "block": 3,
+      "circuit_name": "b3_dec4_tw1_pi_2_in_1",
+      "cz_count": 28,
+      "decoh_twirl": [
+        1,
+        0,
+        1
+      ],
+      "input_label": "1",
+      "pub_index": 201,
+      "sx_count": 126,
+      "theta_idx": 4,
+      "theta_name": "pi_2",
+      "theta_rad": 1.5707963267948966,
+      "twirl_idx": 1
+    },
+    {
+      "arm": "DECOH_4TWIRL",
+      "block": 3,
+      "circuit_name": "b3_dec4_tw1_pi_2_in_-i",
+      "cz_count": 28,
+      "decoh_twirl": [
+        1,
+        0,
+        1
+      ],
+      "input_label": "-i",
+      "pub_index": 202,
+      "sx_count": 126,
+      "theta_idx": 4,
+      "theta_name": "pi_2",
+      "theta_rad": 1.5707963267948966,
+      "twirl_idx": 1
+    },
+    {
+      "arm": "DECOH_4TWIRL",
+      "block": 3,
+      "circuit_name": "b3_dec4_tw0_3pi_8_in_1",
+      "cz_count": 28,
+      "decoh_twirl": [
+        1,
+        1,
+        0
+      ],
+      "input_label": "1",
+      "pub_index": 203,
+      "sx_count": 126,
+      "theta_idx": 3,
+      "theta_name": "3pi_8",
+      "theta_rad": 1.1780972450961724,
+      "twirl_idx": 0
+    },
+    {
+      "arm": "DECOH_4TWIRL",
+      "block": 3,
+      "circuit_name": "b3_dec4_tw0_pi_2_in_-",
+      "cz_count": 28,
+      "decoh_twirl": [
+        1,
+        1,
+        0
+      ],
+      "input_label": "-",
+      "pub_index": 204,
+      "sx_count": 126,
+      "theta_idx": 4,
+      "theta_name": "pi_2",
+      "theta_rad": 1.5707963267948966,
+      "twirl_idx": 0
+    },
+    {
+      "arm": "COHERENT",
+      "block": 3,
+      "circuit_name": "b3_coh_pi_2_in_+",
+      "cz_count": 28,
+      "decoh_twirl": [
+        0,
+        0,
+        0
+      ],
+      "input_label": "+",
+      "pub_index": 205,
+      "sx_count": 126,
+      "theta_idx": 4,
+      "theta_name": "pi_2",
+      "theta_rad": 1.5707963267948966
+    },
+    {
+      "arm": "DECOH_4TWIRL",
+      "block": 3,
+      "circuit_name": "b3_dec4_tw2_3pi_8_in_-",
+      "cz_count": 28,
+      "decoh_twirl": [
+        0,
+        1,
+        1
+      ],
+      "input_label": "-",
+      "pub_index": 206,
+      "sx_count": 126,
+      "theta_idx": 3,
+      "theta_name": "3pi_8",
+      "theta_rad": 1.1780972450961724,
+      "twirl_idx": 2
+    },
+    {
+      "arm": "DECOH_4TWIRL",
+      "block": 3,
+      "circuit_name": "b3_dec4_tw3_pi_2_in_-i",
+      "cz_count": 28,
+      "decoh_twirl": [
+        1,
+        1,
+        1
+      ],
+      "input_label": "-i",
+      "pub_index": 207,
+      "sx_count": 126,
+      "theta_idx": 4,
+      "theta_name": "pi_2",
+      "theta_rad": 1.5707963267948966,
+      "twirl_idx": 3
+    },
+    {
+      "arm": "DECOH_4TWIRL",
+      "block": 3,
+      "circuit_name": "b3_dec4_tw3_pi_2_in_+",
+      "cz_count": 28,
+      "decoh_twirl": [
+        1,
+        1,
+        1
+      ],
+      "input_label": "+",
+      "pub_index": 208,
+      "sx_count": 126,
+      "theta_idx": 4,
+      "theta_name": "pi_2",
+      "theta_rad": 1.5707963267948966,
+      "twirl_idx": 3
+    },
+    {
+      "arm": "DECOH_4TWIRL",
+      "block": 3,
+      "circuit_name": "b3_dec4_tw0_pi_2_in_-i",
+      "cz_count": 28,
+      "decoh_twirl": [
+        1,
+        1,
+        0
+      ],
+      "input_label": "-i",
+      "pub_index": 209,
+      "sx_count": 126,
+      "theta_idx": 4,
+      "theta_name": "pi_2",
+      "theta_rad": 1.5707963267948966,
+      "twirl_idx": 0
+    },
+    {
+      "arm": "DECOH_4TWIRL",
+      "block": 3,
+      "circuit_name": "b3_dec4_tw0_pi_2_in_+",
+      "cz_count": 28,
+      "decoh_twirl": [
+        1,
+        1,
+        0
+      ],
+      "input_label": "+",
+      "pub_index": 210,
+      "sx_count": 126,
+      "theta_idx": 4,
+      "theta_name": "pi_2",
+      "theta_rad": 1.5707963267948966,
+      "twirl_idx": 0
+    },
+    {
+      "arm": "DECOH_4TWIRL",
+      "block": 3,
+      "circuit_name": "b3_dec4_tw1_3pi_8_in_+",
+      "cz_count": 28,
+      "decoh_twirl": [
+        1,
+        0,
+        1
+      ],
+      "input_label": "+",
+      "pub_index": 211,
+      "sx_count": 126,
+      "theta_idx": 3,
+      "theta_name": "3pi_8",
+      "theta_rad": 1.1780972450961724,
+      "twirl_idx": 1
+    },
+    {
+      "arm": "DECOH_4TWIRL",
+      "block": 3,
+      "circuit_name": "b3_dec4_tw0_3pi_8_in_+",
+      "cz_count": 28,
+      "decoh_twirl": [
+        1,
+        1,
+        0
+      ],
+      "input_label": "+",
+      "pub_index": 212,
+      "sx_count": 126,
+      "theta_idx": 3,
+      "theta_name": "3pi_8",
+      "theta_rad": 1.1780972450961724,
+      "twirl_idx": 0
+    },
+    {
+      "arm": "RO_SENTINEL",
+      "block": 3,
+      "circuit_name": "b3_ro_000",
+      "cz_count": 0,
+      "prep_bits_c2c1c0": "000",
+      "pub_index": 213,
+      "sx_count": 6
+    },
+    {
+      "arm": "DECOH_4TWIRL",
+      "block": 3,
+      "circuit_name": "b3_dec4_tw3_pi_2_in_0",
+      "cz_count": 28,
+      "decoh_twirl": [
+        1,
+        1,
+        1
+      ],
+      "input_label": "0",
+      "pub_index": 214,
+      "sx_count": 126,
+      "theta_idx": 4,
+      "theta_name": "pi_2",
+      "theta_rad": 1.5707963267948966,
+      "twirl_idx": 3
+    },
+    {
+      "arm": "DECOH_4TWIRL",
+      "block": 3,
+      "circuit_name": "b3_dec4_tw2_pi_2_in_-",
+      "cz_count": 28,
+      "decoh_twirl": [
+        0,
+        1,
+        1
+      ],
+      "input_label": "-",
+      "pub_index": 215,
+      "sx_count": 126,
+      "theta_idx": 4,
+      "theta_name": "pi_2",
+      "theta_rad": 1.5707963267948966,
+      "twirl_idx": 2
+    },
+    {
+      "arm": "DECOH_4TWIRL",
+      "block": 3,
+      "circuit_name": "b3_dec4_tw2_3pi_8_in_1",
+      "cz_count": 28,
+      "decoh_twirl": [
+        0,
+        1,
+        1
+      ],
+      "input_label": "1",
+      "pub_index": 216,
+      "sx_count": 126,
+      "theta_idx": 3,
+      "theta_name": "3pi_8",
+      "theta_rad": 1.1780972450961724,
+      "twirl_idx": 2
+    },
+    {
+      "arm": "COHERENT",
+      "block": 3,
+      "circuit_name": "b3_coh_3pi_8_in_1",
+      "cz_count": 28,
+      "decoh_twirl": [
+        0,
+        0,
+        0
+      ],
+      "input_label": "1",
+      "pub_index": 217,
+      "sx_count": 126,
+      "theta_idx": 3,
+      "theta_name": "3pi_8",
+      "theta_rad": 1.1780972450961724
+    },
+    {
+      "arm": "DECOH_4TWIRL",
+      "block": 3,
+      "circuit_name": "b3_dec4_tw3_3pi_8_in_-",
+      "cz_count": 28,
+      "decoh_twirl": [
+        1,
+        1,
+        1
+      ],
+      "input_label": "-",
+      "pub_index": 218,
+      "sx_count": 126,
+      "theta_idx": 3,
+      "theta_name": "3pi_8",
+      "theta_rad": 1.1780972450961724,
+      "twirl_idx": 3
+    },
+    {
+      "arm": "DECOH_4TWIRL",
+      "block": 3,
+      "circuit_name": "b3_dec4_tw1_3pi_8_in_-i",
+      "cz_count": 28,
+      "decoh_twirl": [
+        1,
+        0,
+        1
+      ],
+      "input_label": "-i",
+      "pub_index": 219,
+      "sx_count": 126,
+      "theta_idx": 3,
+      "theta_name": "3pi_8",
+      "theta_rad": 1.1780972450961724,
+      "twirl_idx": 1
+    },
+    {
+      "arm": "COHERENT",
+      "block": 3,
+      "circuit_name": "b3_coh_pi_2_in_-i",
+      "cz_count": 28,
+      "decoh_twirl": [
+        0,
+        0,
+        0
+      ],
+      "input_label": "-i",
+      "pub_index": 220,
+      "sx_count": 126,
+      "theta_idx": 4,
+      "theta_name": "pi_2",
+      "theta_rad": 1.5707963267948966
+    },
+    {
+      "arm": "DECOH_4TWIRL",
+      "block": 3,
+      "circuit_name": "b3_dec4_tw1_3pi_8_in_+i",
+      "cz_count": 28,
+      "decoh_twirl": [
+        1,
+        0,
+        1
+      ],
+      "input_label": "+i",
+      "pub_index": 221,
+      "sx_count": 126,
+      "theta_idx": 3,
+      "theta_name": "3pi_8",
+      "theta_rad": 1.1780972450961724,
+      "twirl_idx": 1
+    },
+    {
+      "arm": "DECOH_4TWIRL",
+      "block": 3,
+      "circuit_name": "b3_dec4_tw1_pi_2_in_-",
+      "cz_count": 28,
+      "decoh_twirl": [
+        1,
+        0,
+        1
+      ],
+      "input_label": "-",
+      "pub_index": 222,
+      "sx_count": 126,
+      "theta_idx": 4,
+      "theta_name": "pi_2",
+      "theta_rad": 1.5707963267948966,
+      "twirl_idx": 1
+    },
+    {
+      "arm": "DECOH_4TWIRL",
+      "block": 3,
+      "circuit_name": "b3_dec4_tw2_3pi_8_in_+i",
+      "cz_count": 28,
+      "decoh_twirl": [
+        0,
+        1,
+        1
+      ],
+      "input_label": "+i",
+      "pub_index": 223,
+      "sx_count": 126,
+      "theta_idx": 3,
+      "theta_name": "3pi_8",
+      "theta_rad": 1.1780972450961724,
+      "twirl_idx": 2
+    },
+    {
+      "arm": "DECOH_4TWIRL",
+      "block": 3,
+      "circuit_name": "b3_dec4_tw3_3pi_8_in_0",
+      "cz_count": 28,
+      "decoh_twirl": [
+        1,
+        1,
+        1
+      ],
+      "input_label": "0",
+      "pub_index": 224,
+      "sx_count": 126,
+      "theta_idx": 3,
+      "theta_name": "3pi_8",
+      "theta_rad": 1.1780972450961724,
+      "twirl_idx": 3
+    },
+    {
+      "arm": "DECOH_4TWIRL",
+      "block": 3,
+      "circuit_name": "b3_dec4_tw2_pi_2_in_+i",
+      "cz_count": 28,
+      "decoh_twirl": [
+        0,
+        1,
+        1
+      ],
+      "input_label": "+i",
+      "pub_index": 225,
+      "sx_count": 126,
+      "theta_idx": 4,
+      "theta_name": "pi_2",
+      "theta_rad": 1.5707963267948966,
+      "twirl_idx": 2
+    },
+    {
+      "arm": "COHERENT",
+      "block": 3,
+      "circuit_name": "b3_coh_3pi_8_in_-i",
+      "cz_count": 28,
+      "decoh_twirl": [
+        0,
+        0,
+        0
+      ],
+      "input_label": "-i",
+      "pub_index": 226,
+      "sx_count": 126,
+      "theta_idx": 3,
+      "theta_name": "3pi_8",
+      "theta_rad": 1.1780972450961724
+    },
+    {
+      "arm": "COHERENT",
+      "block": 3,
+      "circuit_name": "b3_coh_pi_2_in_-",
+      "cz_count": 28,
+      "decoh_twirl": [
+        0,
+        0,
+        0
+      ],
+      "input_label": "-",
+      "pub_index": 227,
+      "sx_count": 126,
+      "theta_idx": 4,
+      "theta_name": "pi_2",
+      "theta_rad": 1.5707963267948966
+    },
+    {
+      "arm": "DECOH_4TWIRL",
+      "block": 3,
+      "circuit_name": "b3_dec4_tw0_pi_2_in_1",
+      "cz_count": 28,
+      "decoh_twirl": [
+        1,
+        1,
+        0
+      ],
+      "input_label": "1",
+      "pub_index": 228,
+      "sx_count": 126,
+      "theta_idx": 4,
+      "theta_name": "pi_2",
+      "theta_rad": 1.5707963267948966,
+      "twirl_idx": 0
+    },
+    {
+      "arm": "RO_SENTINEL",
+      "block": 3,
+      "circuit_name": "b3_ro_111",
+      "cz_count": 0,
+      "prep_bits_c2c1c0": "111",
+      "pub_index": 229,
+      "sx_count": 6
+    },
+    {
+      "arm": "DECOH_4TWIRL",
+      "block": 3,
+      "circuit_name": "b3_dec4_tw3_3pi_8_in_+",
+      "cz_count": 28,
+      "decoh_twirl": [
+        1,
+        1,
+        1
+      ],
+      "input_label": "+",
+      "pub_index": 230,
+      "sx_count": 126,
+      "theta_idx": 3,
+      "theta_name": "3pi_8",
+      "theta_rad": 1.1780972450961724,
+      "twirl_idx": 3
+    },
+    {
+      "arm": "DECOH_4TWIRL",
+      "block": 3,
+      "circuit_name": "b3_dec4_tw2_pi_2_in_+",
+      "cz_count": 28,
+      "decoh_twirl": [
+        0,
+        1,
+        1
+      ],
+      "input_label": "+",
+      "pub_index": 231,
+      "sx_count": 126,
+      "theta_idx": 4,
+      "theta_name": "pi_2",
+      "theta_rad": 1.5707963267948966,
+      "twirl_idx": 2
+    },
+    {
+      "arm": "DECOH_4TWIRL",
+      "block": 3,
+      "circuit_name": "b3_dec4_tw3_pi_2_in_1",
+      "cz_count": 28,
+      "decoh_twirl": [
+        1,
+        1,
+        1
+      ],
+      "input_label": "1",
+      "pub_index": 232,
+      "sx_count": 126,
+      "theta_idx": 4,
+      "theta_name": "pi_2",
+      "theta_rad": 1.5707963267948966,
+      "twirl_idx": 3
+    },
+    {
+      "arm": "DECOH_4TWIRL",
+      "block": 3,
+      "circuit_name": "b3_dec4_tw0_3pi_8_in_0",
+      "cz_count": 28,
+      "decoh_twirl": [
+        1,
+        1,
+        0
+      ],
+      "input_label": "0",
+      "pub_index": 233,
+      "sx_count": 126,
+      "theta_idx": 3,
+      "theta_name": "3pi_8",
+      "theta_rad": 1.1780972450961724,
+      "twirl_idx": 0
+    },
+    {
+      "arm": "AA_SENTINEL",
+      "block": 3,
+      "circuit_name": "b3_aa_sent_0",
+      "cz_count": 28,
+      "input_label": "+",
+      "pub_index": 234,
+      "sentinel_rep": 0,
+      "sx_count": 126,
+      "theta_name": "pi_2"
+    },
+    {
+      "arm": "DECOH_4TWIRL",
+      "block": 3,
+      "circuit_name": "b3_dec4_tw1_3pi_8_in_0",
+      "cz_count": 28,
+      "decoh_twirl": [
+        1,
+        0,
+        1
+      ],
+      "input_label": "0",
+      "pub_index": 235,
+      "sx_count": 126,
+      "theta_idx": 3,
+      "theta_name": "3pi_8",
+      "theta_rad": 1.1780972450961724,
+      "twirl_idx": 1
+    },
+    {
+      "arm": "DECOH_4TWIRL",
+      "block": 3,
+      "circuit_name": "b3_dec4_tw0_3pi_8_in_+i",
+      "cz_count": 28,
+      "decoh_twirl": [
+        1,
+        1,
+        0
+      ],
+      "input_label": "+i",
+      "pub_index": 236,
+      "sx_count": 126,
+      "theta_idx": 3,
+      "theta_name": "3pi_8",
+      "theta_rad": 1.1780972450961724,
+      "twirl_idx": 0
+    },
+    {
+      "arm": "COHERENT",
+      "block": 3,
+      "circuit_name": "b3_coh_3pi_8_in_-",
+      "cz_count": 28,
+      "decoh_twirl": [
+        0,
+        0,
+        0
+      ],
+      "input_label": "-",
+      "pub_index": 237,
+      "sx_count": 126,
+      "theta_idx": 3,
+      "theta_name": "3pi_8",
+      "theta_rad": 1.1780972450961724
+    },
+    {
+      "arm": "COHERENT",
+      "block": 3,
+      "circuit_name": "b3_coh_pi_2_in_+i",
+      "cz_count": 28,
+      "decoh_twirl": [
+        0,
+        0,
+        0
+      ],
+      "input_label": "+i",
+      "pub_index": 238,
+      "sx_count": 126,
+      "theta_idx": 4,
+      "theta_name": "pi_2",
+      "theta_rad": 1.5707963267948966
+    },
+    {
+      "arm": "DECOH_4TWIRL",
+      "block": 3,
+      "circuit_name": "b3_dec4_tw2_3pi_8_in_-i",
+      "cz_count": 28,
+      "decoh_twirl": [
+        0,
+        1,
+        1
+      ],
+      "input_label": "-i",
+      "pub_index": 239,
+      "sx_count": 126,
+      "theta_idx": 3,
+      "theta_name": "3pi_8",
+      "theta_rad": 1.1780972450961724,
+      "twirl_idx": 2
+    },
+    {
+      "arm": "DECOH_4TWIRL",
+      "block": 3,
+      "circuit_name": "b3_dec4_tw1_pi_2_in_0",
+      "cz_count": 28,
+      "decoh_twirl": [
+        1,
+        0,
+        1
+      ],
+      "input_label": "0",
+      "pub_index": 240,
+      "sx_count": 126,
+      "theta_idx": 4,
+      "theta_name": "pi_2",
+      "theta_rad": 1.5707963267948966,
+      "twirl_idx": 1
+    },
+    {
+      "arm": "DECOH_4TWIRL",
+      "block": 3,
+      "circuit_name": "b3_dec4_tw1_3pi_8_in_1",
+      "cz_count": 28,
+      "decoh_twirl": [
+        1,
+        0,
+        1
+      ],
+      "input_label": "1",
+      "pub_index": 241,
+      "sx_count": 126,
+      "theta_idx": 3,
+      "theta_name": "3pi_8",
+      "theta_rad": 1.1780972450961724,
+      "twirl_idx": 1
+    },
+    {
+      "arm": "DECOH_4TWIRL",
+      "block": 3,
+      "circuit_name": "b3_dec4_tw0_3pi_8_in_-i",
+      "cz_count": 28,
+      "decoh_twirl": [
+        1,
+        1,
+        0
+      ],
+      "input_label": "-i",
+      "pub_index": 242,
+      "sx_count": 126,
+      "theta_idx": 3,
+      "theta_name": "3pi_8",
+      "theta_rad": 1.1780972450961724,
+      "twirl_idx": 0
+    },
+    {
+      "arm": "DECOH_4TWIRL",
+      "block": 3,
+      "circuit_name": "b3_dec4_tw2_pi_2_in_-i",
+      "cz_count": 28,
+      "decoh_twirl": [
+        0,
+        1,
+        1
+      ],
+      "input_label": "-i",
+      "pub_index": 243,
+      "sx_count": 126,
+      "theta_idx": 4,
+      "theta_name": "pi_2",
+      "theta_rad": 1.5707963267948966,
+      "twirl_idx": 2
+    },
+    {
+      "arm": "DECOH_4TWIRL",
+      "block": 3,
+      "circuit_name": "b3_dec4_tw0_3pi_8_in_-",
+      "cz_count": 28,
+      "decoh_twirl": [
+        1,
+        1,
+        0
+      ],
+      "input_label": "-",
+      "pub_index": 244,
+      "sx_count": 126,
+      "theta_idx": 3,
+      "theta_name": "3pi_8",
+      "theta_rad": 1.1780972450961724,
+      "twirl_idx": 0
+    },
+    {
+      "arm": "DECOH_4TWIRL",
+      "block": 3,
+      "circuit_name": "b3_dec4_tw2_pi_2_in_1",
+      "cz_count": 28,
+      "decoh_twirl": [
+        0,
+        1,
+        1
+      ],
+      "input_label": "1",
+      "pub_index": 245,
+      "sx_count": 126,
+      "theta_idx": 4,
+      "theta_name": "pi_2",
+      "theta_rad": 1.5707963267948966,
+      "twirl_idx": 2
+    },
+    {
+      "arm": "DECOH_4TWIRL",
+      "block": 3,
+      "circuit_name": "b3_dec4_tw0_pi_2_in_+i",
+      "cz_count": 28,
+      "decoh_twirl": [
+        1,
+        1,
+        0
+      ],
+      "input_label": "+i",
+      "pub_index": 246,
+      "sx_count": 126,
+      "theta_idx": 4,
+      "theta_name": "pi_2",
+      "theta_rad": 1.5707963267948966,
+      "twirl_idx": 0
+    },
+    {
+      "arm": "DECOH_4TWIRL",
+      "block": 3,
+      "circuit_name": "b3_dec4_tw0_pi_2_in_0",
+      "cz_count": 28,
+      "decoh_twirl": [
+        1,
+        1,
+        0
+      ],
+      "input_label": "0",
+      "pub_index": 247,
+      "sx_count": 126,
+      "theta_idx": 4,
+      "theta_name": "pi_2",
+      "theta_rad": 1.5707963267948966,
+      "twirl_idx": 0
+    },
+    {
+      "arm": "COHERENT",
+      "block": 3,
+      "circuit_name": "b3_coh_3pi_8_in_+",
+      "cz_count": 28,
+      "decoh_twirl": [
+        0,
+        0,
+        0
+      ],
+      "input_label": "+",
+      "pub_index": 248,
+      "sx_count": 126,
+      "theta_idx": 3,
+      "theta_name": "3pi_8",
+      "theta_rad": 1.1780972450961724
+    },
+    {
+      "arm": "DECOH_4TWIRL",
+      "block": 3,
+      "circuit_name": "b3_dec4_tw3_pi_2_in_-",
+      "cz_count": 28,
+      "decoh_twirl": [
+        1,
+        1,
+        1
+      ],
+      "input_label": "-",
+      "pub_index": 249,
+      "sx_count": 126,
+      "theta_idx": 4,
+      "theta_name": "pi_2",
+      "theta_rad": 1.5707963267948966,
+      "twirl_idx": 3
+    },
+    {
+      "arm": "DECOH_4TWIRL",
+      "block": 3,
+      "circuit_name": "b3_dec4_tw1_3pi_8_in_-",
+      "cz_count": 28,
+      "decoh_twirl": [
+        1,
+        0,
+        1
+      ],
+      "input_label": "-",
+      "pub_index": 250,
+      "sx_count": 126,
+      "theta_idx": 3,
+      "theta_name": "3pi_8",
+      "theta_rad": 1.1780972450961724,
+      "twirl_idx": 1
+    },
+    {
+      "arm": "DECOH_4TWIRL",
+      "block": 3,
+      "circuit_name": "b3_dec4_tw3_pi_2_in_+i",
+      "cz_count": 28,
+      "decoh_twirl": [
+        1,
+        1,
+        1
+      ],
+      "input_label": "+i",
+      "pub_index": 251,
+      "sx_count": 126,
+      "theta_idx": 4,
+      "theta_name": "pi_2",
+      "theta_rad": 1.5707963267948966,
+      "twirl_idx": 3
+    },
+    {
+      "arm": "COHERENT",
+      "block": 3,
+      "circuit_name": "b3_coh_3pi_8_in_0",
+      "cz_count": 28,
+      "decoh_twirl": [
+        0,
+        0,
+        0
+      ],
+      "input_label": "0",
+      "pub_index": 252,
+      "sx_count": 126,
+      "theta_idx": 3,
+      "theta_name": "3pi_8",
+      "theta_rad": 1.1780972450961724
+    },
+    {
+      "arm": "DECOH_4TWIRL",
+      "block": 3,
+      "circuit_name": "b3_dec4_tw3_3pi_8_in_+i",
+      "cz_count": 28,
+      "decoh_twirl": [
+        1,
+        1,
+        1
+      ],
+      "input_label": "+i",
+      "pub_index": 253,
+      "sx_count": 126,
+      "theta_idx": 3,
+      "theta_name": "3pi_8",
+      "theta_rad": 1.1780972450961724,
+      "twirl_idx": 3
+    },
+    {
+      "arm": "DECOH_4TWIRL",
+      "block": 3,
+      "circuit_name": "b3_dec4_tw1_pi_2_in_+",
+      "cz_count": 28,
+      "decoh_twirl": [
+        1,
+        0,
+        1
+      ],
+      "input_label": "+",
+      "pub_index": 254,
+      "sx_count": 126,
+      "theta_idx": 4,
+      "theta_name": "pi_2",
+      "theta_rad": 1.5707963267948966,
+      "twirl_idx": 1
+    },
+    {
+      "arm": "AA_SENTINEL",
+      "block": 3,
+      "circuit_name": "b3_aa_sent_1",
+      "cz_count": 28,
+      "input_label": "+",
+      "pub_index": 255,
+      "sentinel_rep": 1,
+      "sx_count": 126,
+      "theta_name": "pi_2"
+    }
+  ],
+  "schema": "osiris.quantum_protocol/1",
+  "shots_per_pub": 256,
+  "staged_utc": "2026-11-23T13:15:10.190612+00:00",
+  "total_pubs": 256,
+  "total_shots": 65536
+}

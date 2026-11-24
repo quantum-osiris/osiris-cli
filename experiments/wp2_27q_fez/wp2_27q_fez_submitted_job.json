@@ -1,0 +1,17 @@
+{
+  "backend": "ibm_fez",
+  "creation_date": "2026-11-23T01:30:22.939840-05:00",
+  "job_id": "dc1tqvinj2vs73dfrts0",
+  "qiskit_version": "qiskit_ibm_runtime-0.52.1,qiskit-2.6.2*,qiskit_aer-0.18.2",
+  "status": "DONE",
+  "timestamps": {
+    "created": "2026-11-23T06:30:22.93984Z",
+    "finished": "2026-11-23T06:30:58.617972Z",
+    "running": "2026-11-23T06:30:23.979704Z"
+  },
+  "usage": {
+    "qpu_charge_time_seconds": 28,
+    "resource_units": 0.454546,
+    "status": "complete"
+  }
+}
