@@ -10,6 +10,7 @@ from __future__ import annotations
 
 import hashlib
 import json
+import sys
 from collections import defaultdict
 from datetime import datetime
 from pathlib import Path
@@ -19,6 +20,11 @@ from scipy import stats
 
 HERE = Path(__file__).resolve().parent
 ROOT = HERE.parent.parent
+if str(ROOT) not in sys.path:
+    sys.path.insert(0, str(ROOT))
+
+from papers._pdf_preprint_renderer import PreprintDocument  # noqa: E402
+
 DOCS = ROOT / "docs"
 PAPERS = ROOT / "papers"
 P3 = DOCS / "phase3"
@@ -1869,6 +1875,396 @@ def main() -> None:
         c_dfs_pp=100.0 * mc["C_DFS_asymmetry"]["mean"],
     )
     fig3.save(HERE / "fig3_cn01_colored_noise_heldout_gate")
+
+    doc = PreprintDocument(
+        short_title="Calibration Staleness, Readout Telegraphing & Colored-Noise Nulls on Heron r2",
+        manuscript_id="OSIRIS-HERON-R2-UNIFIED-SYNTHESIS",
+        execution_tier="HARDWARE_ATTESTED",
+        footer_left=(
+            f"42 Jobs | {total_shots:,} Shots | ibm_marrakesh, ibm_fez, ibm_kingston | "
+            f"RFC8785: {capsule_digest[:16]}..."
+        ),
+    )
+
+    dt_lo = f"{min(dt_mins.values()):.0f}"
+    dt_hi = f"{max(dt_mins.values()):.0f}"
+    marr_l1 = p4_data["ibm_marrakesh"]["analysis"]["contrasts"]["L1_probe_vs_calibration_path"]
+    fez_l1 = p4_data["ibm_fez"]["analysis"]["contrasts"]["L1_probe_vs_calibration_path"]
+    king_l1 = p4_data["ibm_kingston"]["analysis"]["contrasts"]["L1_probe_vs_calibration_path"]
+    marr_l4 = p4_data["ibm_marrakesh"]["analysis"]["contrasts"]["L4_L1_after_readout_mitigation"]
+    fez_l4 = p4_data["ibm_fez"]["analysis"]["contrasts"]["L4_L1_after_readout_mitigation"]
+    king_l4 = p4_data["ibm_kingston"]["analysis"]["contrasts"]["L4_L1_after_readout_mitigation"]
+    marr_m4 = p5_data["ibm_marrakesh"]["analysis"]["contrasts"]["M4_probe_vs_calibration_replication"]
+    fez_m4 = p5_data["ibm_fez"]["analysis"]["contrasts"]["M4_probe_vs_calibration_replication"]
+    king_m4 = p5_data["ibm_kingston"]["analysis"]["contrasts"]["M4_probe_vs_calibration_replication"]
+
+    locked_dbic_int = int(round(cn_lock["gls_model_selection_on_training_cohort"]["delta_bic_over_h0"]))
+    onef_h3_pct = (
+        100.0
+        * val_summ["local_1f"]["locked"]["selected_model_counts"].get("H3", 0)
+        / val_summ["local_1f"]["n_replicates"]
+    )
+
+    abstract_pdf = (
+        "Benchmarking layout compilation, error mitigation, and bath-correlation hypotheses on utility-scale "
+        "superconducting quantum processors routinely relies on two implicit stationarity assumptions: that provider-"
+        "published device calibration snapshots accurately rank physical qubits during job execution, and that "
+        "independent Markovian (white-noise) models form an adequate statistical null for diagnosing non-local or "
+        f"non-Markovian error channels. Here we synthesize {len(by_camp)} preregistered hardware campaigns "
+        f"({total_jobs} IBM Quantum jobs, {total_pubs:,} PUBs at {shots_per_pub:,} shots each, {total_shots:,} "
+        f"physical circuit shots, and {total_qpu_s:,} s of charged QPU execution) across all {len(BACKENDS)} "
+        f"{chip_qubits}-qubit Heron r2 heavy-hex processors (ibm_marrakesh, ibm_fez, and ibm_kingston). First, in "
+        f"{int(m2_lock['path_summary']['n_qubits'])}-qubit compilation benchmarks at fixed {int(m2_arms['C5_CHAIN_BESTPATH_OPT3']['twoq_gates'])}-CZ "
+        f"count and depth {int(m2_arms['C5_CHAIN_BESTPATH_OPT3']['depth'])} (TMAP-02..TMAP-05, {tmap_jobs} jobs, "
+        f"{tmap_shots:,} shots), moving from a calibration-ranked best path to a median path initially shifted "
+        f"classical fidelity F_cl by {100.0 * c_path['mean_diff']:+.2f} pp, yet replaying the identical physical "
+        f"qubits {dt_days_23} days later reversed the contrast to {k1['mean_pp']:+.2f} pp (p_Holm={k1['p_holm']:.1e}) "
+        f"due to an unflagged readout fault on q46 ({100.0 * q46_m3_mean:.1f}% measured vs "
+        f"{100.0 * m3_raw['execution_time_calibration']['qubits']['46']['readout_error']:.1f}% published). Repeating "
+        f"probe-vs-calibration selection {dt_lo}--{dt_hi} minutes apart flipped sign on every processor "
+        f"({marr_l1['mean_pp']:+.2f}->{marr_m4['mean_pp']:+.2f} pp on ibm_marrakesh, "
+        f"{fez_l1['mean_pp']:+.2f}->{fez_m4['mean_pp']:+.2f} pp on ibm_fez, and "
+        f"{king_l1['mean_pp']:+.2f}->{king_m4['mean_pp']:+.2f} pp on ibm_kingston), while tensored readout mitigation "
+        f"restored calibration-path superiority on all 3 QPUs ({marr_l4['mean_pp']:+.1f}, {fez_l4['mean_pp']:+.1f}, "
+        f"{king_l4['mean_pp']:+.1f} pp). Second, longitudinal monitoring and context-isolation tests (RO-06 & RO-07, "
+        f"{ro_jobs} jobs, {ro_shots:,} shots) show hidden faults (>15% actual vs <3% listed) are transient "
+        f"({int(ro6_a['H2_of_which_recovered_in_another_round'])}/{int(ro6_a['H2_qubits_ever_hidden'])} recovered <5%), "
+        f"persist across 15-min intervals at {100.0 * ro6_a['H3_p_fault_next_given_fault']:.1f}% vs "
+        f"{100.0 * ro6_a['H3_p_fault_next_given_ok']:.2f}% onset (Fisher OR={int(round(ro6_a['H3_fisher_odds_ratio'])):,}), "
+        f"and exhibit <= {100.0 * max_mux_abs:.2f} pp multiplexing shift (|D_nbr| <= {100.0 * max_nbr_abs:.2f} pp), "
+        f"tracing reversals to snapshots static up to {king_unchanged_h:.1f} h. Third, multiplexed DD spectroscopy "
+        f"across {len(cn_lock['per_coupler_profiles'])} couplers >=5 hops apart (CN-01, {by_camp['CN-01']['shots']:,} "
+        f"shots) yielded null mechanistic contrasts (C_DFS = {100.0 * mc['C_DFS_asymmetry']['mean']:+.2f} pp, "
+        f"p_Holm={mc['C_DFS_asymmetry']['p_holm_adjusted']:.2f}), yet white-noise GLS falsely selected non-local H3 by "
+        f"Delta BIC = {locked_dbic_int:,} before failing the 6-coupler held-out gate (p={ho['p_two_sided_df5']:.2f}); "
+        f"a {len(cn_val['replicates'])}-replicate synthetic audit proves white-noise nulls misclassify "
+        f"{onef_h3_pct:.0f}% of local 1/f dephasing, whereas A-3 local colored-noise nulls achieve 0% false positives "
+        f"and select local H0 (BIC = {af['H0']['bic']:.2f})."
+    )
+
+    doc.add_title_block(
+        title=(
+            "Calibration Staleness, Transient Readout Telegraphing, and Colored-Noise False "
+            "Positives Across Three 156-Qubit Superconducting Quantum Processors"
+        ),
+        author="Devin Phillip Davis",
+        affiliation="Agile Defense Systems LLC",
+        date_str="November 22, 2026",
+        metadata_rows=[
+            (
+                "Unified Hardware Scope",
+                f"{len(by_camp)} campaigns | {total_jobs} jobs | {total_pubs:,} PUBs x {shots_per_pub:,} = {total_shots:,} shots ({total_qpu_s:,}s QPU)",
+            ),
+            (
+                "Three 156Q Heron r2 QPUs",
+                f"marrakesh ({by_back['ibm_marrakesh']['jobs']}j, {by_back['ibm_marrakesh']['shots']:,}s) | fez ({by_back['ibm_fez']['jobs']}j, {by_back['ibm_fez']['shots']:,}s) | kingston ({by_back['ibm_kingston']['jobs']}j, {by_back['ibm_kingston']['shots']:,}s)",
+            ),
+            (
+                "Zenodo Archive Records",
+                f"{sum(1 for z in zenodo_records if z['kind'] == 'preregistration')} prospective preregistrations + {sum(1 for z in zenodo_records if z['kind'] == 'results')} results DOIs",
+            ),
+            ("RFC 8785 Capsule SHA-256", f"{capsule_digest} ({len(source_artifacts)} source JSON digests)"),
+        ],
+        abstract=abstract_pdf,
+    )
+
+    doc.add_callout_box(
+        "THREE UNIFIED ARCHITECTURAL FINDINGS ACROSS 42 HERON R2 JOBS",
+        [
+            f"1. Layout Ranking Sign Reversals (TMAP-02..05): Frozen 40Q 39-CZ best-vs-median path contrast flipped from {100.0 * c_path['mean_diff']:+.2f} pp to {k1['mean_pp']:+.2f} pp over {dt_days_23} days on ibm_marrakesh, and probe-vs-calibration rankings inverted sign on all 3 Heron r2 QPUs within {dt_lo}--{dt_hi} min.",
+            f"2. Stale Snapshots, Not Readout Crosstalk (RO-06 & RO-07): 100% ({int(ro6_a['H2_of_which_recovered_in_another_round'])}/{int(ro6_a['H2_qubits_ever_hidden'])}) of hidden readout faults (>15% actual vs <3% listed) recovered <5% across rounds (15-min Fisher OR={int(round(ro6_a['H3_fisher_odds_ratio'])):,}), while simultaneous 156Q readout crosstalk stayed <= {100.0 * max_mux_abs:.2f} pp.",
+            f"3. White-Noise Null Misspecification vs. Held-Out Gate (CN-01): White-noise GLS falsely favored non-local OU bath H3 by Delta BIC = {locked_dbic_int:,} on null data (C_DFS = {100.0 * mc['C_DFS_asymmetry']['mean']:+.2f} pp), caught by the 6-coupler held-out gate (p={ho['p_two_sided_df5']:.2f}) and resolved by A-3 local colored nulls (0% FP; H0 BIC = {af['H0']['bic']:.2f}).",
+        ],
+        tone="info",
+    )
+
+    doc.add_section("1. Experimental Registry and Preregistered Governance")
+    doc.add_paragraph(
+        f"All {total_jobs} hardware jobs were executed via qiskit-ibm-runtime SamplerV2 with hardware measurement "
+        "mitigation disabled (resilience_level=0) so raw shot bitstrings were preserved without opaque post-processing. "
+        "Every campaign enforced cryptographic pre-submission QPY/manifest locking, interleaved block randomization "
+        f"(two-sided paired t-tests with Holm-Bonferroni FWER control at alpha=0.05), embedded physical A/A drift "
+        f"sentinels (virtual-Z A/A {100.0 * c_aa['mean_diff']:+.2f} pp in TMAP-02; {cn_lock['live_aa_sentinel_rms_pp_raw']:.2f} pp "
+        "RMS floor in CN-01), and verbatim programmatic provenance."
+    )
+
+    camp_rows_pdf = [
+        [
+            cid,
+            dt_s,
+            b_str.replace("\\texttt{", "").replace("}", ""),
+            str(by_camp[cid]["jobs"]),
+            f"{by_camp[cid]['pubs']:,}",
+            f"{by_camp[cid]['shots']:,}",
+            str(by_camp[cid]["qpu_s"]),
+            pre_id,
+            res_doi.split(".")[-1],
+        ]
+        for cid, dt_s, b_str, pre_id, res_doi in camp_meta
+    ]
+    camp_rows_pdf.append(
+        [
+            "Total",
+            "Nov 16-21",
+            "3 Heron r2",
+            str(total_jobs),
+            f"{total_pubs:,}",
+            f"{total_shots:,}",
+            f"{total_qpu_s:,}",
+            "5 DOIs",
+            "6 DOIs",
+        ]
+    )
+    doc.add_table(
+        f"TABLE I. Unified registry of {len(by_camp)} preregistered campaigns across 3 156-qubit IBM Heron r2 "
+        f"processors ({shots_per_pub:,} shots/PUB, resilience_level=0; Zenodo IDs under 10.5281/zenodo.<id>).",
+        ["Campaign", "UTC Date", "Processors", "Jobs", "PUBs", "Shots", "QPU(s)", "Prereg", "Data DOI"],
+        camp_rows_pdf,
+        col_widths=[56, 62, 68, 30, 42, 64, 40, 58, 58],
+        alignments=["left", "center", "left", "right", "right", "right", "right", "center", "center"],
+        font_size=6.9,
+    )
+
+    doc.add_section("2. Routing vs. Hidden Readout Faults & 90-Min Three-QPU Sign Flip (TMAP-02..05)")
+    doc.add_paragraph(
+        f"TMAP-02 decomposed compilation sensitivity on a 40-qubit circuit concentrating ideal probability onto "
+        f"four bitstrings. Rewriting the degree-20 star into an equivalent nearest-neighbor chain on identical "
+        f"qubits boosted F_cl by {100.0 * c_rew3['mean_diff']:+.2f} pp at opt-level 3 (119->39 CZ), while shifting "
+        f"the fixed 39-CZ depth-66 chain from best to median path cut F_cl by {100.0 * c_path['mean_diff']:+.2f} pp. "
+        f"Yet replaying the exact frozen layouts {dt_days_23} days later in TMAP-03 inverted the path contrast to "
+        f"{k1['mean_pp']:+.2f} pp because q46 developed a {100.0 * q46_m3_mean:.1f}% readout excursion while IBM's "
+        f"snapshot listed {100.0 * m3_raw['execution_time_calibration']['qubits']['46']['readout_error']:.1f}%; "
+        f"tensored readout mitigation restored a {m3_mit_gap:+.2f} pp best-path lead."
+    )
+    doc.add_equation(
+        ["Path Cost:  C(P) = -sum_{e in P} ln(1 - e_CZ(e)) - sum_{q in P} ln(1 - e_RO(q))"],
+        eq_num="1",
+    )
+
+    doc.add_figure(
+        fig1,
+        f"Layout ranking reversals across {dt_days_23} days on ibm_marrakesh (a) and across {dt_lo}--{dt_hi} minutes "
+        f"on all three 156Q Heron r2 processors (b) ({tmap_jobs} jobs, {tmap_shots:,} circuit shots).",
+    )
+
+    tmap_rows_pdf = []
+    for b in BACKENDS:
+        c_l1 = p4_data[b]["analysis"]["contrasts"]["L1_probe_vs_calibration_path"]
+        c_l4 = p4_data[b]["analysis"]["contrasts"]["L4_L1_after_readout_mitigation"]
+        c_m1 = p5_data[b]["analysis"]["contrasts"]["M1_exclusion_vs_calibration"]
+        c_m2 = p5_data[b]["analysis"]["contrasts"]["M2_exclusion_vs_probe_ranking"]
+        c_m4 = p5_data[b]["analysis"]["contrasts"]["M4_probe_vs_calibration_replication"]
+        tmap_rows_pdf.append(
+            [
+                b,
+                f"{dt_mins[b]:.0f}m",
+                f"{c_l1['mean_pp']:+.2f} [{c_l1['ci95_pp'][0]:+.2f}, {c_l1['ci95_pp'][1]:+.2f}]",
+                f"{c_l4['mean_pp']:+.1f}",
+                f"{c_m4['mean_pp']:+.2f} [{c_m4['ci95_pp'][0]:+.2f}, {c_m4['ci95_pp'][1]:+.2f}]",
+                f"{c_m1['mean_pp']:+.2f}",
+                f"{c_m2['mean_pp']:+.2f}",
+            ]
+        )
+    doc.add_table(
+        f"TABLE II. Three-processor 40-qubit 39-CZ chain contrasts (Delta F_cl in pp across {int(m2_a['n_blocks'])} "
+        f"blocks, 95% CI) across TMAP-04 and TMAP-05 ({dt_lo}--{dt_hi} min later).",
+        ["Processor", "dt", "TMAP-04 L1: Probe-Cal", "L4 (RO-Mit)", "TMAP-05 M4: Probe-Cal", "M1: Excl-Cal", "M2: Excl-Probe"],
+        tmap_rows_pdf,
+        col_widths=[74, 28, 122, 54, 122, 56, 60],
+        font_size=6.8,
+    )
+
+    doc.add_section("3. Full-Chip Readout Time Series: Stale Snapshots, Not Crosstalk (RO-06 & RO-07)")
+    doc.add_paragraph(
+        f"RO-06 sampled full-chip |0>^156 / |1>^156 probes across 8 rounds on all 3 QPUs, proving hidden faults "
+        f"(e_probe > 15% while e_IBM < 3%) are rare ({min(h1_means):.3f}--{max(h1_means):.3f} qubits/round), 100% "
+        f"intermittent ({int(ro6_a['H2_of_which_recovered_in_another_round'])}/{int(ro6_a['H2_qubits_ever_hidden'])} "
+        f"recovered <5%), and persistent over 15-min intervals ({100.0 * ro6_a['H3_p_fault_next_given_fault']:.1f}% vs "
+        f"{100.0 * ro6_a['H3_p_fault_next_given_ok']:.2f}%, Fisher OR={int(round(ro6_a['H3_fisher_odds_ratio'])):,}). "
+        f"RO-07 tested isolated (ISO), full-chip (ALL), and neighbor-inverted (FLIP) contexts across "
+        f"{sum(len(d['per_qubit']) for d in ro7_a['devices'].values())} qubits, bounding |D_mux| <= "
+        f"{100.0 * max_mux_abs:.2f} pp and |D_nbr| <= {100.0 * max_nbr_abs:.2f} pp (far below the +/-5.0 pp crosstalk "
+        f"gate), while IBM snapshots stayed static for up to {king_unchanged_h:.1f} h on ibm_kingston."
+    )
+
+    doc.add_figure(
+        fig2,
+        f"Longitudinal full-chip readout telegraphing across 8 rounds in RO-06 (a) and simultaneous-readout context "
+        f"independence in RO-07 (b) ({ro_jobs} jobs, {ro_shots:,} shots across 3 156Q Heron r2 processors).",
+    )
+
+    ro_rows_pdf = []
+    for b in BACKENDS:
+        h1_b = ro6_a["H1_hidden_faults_per_round"][b]
+        rho_b = ro6_a["H4_spearman_median"][b]
+        cad_str = " ".join(str(x) for x in cad[b]["qubits_changed"])
+        dev7 = ro7_a["devices"][b]["per_qubit"]
+        b_mux = 100.0 * max(abs(v["D_mux"]["mean"]) for v in dev7.values())
+        b_nbr = 100.0 * max(abs(v["D_nbr"]["mean"]) for v in dev7.values())
+        ro_rows_pdf.append(
+            [
+                b,
+                " ".join(str(x) for x in h1_b["counts"]),
+                f"{h1_b['mean']:.3f}",
+                f"{rho_b:.2f}",
+                cad_str,
+                f"{b_mux:.2f}",
+                f"{b_nbr:.2f}",
+            ]
+        )
+    doc.add_table(
+        "TABLE III. Full-chip readout drift (RO-06, 24 jobs) and simultaneous-readout context shifts (RO-07, 3 jobs).",
+        ["Processor", "Hidden Faults (r0..r7)", "Mean/Rnd", "Med. rho", "IBM Snapshot Updates (8 int.)", "Max |D_mux|", "Max |D_nbr|"],
+        ro_rows_pdf,
+        col_widths=[78, 92, 48, 46, 122, 62, 62],
+        alignments=["left", "center", "right", "right", "center", "right", "right"],
+        font_size=6.9,
+    )
+
+    doc.add_section("4. Distant Couplers & Why White-Noise Nulls Misclassify Local 1/f Drift (CN-01)")
+    doc.add_equation(
+        [
+            "alpha_{uv}(Delta) = 1 - 2*Delta / tau_slot,    Gamma_{Phi+/-} = gamma_u + gamma_v + 2*alpha_{uv}(Delta)*gamma_{uv}",
+        ],
+        eq_num="2",
+    )
+    doc.add_paragraph(
+        f"Across 10 couplers separated by >=5 heavy-hex hops on ibm_marrakesh (job {cn_lock['job_id']}, "
+        f"{by_camp['CN-01']['shots']:,} circuit shots), all four mechanistic contrasts were null (C_DFS = "
+        f"{100.0 * mc['C_DFS_asymmetry']['mean']:+.2f} pp, p_Holm={mc['C_DFS_asymmetry']['p_holm_adjusted']:.2f}). "
+        f"Yet white-noise GLS on the 4 training couplers favored non-local OU bath H3 by Delta BIC = "
+        f"{locked_dbic_int:,} before failing the preregistered 6-coupler held-out RMSE kill gate "
+        f"(H3 {ho['mean_rmse_h3']:.3f} vs H0 {ho['mean_rmse_h0']:.3f}, p={ho['p_two_sided_df5']:.2f}). Amendment A-3 "
+        f"adds local 1/f and local OU nulls on a common echo-DD32 baseline, achieving 0% non-local false positives "
+        f"across {sum(int(val_summ[k]['n_replicates']) for k in local_keys)} synthetic local-noise runs and selecting "
+        f"independent local H0 on live hardware (BIC = {af['H0']['bic']:.2f} vs H1 {af['H1']['bic']:.2f})."
+    )
+
+    doc.add_figure(
+        fig3,
+        f"CN-01 synthetic colored-noise validation across {len(cn_val['replicates'])} replicates (a), measured DD16 "
+        f"stagger curves across 10 couplers on ibm_marrakesh (b), and 6-coupler held-out RMSE kill gate (c).",
+    )
+
+    cn_con_pdf = []
+    for key, _tag, sym_tex, desc_tex in cn_con_specs:
+        ent = mc[key]
+        m_pp = 100.0 * ent["mean"]
+        se_pp = 100.0 * ent["se_across_couplers"]
+        cn_con_pdf.append(
+            [
+                sym_tex.replace("$", "").replace("\\mathrm{", "").replace("}", ""),
+                desc_tex.replace("$", "").replace("\\to", "->").replace("\\,", " ").replace("\\mathrm{", "").replace("}", "").replace("\\mu", "u"),
+                f"{m_pp:+.2f}",
+                f"[{m_pp - t9 * se_pp:+.2f}, {m_pp + t9 * se_pp:+.2f}]",
+                f"{ent['p_holm_adjusted']:.2f}",
+            ]
+        )
+    doc.add_table(
+        "TABLE IV(a). CN-01 hardware mechanistic contrasts across 10 couplers (>=5 hops apart, df=9, Holm-adjusted).",
+        ["Contrast", "Physical Observable", "Mean (pp)", "95% CI (pp)", "Holm p"],
+        cn_con_pdf,
+        col_widths=[62, 232, 62, 104, 52],
+        font_size=7.0,
+    )
+
+    cn_bic_pdf = []
+    for mkey, mlab, mscope in model_order:
+        a_row = af[mkey]
+        l_chi = f"{lf[mkey]['chi2']:,.1f}" if mkey in lf else "--"
+        l_bic = f"{lf[mkey]['bic']:,.1f}" if mkey in lf else "--"
+        cn_bic_pdf.append(
+            [
+                mlab.replace("$", "").replace("\\mathrm{", "").replace("}", ""),
+                mscope,
+                str(a_row["k_params"]),
+                l_chi,
+                l_bic,
+                f"{a_row['chi2']:,.1f}",
+                f"{a_row['bic']:,.2f}",
+            ]
+        )
+    doc.add_table(
+        f"TABLE IV(b). Training-cohort GLS fits (4 couplers; held-out RMSE H0={ho['mean_rmse_h0']:.3f} vs "
+        f"H3={ho['mean_rmse_h3']:.3f}, t_5={ho['t_stat_h0_minus_h3_df5']:.2f}, p={ho['p_two_sided_df5']:.2f}).",
+        ["Noise Hypothesis", "Scope", "k", "chi2_lock", "BIC_lock", "chi2_A3", "BIC_A3"],
+        cn_bic_pdf,
+        col_widths=[162, 62, 26, 66, 66, 62, 66],
+        font_size=6.9,
+    )
+
+    cn_val_pdf = []
+    for tkey, tlab in val_table_specs:
+        s_row = val_summ[tkey]
+        n_rep = int(s_row["n_replicates"])
+        h3_sel = 100.0 * s_row["locked"]["selected_model_counts"].get("H3", 0) / n_rep
+        st2 = 100.0 * s_row["locked"]["rates"]["stage2_gate"]["rate"]
+        a3_any = (
+            100.0
+            * s_row["a3"]["rates"]
+            .get("any_nonlocal_claim", s_row["a3"]["rates"]["correlated_dephasing_supported"])["rate"]
+        )
+        a3_corr = 100.0 * s_row["a3"]["rates"]["correlated_dephasing_supported"]["rate"]
+        cn_val_pdf.append(
+            [
+                tlab.replace("$", "").replace("--", "-"),
+                str(n_rep),
+                f"{int(round(med_locked_dbic(tkey))):,}",
+                f"{h3_sel:.0f}%",
+                f"{st2:.0f}%",
+                f"{a3_any:.0f}%",
+                f"{a3_corr:.0f}%",
+            ]
+        )
+    doc.add_table(
+        f"TABLE IV(c). Pre-execution synthetic validation ({len(cn_val['replicates'])} replicates across 7 ground-truth baths).",
+        ["Synthetic Ground Truth", "Reps", "Med. dBIC_lock", "Lock H3", "Lock Stg2", "A-3 Non-Loc", "A-3 Corr"],
+        cn_val_pdf,
+        col_widths=[174, 38, 72, 54, 58, 60, 56],
+        font_size=6.9,
+    )
+
+    doc.add_section("5. Operational Design Rules & Data Availability")
+    doc.add_callout_box(
+        "FOUR GOVERNANCE RULES FOR REPRODUCIBLE NISQ BENCHMARKING",
+        [
+            "Rule 1 (Interleaved Block Randomization + Embedded A/A Sentinels): Never treat individual shots as independent replicates; interleave randomized blocks with identical-circuit A/A sentinels to anchor empirical within-job drift.",
+            "Rule 2 (Surgical Readout Screening Over Global Probe Re-Weighting): Run a rapid 6-PUB full-chip |0>/|1> probe before execution to mask gross faults (e_probe > 15%), while preserving gate/T2 calibration rankings and embedding union |0>/|1> SPAM sentinels.",
+            f"Rule 3 (Multi-Epoch Replication Across Calibration Windows): Single-job layout benchmarks measure transient hourly defect states (inverting within {dt_lo}--{dt_hi} min across all 3 QPUs); compiler claims require separated calibration epochs.",
+            "Rule 4 (Local Colored-Noise Nulls + Spatially Held-Out Kill Gates): Include local 1/f and local OU nulls on matched echo baselines (verified at 0% synthetic FP) paired with simultaneous held-out spatial couplers.",
+        ],
+        tone="success",
+    )
+
+    doc.add_paragraph(
+        f"All raw SamplerV2 bitstring histograms ({total_pubs:,} PUBs, {total_shots:,} shots across {total_jobs} jobs), "
+        "QPY binaries, SHA-256 lock manifests, calibration snapshots, and analysis scripts are archived on Zenodo: "
+        f"TMAP-02 ({doi_tmap02}), TMAP-03 ({doi_tmap03_pre}, {doi_tmap03}), TMAP-04 ({doi_tmap04_pre}, {doi_tmap04}), "
+        f"TMAP-05 ({doi_tmap05_pre}, {doi_tmap05}), RO-06/RO-07 ({doi_ro06_pre}, {doi_ro07_pre}, {doi_ro06_07}), and "
+        f"CN-01 ({doi_cn01}), bound by reproducibility_capsule.json (RFC 8785 SHA-256 {capsule_digest[:24]}...). "
+        "We acknowledge the use of IBM Quantum services for this work; the views expressed are those of the author "
+        "and do not reflect the official policy or position of IBM or the IBM Quantum team."
+    )
+
+    doc.add_references(
+        [
+            "[1] P. V. Klimov et al., Phys. Rev. Lett. 121, 090502 (2018).",
+            "[2] J. J. Burnett et al., npj Quantum Inf. 5, 54 (2019).",
+            "[3] T. Proctor et al., Nat. Commun. 11, 5396 (2020).",
+            "[4] T. Thorbeck et al., PRX Quantum 4, 020356 (2023).",
+            "[5] P. D. Nation and M. Treinish, PRX Quantum 4, 010327 (2023).",
+            "[6] G. A. Paz-Silva, L. M. Norris, and L. Viola, Phys. Rev. A 95, 022121 (2017).",
+            "[7] Y. Sung et al., Nat. Commun. 12, 967 (2021).",
+            "[8] V. Tripathi et al., Phys. Rev. Applied 18, 024068 (2022).",
+            "[9] C. Chamberland et al., Phys. Rev. X 10, 011022 (2020).",
+            "[10] E. H. Chen et al., Phys. Rev. A 107, 032602 (2023).",
+            "[11] L. Cywinski, R. M. Lutchyn, C. P. Nave, and S. Das Sarma, Phys. Rev. B 77, 174509 (2008).",
+            "[12] J. Bylander et al., Nat. Phys. 7, 565 (2011).",
+            f"[13] D. P. Davis, TMAP-02: {doi_tmap02}; CN-01: {doi_cn01}; TMAP-03: {doi_tmap03_pre}, {doi_tmap03}; TMAP-04: {doi_tmap04_pre}, {doi_tmap04}; TMAP-05: {doi_tmap05_pre}, {doi_tmap05}; RO-06/07: {doi_ro06_pre}, {doi_ro07_pre}, {doi_ro06_07} (Zenodo, 2026).",
+        ]
+    )
+
+    (HERE / "heron_r2_calibration_staleness_and_colored_nulls.pdf").write_bytes(doc.to_pdf_bytes())
 
     sum_lines: list[str] = []
     for item in sorted(HERE.iterdir(), key=lambda p: p.name):

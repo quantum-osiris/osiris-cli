@@ -1,0 +1,1072 @@
+%PDF-1.4
+%‚„œ”
+1 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>
+endobj
+2 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica-Bold >>
+endobj
+3 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Courier >>
+endobj
+4 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Times-Roman >>
+endobj
+5 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Times-Bold >>
+endobj
+6 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Times-Italic >>
+endobj
+7 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Courier-Bold >>
+endobj
+8 0 obj
+<< /Type /Pages /Kids [10 0 R 12 0 R 14 0 R 16 0 R 18 0 R] /Count 5 >>
+endobj
+9 0 obj
+<< /Length 11784 >>
+stream
+1 1 1 rg
+0 0 612.00 792.00 re f
+q 0.60 w 0.973 0.980 0.988 rg 0.886 0.910 0.941 RG 48.00 743.00 516.00 16.00 re B Q
+BT /F2 7.4 Tf 0.200 0.255 0.333 rg 55.00 748.00 Td (OSIRIS ARCHIVAL PREPRINT  |  OSIRIS-HERON-R2-UNIFIED-SYNTHESIS) Tj ET
+q 0.60 w 0.925 0.992 0.961 rg 0.431 0.906 0.718 RG 361.16 745.00 199.84 12.00 re B Q
+BT /F2 7.2 Tf 0.024 0.373 0.275 rg 367.16 748.20 Td (TIER: HARDWARE_ATTESTED  |  November 22, 2026) Tj ET
+BT /F5 13.4 Tf 0.059 0.090 0.165 rg 48.00 728.00 Td (Calibration Staleness, Transient Readout Telegraphing, and Colored-Noise False) Tj ET
+BT /F5 13.4 Tf 0.059 0.090 0.165 rg 48.00 711.20 Td (Positives Across Three 156-Qubit Superconducting Quantum Processors) Tj ET
+BT /F5 10.0 Tf 0.118 0.161 0.231 rg 48.00 692.40 Td (Devin Phillip Davis) Tj ET
+BT /F6 9.0 Tf 0.278 0.333 0.412 rg 48.00 679.90 Td (Agile Defense Systems LLC  |  November 22, 2026) Tj ET
+q 0.70 w 0.973 0.980 0.988 rg 0.796 0.835 0.882 RG 48.00 620.30 516.00 49.60 re B Q
+q 0.114 0.306 0.847 rg 48.00 620.30 2.80 49.60 re f Q
+BT /F2 7.4 Tf 0.118 0.161 0.231 rg 57.00 659.90 Td (Unified Hardware Scope: ) Tj ET
+BT /F3 7.2 Tf 0.200 0.255 0.333 rg 145.30 659.90 Td (7 campaigns | 42 jobs | 1,062 PUBs x 2,048 = 2,174,976 shots \(673s QPU\)) Tj ET
+BT /F2 7.4 Tf 0.118 0.161 0.231 rg 57.00 649.50 Td (Three 156Q Heron r2 QPUs: ) Tj ET
+BT /F3 7.2 Tf 0.200 0.255 0.333 rg 156.24 649.50 Td (marrakesh \(16j, 1,290,240s\) | fez \(13j, 442,368s\) | kingston \(13j, 442,368s\)) Tj ET
+BT /F2 7.4 Tf 0.118 0.161 0.231 rg 57.00 639.10 Td (Zenodo Archive Records: ) Tj ET
+BT /F3 7.2 Tf 0.200 0.255 0.333 rg 146.66 639.10 Td (5 prospective preregistrations + 6 results DOIs) Tj ET
+BT /F2 7.4 Tf 0.118 0.161 0.231 rg 57.00 628.70 Td (RFC 8785 Capsule SHA-256: ) Tj ET
+BT /F3 7.2 Tf 0.200 0.255 0.333 rg 161.03 628.70 Td (9631f34a6c54d7eb334b78f1d492e5acef2a163266314993a9f35eea4f4f71a5 \(125 source JSON digests\)) Tj ET
+q 0.60 w 0.988 0.988 0.992 rg 0.796 0.835 0.882 RG 48.00 366.10 516.00 244.20 re B Q
+BT /F2 8.4 Tf 0.059 0.090 0.165 rg 58.00 598.80 Td (ABSTRACT) Tj ET
+BT /F4 9.0 Tf 0.122 0.161 0.216 rg 58.00 587.30 Td (Benchmarking layout compilation, error mitigation, and bath-correlation hypotheses on utility-scale superconducting quantum) Tj ET
+BT /F4 9.0 Tf 0.122 0.161 0.216 rg 58.00 575.50 Td (processors routinely relies on two implicit stationarity assumptions: that provider-published device calibration snapshots) Tj ET
+BT /F4 9.0 Tf 0.122 0.161 0.216 rg 58.00 563.70 Td (accurately rank physical qubits during job execution, and that independent Markovian \(white-noise\) models form an adequate) Tj ET
+BT /F4 9.0 Tf 0.122 0.161 0.216 rg 58.00 551.90 Td (statistical null for diagnosing non-local or non-Markovian error channels. Here we synthesize 7 preregistered hardware) Tj ET
+BT /F4 9.0 Tf 0.122 0.161 0.216 rg 58.00 540.10 Td (campaigns \(42 IBM Quantum jobs, 1,062 PUBs at 2,048 shots each, 2,174,976 physical circuit shots, and 673 s of charged QPU) Tj ET
+BT /F4 9.0 Tf 0.122 0.161 0.216 rg 58.00 528.30 Td (execution\) across all 3 156-qubit Heron r2 heavy-hex processors \(ibm_marrakesh, ibm_fez, and ibm_kingston\). First, in 40-qubit) Tj ET
+BT /F4 9.0 Tf 0.122 0.161 0.216 rg 58.00 516.50 Td (compilation benchmarks at fixed 39-CZ count and depth 66 \(TMAP-02..TMAP-05, 14 jobs, 1,159,168 shots\), moving from a) Tj ET
+BT /F4 9.0 Tf 0.122 0.161 0.216 rg 58.00 504.70 Td (calibration-ranked best path to a median path initially shifted classical fidelity F_cl by +10.54 pp, yet replaying the identical) Tj ET
+BT /F4 9.0 Tf 0.122 0.161 0.216 rg 58.00 492.90 Td (physical qubits 4 days later reversed the contrast to -4.29 pp \(p_Holm=6.4e-06\) due to an unflagged readout fault on q46 \(35.0%) Tj ET
+BT /F4 9.0 Tf 0.122 0.161 0.216 rg 58.00 481.10 Td (measured vs 1.1% published\). Repeating probe-vs-calibration selection 82--85 minutes apart flipped sign on every processor) Tj ET
+BT /F4 9.0 Tf 0.122 0.161 0.216 rg 58.00 469.30 Td (\(+25.02->-3.00 pp on ibm_marrakesh, -3.60->+6.90 pp on ibm_fez, and -0.25->+7.81 pp on ibm_kingston\), while tensored) Tj ET
+BT /F4 9.0 Tf 0.122 0.161 0.216 rg 58.00 457.50 Td (readout mitigation restored calibration-path superiority on all 3 QPUs \(-10.1, -19.6, -9.2 pp\). Second, longitudinal monitoring and) Tj ET
+BT /F4 9.0 Tf 0.122 0.161 0.216 rg 58.00 445.70 Td (context-isolation tests \(RO-06 & RO-07, 27 jobs, 516,096 shots\) show hidden faults \(>15% actual vs <3% listed\) are transient) Tj ET
+BT /F4 9.0 Tf 0.122 0.161 0.216 rg 58.00 433.90 Td (\(6/6 recovered <5%\), persist across 15-min intervals at 87.4% vs 0.63% onset \(Fisher OR=1,095\), and exhibit <= 1.16 pp) Tj ET
+BT /F4 9.0 Tf 0.122 0.161 0.216 rg 58.00 422.10 Td (multiplexing shift \(|D_nbr| <= 1.61 pp\), tracing reversals to snapshots static up to 16.0 h. Third, multiplexed DD spectroscopy) Tj ET
+BT /F4 9.0 Tf 0.122 0.161 0.216 rg 58.00 410.30 Td (across 10 couplers >=5 hops apart \(CN-01, 499,712 shots\) yielded null mechanistic contrasts \(C_DFS = +0.43 pp,) Tj ET
+BT /F4 9.0 Tf 0.122 0.161 0.216 rg 58.00 398.50 Td (p_Holm=0.47\), yet white-noise GLS falsely selected non-local H3 by Delta BIC = 10,263 before failing the 6-coupler held-out) Tj ET
+BT /F4 9.0 Tf 0.122 0.161 0.216 rg 58.00 386.70 Td (gate \(p=0.82\); a 550-replicate synthetic audit proves white-noise nulls misclassify 100% of local 1/f dephasing, whereas A-3) Tj ET
+BT /F4 9.0 Tf 0.122 0.161 0.216 rg 58.00 374.90 Td (local colored-noise nulls achieve 0% false positives and select local H0 \(BIC = 115.05\).) Tj ET
+q 0.80 w 0.937 0.965 1.000 rg 0.749 0.859 0.996 RG 48.00 236.40 516.00 117.70 re B Q
+q 0.114 0.306 0.847 rg 48.00 236.40 3.20 117.70 re f Q
+BT /F2 8.8 Tf 0.118 0.227 0.541 rg 58.00 343.30 Td (THREE UNIFIED ARCHITECTURAL FINDINGS ACROSS 42 HERON R2 JOBS) Tj ET
+q 0.114 0.306 0.847 rg 59.00 332.40 2.80 2.80 re f Q
+BT /F4 8.8 Tf 0.122 0.161 0.216 rg 67.00 330.80 Td (1. Layout Ranking Sign Reversals \(TMAP-02..05\): Frozen 40Q 39-CZ best-vs-median path contrast flipped from +10.54 pp to) Tj ET
+BT /F4 8.8 Tf 0.122 0.161 0.216 rg 67.00 319.40 Td (-4.29 pp over 4 days on ibm_marrakesh, and probe-vs-calibration rankings inverted sign on all 3 Heron r2 QPUs within 82--85) Tj ET
+BT /F4 8.8 Tf 0.122 0.161 0.216 rg 67.00 308.00 Td (min.) Tj ET
+q 0.114 0.306 0.847 rg 59.00 296.20 2.80 2.80 re f Q
+BT /F4 8.8 Tf 0.122 0.161 0.216 rg 67.00 294.60 Td (2. Stale Snapshots, Not Readout Crosstalk \(RO-06 & RO-07\): 100% \(6/6\) of hidden readout faults \(>15% actual vs <3% listed\)) Tj ET
+BT /F4 8.8 Tf 0.122 0.161 0.216 rg 67.00 283.20 Td (recovered <5% across rounds \(15-min Fisher OR=1,095\), while simultaneous 156Q readout crosstalk stayed <= 1.16 pp.) Tj ET
+q 0.114 0.306 0.847 rg 59.00 271.40 2.80 2.80 re f Q
+BT /F4 8.8 Tf 0.122 0.161 0.216 rg 67.00 269.80 Td (3. White-Noise Null Misspecification vs. Held-Out Gate \(CN-01\): White-noise GLS falsely favored non-local OU bath H3 by) Tj ET
+BT /F4 8.8 Tf 0.122 0.161 0.216 rg 67.00 258.40 Td (Delta BIC = 10,263 on null data \(C_DFS = +0.43 pp\), caught by the 6-coupler held-out gate \(p=0.82\) and resolved by A-3 local) Tj ET
+BT /F4 8.8 Tf 0.122 0.161 0.216 rg 67.00 247.00 Td (colored nulls \(0% FP; H0 BIC = 115.05\).) Tj ET
+BT /F2 10.4 Tf 0.059 0.090 0.165 rg 48.00 223.40 Td (1. Experimental Registry and Preregistered Governance) Tj ET
+q [] 0 d 0.70 w 0.796 0.835 0.882 RG 48.00 218.40 m 564.00 218.40 l S Q
+q [] 0 d 1.40 w 0.114 0.306 0.847 RG 48.00 218.40 m 106.00 218.40 l S Q
+BT /F4 9.4 Tf 0.067 0.094 0.153 rg 48.00 207.70 Td (All 42 hardware jobs were executed via qiskit-ibm-runtime SamplerV2 with hardware measurement mitigation disabled) Tj ET
+BT /F4 9.4 Tf 0.067 0.094 0.153 rg 48.00 195.20 Td (\(resilience_level=0\) so raw shot bitstrings were preserved without opaque post-processing. Every campaign enforced) Tj ET
+BT /F4 9.4 Tf 0.067 0.094 0.153 rg 48.00 182.70 Td (cryptographic pre-submission QPY/manifest locking, interleaved block randomization \(two-sided paired t-tests with) Tj ET
+BT /F4 9.4 Tf 0.067 0.094 0.153 rg 48.00 170.20 Td (Holm-Bonferroni FWER control at alpha=0.05\), embedded physical A/A drift sentinels \(virtual-Z A/A -0.24 pp in TMAP-02;) Tj ET
+BT /F4 9.4 Tf 0.067 0.094 0.153 rg 48.00 157.70 Td (1.15 pp RMS floor in CN-01\), and verbatim programmatic provenance.) Tj ET
+BT /F5 8.4 Tf 0.059 0.090 0.165 rg 48.00 140.20 Td (TABLE I. Unified registry of 7 preregistered campaigns across 3 156-qubit IBM Heron r2 processors \(2,048 shots/PUB,) Tj ET
+BT /F5 8.4 Tf 0.059 0.090 0.165 rg 48.00 129.20 Td (resilience_level=0; Zenodo IDs under 10.5281/zenodo.<id>\).) Tj ET
+q 0.886 0.910 0.941 rg 48.00 102.70 516.00 14.50 re f Q
+q [] 0 d 1.00 w 0.059 0.090 0.165 RG 48.00 117.20 m 564.00 117.20 l S Q
+BT /F2 6.9 Tf 0.059 0.090 0.165 rg 51.00 108.50 Td (Campaign) Tj ET
+BT /F2 6.9 Tf 0.059 0.090 0.165 rg 125.85 108.50 Td (UTC Date) Tj ET
+BT /F2 6.9 Tf 0.059 0.090 0.165 rg 178.38 108.50 Td (Processors) Tj ET
+BT /F2 6.9 Tf 0.059 0.090 0.165 rg 263.94 108.50 Td (Jobs) Tj ET
+BT /F2 6.9 Tf 0.059 0.090 0.165 rg 304.73 108.50 Td (PUBs) Tj ET
+BT /F2 6.9 Tf 0.059 0.090 0.165 rg 373.64 108.50 Td (Shots) Tj ET
+BT /F2 6.9 Tf 0.059 0.090 0.165 rg 411.97 108.50 Td (QPU\(s\)) Tj ET
+BT /F2 6.9 Tf 0.059 0.090 0.165 rg 459.35 108.50 Td (Prereg) Tj ET
+BT /F2 6.9 Tf 0.059 0.090 0.165 rg 517.74 108.50 Td (Data DOI) Tj ET
+q [] 0 d 0.80 w 0.200 0.255 0.333 RG 48.00 102.70 m 564.00 102.70 l S Q
+BT /F1 6.9 Tf 0.118 0.161 0.231 rg 51.00 94.40 Td (TMAP-02) Tj ET
+BT /F3 6.9 Tf 0.118 0.161 0.231 rg 121.22 94.40 Td (2026-11-16) Tj ET
+BT /F3 6.9 Tf 0.118 0.161 0.231 rg 178.38 94.40 Td (marrakesh) Tj ET
+BT /F3 6.9 Tf 0.118 0.161 0.231 rg 274.03 94.40 Td (1) Tj ET
+BT /F3 6.9 Tf 0.118 0.161 0.231 rg 315.23 94.40 Td (90) Tj ET
+BT /F3 6.9 Tf 0.118 0.161 0.231 rg 363.62 94.40 Td (184,320) Tj ET
+BT /F3 6.9 Tf 0.118 0.161 0.231 rg 427.50 94.40 Td (53) Tj ET
+BT /F3 6.9 Tf 0.118 0.161 0.231 rg 465.94 94.40 Td (--) Tj ET
+BT /F3 6.9 Tf 0.118 0.161 0.231 rg 516.13 94.40 Td (24406426) Tj ET
+q [] 0 d 0.40 w 0.886 0.910 0.941 RG 48.00 89.00 m 564.00 89.00 l S Q
+q 0.973 0.980 0.988 rg 48.00 75.30 516.00 13.70 re f Q
+BT /F1 6.9 Tf 0.118 0.161 0.231 rg 51.00 80.70 Td (CN-01) Tj ET
+BT /F3 6.9 Tf 0.118 0.161 0.231 rg 121.22 80.70 Td (2026-11-16) Tj ET
+BT /F3 6.9 Tf 0.118 0.161 0.231 rg 178.38 80.70 Td (marrakesh) Tj ET
+BT /F3 6.9 Tf 0.118 0.161 0.231 rg 274.03 80.70 Td (1) Tj ET
+BT /F3 6.9 Tf 0.118 0.161 0.231 rg 311.09 80.70 Td (244) Tj ET
+BT /F3 6.9 Tf 0.118 0.161 0.231 rg 363.62 80.70 Td (499,712) Tj ET
+BT /F3 6.9 Tf 0.118 0.161 0.231 rg 423.36 80.70 Td (139) Tj ET
+BT /F3 6.9 Tf 0.118 0.161 0.231 rg 465.94 80.70 Td (--) Tj ET
+BT /F3 6.9 Tf 0.118 0.161 0.231 rg 516.13 80.70 Td (24406435) Tj ET
+q [] 0 d 0.40 w 0.886 0.910 0.941 RG 48.00 75.30 m 564.00 75.30 l S Q
+BT /F1 6.9 Tf 0.118 0.161 0.231 rg 51.00 67.00 Td (TMAP-03) Tj ET
+BT /F3 6.9 Tf 0.118 0.161 0.231 rg 121.22 67.00 Td (2026-11-20) Tj ET
+BT /F3 6.9 Tf 0.118 0.161 0.231 rg 178.38 67.00 Td (marrakesh) Tj ET
+BT /F3 6.9 Tf 0.118 0.161 0.231 rg 274.03 67.00 Td (1) Tj ET
+BT /F3 6.9 Tf 0.118 0.161 0.231 rg 315.23 67.00 Td (80) Tj ET
+BT /F3 6.9 Tf 0.118 0.161 0.231 rg 363.62 67.00 Td (163,840) Tj ET
+BT /F3 6.9 Tf 0.118 0.161 0.231 rg 427.50 67.00 Td (47) Tj ET
+BT /F3 6.9 Tf 0.118 0.161 0.231 rg 453.52 67.00 Td (24406496) Tj ET
+BT /F3 6.9 Tf 0.118 0.161 0.231 rg 516.13 67.00 Td (24406525) Tj ET
+q [] 0 d 0.40 w 0.886 0.910 0.941 RG 48.00 61.60 m 564.00 61.60 l S Q
+q [] 0 d 0.90 w 0.059 0.090 0.165 RG 48.00 61.60 m 564.00 61.60 l S Q
+q [] 0 d 0.60 w 0.796 0.835 0.882 RG 48.00 42.00 m 564.00 42.00 l S Q
+BT /F3 7.0 Tf 0.392 0.455 0.545 rg 48.00 29.00 Td (42 Jobs | 2,174,976 Shots | ibm_marrakesh, ibm_fez, ibm_kingston | RFC8785: 9631f34a6c54d7eb...) Tj ET
+BT /F2 7.6 Tf 0.200 0.255 0.333 rg 523.30 29.00 Td (Page 1 of 5) Tj ET
+endstream
+endobj
+10 0 obj
+<< /Type /Page /Parent 8 0 R /MediaBox [0 0 612.00 792.00] /Resources << /Font << /F1 1 0 R /F2 2 0 R /F3 3 0 R /F4 4 0 R /F5 5 0 R /F6 6 0 R /F7 7 0 R >> >> /Contents 9 0 R >>
+endobj
+11 0 obj
+<< /Length 19738 >>
+stream
+1 1 1 rg
+0 0 612.00 792.00 re f
+BT /F6 8.2 Tf 0.278 0.333 0.412 rg 48.00 738.00 Td (TABLE I. Unified registry of 7 preregistered campaigns across 3 156-qubit IBM Heron r2 processors \(2,048 shots/PUB, \(continued\)) Tj ET
+q 0.886 0.910 0.941 rg 48.00 713.00 516.00 14.50 re f Q
+q [] 0 d 1.00 w 0.059 0.090 0.165 RG 48.00 727.50 m 564.00 727.50 l S Q
+BT /F2 6.9 Tf 0.059 0.090 0.165 rg 51.00 718.80 Td (Campaign) Tj ET
+BT /F2 6.9 Tf 0.059 0.090 0.165 rg 125.85 718.80 Td (UTC Date) Tj ET
+BT /F2 6.9 Tf 0.059 0.090 0.165 rg 178.38 718.80 Td (Processors) Tj ET
+BT /F2 6.9 Tf 0.059 0.090 0.165 rg 263.94 718.80 Td (Jobs) Tj ET
+BT /F2 6.9 Tf 0.059 0.090 0.165 rg 304.73 718.80 Td (PUBs) Tj ET
+BT /F2 6.9 Tf 0.059 0.090 0.165 rg 373.64 718.80 Td (Shots) Tj ET
+BT /F2 6.9 Tf 0.059 0.090 0.165 rg 411.97 718.80 Td (QPU\(s\)) Tj ET
+BT /F2 6.9 Tf 0.059 0.090 0.165 rg 459.35 718.80 Td (Prereg) Tj ET
+BT /F2 6.9 Tf 0.059 0.090 0.165 rg 517.74 718.80 Td (Data DOI) Tj ET
+q [] 0 d 0.80 w 0.200 0.255 0.333 RG 48.00 713.00 m 564.00 713.00 l S Q
+q 0.973 0.980 0.988 rg 48.00 699.30 516.00 13.70 re f Q
+BT /F1 6.9 Tf 0.118 0.161 0.231 rg 51.00 704.70 Td (TMAP-04) Tj ET
+BT /F3 6.9 Tf 0.118 0.161 0.231 rg 121.22 704.70 Td (2026-11-20) Tj ET
+BT /F3 6.9 Tf 0.118 0.161 0.231 rg 178.38 704.70 Td (All 3 QPUs) Tj ET
+BT /F3 6.9 Tf 0.118 0.161 0.231 rg 274.03 704.70 Td (6) Tj ET
+BT /F3 6.9 Tf 0.118 0.161 0.231 rg 311.09 704.70 Td (198) Tj ET
+BT /F3 6.9 Tf 0.118 0.161 0.231 rg 363.62 704.70 Td (405,504) Tj ET
+BT /F3 6.9 Tf 0.118 0.161 0.231 rg 423.36 704.70 Td (121) Tj ET
+BT /F3 6.9 Tf 0.118 0.161 0.231 rg 453.52 704.70 Td (24406640) Tj ET
+BT /F3 6.9 Tf 0.118 0.161 0.231 rg 516.13 704.70 Td (24407001) Tj ET
+q [] 0 d 0.40 w 0.886 0.910 0.941 RG 48.00 699.30 m 564.00 699.30 l S Q
+BT /F1 6.9 Tf 0.118 0.161 0.231 rg 51.00 691.00 Td (TMAP-05) Tj ET
+BT /F3 6.9 Tf 0.118 0.161 0.231 rg 121.22 691.00 Td (2026-11-20) Tj ET
+BT /F3 6.9 Tf 0.118 0.161 0.231 rg 178.38 691.00 Td (All 3 QPUs) Tj ET
+BT /F3 6.9 Tf 0.118 0.161 0.231 rg 274.03 691.00 Td (6) Tj ET
+BT /F3 6.9 Tf 0.118 0.161 0.231 rg 311.09 691.00 Td (198) Tj ET
+BT /F3 6.9 Tf 0.118 0.161 0.231 rg 363.62 691.00 Td (405,504) Tj ET
+BT /F3 6.9 Tf 0.118 0.161 0.231 rg 423.36 691.00 Td (120) Tj ET
+BT /F3 6.9 Tf 0.118 0.161 0.231 rg 453.52 691.00 Td (24407538) Tj ET
+BT /F3 6.9 Tf 0.118 0.161 0.231 rg 516.13 691.00 Td (24407875) Tj ET
+q [] 0 d 0.40 w 0.886 0.910 0.941 RG 48.00 685.60 m 564.00 685.60 l S Q
+q 0.973 0.980 0.988 rg 48.00 671.90 516.00 13.70 re f Q
+BT /F1 6.9 Tf 0.118 0.161 0.231 rg 51.00 677.30 Td (RO-06) Tj ET
+BT /F3 6.9 Tf 0.118 0.161 0.231 rg 112.94 677.30 Td (2026-11-20..21) Tj ET
+BT /F3 6.9 Tf 0.118 0.161 0.231 rg 178.38 677.30 Td (All 3 QPUs) Tj ET
+BT /F3 6.9 Tf 0.118 0.161 0.231 rg 269.89 677.30 Td (24) Tj ET
+BT /F3 6.9 Tf 0.118 0.161 0.231 rg 311.09 677.30 Td (144) Tj ET
+BT /F3 6.9 Tf 0.118 0.161 0.231 rg 363.62 677.30 Td (294,912) Tj ET
+BT /F3 6.9 Tf 0.118 0.161 0.231 rg 423.36 677.30 Td (128) Tj ET
+BT /F3 6.9 Tf 0.118 0.161 0.231 rg 453.52 677.30 Td (24407897) Tj ET
+BT /F3 6.9 Tf 0.118 0.161 0.231 rg 516.13 677.30 Td (24420902) Tj ET
+q [] 0 d 0.40 w 0.886 0.910 0.941 RG 48.00 671.90 m 564.00 671.90 l S Q
+BT /F1 6.9 Tf 0.118 0.161 0.231 rg 51.00 663.60 Td (RO-07) Tj ET
+BT /F3 6.9 Tf 0.118 0.161 0.231 rg 121.22 663.60 Td (2026-11-21) Tj ET
+BT /F3 6.9 Tf 0.118 0.161 0.231 rg 178.38 663.60 Td (All 3 QPUs) Tj ET
+BT /F3 6.9 Tf 0.118 0.161 0.231 rg 274.03 663.60 Td (3) Tj ET
+BT /F3 6.9 Tf 0.118 0.161 0.231 rg 311.09 663.60 Td (108) Tj ET
+BT /F3 6.9 Tf 0.118 0.161 0.231 rg 363.62 663.60 Td (221,184) Tj ET
+BT /F3 6.9 Tf 0.118 0.161 0.231 rg 427.50 663.60 Td (65) Tj ET
+BT /F3 6.9 Tf 0.118 0.161 0.231 rg 453.52 663.60 Td (24419327) Tj ET
+BT /F3 6.9 Tf 0.118 0.161 0.231 rg 516.13 663.60 Td (24420902) Tj ET
+q [] 0 d 0.40 w 0.886 0.910 0.941 RG 48.00 658.20 m 564.00 658.20 l S Q
+q 0.973 0.980 0.988 rg 48.00 644.50 516.00 13.70 re f Q
+BT /F1 6.9 Tf 0.118 0.161 0.231 rg 51.00 649.90 Td (Total) Tj ET
+BT /F3 6.9 Tf 0.118 0.161 0.231 rg 123.29 649.90 Td (Nov 16-21) Tj ET
+BT /F3 6.9 Tf 0.118 0.161 0.231 rg 178.38 649.90 Td (3 Heron r2) Tj ET
+BT /F3 6.9 Tf 0.118 0.161 0.231 rg 269.89 649.90 Td (42) Tj ET
+BT /F3 6.9 Tf 0.118 0.161 0.231 rg 302.81 649.90 Td (1,062) Tj ET
+BT /F3 6.9 Tf 0.118 0.161 0.231 rg 355.34 649.90 Td (2,174,976) Tj ET
+BT /F3 6.9 Tf 0.118 0.161 0.231 rg 423.36 649.90 Td (673) Tj ET
+BT /F3 6.9 Tf 0.118 0.161 0.231 rg 457.66 649.90 Td (5 DOIs) Tj ET
+BT /F3 6.9 Tf 0.118 0.161 0.231 rg 520.27 649.90 Td (6 DOIs) Tj ET
+q [] 0 d 0.40 w 0.886 0.910 0.941 RG 48.00 644.50 m 564.00 644.50 l S Q
+q [] 0 d 1.00 w 0.059 0.090 0.165 RG 48.00 644.50 m 564.00 644.50 l S Q
+BT /F2 10.4 Tf 0.059 0.090 0.165 rg 48.00 631.00 Td (2. Routing vs. Hidden Readout Faults & 90-Min Three-QPU Sign Flip \(TMAP-02..05\)) Tj ET
+q [] 0 d 0.70 w 0.796 0.835 0.882 RG 48.00 626.00 m 564.00 626.00 l S Q
+q [] 0 d 1.40 w 0.114 0.306 0.847 RG 48.00 626.00 m 106.00 626.00 l S Q
+BT /F4 9.4 Tf 0.067 0.094 0.153 rg 48.00 615.30 Td (TMAP-02 decomposed compilation sensitivity on a 40-qubit circuit concentrating ideal probability onto four bitstrings.) Tj ET
+BT /F4 9.4 Tf 0.067 0.094 0.153 rg 48.00 602.80 Td (Rewriting the degree-20 star into an equivalent nearest-neighbor chain on identical qubits boosted F_cl by +14.27 pp at) Tj ET
+BT /F4 9.4 Tf 0.067 0.094 0.153 rg 48.00 590.30 Td (opt-level 3 \(119->39 CZ\), while shifting the fixed 39-CZ depth-66 chain from best to median path cut F_cl by +10.54 pp. Yet) Tj ET
+BT /F4 9.4 Tf 0.067 0.094 0.153 rg 48.00 577.80 Td (replaying the exact frozen layouts 4 days later in TMAP-03 inverted the path contrast to -4.29 pp because q46 developed a) Tj ET
+BT /F4 9.4 Tf 0.067 0.094 0.153 rg 48.00 565.30 Td (35.0% readout excursion while IBM's snapshot listed 1.1%; tensored readout mitigation restored a +17.03 pp best-path lead.) Tj ET
+q 0.50 w 0.973 0.980 0.988 rg 0.886 0.910 0.941 RG 62.00 530.60 488.00 20.20 re B Q
+BT /F3 8.2 Tf 0.059 0.090 0.165 rg 111.66 540.30 Td (Path Cost:  C\(P\) = -sum_{e in P} ln\(1 - e_CZ\(e\)\) - sum_{q in P} ln\(1 - e_RO\(q\)\)) Tj ET
+BT /F4 8.6 Tf 0.278 0.333 0.412 rg 533.72 540.30 Td (\(1\)) Tj ET
+q 0.8176 0 0 0.8176 68.88 243.60 cm
+1 1 1 rg
+0 0 580.00 340.00 re f
+BT /F2 10.2 Tf 0.067 0.094 0.153 rg 52.14 322.00 Td (Layout Ranking Reversals Across Four Days and Ninety Minutes on Three 156Q Heron r2 QPUs) Tj ET
+BT /F1 8.0 Tf 0.294 0.333 0.388 rg 58.00 309.00 Td (14 hardware jobs | 1,159,168 circuit shots | Fixed 39-CZ depth-66 40-qubit chain contrasts \(mean +/- 95% CI, df=9\)) Tj ET
+0.90 w 0.973 0.980 0.988 rg 0.796 0.835 0.882 RG 50.00 60.00 215.00 226.00 re B
+BT /F2 8.5 Tf 0.067 0.094 0.153 rg 47.13 292.00 Td (\(a\) ibm_marrakesh 4-Day Reversal \(TMAP-02/03\)) Tj ET
+q [] 0 d 0.60 w 0.886 0.910 0.941 RG 50.00 95.31 m 265.00 95.31 l S Q
+BT /F1 7.5 Tf 0.216 0.255 0.318 rg 37.50 92.31 Td (-5) Tj ET
+q [4 3] 0 d 1.00 w 0.580 0.639 0.722 RG 50.00 130.62 m 265.00 130.62 l S Q
+BT /F1 7.5 Tf 0.216 0.255 0.318 rg 41.25 127.62 Td (0) Tj ET
+q [] 0 d 0.60 w 0.886 0.910 0.941 RG 50.00 165.94 m 265.00 165.94 l S Q
+BT /F1 7.5 Tf 0.216 0.255 0.318 rg 37.50 162.94 Td (+5) Tj ET
+q [] 0 d 0.60 w 0.886 0.910 0.941 RG 50.00 201.25 m 265.00 201.25 l S Q
+BT /F1 7.5 Tf 0.216 0.255 0.318 rg 33.75 198.25 Td (+10) Tj ET
+q [] 0 d 0.60 w 0.886 0.910 0.941 RG 50.00 236.56 m 265.00 236.56 l S Q
+BT /F1 7.5 Tf 0.216 0.255 0.318 rg 33.75 233.56 Td (+15) Tj ET
+q [] 0 d 0.60 w 0.886 0.910 0.941 RG 50.00 271.88 m 265.00 271.88 l S Q
+BT /F1 7.5 Tf 0.216 0.255 0.318 rg 33.75 268.88 Td (+20) Tj ET
+BT /F2 8.0 Tf 0.122 0.161 0.216 rg -22.04 173.00 Td (Delta F_cl \(pp\)) Tj ET
+0.70 w 0.114 0.306 0.847 rg 0.118 0.161 0.231 RG 66.00 130.62 28.00 74.41 re B
+q [] 0 d 1.20 w 0.059 0.090 0.165 RG 80.00 200.92 m 80.00 209.15 l S Q
+q [] 0 d 1.20 w 0.059 0.090 0.165 RG 76.00 200.92 m 84.00 200.92 l S Q
+q [] 0 d 1.20 w 0.059 0.090 0.165 RG 76.00 209.15 m 84.00 209.15 l S Q
+BT /F2 7.4 Tf 0.114 0.306 0.847 rg 68.23 212.04 Td (+10.54) Tj ET
+BT /F2 7.2 Tf 0.122 0.161 0.216 rg 68.55 48.00 Td (MAP-02) Tj ET
+BT /F1 6.9 Tf 0.294 0.333 0.388 rg 66.20 38.00 Td (Best-Med) Tj ET
+0.70 w 0.392 0.455 0.545 rg 0.118 0.161 0.231 RG 117.00 128.96 28.00 1.66 re B
+q [] 0 d 1.20 w 0.059 0.090 0.165 RG 131.00 124.42 m 131.00 133.50 l S Q
+q [] 0 d 1.20 w 0.059 0.090 0.165 RG 127.00 124.42 m 135.00 124.42 l S Q
+q [] 0 d 1.20 w 0.059 0.090 0.165 RG 127.00 133.50 m 135.00 133.50 l S Q
+BT /F2 7.4 Tf 0.392 0.455 0.545 rg 121.19 116.96 Td (-0.24) Tj ET
+BT /F2 7.2 Tf 0.122 0.161 0.216 rg 119.55 48.00 Td (MAP-02) Tj ET
+BT /F1 6.9 Tf 0.294 0.333 0.388 rg 113.75 38.00 Td (Virt-Z A/A) Tj ET
+0.70 w 0.863 0.149 0.149 rg 0.118 0.161 0.231 RG 168.00 100.35 28.00 30.27 re B
+q [] 0 d 1.20 w 0.059 0.090 0.165 RG 182.00 93.59 m 182.00 107.11 l S Q
+q [] 0 d 1.20 w 0.059 0.090 0.165 RG 178.00 93.59 m 186.00 93.59 l S Q
+q [] 0 d 1.20 w 0.059 0.090 0.165 RG 178.00 107.11 m 186.00 107.11 l S Q
+BT /F2 7.4 Tf 0.863 0.149 0.149 rg 172.19 88.35 Td (-4.29) Tj ET
+BT /F2 7.2 Tf 0.122 0.161 0.216 rg 170.55 48.00 Td (MAP-03) Tj ET
+BT /F1 6.9 Tf 0.294 0.333 0.388 rg 163.03 38.00 Td (Raw \(+4d\)) Tj ET
+0.70 w 0.020 0.588 0.412 rg 0.118 0.161 0.231 RG 219.00 130.62 28.00 120.28 re B
+q [] 0 d 1.20 w 0.059 0.090 0.165 RG 233.00 224.07 m 233.00 277.75 l S Q
+q [] 0 d 1.20 w 0.059 0.090 0.165 RG 229.00 224.07 m 237.00 224.07 l S Q
+q [] 0 d 1.20 w 0.059 0.090 0.165 RG 229.00 277.75 m 237.00 277.75 l S Q
+BT /F2 7.4 Tf 0.020 0.588 0.412 rg 221.23 257.91 Td (+17.03) Tj ET
+BT /F2 7.2 Tf 0.122 0.161 0.216 rg 221.55 48.00 Td (MAP-03) Tj ET
+BT /F1 6.9 Tf 0.294 0.333 0.388 rg 222.65 38.00 Td (RO-Mit) Tj ET
+BT /F1 7.3 Tf 0.600 0.106 0.106 rg 71.73 22.00 Td (q46 RO error: 1.3% -> 35.0% \(IBM listed 1.1%\)) Tj ET
+0.90 w 0.973 0.980 0.988 rg 0.796 0.835 0.882 RG 310.00 60.00 250.00 226.00 re B
+BT /F2 8.5 Tf 0.067 0.094 0.153 rg 320.12 292.00 Td (\(b\) ~85-Min Three-QPU Sign Flip \(TMAP-04 -> 05\)) Tj ET
+q [] 0 d 0.60 w 0.886 0.910 0.941 RG 310.00 76.74 m 560.00 76.74 l S Q
+BT /F1 7.5 Tf 0.216 0.255 0.318 rg 293.75 73.74 Td (-20) Tj ET
+q [] 0 d 0.60 w 0.886 0.910 0.941 RG 310.00 118.59 m 560.00 118.59 l S Q
+BT /F1 7.5 Tf 0.216 0.255 0.318 rg 293.75 115.59 Td (-10) Tj ET
+q [4 3] 0 d 1.00 w 0.580 0.639 0.722 RG 310.00 160.44 m 560.00 160.44 l S Q
+BT /F1 7.5 Tf 0.216 0.255 0.318 rg 301.25 157.44 Td (0) Tj ET
+q [] 0 d 0.60 w 0.886 0.910 0.941 RG 310.00 202.30 m 560.00 202.30 l S Q
+BT /F1 7.5 Tf 0.216 0.255 0.318 rg 293.75 199.30 Td (+10) Tj ET
+q [] 0 d 0.60 w 0.886 0.910 0.941 RG 310.00 244.15 m 560.00 244.15 l S Q
+BT /F1 7.5 Tf 0.216 0.255 0.318 rg 293.75 241.15 Td (+20) Tj ET
+q [] 0 d 0.60 w 0.886 0.910 0.941 RG 310.00 265.07 m 560.00 265.07 l S Q
+BT /F1 7.5 Tf 0.216 0.255 0.318 rg 293.75 262.07 Td (+25) Tj ET
+q [] 0 d 1.80 w 0.863 0.149 0.149 RG 334.00 265.17 m 358.00 147.87 l S Q
+q [] 0 d 1.20 w 0.863 0.149 0.149 RG 334.00 261.55 m 334.00 268.78 l S Q
+q [] 0 d 1.20 w 0.863 0.149 0.149 RG 358.00 142.29 m 358.00 153.46 l S Q
+q 1.60 w 1.000 1.000 1.000 rg 0.863 0.149 0.149 RG 337.60 265.17 m 337.60 267.15 335.99 268.77 334.00 268.77 c 332.01 268.77 330.40 267.15 330.40 265.17 c 330.40 263.18 332.01 261.57 334.00 261.57 c 335.99 261.57 337.60 263.18 337.60 265.17 c B Q
+q 1.40 w 0.863 0.149 0.149 rg 0.863 0.149 0.149 RG 361.60 147.87 m 361.60 149.86 359.99 151.47 358.00 151.47 c 356.01 151.47 354.40 149.86 354.40 147.87 c 354.40 145.89 356.01 144.27 358.00 144.27 c 359.99 144.27 361.60 145.89 361.60 147.87 c B Q
+0.90 w 0.961 0.620 0.043 rg 0.573 0.251 0.055 RG 374.00 114.98 6.00 6.00 re B
+BT /F2 7.0 Tf 0.863 0.149 0.149 rg 322.73 271.17 Td (+25.0) Tj ET
+BT /F2 7.0 Tf 0.863 0.149 0.149 rg 352.58 136.87 Td (-3.0) Tj ET
+BT /F1 6.6 Tf 0.573 0.251 0.055 rg 370.75 107.98 Td (-10.1) Tj ET
+BT /F2 7.4 Tf 0.122 0.161 0.216 rg 336.35 48.00 Td (marrakesh) Tj ET
+BT /F1 6.9 Tf 0.294 0.333 0.388 rg 343.65 38.00 Td (dt=85m) Tj ET
+q [] 0 d 1.80 w 0.145 0.388 0.922 RG 415.00 145.39 m 439.00 189.32 l S Q
+q [] 0 d 1.20 w 0.145 0.388 0.922 RG 415.00 142.16 m 415.00 148.62 l S Q
+q [] 0 d 1.20 w 0.145 0.388 0.922 RG 439.00 183.96 m 439.00 194.68 l S Q
+q 1.60 w 1.000 1.000 1.000 rg 0.145 0.388 0.922 RG 418.60 145.39 m 418.60 147.38 416.99 148.99 415.00 148.99 c 413.01 148.99 411.40 147.38 411.40 145.39 c 411.40 143.40 413.01 141.79 415.00 141.79 c 416.99 141.79 418.60 143.40 418.60 145.39 c B Q
+q 1.40 w 0.145 0.388 0.922 rg 0.145 0.388 0.922 RG 442.60 189.32 m 442.60 191.31 440.99 192.92 439.00 192.92 c 437.01 192.92 435.40 191.31 435.40 189.32 c 435.40 187.33 437.01 185.72 439.00 185.72 c 440.99 185.72 442.60 187.33 442.60 189.32 c B Q
+0.90 w 0.961 0.620 0.043 rg 0.573 0.251 0.055 RG 455.00 75.51 6.00 6.00 re B
+BT /F2 7.0 Tf 0.145 0.388 0.922 rg 405.58 134.39 Td (-3.6) Tj ET
+BT /F2 7.0 Tf 0.145 0.388 0.922 rg 433.58 195.32 Td (+6.9) Tj ET
+BT /F1 6.6 Tf 0.573 0.251 0.055 rg 451.75 68.51 Td (-19.6) Tj ET
+BT /F2 7.4 Tf 0.122 0.161 0.216 rg 429.12 48.00 Td (fez) Tj ET
+BT /F1 6.9 Tf 0.294 0.333 0.388 rg 424.65 38.00 Td (dt=84m) Tj ET
+q [] 0 d 1.80 w 0.020 0.588 0.412 RG 496.00 159.42 m 520.00 193.11 l S Q
+q [] 0 d 1.20 w 0.020 0.588 0.412 RG 496.00 153.64 m 496.00 165.19 l S Q
+q [] 0 d 1.20 w 0.020 0.588 0.412 RG 520.00 187.99 m 520.00 198.23 l S Q
+q 1.60 w 1.000 1.000 1.000 rg 0.020 0.588 0.412 RG 499.60 159.42 m 499.60 161.41 497.99 163.02 496.00 163.02 c 494.01 163.02 492.40 161.41 492.40 159.42 c 492.40 157.43 494.01 155.82 496.00 155.82 c 497.99 155.82 499.60 157.43 499.60 159.42 c B Q
+q 1.40 w 0.020 0.588 0.412 rg 0.020 0.588 0.412 RG 523.60 193.11 m 523.60 195.10 521.99 196.71 520.00 196.71 c 518.01 196.71 516.40 195.10 516.40 193.11 c 516.40 191.12 518.01 189.51 520.00 189.51 c 521.99 189.51 523.60 191.12 523.60 193.11 c B Q
+0.90 w 0.961 0.620 0.043 rg 0.573 0.251 0.055 RG 536.00 119.11 6.00 6.00 re B
+BT /F2 7.0 Tf 0.020 0.588 0.412 rg 486.58 148.42 Td (-0.2) Tj ET
+BT /F2 7.0 Tf 0.020 0.588 0.412 rg 514.58 199.11 Td (+7.8) Tj ET
+BT /F1 6.6 Tf 0.573 0.251 0.055 rg 534.40 112.11 Td (-9.2) Tj ET
+BT /F2 7.4 Tf 0.122 0.161 0.216 rg 500.31 48.00 Td (kingston) Tj ET
+BT /F1 6.9 Tf 0.294 0.333 0.388 rg 505.65 38.00 Td (dt=82m) Tj ET
+q 1.40 w 1.000 1.000 1.000 rg 0.216 0.255 0.318 RG 395.20 272.00 m 395.20 273.77 393.77 275.20 392.00 275.20 c 390.23 275.20 388.80 273.77 388.80 272.00 c 388.80 270.23 390.23 268.80 392.00 268.80 c 393.77 268.80 395.20 270.23 395.20 272.00 c B Q
+BT /F1 6.9 Tf 0.122 0.161 0.216 rg 399.00 269.00 Td (MAP-04 L1 \(raw\)) Tj ET
+q 1.40 w 0.216 0.255 0.318 rg 0.216 0.255 0.318 RG 479.20 272.00 m 479.20 273.77 477.77 275.20 476.00 275.20 c 474.23 275.20 472.80 273.77 472.80 272.00 c 472.80 270.23 474.23 268.80 476.00 268.80 c 477.77 268.80 479.20 270.23 479.20 272.00 c B Q
+BT /F1 6.9 Tf 0.122 0.161 0.216 rg 483.00 269.00 Td (MAP-05 M4 \(+85m\)) Tj ET
+0.90 w 0.961 0.620 0.043 rg 0.573 0.251 0.055 RG 389.00 257.00 6.00 6.00 re B
+BT /F1 6.8 Tf 0.573 0.251 0.055 rg 399.00 257.00 Td (MAP-04 L4 \(RO-mitigated: cal path wins 3/3\)) Tj ET
+BT /F1 7.3 Tf 0.118 0.227 0.541 rg 321.85 22.00 Td (marrakesh q46 recovered 34.4% -> 0.6%; all 3 QPUs flipped sign) Tj ET
+Q
+q 0.60 w 0.796 0.835 0.882 RG 68.88 243.60 474.24 278.00 re S Q
+BT /F5 8.5 Tf 0.200 0.255 0.333 rg 48.00 233.60 Td (Figure 1. ) Tj ET
+BT /F6 8.5 Tf 0.200 0.255 0.333 rg 84.78 233.60 Td (Layout ranking reversals across 4 days on ibm_marrakesh \(a\) and across 82--85 minutes on all three 156Q Heron r2 processors \(b\)) Tj ET
+BT /F6 8.5 Tf 0.200 0.255 0.333 rg 48.00 222.40 Td (\(14 jobs, 1,159,168 circuit shots\).) Tj ET
+BT /F5 8.4 Tf 0.059 0.090 0.165 rg 48.00 205.20 Td (TABLE II. Three-processor 40-qubit 39-CZ chain contrasts \(Delta F_cl in pp across 10 blocks, 95% CI\) across TMAP-04 and) Tj ET
+BT /F5 8.4 Tf 0.059 0.090 0.165 rg 48.00 194.20 Td (TMAP-05 \(82--85 min later\).) Tj ET
+q 0.886 0.910 0.941 rg 48.00 167.80 516.00 14.40 re f Q
+q [] 0 d 1.00 w 0.059 0.090 0.165 RG 48.00 182.20 m 564.00 182.20 l S Q
+BT /F2 6.8 Tf 0.059 0.090 0.165 rg 51.00 173.60 Td (Processor) Tj ET
+BT /F2 6.8 Tf 0.059 0.090 0.165 rg 140.76 173.60 Td (dt) Tj ET
+BT /F2 6.8 Tf 0.059 0.090 0.165 rg 190.70 173.60 Td (TMAP-04 L1: Probe-Cal) Tj ET
+BT /F2 6.8 Tf 0.059 0.090 0.165 rg 283.99 173.60 Td (L4 \(RO-Mit\)) Tj ET
+BT /F2 6.8 Tf 0.059 0.090 0.165 rg 365.23 173.60 Td (TMAP-05 M4: Probe-Cal) Tj ET
+BT /F2 6.8 Tf 0.059 0.090 0.165 rg 459.05 173.60 Td (M1: Excl-Cal) Tj ET
+BT /F2 6.8 Tf 0.059 0.090 0.165 rg 511.03 173.60 Td (M2: Excl-Probe) Tj ET
+q [] 0 d 0.80 w 0.200 0.255 0.333 RG 48.00 167.80 m 564.00 167.80 l S Q
+BT /F1 6.8 Tf 0.118 0.161 0.231 rg 51.00 159.60 Td (ibm_marrakesh) Tj ET
+BT /F3 6.8 Tf 0.118 0.161 0.231 rg 134.76 159.60 Td (85m) Tj ET
+BT /F3 6.8 Tf 0.118 0.161 0.231 rg 175.16 159.60 Td (+25.02 [+24.16, +25.89]) Tj ET
+BT /F3 6.8 Tf 0.118 0.161 0.231 rg 302.60 159.60 Td (-10.1) Tj ET
+BT /F3 6.8 Tf 0.118 0.161 0.231 rg 363.40 159.60 Td (-3.00 [-4.34, -1.67]) Tj ET
+BT /F3 6.8 Tf 0.118 0.161 0.231 rg 480.60 159.60 Td (-0.29) Tj ET
+BT /F3 6.8 Tf 0.118 0.161 0.231 rg 540.60 159.60 Td (+2.71) Tj ET
+q [] 0 d 0.40 w 0.886 0.910 0.941 RG 48.00 154.20 m 564.00 154.20 l S Q
+q 0.973 0.980 0.988 rg 48.00 140.60 516.00 13.60 re f Q
+BT /F1 6.8 Tf 0.118 0.161 0.231 rg 51.00 146.00 Td (ibm_fez) Tj ET
+BT /F3 6.8 Tf 0.118 0.161 0.231 rg 134.76 146.00 Td (84m) Tj ET
+BT /F3 6.8 Tf 0.118 0.161 0.231 rg 187.40 146.00 Td (-3.60 [-4.37, -2.83]) Tj ET
+BT /F3 6.8 Tf 0.118 0.161 0.231 rg 302.60 146.00 Td (-19.6) Tj ET
+BT /F3 6.8 Tf 0.118 0.161 0.231 rg 363.40 146.00 Td (+6.90 [+5.62, +8.18]) Tj ET
+BT /F3 6.8 Tf 0.118 0.161 0.231 rg 480.60 146.00 Td (+2.26) Tj ET
+BT /F3 6.8 Tf 0.118 0.161 0.231 rg 540.60 146.00 Td (-4.64) Tj ET
+q [] 0 d 0.40 w 0.886 0.910 0.941 RG 48.00 140.60 m 564.00 140.60 l S Q
+BT /F1 6.8 Tf 0.118 0.161 0.231 rg 51.00 132.40 Td (ibm_kingston) Tj ET
+BT /F3 6.8 Tf 0.118 0.161 0.231 rg 134.76 132.40 Td (82m) Tj ET
+BT /F3 6.8 Tf 0.118 0.161 0.231 rg 187.40 132.40 Td (-0.25 [-1.62, +1.13]) Tj ET
+BT /F3 6.8 Tf 0.118 0.161 0.231 rg 306.68 132.40 Td (-9.2) Tj ET
+BT /F3 6.8 Tf 0.118 0.161 0.231 rg 363.40 132.40 Td (+7.81 [+6.58, +9.03]) Tj ET
+BT /F3 6.8 Tf 0.118 0.161 0.231 rg 480.60 132.40 Td (+4.65) Tj ET
+BT /F3 6.8 Tf 0.118 0.161 0.231 rg 540.60 132.40 Td (-3.16) Tj ET
+q [] 0 d 0.40 w 0.886 0.910 0.941 RG 48.00 127.00 m 564.00 127.00 l S Q
+q [] 0 d 1.00 w 0.059 0.090 0.165 RG 48.00 127.00 m 564.00 127.00 l S Q
+BT /F2 10.4 Tf 0.059 0.090 0.165 rg 48.00 113.50 Td (3. Full-Chip Readout Time Series: Stale Snapshots, Not Crosstalk \(RO-06 & RO-07\)) Tj ET
+q [] 0 d 0.70 w 0.796 0.835 0.882 RG 48.00 108.50 m 564.00 108.50 l S Q
+q [] 0 d 1.40 w 0.114 0.306 0.847 RG 48.00 108.50 m 106.00 108.50 l S Q
+BT /F4 9.4 Tf 0.067 0.094 0.153 rg 48.00 97.80 Td (RO-06 sampled full-chip |0>^156 / |1>^156 probes across 8 rounds on all 3 QPUs, proving hidden faults \(e_probe > 15% while) Tj ET
+BT /F4 9.4 Tf 0.067 0.094 0.153 rg 48.00 85.30 Td (e_IBM < 3%\) are rare \(0.125--0.500 qubits/round\), 100% intermittent \(6/6 recovered <5%\), and persistent over 15-min intervals) Tj ET
+BT /F4 9.4 Tf 0.067 0.094 0.153 rg 48.00 72.80 Td (\(87.4% vs 0.63%, Fisher OR=1,095\). RO-07 tested isolated \(ISO\), full-chip \(ALL\), and neighbor-inverted \(FLIP\) contexts) Tj ET
+BT /F6 8.0 Tf 0.392 0.455 0.545 rg 48.00 762.00 Td (Calibration Staleness, Readout Telegraphing & Colored-Noise Nulls on Heron r2) Tj ET
+BT /F1 7.5 Tf 0.392 0.455 0.545 rg 343.05 762.00 Td (Devin Phillip Davis  |  OSIRIS-HERON-R2-UNIFIED-SYNTHESIS) Tj ET
+q [] 0 d 0.60 w 0.796 0.835 0.882 RG 48.00 756.00 m 564.00 756.00 l S Q
+q [] 0 d 0.60 w 0.796 0.835 0.882 RG 48.00 42.00 m 564.00 42.00 l S Q
+BT /F3 7.0 Tf 0.392 0.455 0.545 rg 48.00 29.00 Td (42 Jobs | 2,174,976 Shots | ibm_marrakesh, ibm_fez, ibm_kingston | RFC8785: 9631f34a6c54d7eb...) Tj ET
+BT /F2 7.6 Tf 0.200 0.255 0.333 rg 523.30 29.00 Td (Page 2 of 5) Tj ET
+endstream
+endobj
+12 0 obj
+<< /Type /Page /Parent 8 0 R /MediaBox [0 0 612.00 792.00] /Resources << /Font << /F1 1 0 R /F2 2 0 R /F3 3 0 R /F4 4 0 R /F5 5 0 R /F6 6 0 R /F7 7 0 R >> >> /Contents 11 0 R >>
+endobj
+13 0 obj
+<< /Length 36305 >>
+stream
+1 1 1 rg
+0 0 612.00 792.00 re f
+BT /F4 9.4 Tf 0.067 0.094 0.153 rg 48.00 738.00 Td (across 19 qubits, bounding |D_mux| <= 1.16 pp and |D_nbr| <= 1.61 pp \(far below the +/-5.0 pp crosstalk gate\), while IBM) Tj ET
+BT /F4 9.4 Tf 0.067 0.094 0.153 rg 48.00 725.50 Td (snapshots stayed static for up to 16.0 h on ibm_kingston.) Tj ET
+q 0.8058 0 0 0.8058 72.32 430.00 cm
+1 1 1 rg
+0 0 580.00 345.00 re f
+BT /F2 10.1 Tf 0.067 0.094 0.153 rg 35.73 327.00 Td (Full-Chip Readout Telegraphing \(RO-06\) vs Simultaneous-Readout Context Independence \(RO-07\)) Tj ET
+BT /F1 8.0 Tf 0.294 0.333 0.388 rg 94.00 314.00 Td (27 hardware jobs | 516,096 shots across 156Q x 3 Heron r2 QPUs | IBM snapshots static up to 16.0 h) Tj ET
+0.90 w 0.973 0.980 0.988 rg 0.796 0.835 0.882 RG 48.00 65.00 232.00 226.00 re B
+BT /F2 8.4 Tf 0.067 0.094 0.153 rg 63.83 297.00 Td (\(a\) 6/6 Hidden Faults Recover Across Rounds) Tj ET
+0.863 0.988 0.906 rg 48.00 65.00 232.00 19.37 re f
+q [] 0 d 0.60 w 0.886 0.910 0.941 RG 48.00 65.00 m 280.00 65.00 l S Q
+BT /F1 7.2 Tf 0.216 0.255 0.318 rg 35.80 62.00 Td (0%) Tj ET
+q [4 3] 0 d 0.90 w 0.020 0.588 0.412 RG 48.00 97.29 m 280.00 97.29 l S Q
+BT /F1 7.2 Tf 0.216 0.255 0.318 rg 35.80 94.29 Td (5%) Tj ET
+q [] 0 d 0.60 w 0.886 0.910 0.941 RG 48.00 129.57 m 280.00 129.57 l S Q
+BT /F1 7.2 Tf 0.216 0.255 0.318 rg 32.20 126.57 Td (10%) Tj ET
+q [4 3] 0 d 0.90 w 0.863 0.149 0.149 RG 48.00 161.86 m 280.00 161.86 l S Q
+BT /F1 7.2 Tf 0.216 0.255 0.318 rg 32.20 158.86 Td (15%) Tj ET
+q [] 0 d 0.60 w 0.886 0.910 0.941 RG 48.00 194.14 m 280.00 194.14 l S Q
+BT /F1 7.2 Tf 0.216 0.255 0.318 rg 32.20 191.14 Td (20%) Tj ET
+q [] 0 d 0.60 w 0.886 0.910 0.941 RG 48.00 226.43 m 280.00 226.43 l S Q
+BT /F1 7.2 Tf 0.216 0.255 0.318 rg 32.20 223.43 Td (25%) Tj ET
+q [] 0 d 0.60 w 0.886 0.910 0.941 RG 48.00 258.71 m 280.00 258.71 l S Q
+BT /F1 7.2 Tf 0.216 0.255 0.318 rg 32.20 255.71 Td (30%) Tj ET
+q [] 0 d 0.60 w 0.886 0.910 0.941 RG 48.00 291.00 m 280.00 291.00 l S Q
+BT /F1 7.2 Tf 0.216 0.255 0.318 rg 32.20 288.00 Td (35%) Tj ET
+BT /F2 6.7 Tf 0.863 0.149 0.149 rg 215.63 165.86 Td (Hidden fault >15%) Tj ET
+BT /F1 6.6 Tf 0.024 0.373 0.275 rg 173.70 101.29 Td (Recovered <5% \(IBM <3% green\)) Tj ET
+q [4 3] 0 d 0.90 w 0.580 0.639 0.722 RG 78.29 291.00 m 78.29 65.00 l S Q
+BT /F1 6.5 Tf 0.392 0.455 0.545 rg 80.29 280.00 Td (13.7h gap) Tj ET
+BT /F1 7.2 Tf 0.122 0.161 0.216 rg 60.40 53.00 Td (r0) Tj ET
+BT /F1 7.2 Tf 0.122 0.161 0.216 rg 88.97 53.00 Td (r1) Tj ET
+BT /F1 7.2 Tf 0.122 0.161 0.216 rg 117.54 53.00 Td (r2) Tj ET
+BT /F1 7.2 Tf 0.122 0.161 0.216 rg 146.11 53.00 Td (r3) Tj ET
+BT /F1 7.2 Tf 0.122 0.161 0.216 rg 174.69 53.00 Td (r4) Tj ET
+BT /F1 7.2 Tf 0.122 0.161 0.216 rg 203.26 53.00 Td (r5) Tj ET
+BT /F1 7.2 Tf 0.122 0.161 0.216 rg 231.83 53.00 Td (r6) Tj ET
+BT /F1 7.2 Tf 0.122 0.161 0.216 rg 260.40 53.00 Td (r7) Tj ET
+q [] 0 d 1.50 w 0.576 0.200 0.918 RG 64.00 75.93 m 92.57 74.46 l 121.14 137.62 l 149.71 128.27 l 178.29 139.46 l 206.86 108.14 l 235.43 171.73 l 264.00 96.48 l S Q
+q 0.60 w 0.576 0.200 0.918 rg 1.000 1.000 1.000 RG 66.50 75.93 m 66.50 77.31 65.38 78.43 64.00 78.43 c 62.62 78.43 61.50 77.31 61.50 75.93 c 61.50 74.55 62.62 73.43 64.00 73.43 c 65.38 73.43 66.50 74.55 66.50 75.93 c B Q
+q 0.60 w 0.576 0.200 0.918 rg 1.000 1.000 1.000 RG 95.07 74.46 m 95.07 75.84 93.95 76.96 92.57 76.96 c 91.19 76.96 90.07 75.84 90.07 74.46 c 90.07 73.08 91.19 71.96 92.57 71.96 c 93.95 71.96 95.07 73.08 95.07 74.46 c B Q
+q 0.60 w 0.576 0.200 0.918 rg 1.000 1.000 1.000 RG 123.64 137.62 m 123.64 139.00 122.52 140.12 121.14 140.12 c 119.76 140.12 118.64 139.00 118.64 137.62 c 118.64 136.24 119.76 135.12 121.14 135.12 c 122.52 135.12 123.64 136.24 123.64 137.62 c B Q
+q 0.60 w 0.576 0.200 0.918 rg 1.000 1.000 1.000 RG 152.21 128.27 m 152.21 129.65 151.09 130.77 149.71 130.77 c 148.33 130.77 147.21 129.65 147.21 128.27 c 147.21 126.89 148.33 125.77 149.71 125.77 c 151.09 125.77 152.21 126.89 152.21 128.27 c B Q
+q 0.60 w 0.576 0.200 0.918 rg 1.000 1.000 1.000 RG 180.79 139.46 m 180.79 140.84 179.67 141.96 178.29 141.96 c 176.91 141.96 175.79 140.84 175.79 139.46 c 175.79 138.08 176.91 136.96 178.29 136.96 c 179.67 136.96 180.79 138.08 180.79 139.46 c B Q
+q 0.60 w 0.576 0.200 0.918 rg 1.000 1.000 1.000 RG 209.36 108.14 m 209.36 109.52 208.24 110.64 206.86 110.64 c 205.48 110.64 204.36 109.52 204.36 108.14 c 204.36 106.76 205.48 105.64 206.86 105.64 c 208.24 105.64 209.36 106.76 209.36 108.14 c B Q
+q 0.60 w 0.576 0.200 0.918 rg 1.000 1.000 1.000 RG 237.93 171.73 m 237.93 173.11 236.81 174.23 235.43 174.23 c 234.05 174.23 232.93 173.11 232.93 171.73 c 232.93 170.35 234.05 169.23 235.43 169.23 c 236.81 169.23 237.93 170.35 237.93 171.73 c B Q
+q 0.60 w 0.576 0.200 0.918 rg 1.000 1.000 1.000 RG 266.50 96.48 m 266.50 97.86 265.38 98.98 264.00 98.98 c 262.62 98.98 261.50 97.86 261.50 96.48 c 261.50 95.10 262.62 93.98 264.00 93.98 c 265.38 93.98 266.50 95.10 266.50 96.48 c B Q
+q [] 0 d 1.80 w 0.576 0.200 0.918 RG 56.00 270.00 m 66.00 270.00 l S Q
+BT /F1 6.7 Tf 0.122 0.161 0.216 rg 69.00 267.00 Td (mar q85 \(max 16.5%\)) Tj ET
+q [] 0 d 1.50 w 0.918 0.345 0.047 RG 64.00 72.83 m 92.57 70.25 l 121.14 71.04 l 149.71 72.20 l 178.29 71.36 l 206.86 108.88 l 235.43 90.64 l 264.00 223.91 l S Q
+q 0.60 w 0.918 0.345 0.047 rg 1.000 1.000 1.000 RG 66.50 72.83 m 66.50 74.21 65.38 75.33 64.00 75.33 c 62.62 75.33 61.50 74.21 61.50 72.83 c 61.50 71.45 62.62 70.33 64.00 70.33 c 65.38 70.33 66.50 71.45 66.50 72.83 c B Q
+q 0.60 w 0.918 0.345 0.047 rg 1.000 1.000 1.000 RG 95.07 70.25 m 95.07 71.64 93.95 72.75 92.57 72.75 c 91.19 72.75 90.07 71.64 90.07 70.25 c 90.07 68.87 91.19 67.75 92.57 67.75 c 93.95 67.75 95.07 68.87 95.07 70.25 c B Q
+q 0.60 w 0.918 0.345 0.047 rg 1.000 1.000 1.000 RG 123.64 71.04 m 123.64 72.42 122.52 73.54 121.14 73.54 c 119.76 73.54 118.64 72.42 118.64 71.04 c 118.64 69.66 119.76 68.54 121.14 68.54 c 122.52 68.54 123.64 69.66 123.64 71.04 c B Q
+q 0.60 w 0.918 0.345 0.047 rg 1.000 1.000 1.000 RG 152.21 72.20 m 152.21 73.58 151.09 74.70 149.71 74.70 c 148.33 74.70 147.21 73.58 147.21 72.20 c 147.21 70.82 148.33 69.70 149.71 69.70 c 151.09 69.70 152.21 70.82 152.21 72.20 c B Q
+q 0.60 w 0.918 0.345 0.047 rg 1.000 1.000 1.000 RG 180.79 71.36 m 180.79 72.74 179.67 73.86 178.29 73.86 c 176.91 73.86 175.79 72.74 175.79 71.36 c 175.79 69.98 176.91 68.86 178.29 68.86 c 179.67 68.86 180.79 69.98 180.79 71.36 c B Q
+q 0.60 w 0.918 0.345 0.047 rg 1.000 1.000 1.000 RG 209.36 108.88 m 209.36 110.26 208.24 111.38 206.86 111.38 c 205.48 111.38 204.36 110.26 204.36 108.88 c 204.36 107.50 205.48 106.38 206.86 106.38 c 208.24 106.38 209.36 107.50 209.36 108.88 c B Q
+q 0.60 w 0.918 0.345 0.047 rg 1.000 1.000 1.000 RG 237.93 90.64 m 237.93 92.02 236.81 93.14 235.43 93.14 c 234.05 93.14 232.93 92.02 232.93 90.64 c 232.93 89.26 234.05 88.14 235.43 88.14 c 236.81 88.14 237.93 89.26 237.93 90.64 c B Q
+q 0.60 w 0.918 0.345 0.047 rg 1.000 1.000 1.000 RG 266.50 223.91 m 266.50 225.29 265.38 226.41 264.00 226.41 c 262.62 226.41 261.50 225.29 261.50 223.91 c 261.50 222.53 262.62 221.41 264.00 221.41 c 265.38 221.41 266.50 222.53 266.50 223.91 c B Q
+q [] 0 d 1.80 w 0.918 0.345 0.047 RG 170.00 270.00 m 180.00 270.00 l S Q
+BT /F1 6.7 Tf 0.122 0.161 0.216 rg 183.00 267.00 Td (mar q16 \(max 24.6%\)) Tj ET
+q [] 0 d 1.50 w 0.863 0.149 0.149 RG 64.00 97.21 m 92.57 76.88 l 121.14 78.35 l 149.71 76.35 l 178.29 78.82 l 206.86 87.33 l 235.43 82.18 l 264.00 269.62 l S Q
+q 0.60 w 0.863 0.149 0.149 rg 1.000 1.000 1.000 RG 66.50 97.21 m 66.50 98.59 65.38 99.71 64.00 99.71 c 62.62 99.71 61.50 98.59 61.50 97.21 c 61.50 95.83 62.62 94.71 64.00 94.71 c 65.38 94.71 66.50 95.83 66.50 97.21 c B Q
+q 0.60 w 0.863 0.149 0.149 rg 1.000 1.000 1.000 RG 95.07 76.88 m 95.07 78.26 93.95 79.38 92.57 79.38 c 91.19 79.38 90.07 78.26 90.07 76.88 c 90.07 75.50 91.19 74.38 92.57 74.38 c 93.95 74.38 95.07 75.50 95.07 76.88 c B Q
+q 0.60 w 0.863 0.149 0.149 rg 1.000 1.000 1.000 RG 123.64 78.35 m 123.64 79.73 122.52 80.85 121.14 80.85 c 119.76 80.85 118.64 79.73 118.64 78.35 c 118.64 76.97 119.76 75.85 121.14 75.85 c 122.52 75.85 123.64 76.97 123.64 78.35 c B Q
+q 0.60 w 0.863 0.149 0.149 rg 1.000 1.000 1.000 RG 152.21 76.35 m 152.21 77.73 151.09 78.85 149.71 78.85 c 148.33 78.85 147.21 77.73 147.21 76.35 c 147.21 74.97 148.33 73.85 149.71 73.85 c 151.09 73.85 152.21 74.97 152.21 76.35 c B Q
+q 0.60 w 0.863 0.149 0.149 rg 1.000 1.000 1.000 RG 180.79 78.82 m 180.79 80.20 179.67 81.32 178.29 81.32 c 176.91 81.32 175.79 80.20 175.79 78.82 c 175.79 77.44 176.91 76.32 178.29 76.32 c 179.67 76.32 180.79 77.44 180.79 78.82 c B Q
+q 0.60 w 0.863 0.149 0.149 rg 1.000 1.000 1.000 RG 209.36 87.33 m 209.36 88.71 208.24 89.83 206.86 89.83 c 205.48 89.83 204.36 88.71 204.36 87.33 c 204.36 85.95 205.48 84.83 206.86 84.83 c 208.24 84.83 209.36 85.95 209.36 87.33 c B Q
+q 0.60 w 0.863 0.149 0.149 rg 1.000 1.000 1.000 RG 237.93 82.18 m 237.93 83.56 236.81 84.68 235.43 84.68 c 234.05 84.68 232.93 83.56 232.93 82.18 c 232.93 80.80 234.05 79.68 235.43 79.68 c 236.81 79.68 237.93 80.80 237.93 82.18 c B Q
+q 0.60 w 0.863 0.149 0.149 rg 1.000 1.000 1.000 RG 266.50 269.62 m 266.50 271.00 265.38 272.12 264.00 272.12 c 262.62 272.12 261.50 271.00 261.50 269.62 c 261.50 268.24 262.62 267.12 264.00 267.12 c 265.38 267.12 266.50 268.24 266.50 269.62 c B Q
+q [] 0 d 1.80 w 0.863 0.149 0.149 RG 56.00 259.00 m 66.00 259.00 l S Q
+BT /F1 6.7 Tf 0.122 0.161 0.216 rg 69.00 256.00 Td (mar q111 \(max 31.7%\)) Tj ET
+q [] 0 d 1.50 w 0.859 0.153 0.467 RG 64.00 69.10 m 92.57 84.13 l 121.14 71.99 l 149.71 80.71 l 178.29 70.36 l 206.86 74.46 l 235.43 73.67 l 264.00 165.84 l S Q
+q 0.60 w 0.859 0.153 0.467 rg 1.000 1.000 1.000 RG 66.50 69.10 m 66.50 70.48 65.38 71.60 64.00 71.60 c 62.62 71.60 61.50 70.48 61.50 69.10 c 61.50 67.72 62.62 66.60 64.00 66.60 c 65.38 66.60 66.50 67.72 66.50 69.10 c B Q
+q 0.60 w 0.859 0.153 0.467 rg 1.000 1.000 1.000 RG 95.07 84.13 m 95.07 85.51 93.95 86.63 92.57 86.63 c 91.19 86.63 90.07 85.51 90.07 84.13 c 90.07 82.75 91.19 81.63 92.57 81.63 c 93.95 81.63 95.07 82.75 95.07 84.13 c B Q
+q 0.60 w 0.859 0.153 0.467 rg 1.000 1.000 1.000 RG 123.64 71.99 m 123.64 73.37 122.52 74.49 121.14 74.49 c 119.76 74.49 118.64 73.37 118.64 71.99 c 118.64 70.61 119.76 69.49 121.14 69.49 c 122.52 69.49 123.64 70.61 123.64 71.99 c B Q
+q 0.60 w 0.859 0.153 0.467 rg 1.000 1.000 1.000 RG 152.21 80.71 m 152.21 82.09 151.09 83.21 149.71 83.21 c 148.33 83.21 147.21 82.09 147.21 80.71 c 147.21 79.33 148.33 78.21 149.71 78.21 c 151.09 78.21 152.21 79.33 152.21 80.71 c B Q
+q 0.60 w 0.859 0.153 0.467 rg 1.000 1.000 1.000 RG 180.79 70.36 m 180.79 71.74 179.67 72.86 178.29 72.86 c 176.91 72.86 175.79 71.74 175.79 70.36 c 175.79 68.98 176.91 67.86 178.29 67.86 c 179.67 67.86 180.79 68.98 180.79 70.36 c B Q
+q 0.60 w 0.859 0.153 0.467 rg 1.000 1.000 1.000 RG 209.36 74.46 m 209.36 75.84 208.24 76.96 206.86 76.96 c 205.48 76.96 204.36 75.84 204.36 74.46 c 204.36 73.08 205.48 71.96 206.86 71.96 c 208.24 71.96 209.36 73.08 209.36 74.46 c B Q
+q 0.60 w 0.859 0.153 0.467 rg 1.000 1.000 1.000 RG 237.93 73.67 m 237.93 75.05 236.81 76.17 235.43 76.17 c 234.05 76.17 232.93 75.05 232.93 73.67 c 232.93 72.29 234.05 71.17 235.43 71.17 c 236.81 71.17 237.93 72.29 237.93 73.67 c B Q
+q 0.60 w 0.859 0.153 0.467 rg 1.000 1.000 1.000 RG 266.50 165.84 m 266.50 167.22 265.38 168.34 264.00 168.34 c 262.62 168.34 261.50 167.22 261.50 165.84 c 261.50 164.46 262.62 163.34 264.00 163.34 c 265.38 163.34 266.50 164.46 266.50 165.84 c B Q
+q [] 0 d 1.80 w 0.859 0.153 0.467 RG 170.00 259.00 m 180.00 259.00 l S Q
+BT /F1 6.7 Tf 0.122 0.161 0.216 rg 183.00 256.00 Td (mar q126 \(max 15.6%\)) Tj ET
+q [] 0 d 1.50 w 0.145 0.388 0.922 RG 64.00 76.30 m 92.57 179.66 l 121.14 81.13 l 149.71 101.36 l 178.29 110.51 l 206.86 76.98 l 235.43 76.35 l 264.00 79.92 l S Q
+q 0.60 w 0.145 0.388 0.922 rg 1.000 1.000 1.000 RG 66.50 76.30 m 66.50 77.68 65.38 78.80 64.00 78.80 c 62.62 78.80 61.50 77.68 61.50 76.30 c 61.50 74.92 62.62 73.80 64.00 73.80 c 65.38 73.80 66.50 74.92 66.50 76.30 c B Q
+q 0.60 w 0.145 0.388 0.922 rg 1.000 1.000 1.000 RG 95.07 179.66 m 95.07 181.04 93.95 182.16 92.57 182.16 c 91.19 182.16 90.07 181.04 90.07 179.66 c 90.07 178.28 91.19 177.16 92.57 177.16 c 93.95 177.16 95.07 178.28 95.07 179.66 c B Q
+q 0.60 w 0.145 0.388 0.922 rg 1.000 1.000 1.000 RG 123.64 81.13 m 123.64 82.51 122.52 83.63 121.14 83.63 c 119.76 83.63 118.64 82.51 118.64 81.13 c 118.64 79.75 119.76 78.63 121.14 78.63 c 122.52 78.63 123.64 79.75 123.64 81.13 c B Q
+q 0.60 w 0.145 0.388 0.922 rg 1.000 1.000 1.000 RG 152.21 101.36 m 152.21 102.74 151.09 103.86 149.71 103.86 c 148.33 103.86 147.21 102.74 147.21 101.36 c 147.21 99.98 148.33 98.86 149.71 98.86 c 151.09 98.86 152.21 99.98 152.21 101.36 c B Q
+q 0.60 w 0.145 0.388 0.922 rg 1.000 1.000 1.000 RG 180.79 110.51 m 180.79 111.89 179.67 113.01 178.29 113.01 c 176.91 113.01 175.79 111.89 175.79 110.51 c 175.79 109.13 176.91 108.01 178.29 108.01 c 179.67 108.01 180.79 109.13 180.79 110.51 c B Q
+q 0.60 w 0.145 0.388 0.922 rg 1.000 1.000 1.000 RG 209.36 76.98 m 209.36 78.36 208.24 79.48 206.86 79.48 c 205.48 79.48 204.36 78.36 204.36 76.98 c 204.36 75.60 205.48 74.48 206.86 74.48 c 208.24 74.48 209.36 75.60 209.36 76.98 c B Q
+q 0.60 w 0.145 0.388 0.922 rg 1.000 1.000 1.000 RG 237.93 76.35 m 237.93 77.73 236.81 78.85 235.43 78.85 c 234.05 78.85 232.93 77.73 232.93 76.35 c 232.93 74.97 234.05 73.85 235.43 73.85 c 236.81 73.85 237.93 74.97 237.93 76.35 c B Q
+q 0.60 w 0.145 0.388 0.922 rg 1.000 1.000 1.000 RG 266.50 79.92 m 266.50 81.30 265.38 82.42 264.00 82.42 c 262.62 82.42 261.50 81.30 261.50 79.92 c 261.50 78.54 262.62 77.42 264.00 77.42 c 265.38 77.42 266.50 78.54 266.50 79.92 c B Q
+q [] 0 d 1.80 w 0.145 0.388 0.922 RG 56.00 248.00 m 66.00 248.00 l S Q
+BT /F1 6.7 Tf 0.122 0.161 0.216 rg 69.00 245.00 Td (fez q93 \(max 17.8%\)) Tj ET
+q [] 0 d 1.50 w 0.020 0.588 0.412 RG 64.00 208.14 m 92.57 74.83 l 121.14 76.61 l 149.71 75.04 l 178.29 75.51 l 206.86 74.88 l 235.43 73.25 l 264.00 82.18 l S Q
+q 0.60 w 0.020 0.588 0.412 rg 1.000 1.000 1.000 RG 66.50 208.14 m 66.50 209.52 65.38 210.64 64.00 210.64 c 62.62 210.64 61.50 209.52 61.50 208.14 c 61.50 206.76 62.62 205.64 64.00 205.64 c 65.38 205.64 66.50 206.76 66.50 208.14 c B Q
+q 0.60 w 0.020 0.588 0.412 rg 1.000 1.000 1.000 RG 95.07 74.83 m 95.07 76.21 93.95 77.33 92.57 77.33 c 91.19 77.33 90.07 76.21 90.07 74.83 c 90.07 73.45 91.19 72.33 92.57 72.33 c 93.95 72.33 95.07 73.45 95.07 74.83 c B Q
+q 0.60 w 0.020 0.588 0.412 rg 1.000 1.000 1.000 RG 123.64 76.61 m 123.64 77.99 122.52 79.11 121.14 79.11 c 119.76 79.11 118.64 77.99 118.64 76.61 c 118.64 75.23 119.76 74.11 121.14 74.11 c 122.52 74.11 123.64 75.23 123.64 76.61 c B Q
+q 0.60 w 0.020 0.588 0.412 rg 1.000 1.000 1.000 RG 152.21 75.04 m 152.21 76.42 151.09 77.54 149.71 77.54 c 148.33 77.54 147.21 76.42 147.21 75.04 c 147.21 73.66 148.33 72.54 149.71 72.54 c 151.09 72.54 152.21 73.66 152.21 75.04 c B Q
+q 0.60 w 0.020 0.588 0.412 rg 1.000 1.000 1.000 RG 180.79 75.51 m 180.79 76.89 179.67 78.01 178.29 78.01 c 176.91 78.01 175.79 76.89 175.79 75.51 c 175.79 74.13 176.91 73.01 178.29 73.01 c 179.67 73.01 180.79 74.13 180.79 75.51 c B Q
+q 0.60 w 0.020 0.588 0.412 rg 1.000 1.000 1.000 RG 209.36 74.88 m 209.36 76.26 208.24 77.38 206.86 77.38 c 205.48 77.38 204.36 76.26 204.36 74.88 c 204.36 73.50 205.48 72.38 206.86 72.38 c 208.24 72.38 209.36 73.50 209.36 74.88 c B Q
+q 0.60 w 0.020 0.588 0.412 rg 1.000 1.000 1.000 RG 237.93 73.25 m 237.93 74.63 236.81 75.75 235.43 75.75 c 234.05 75.75 232.93 74.63 232.93 73.25 c 232.93 71.87 234.05 70.75 235.43 70.75 c 236.81 70.75 237.93 71.87 237.93 73.25 c B Q
+q 0.60 w 0.020 0.588 0.412 rg 1.000 1.000 1.000 RG 266.50 82.18 m 266.50 83.56 265.38 84.68 264.00 84.68 c 262.62 84.68 261.50 83.56 261.50 82.18 c 261.50 80.80 262.62 79.68 264.00 79.68 c 265.38 79.68 266.50 80.80 266.50 82.18 c B Q
+q [] 0 d 1.80 w 0.020 0.588 0.412 RG 170.00 248.00 m 180.00 248.00 l S Q
+BT /F1 6.7 Tf 0.122 0.161 0.216 rg 183.00 245.00 Td (kng q107 \(max 22.2%\)) Tj ET
+BT /F2 7.2 Tf 0.118 0.227 0.541 rg 60.97 39.00 Td (15-min persistence: 87.4% vs 0.63% \(Fisher OR=1,095\)) Tj ET
+BT /F1 7.0 Tf 0.600 0.106 0.106 rg 46.75 27.00 Td (ibm_kingston snapshot unchanged for 16.0 h \(0/156 qubits updated\)) Tj ET
+0.90 w 0.973 0.980 0.988 rg 0.796 0.835 0.882 RG 332.00 65.00 228.00 226.00 re B
+BT /F2 8.1 Tf 0.067 0.094 0.153 rg 338.68 297.00 Td (\(b\) RO-07 |D_mux| <= 1.16 pp, |D_nbr| <= 1.61 pp) Tj ET
+q [4 3] 0 d 1.00 w 0.863 0.149 0.149 RG 347.72 291.00 m 347.72 65.00 l S Q
+BT /F1 7.2 Tf 0.216 0.255 0.318 rg 344.12 53.00 Td (-5) Tj ET
+q [] 0 d 0.60 w 0.886 0.910 0.941 RG 406.69 291.00 m 406.69 65.00 l S Q
+BT /F1 7.2 Tf 0.216 0.255 0.318 rg 403.09 53.00 Td (-2) Tj ET
+q [4 3] 0 d 1.00 w 0.392 0.455 0.545 RG 446.00 291.00 m 446.00 65.00 l S Q
+BT /F1 7.2 Tf 0.216 0.255 0.318 rg 444.20 53.00 Td (0) Tj ET
+q [] 0 d 0.60 w 0.886 0.910 0.941 RG 485.31 291.00 m 485.31 65.00 l S Q
+BT /F1 7.2 Tf 0.216 0.255 0.318 rg 481.71 53.00 Td (+2) Tj ET
+q [4 3] 0 d 1.00 w 0.863 0.149 0.149 RG 544.28 291.00 m 544.28 65.00 l S Q
+BT /F1 7.2 Tf 0.216 0.255 0.318 rg 540.68 53.00 Td (+5) Tj ET
+BT /F1 6.5 Tf 0.863 0.149 0.149 rg 350.72 280.00 Td (-5 pp gate) Tj ET
+BT /F1 6.5 Tf 0.863 0.149 0.149 rg 508.78 280.00 Td (+5 pp gate) Tj ET
+BT /F3 6.3 Tf 0.122 0.161 0.216 rg 282.64 268.50 Td (mar:q93\(D\)) Tj ET
+q [] 0 d 1.00 w 0.145 0.388 0.922 RG 422.68 272.50 m 446.13 272.50 l S Q
+q 0.80 w 0.145 0.388 0.922 rg 0.145 0.388 0.922 RG 436.40 272.50 m 436.40 273.60 435.51 274.50 434.40 274.50 c 433.30 274.50 432.40 273.60 432.40 272.50 c 432.40 271.40 433.30 270.50 434.40 270.50 c 435.51 270.50 436.40 271.40 436.40 272.50 c B Q
+q [] 0 d 1.00 w 0.851 0.467 0.024 RG 439.43 269.20 m 467.76 269.20 l S Q
+q 0.80 w 0.851 0.467 0.024 rg 0.851 0.467 0.024 RG 455.60 269.20 m 455.60 270.30 454.70 271.20 453.60 271.20 c 452.49 271.20 451.60 270.30 451.60 269.20 c 451.60 268.10 452.49 267.20 453.60 267.20 c 454.70 267.20 455.60 268.10 455.60 269.20 c B Q
+BT /F3 6.3 Tf 0.122 0.161 0.216 rg 282.64 257.76 Td (mar:q31\(D\)) Tj ET
+q [] 0 d 1.00 w 0.145 0.388 0.922 RG 419.29 261.76 m 463.43 261.76 l S Q
+q 0.80 w 0.145 0.388 0.922 rg 0.145 0.388 0.922 RG 443.36 261.76 m 443.36 262.87 442.47 263.76 441.36 263.76 c 440.26 263.76 439.36 262.87 439.36 261.76 c 439.36 260.66 440.26 259.76 441.36 259.76 c 442.47 259.76 443.36 260.66 443.36 261.76 c B Q
+q [] 0 d 1.00 w 0.851 0.467 0.024 RG 421.06 258.46 m 487.41 258.46 l S Q
+q 0.80 w 0.851 0.467 0.024 rg 0.851 0.467 0.024 RG 456.24 258.46 m 456.24 259.57 455.34 260.46 454.24 260.46 c 453.13 260.46 452.24 259.57 452.24 258.46 c 452.24 257.36 453.13 256.46 454.24 256.46 c 455.34 256.46 456.24 257.36 456.24 258.46 c B Q
+BT /F3 6.3 Tf 0.122 0.161 0.216 rg 278.86 247.03 Td (mar:q111\(D\)) Tj ET
+q [] 0 d 1.00 w 0.145 0.388 0.922 RG 435.08 251.03 m 442.36 251.03 l S Q
+q 0.80 w 0.145 0.388 0.922 rg 0.145 0.388 0.922 RG 440.72 251.03 m 440.72 252.13 439.83 253.03 438.72 253.03 c 437.62 253.03 436.72 252.13 436.72 251.03 c 436.72 249.92 437.62 249.03 438.72 249.03 c 439.83 249.03 440.72 249.92 440.72 251.03 c B Q
+q [] 0 d 1.00 w 0.851 0.467 0.024 RG 444.04 247.73 m 450.03 247.73 l S Q
+q 0.80 w 0.851 0.467 0.024 rg 0.851 0.467 0.024 RG 449.04 247.73 m 449.04 248.83 448.14 249.73 447.04 249.73 c 445.94 249.73 445.04 248.83 445.04 247.73 c 445.04 246.62 445.94 245.73 447.04 245.73 c 448.14 245.73 449.04 246.62 449.04 247.73 c B Q
+BT /F3 6.3 Tf 0.122 0.161 0.216 rg 278.86 236.29 Td (mar:q130\(A\)) Tj ET
+q [] 0 d 1.00 w 0.145 0.388 0.922 RG 406.82 240.29 m 439.44 240.29 l S Q
+q 0.80 w 0.145 0.388 0.922 rg 0.145 0.388 0.922 RG 425.13 240.29 m 425.13 241.39 424.23 242.29 423.13 242.29 c 422.02 242.29 421.13 241.39 421.13 240.29 c 421.13 239.18 422.02 238.29 423.13 238.29 c 424.23 238.29 425.13 239.18 425.13 240.29 c B Q
+q [] 0 d 1.00 w 0.851 0.467 0.024 RG 450.81 236.99 m 494.78 236.99 l S Q
+q 0.80 w 0.851 0.467 0.024 rg 0.851 0.467 0.024 RG 474.79 236.99 m 474.79 238.09 473.90 238.99 472.79 238.99 c 471.69 238.99 470.79 238.09 470.79 236.99 c 470.79 235.88 471.69 234.99 472.79 234.99 c 473.90 234.99 474.79 235.88 474.79 236.99 c B Q
+BT /F3 6.3 Tf 0.122 0.161 0.216 rg 282.64 225.55 Td (mar:q48\(A\)) Tj ET
+q [] 0 d 1.00 w 0.145 0.388 0.922 RG 437.10 229.55 m 466.73 229.55 l S Q
+q 0.80 w 0.145 0.388 0.922 rg 0.145 0.388 0.922 RG 453.92 229.55 m 453.92 230.66 453.02 231.55 451.92 231.55 c 450.81 231.55 449.92 230.66 449.92 229.55 c 449.92 228.45 450.81 227.55 451.92 227.55 c 453.02 227.55 453.92 228.45 453.92 229.55 c B Q
+q [] 0 d 1.00 w 0.851 0.467 0.024 RG 414.72 226.25 m 455.53 226.25 l S Q
+q 0.80 w 0.851 0.467 0.024 rg 0.851 0.467 0.024 RG 437.12 226.25 m 437.12 227.36 436.23 228.25 435.12 228.25 c 434.02 228.25 433.12 227.36 433.12 226.25 c 433.12 225.15 434.02 224.25 435.12 224.25 c 436.23 224.25 437.12 225.15 437.12 226.25 c B Q
+BT /F3 6.3 Tf 0.122 0.161 0.216 rg 282.64 214.82 Td (mar:q14\(C\)) Tj ET
+q [] 0 d 1.00 w 0.145 0.388 0.922 RG 441.32 218.82 m 447.32 218.82 l S Q
+q 0.80 w 0.145 0.388 0.922 rg 0.145 0.388 0.922 RG 446.32 218.82 m 446.32 219.92 445.43 220.82 444.32 220.82 c 443.22 220.82 442.32 219.92 442.32 218.82 c 442.32 217.71 443.22 216.82 444.32 216.82 c 445.43 216.82 446.32 217.71 446.32 218.82 c B Q
+q [] 0 d 1.00 w 0.851 0.467 0.024 RG 443.90 215.52 m 448.74 215.52 l S Q
+q 0.80 w 0.851 0.467 0.024 rg 0.851 0.467 0.024 RG 448.32 215.52 m 448.32 216.62 447.42 217.52 446.32 217.52 c 445.22 217.52 444.32 216.62 444.32 215.52 c 444.32 214.41 445.22 213.52 446.32 213.52 c 447.42 213.52 448.32 214.41 448.32 215.52 c B Q
+BT /F3 6.3 Tf 0.122 0.161 0.216 rg 282.64 204.08 Td (mar:q10\(C\)) Tj ET
+q [] 0 d 1.00 w 0.145 0.388 0.922 RG 442.81 208.08 m 447.27 208.08 l S Q
+q 0.80 w 0.145 0.388 0.922 rg 0.145 0.388 0.922 RG 447.04 208.08 m 447.04 209.18 446.14 210.08 445.04 210.08 c 443.94 210.08 443.04 209.18 443.04 208.08 c 443.04 206.97 443.94 206.08 445.04 206.08 c 446.14 206.08 447.04 206.97 447.04 208.08 c B Q
+q [] 0 d 1.00 w 0.851 0.467 0.024 RG 444.35 204.78 m 450.21 204.78 l S Q
+q 0.80 w 0.851 0.467 0.024 rg 0.851 0.467 0.024 RG 449.28 204.78 m 449.28 205.88 448.38 206.78 447.28 206.78 c 446.18 206.78 445.28 205.88 445.28 204.78 c 445.28 203.67 446.18 202.78 447.28 202.78 c 448.38 202.78 449.28 203.67 449.28 204.78 c B Q
+BT /F3 6.3 Tf 0.122 0.161 0.216 rg 282.64 193.34 Td (fez:q11\(D\)) Tj ET
+q [] 0 d 1.00 w 0.145 0.388 0.922 RG 442.02 197.34 m 466.78 197.34 l S Q
+q 0.80 w 0.145 0.388 0.922 rg 0.145 0.388 0.922 RG 456.40 197.34 m 456.40 198.45 455.50 199.34 454.40 199.34 c 453.29 199.34 452.40 198.45 452.40 197.34 c 452.40 196.24 453.29 195.34 454.40 195.34 c 455.50 195.34 456.40 196.24 456.40 197.34 c B Q
+q [] 0 d 1.00 w 0.851 0.467 0.024 RG 446.19 194.04 m 484.68 194.04 l S Q
+q 0.80 w 0.851 0.467 0.024 rg 0.851 0.467 0.024 RG 467.43 194.04 m 467.43 195.15 466.54 196.04 465.43 196.04 c 464.33 196.04 463.43 195.15 463.43 194.04 c 463.43 192.94 464.33 192.04 465.43 192.04 c 466.54 192.04 467.43 192.94 467.43 194.04 c B Q
+BT /F3 6.3 Tf 0.122 0.161 0.216 rg 282.64 182.61 Td (fez:q71\(D\)) Tj ET
+q [] 0 d 1.00 w 0.145 0.388 0.922 RG 442.56 186.61 m 449.28 186.61 l S Q
+q 0.80 w 0.145 0.388 0.922 rg 0.145 0.388 0.922 RG 447.92 186.61 m 447.92 187.71 447.02 188.61 445.92 188.61 c 444.82 188.61 443.92 187.71 443.92 186.61 c 443.92 185.50 444.82 184.61 445.92 184.61 c 447.02 184.61 447.92 185.50 447.92 186.61 c B Q
+q [] 0 d 1.00 w 0.851 0.467 0.024 RG 443.02 183.31 m 447.38 183.31 l S Q
+q 0.80 w 0.851 0.467 0.024 rg 0.851 0.467 0.024 RG 447.20 183.31 m 447.20 184.41 446.30 185.31 445.20 185.31 c 444.10 185.31 443.20 184.41 443.20 183.31 c 443.20 182.20 444.10 181.31 445.20 181.31 c 446.30 181.31 447.20 182.20 447.20 183.31 c B Q
+BT /F3 6.3 Tf 0.122 0.161 0.216 rg 282.64 171.87 Td (fez:q33\(D\)) Tj ET
+q [] 0 d 1.00 w 0.145 0.388 0.922 RG 441.03 175.87 m 449.69 175.87 l S Q
+q 0.80 w 0.145 0.388 0.922 rg 0.145 0.388 0.922 RG 447.36 175.87 m 447.36 176.97 446.46 177.87 445.36 177.87 c 444.26 177.87 443.36 176.97 443.36 175.87 c 443.36 174.76 444.26 173.87 445.36 173.87 c 446.46 173.87 447.36 174.76 447.36 175.87 c B Q
+q [] 0 d 1.00 w 0.851 0.467 0.024 RG 446.47 172.57 m 454.81 172.57 l S Q
+q 0.80 w 0.851 0.467 0.024 rg 0.851 0.467 0.024 RG 452.64 172.57 m 452.64 173.67 451.74 174.57 450.64 174.57 c 449.53 174.57 448.64 173.67 448.64 172.57 c 448.64 171.46 449.53 170.57 450.64 170.57 c 451.74 170.57 452.64 171.46 452.64 172.57 c B Q
+BT /F3 6.3 Tf 0.122 0.161 0.216 rg 278.86 161.13 Td (fez:q148\(A\)) Tj ET
+q [] 0 d 1.00 w 0.145 0.388 0.922 RG 435.02 165.13 m 454.42 165.13 l S Q
+q 0.80 w 0.145 0.388 0.922 rg 0.145 0.388 0.922 RG 446.72 165.13 m 446.72 166.24 445.82 167.13 444.72 167.13 c 443.62 167.13 442.72 166.24 442.72 165.13 c 442.72 164.03 443.62 163.13 444.72 163.13 c 445.82 163.13 446.72 164.03 446.72 165.13 c B Q
+q [] 0 d 1.00 w 0.851 0.467 0.024 RG 416.56 161.83 m 458.49 161.83 l S Q
+q 0.80 w 0.851 0.467 0.024 rg 0.851 0.467 0.024 RG 439.52 161.83 m 439.52 162.94 438.63 163.83 437.52 163.83 c 436.42 163.83 435.52 162.94 435.52 161.83 c 435.52 160.73 436.42 159.83 437.52 159.83 c 438.63 159.83 439.52 160.73 439.52 161.83 c B Q
+BT /F3 6.3 Tf 0.122 0.161 0.216 rg 278.86 150.39 Td (fez:q134\(C\)) Tj ET
+q [] 0 d 1.00 w 0.145 0.388 0.922 RG 443.45 154.39 m 448.07 154.39 l S Q
+q 0.80 w 0.145 0.388 0.922 rg 0.145 0.388 0.922 RG 447.76 154.39 m 447.76 155.50 446.86 156.39 445.76 156.39 c 444.66 156.39 443.76 155.50 443.76 154.39 c 443.76 153.29 444.66 152.39 445.76 152.39 c 446.86 152.39 447.76 153.29 447.76 154.39 c B Q
+q [] 0 d 1.00 w 0.851 0.467 0.024 RG 443.91 151.09 m 450.33 151.09 l S Q
+q 0.80 w 0.851 0.467 0.024 rg 0.851 0.467 0.024 RG 449.12 151.09 m 449.12 152.20 448.22 153.09 447.12 153.09 c 446.02 153.09 445.12 152.20 445.12 151.09 c 445.12 149.99 446.02 149.09 447.12 149.09 c 448.22 149.09 449.12 149.99 449.12 151.09 c B Q
+BT /F3 6.3 Tf 0.122 0.161 0.216 rg 282.64 139.66 Td (fez:q23\(C\)) Tj ET
+q [] 0 d 1.00 w 0.145 0.388 0.922 RG 434.48 143.66 m 444.57 143.66 l S Q
+q 0.80 w 0.145 0.388 0.922 rg 0.145 0.388 0.922 RG 441.52 143.66 m 441.52 144.76 440.63 145.66 439.52 145.66 c 438.42 145.66 437.52 144.76 437.52 143.66 c 437.52 142.55 438.42 141.66 439.52 141.66 c 440.63 141.66 441.52 142.55 441.52 143.66 c B Q
+q [] 0 d 1.00 w 0.851 0.467 0.024 RG 434.10 140.36 m 449.42 140.36 l S Q
+q 0.80 w 0.851 0.467 0.024 rg 0.851 0.467 0.024 RG 443.76 140.36 m 443.76 141.46 442.87 142.36 441.76 142.36 c 440.66 142.36 439.76 141.46 439.76 140.36 c 439.76 139.25 440.66 138.36 441.76 138.36 c 442.87 138.36 443.76 139.25 443.76 140.36 c B Q
+BT /F3 6.3 Tf 0.122 0.161 0.216 rg 278.86 128.92 Td (kng:q121\(D\)) Tj ET
+q [] 0 d 1.00 w 0.145 0.388 0.922 RG 415.82 132.92 m 450.91 132.92 l S Q
+q 0.80 w 0.145 0.388 0.922 rg 0.145 0.388 0.922 RG 435.36 132.92 m 435.36 134.03 434.47 134.92 433.36 134.92 c 432.26 134.92 431.36 134.03 431.36 132.92 c 431.36 131.82 432.26 130.92 433.36 130.92 c 434.47 130.92 435.36 131.82 435.36 132.92 c B Q
+q [] 0 d 1.00 w 0.851 0.467 0.024 RG 457.59 129.62 m 497.75 129.62 l S Q
+q 0.80 w 0.851 0.467 0.024 rg 0.851 0.467 0.024 RG 479.67 129.62 m 479.67 130.73 478.78 131.62 477.67 131.62 c 476.57 131.62 475.67 130.73 475.67 129.62 c 475.67 128.52 476.57 127.62 477.67 127.62 c 478.78 127.62 479.67 128.52 479.67 129.62 c B Q
+BT /F3 6.3 Tf 0.122 0.161 0.216 rg 286.42 118.18 Td (kng:q2\(D\)) Tj ET
+q [] 0 d 1.00 w 0.145 0.388 0.922 RG 445.91 122.18 m 453.44 122.18 l S Q
+q 0.80 w 0.145 0.388 0.922 rg 0.145 0.388 0.922 RG 451.68 122.18 m 451.68 123.29 450.78 124.18 449.68 124.18 c 448.57 124.18 447.68 123.29 447.68 122.18 c 447.68 121.08 448.57 120.18 449.68 120.18 c 450.78 120.18 451.68 121.08 451.68 122.18 c B Q
+q [] 0 d 1.00 w 0.851 0.467 0.024 RG 441.02 118.88 m 446.98 118.88 l S Q
+q 0.80 w 0.851 0.467 0.024 rg 0.851 0.467 0.024 RG 446.00 118.88 m 446.00 119.99 445.11 120.88 444.00 120.88 c 442.90 120.88 442.00 119.99 442.00 118.88 c 442.00 117.78 442.90 116.88 444.00 116.88 c 445.11 116.88 446.00 117.78 446.00 118.88 c B Q
+BT /F3 6.3 Tf 0.122 0.161 0.216 rg 282.64 107.45 Td (kng:q21\(D\)) Tj ET
+q [] 0 d 1.00 w 0.145 0.388 0.922 RG 442.16 111.45 m 451.76 111.45 l S Q
+q 0.80 w 0.145 0.388 0.922 rg 0.145 0.388 0.922 RG 448.96 111.45 m 448.96 112.55 448.06 113.45 446.96 113.45 c 445.86 113.45 444.96 112.55 444.96 111.45 c 444.96 110.34 445.86 109.45 446.96 109.45 c 448.06 109.45 448.96 110.34 448.96 111.45 c B Q
+q [] 0 d 1.00 w 0.851 0.467 0.024 RG 442.79 108.15 m 452.41 108.15 l S Q
+q 0.80 w 0.851 0.467 0.024 rg 0.851 0.467 0.024 RG 449.60 108.15 m 449.60 109.25 448.70 110.15 447.60 110.15 c 446.49 110.15 445.60 109.25 445.60 108.15 c 445.60 107.04 446.49 106.15 447.60 106.15 c 448.70 106.15 449.60 107.04 449.60 108.15 c B Q
+BT /F3 6.3 Tf 0.122 0.161 0.216 rg 278.86 96.71 Td (kng:q146\(A\)) Tj ET
+q [] 0 d 1.00 w 0.145 0.388 0.922 RG 401.31 100.71 m 458.70 100.71 l S Q
+q 0.80 w 0.145 0.388 0.922 rg 0.145 0.388 0.922 RG 432.00 100.71 m 432.00 101.82 431.11 102.71 430.00 102.71 c 428.90 102.71 428.00 101.82 428.00 100.71 c 428.00 99.61 428.90 98.71 430.00 98.71 c 431.11 98.71 432.00 99.61 432.00 100.71 c B Q
+q [] 0 d 1.00 w 0.851 0.467 0.024 RG 443.73 97.41 m 475.78 97.41 l S Q
+q 0.80 w 0.851 0.467 0.024 rg 0.851 0.467 0.024 RG 461.76 97.41 m 461.76 98.52 460.86 99.41 459.76 99.41 c 458.65 99.41 457.76 98.52 457.76 97.41 c 457.76 96.31 458.65 95.41 459.76 95.41 c 460.86 95.41 461.76 96.31 461.76 97.41 c B Q
+BT /F3 6.3 Tf 0.122 0.161 0.216 rg 278.86 85.97 Td (kng:q148\(C\)) Tj ET
+q [] 0 d 1.00 w 0.145 0.388 0.922 RG 443.02 89.97 m 448.18 89.97 l S Q
+q 0.80 w 0.145 0.388 0.922 rg 0.145 0.388 0.922 RG 447.60 89.97 m 447.60 91.08 446.70 91.97 445.60 91.97 c 444.50 91.97 443.60 91.08 443.60 89.97 c 443.60 88.87 444.50 87.97 445.60 87.97 c 446.70 87.97 447.60 88.87 447.60 89.97 c B Q
+q [] 0 d 1.00 w 0.851 0.467 0.024 RG 443.95 86.67 m 448.53 86.67 l S Q
+q 0.80 w 0.851 0.467 0.024 rg 0.851 0.467 0.024 RG 448.24 86.67 m 448.24 87.78 447.34 88.67 446.24 88.67 c 445.14 88.67 444.24 87.78 444.24 86.67 c 444.24 85.57 445.14 84.67 446.24 84.67 c 447.34 84.67 448.24 85.57 448.24 86.67 c B Q
+BT /F3 6.3 Tf 0.122 0.161 0.216 rg 282.64 75.24 Td (kng:q93\(C\)) Tj ET
+q [] 0 d 1.00 w 0.145 0.388 0.922 RG 442.20 79.24 m 450.44 79.24 l S Q
+q 0.80 w 0.145 0.388 0.922 rg 0.145 0.388 0.922 RG 448.32 79.24 m 448.32 80.34 447.42 81.24 446.32 81.24 c 445.22 81.24 444.32 80.34 444.32 79.24 c 444.32 78.13 445.22 77.24 446.32 77.24 c 447.42 77.24 448.32 78.13 448.32 79.24 c B Q
+q [] 0 d 1.00 w 0.851 0.467 0.024 RG 442.24 75.94 m 449.12 75.94 l S Q
+q 0.80 w 0.851 0.467 0.024 rg 0.851 0.467 0.024 RG 447.68 75.94 m 447.68 77.04 446.78 77.94 445.68 77.94 c 444.58 77.94 443.68 77.04 443.68 75.94 c 443.68 74.83 444.58 73.94 445.68 73.94 c 446.78 73.94 447.68 74.83 447.68 75.94 c B Q
+BT /F2 7.0 Tf 0.122 0.161 0.216 rg 338.41 39.00 Td (Blue: D_mux \(max 1.16 pp\) | Amber: D_nbr \(max 1.61 pp\)) Tj ET
+BT /F1 7.0 Tf 0.024 0.373 0.275 rg 335.75 27.00 Td (Simultaneous 156Q readout crosstalk ruled out across all 3 QPUs) Tj ET
+Q
+q 0.60 w 0.796 0.835 0.882 RG 72.32 430.00 467.36 278.00 re S Q
+BT /F5 8.5 Tf 0.200 0.255 0.333 rg 48.00 420.00 Td (Figure 2. ) Tj ET
+BT /F6 8.5 Tf 0.200 0.255 0.333 rg 84.78 420.00 Td (Longitudinal full-chip readout telegraphing across 8 rounds in RO-06 \(a\) and simultaneous-readout context independence in RO-07) Tj ET
+BT /F6 8.5 Tf 0.200 0.255 0.333 rg 48.00 408.80 Td (\(b\) \(27 jobs, 516,096 shots across 3 156Q Heron r2 processors\).) Tj ET
+BT /F5 8.4 Tf 0.059 0.090 0.165 rg 48.00 391.60 Td (TABLE III. Full-chip readout drift \(RO-06, 24 jobs\) and simultaneous-readout context shifts \(RO-07, 3 jobs\).) Tj ET
+q 0.886 0.910 0.941 rg 48.00 365.10 516.00 14.50 re f Q
+q [] 0 d 1.00 w 0.059 0.090 0.165 RG 48.00 379.60 m 564.00 379.60 l S Q
+BT /F2 6.9 Tf 0.059 0.090 0.165 rg 51.00 370.90 Td (Processor) Tj ET
+BT /F2 6.9 Tf 0.059 0.090 0.165 rg 138.70 370.90 Td (Hidden Faults \(r0..r7\)) Tj ET
+BT /F2 6.9 Tf 0.059 0.090 0.165 rg 232.48 370.90 Td (Mean/Rnd) Tj ET
+BT /F2 6.9 Tf 0.059 0.090 0.165 rg 283.78 370.90 Td (Med. rho) Tj ET
+BT /F2 6.9 Tf 0.059 0.090 0.165 rg 327.42 370.90 Td (IBM Snapshot Updates \(8 int.\)) Tj ET
+BT /F2 6.9 Tf 0.059 0.090 0.165 rg 455.56 370.90 Td (Max |D_mux|) Tj ET
+BT /F2 6.9 Tf 0.059 0.090 0.165 rg 521.44 370.90 Td (Max |D_nbr|) Tj ET
+q [] 0 d 0.80 w 0.200 0.255 0.333 RG 48.00 365.10 m 564.00 365.10 l S Q
+BT /F1 6.9 Tf 0.118 0.161 0.231 rg 51.00 356.80 Td (ibm_marrakesh) Tj ET
+BT /F3 6.9 Tf 0.118 0.161 0.231 rg 142.41 356.80 Td (0 0 0 0 0 0 1 3) Tj ET
+BT /F3 6.9 Tf 0.118 0.161 0.231 rg 244.86 356.80 Td (0.500) Tj ET
+BT /F3 6.9 Tf 0.118 0.161 0.231 rg 295.55 356.80 Td (0.71) Tj ET
+BT /F3 6.9 Tf 0.118 0.161 0.231 rg 341.63 356.80 Td (155 0 0 0 0 0 0 0) Tj ET
+BT /F3 6.9 Tf 0.118 0.161 0.231 rg 481.71 356.80 Td (1.16) Tj ET
+BT /F3 6.9 Tf 0.118 0.161 0.231 rg 544.44 356.80 Td (1.36) Tj ET
+q [] 0 d 0.40 w 0.886 0.910 0.941 RG 48.00 351.40 m 564.00 351.40 l S Q
+q 0.973 0.980 0.988 rg 48.00 337.70 516.00 13.70 re f Q
+BT /F1 6.9 Tf 0.118 0.161 0.231 rg 51.00 343.10 Td (ibm_fez) Tj ET
+BT /F3 6.9 Tf 0.118 0.161 0.231 rg 142.41 343.10 Td (0 1 0 0 0 0 0 0) Tj ET
+BT /F3 6.9 Tf 0.118 0.161 0.231 rg 244.86 343.10 Td (0.125) Tj ET
+BT /F3 6.9 Tf 0.118 0.161 0.231 rg 295.55 343.10 Td (0.83) Tj ET
+BT /F3 6.9 Tf 0.118 0.161 0.231 rg 337.49 343.10 Td (153 0 0 0 0 0 0 153) Tj ET
+BT /F3 6.9 Tf 0.118 0.161 0.231 rg 481.71 343.10 Td (0.43) Tj ET
+BT /F3 6.9 Tf 0.118 0.161 0.231 rg 544.44 343.10 Td (0.99) Tj ET
+q [] 0 d 0.40 w 0.886 0.910 0.941 RG 48.00 337.70 m 564.00 337.70 l S Q
+BT /F1 6.9 Tf 0.118 0.161 0.231 rg 51.00 329.40 Td (ibm_kingston) Tj ET
+BT /F3 6.9 Tf 0.118 0.161 0.231 rg 142.41 329.40 Td (1 0 0 0 0 0 0 0) Tj ET
+BT /F3 6.9 Tf 0.118 0.161 0.231 rg 244.86 329.40 Td (0.125) Tj ET
+BT /F3 6.9 Tf 0.118 0.161 0.231 rg 295.55 329.40 Td (0.71) Tj ET
+BT /F3 6.9 Tf 0.118 0.161 0.231 rg 345.77 329.40 Td (0 0 0 0 0 0 0 0) Tj ET
+BT /F3 6.9 Tf 0.118 0.161 0.231 rg 481.71 329.40 Td (0.81) Tj ET
+BT /F3 6.9 Tf 0.118 0.161 0.231 rg 544.44 329.40 Td (1.61) Tj ET
+q [] 0 d 0.40 w 0.886 0.910 0.941 RG 48.00 324.00 m 564.00 324.00 l S Q
+q [] 0 d 1.00 w 0.059 0.090 0.165 RG 48.00 324.00 m 564.00 324.00 l S Q
+BT /F2 10.4 Tf 0.059 0.090 0.165 rg 48.00 310.50 Td (4. Distant Couplers & Why White-Noise Nulls Misclassify Local 1/f Drift \(CN-01\)) Tj ET
+q [] 0 d 0.70 w 0.796 0.835 0.882 RG 48.00 305.50 m 564.00 305.50 l S Q
+q [] 0 d 1.40 w 0.114 0.306 0.847 RG 48.00 305.50 m 106.00 305.50 l S Q
+q 0.50 w 0.973 0.980 0.988 rg 0.886 0.910 0.941 RG 62.00 277.60 488.00 20.20 re B Q
+BT /F3 8.2 Tf 0.059 0.090 0.165 rg 25.56 287.30 Td (alpha_{uv}\(Delta\) = 1 - 2*Delta / tau_slot,    Gamma_{Phi+/-} = gamma_u + gamma_v + 2*alpha_{uv}\(Delta\)*gamma_{uv}) Tj ET
+BT /F4 8.6 Tf 0.278 0.333 0.412 rg 533.72 287.30 Td (\(2\)) Tj ET
+BT /F4 9.4 Tf 0.067 0.094 0.153 rg 48.00 268.60 Td (Across 10 couplers separated by >=5 heavy-hex hops on ibm_marrakesh \(job dbtp67dav06s73cfbsm0, 499,712 circuit shots\), all) Tj ET
+BT /F4 9.4 Tf 0.067 0.094 0.153 rg 48.00 256.10 Td (four mechanistic contrasts were null \(C_DFS = +0.43 pp, p_Holm=0.47\). Yet white-noise GLS on the 4 training couplers) Tj ET
+BT /F4 9.4 Tf 0.067 0.094 0.153 rg 48.00 243.60 Td (favored non-local OU bath H3 by Delta BIC = 10,263 before failing the preregistered 6-coupler held-out RMSE kill gate \(H3) Tj ET
+BT /F4 9.4 Tf 0.067 0.094 0.153 rg 48.00 231.10 Td (0.143 vs H0 0.130, p=0.82\). Amendment A-3 adds local 1/f and local OU nulls on a common echo-DD32 baseline, achieving 0%) Tj ET
+BT /F4 9.4 Tf 0.067 0.094 0.153 rg 48.00 218.60 Td (non-local false positives across 400 synthetic local-noise runs and selecting independent local H0 on live hardware \(BIC =) Tj ET
+BT /F4 9.4 Tf 0.067 0.094 0.153 rg 48.00 206.10 Td (115.05 vs H1 115.27\).) Tj ET
+BT /F6 8.0 Tf 0.392 0.455 0.545 rg 48.00 762.00 Td (Calibration Staleness, Readout Telegraphing & Colored-Noise Nulls on Heron r2) Tj ET
+BT /F1 7.5 Tf 0.392 0.455 0.545 rg 343.05 762.00 Td (Devin Phillip Davis  |  OSIRIS-HERON-R2-UNIFIED-SYNTHESIS) Tj ET
+q [] 0 d 0.60 w 0.796 0.835 0.882 RG 48.00 756.00 m 564.00 756.00 l S Q
+q [] 0 d 0.60 w 0.796 0.835 0.882 RG 48.00 42.00 m 564.00 42.00 l S Q
+BT /F3 7.0 Tf 0.392 0.455 0.545 rg 48.00 29.00 Td (42 Jobs | 2,174,976 Shots | ibm_marrakesh, ibm_fez, ibm_kingston | RFC8785: 9631f34a6c54d7eb...) Tj ET
+BT /F2 7.6 Tf 0.200 0.255 0.333 rg 523.30 29.00 Td (Page 3 of 5) Tj ET
+endstream
+endobj
+14 0 obj
+<< /Type /Page /Parent 8 0 R /MediaBox [0 0 612.00 792.00] /Resources << /Font << /F1 1 0 R /F2 2 0 R /F3 3 0 R /F4 4 0 R /F5 5 0 R /F6 6 0 R /F7 7 0 R >> >> /Contents 13 0 R >>
+endobj
+15 0 obj
+<< /Length 21804 >>
+stream
+1 1 1 rg
+0 0 612.00 792.00 re f
+q 0.8058 0 0 0.8058 72.32 460.00 cm
+1 1 1 rg
+0 0 580.00 345.00 re f
+BT /F2 10.1 Tf 0.067 0.094 0.153 rg 51.79 327.00 Td (White-Noise Null False Positives Under Local 1/f Drift vs Held-Out Coupler Gate \(CN-01\)) Tj ET
+BT /F1 8.0 Tf 0.294 0.333 0.388 rg 64.00 314.00 Td (ibm_marrakesh | 10 couplers \(>=5 hops: 4 train, 6 held-out\) | 499,712 circuit shots | Locked Delta BIC = 10,263) Tj ET
+0.90 w 0.973 0.980 0.988 rg 0.796 0.835 0.882 RG 50.00 65.00 230.00 226.00 re B
+BT /F2 8.4 Tf 0.067 0.094 0.153 rg 73.73 297.00 Td (\(a\) Non-Local Claim Rate on Local Noise) Tj ET
+q [] 0 d 0.90 w 0.580 0.639 0.722 RG 50.00 65.00 m 280.00 65.00 l S Q
+BT /F1 7.2 Tf 0.216 0.255 0.318 rg 37.80 62.00 Td (0%) Tj ET
+q [] 0 d 0.60 w 0.886 0.910 0.941 RG 50.00 117.31 m 280.00 117.31 l S Q
+BT /F1 7.2 Tf 0.216 0.255 0.318 rg 34.20 114.31 Td (25%) Tj ET
+q [] 0 d 0.60 w 0.886 0.910 0.941 RG 50.00 169.63 m 280.00 169.63 l S Q
+BT /F1 7.2 Tf 0.216 0.255 0.318 rg 34.20 166.63 Td (50%) Tj ET
+q [] 0 d 0.60 w 0.886 0.910 0.941 RG 50.00 221.94 m 280.00 221.94 l S Q
+BT /F1 7.2 Tf 0.216 0.255 0.318 rg 34.20 218.94 Td (75%) Tj ET
+q [] 0 d 0.60 w 0.886 0.910 0.941 RG 50.00 274.26 m 280.00 274.26 l S Q
+BT /F1 7.2 Tf 0.216 0.255 0.318 rg 30.60 271.26 Td (100%) Tj ET
+0.70 w 0.863 0.149 0.149 rg 0.498 0.114 0.114 RG 67.00 63.50 14.00 1.50 re B
+0.70 w 0.020 0.588 0.412 rg 0.024 0.306 0.231 RG 83.00 63.50 14.00 1.50 re B
+BT /F2 6.9 Tf 0.863 0.149 0.149 rg 70.34 70.00 Td (0%) Tj ET
+BT /F2 6.9 Tf 0.020 0.588 0.412 rg 86.34 70.00 Td (0%) Tj ET
+BT /F2 6.9 Tf 0.122 0.161 0.216 rg 67.37 53.00 Td (White H0) Tj ET
+BT /F1 6.3 Tf 0.420 0.447 0.502 rg 72.55 43.00 Td (dBIC~0) Tj ET
+0.70 w 0.863 0.149 0.149 rg 0.498 0.114 0.114 RG 121.00 65.00 14.00 209.26 re B
+0.70 w 0.020 0.588 0.412 rg 0.024 0.306 0.231 RG 137.00 63.50 14.00 1.50 re B
+BT /F2 6.9 Tf 0.863 0.149 0.149 rg 120.69 279.26 Td (100%) Tj ET
+BT /F2 6.9 Tf 0.020 0.588 0.412 rg 140.34 70.00 Td (0%) Tj ET
+BT /F2 6.9 Tf 0.122 0.161 0.216 rg 119.54 53.00 Td (Local 1/f) Tj ET
+BT /F1 6.3 Tf 0.420 0.447 0.502 rg 120.25 43.00 Td (dBIC~3,397) Tj ET
+0.70 w 0.863 0.149 0.149 rg 0.498 0.114 0.114 RG 175.00 65.00 14.00 209.26 re B
+0.70 w 0.020 0.588 0.412 rg 0.024 0.306 0.231 RG 191.00 63.50 14.00 1.50 re B
+BT /F2 6.9 Tf 0.863 0.149 0.149 rg 174.69 279.26 Td (100%) Tj ET
+BT /F2 6.9 Tf 0.020 0.588 0.412 rg 194.34 70.00 Td (0%) Tj ET
+BT /F2 6.9 Tf 0.122 0.161 0.216 rg 173.54 53.00 Td (1/f+Detun) Tj ET
+BT /F1 6.3 Tf 0.420 0.447 0.502 rg 172.68 43.00 Td (dBIC~17,456) Tj ET
+0.70 w 0.863 0.149 0.149 rg 0.498 0.114 0.114 RG 229.00 65.00 14.00 209.26 re B
+0.70 w 0.020 0.588 0.412 rg 0.024 0.306 0.231 RG 245.00 63.50 14.00 1.50 re B
+BT /F2 6.9 Tf 0.863 0.149 0.149 rg 228.69 279.26 Td (100%) Tj ET
+BT /F2 6.9 Tf 0.020 0.588 0.412 rg 248.34 70.00 Td (0%) Tj ET
+BT /F2 6.9 Tf 0.122 0.161 0.216 rg 229.37 53.00 Td (Local OU) Tj ET
+BT /F1 6.3 Tf 0.420 0.447 0.502 rg 231.40 43.00 Td (dBIC~415) Tj ET
+0.60 w 0.863 0.149 0.149 rg 0.498 0.114 0.114 RG 60.00 275.00 8.00 8.00 re B
+BT /F1 6.8 Tf 0.122 0.161 0.216 rg 72.00 276.00 Td (White-noise null \(H3 selected\)) Tj ET
+0.60 w 0.020 0.588 0.412 rg 0.024 0.306 0.231 RG 60.00 263.00 8.00 8.00 re B
+BT /F1 6.8 Tf 0.122 0.161 0.216 rg 72.00 264.00 Td (A-3 local 1/f + OU nulls \(0% FP\)) Tj ET
+BT /F1 7.0 Tf 0.024 0.373 0.275 rg 39.00 27.00 Td (400/400 synthetic local-noise runs trigger 0% non-local claims under A-3) Tj ET
+0.90 w 0.973 0.980 0.988 rg 0.796 0.835 0.882 RG 320.00 183.00 240.00 108.00 re B
+BT /F2 8.4 Tf 0.067 0.094 0.153 rg 339.83 297.00 Td (\(b\) DD16 Sublattice Stagger \(10 Couplers\)) Tj ET
+0.996 0.886 0.886 rg 320.00 273.00 240.00 18.00 re f
+BT /F1 6.3 Tf 0.600 0.106 0.106 rg 458.35 278.50 Td (Fast corr. pred. \(+1.4..3 pp\)) Tj ET
+q [] 0 d 0.60 w 0.886 0.910 0.941 RG 320.00 201.00 m 560.00 201.00 l S Q
+BT /F1 6.9 Tf 0.216 0.255 0.318 rg 309.10 198.00 Td (-1) Tj ET
+q [4 3] 0 d 0.90 w 0.580 0.639 0.722 RG 320.00 231.00 m 560.00 231.00 l S Q
+BT /F1 6.9 Tf 0.216 0.255 0.318 rg 312.55 228.00 Td (0) Tj ET
+q [] 0 d 0.60 w 0.886 0.910 0.941 RG 320.00 261.00 m 560.00 261.00 l S Q
+BT /F1 6.9 Tf 0.216 0.255 0.318 rg 309.10 258.00 Td (+1) Tj ET
+q [] 0 d 1.00 w 0.145 0.388 0.922 RG 334.00 231.00 m 347.25 251.22 l 360.50 263.52 l 373.75 254.43 l 400.25 260.16 l 466.50 267.48 l 546.00 253.71 l S Q
+q [] 0 d 1.00 w 0.145 0.388 0.922 RG 334.00 231.00 m 347.25 260.28 l 360.50 253.86 l 373.75 260.28 l 400.25 239.19 l 466.50 240.96 l 546.00 247.41 l S Q
+q [] 0 d 1.00 w 0.145 0.388 0.922 RG 334.00 231.00 m 347.25 231.75 l 360.50 233.94 l 373.75 247.14 l 400.25 233.79 l 466.50 221.94 l 546.00 244.35 l S Q
+q [] 0 d 1.00 w 0.145 0.388 0.922 RG 334.00 231.00 m 347.25 204.21 l 360.50 230.43 l 373.75 218.13 l 400.25 226.77 l 466.50 214.74 l 546.00 225.72 l S Q
+q [] 0 d 1.00 w 0.851 0.467 0.024 RG 334.00 231.00 m 347.25 233.64 l 360.50 207.57 l 373.75 231.45 l 400.25 218.25 l 466.50 213.27 l 546.00 235.68 l S Q
+q [] 0 d 1.00 w 0.851 0.467 0.024 RG 334.00 231.00 m 347.25 241.38 l 360.50 258.96 l 373.75 248.13 l 400.25 250.32 l 466.50 255.60 l 546.00 265.26 l S Q
+q [] 0 d 1.00 w 0.851 0.467 0.024 RG 334.00 231.00 m 347.25 234.66 l 360.50 232.32 l 373.75 229.83 l 400.25 222.63 l 466.50 250.92 l 546.00 225.87 l S Q
+q [] 0 d 1.00 w 0.851 0.467 0.024 RG 334.00 231.00 m 347.25 226.02 l 360.50 249.00 l 373.75 235.98 l 400.25 213.27 l 466.50 247.83 l 546.00 238.92 l S Q
+q [] 0 d 1.00 w 0.851 0.467 0.024 RG 334.00 231.00 m 347.25 207.42 l 360.50 209.31 l 373.75 208.14 l 400.25 222.36 l 466.50 213.00 l 546.00 200.97 l S Q
+q [] 0 d 1.00 w 0.851 0.467 0.024 RG 334.00 231.00 m 347.25 230.25 l 360.50 244.47 l 373.75 213.99 l 400.25 237.30 l 466.50 221.76 l 546.00 233.04 l S Q
+BT /F1 6.5 Tf 0.294 0.333 0.388 rg 329.12 173.00 Td (0ns) Tj ET
+BT /F1 6.5 Tf 0.294 0.333 0.388 rg 367.25 173.00 Td (48ns) Tj ET
+BT /F1 6.5 Tf 0.294 0.333 0.388 rg 458.38 173.00 Td (160ns) Tj ET
+BT /F1 6.5 Tf 0.294 0.333 0.388 rg 537.88 173.00 Td (256ns) Tj ET
+BT /F1 6.5 Tf 0.122 0.161 0.216 rg 328.00 189.00 Td (C_DFS = +0.43 pp \(null; blue=train, amber=held-out\)) Tj ET
+0.90 w 0.973 0.980 0.988 rg 0.796 0.835 0.882 RG 320.00 65.00 240.00 94.00 re B
+BT /F2 8.3 Tf 0.067 0.094 0.153 rg 354.22 164.00 Td (\(c\) Held-Out 6-Coupler RMSE Kill Gate) Tj ET
+q [] 0 d 0.60 w 0.886 0.910 0.941 RG 320.00 65.00 m 560.00 65.00 l S Q
+BT /F1 6.8 Tf 0.216 0.255 0.318 rg 302.40 62.00 Td (0.00) Tj ET
+q [] 0 d 0.60 w 0.886 0.910 0.941 RG 320.00 104.17 m 560.00 104.17 l S Q
+BT /F1 6.8 Tf 0.216 0.255 0.318 rg 302.40 101.17 Td (0.15) Tj ET
+q [] 0 d 0.60 w 0.886 0.910 0.941 RG 320.00 143.33 m 560.00 143.33 l S Q
+BT /F1 6.8 Tf 0.216 0.255 0.318 rg 302.40 140.33 Td (0.30) Tj ET
+0.60 w 0.278 0.333 0.412 rg 0.118 0.161 0.231 RG 337.00 65.00 8.00 31.34 re B
+0.60 w 0.863 0.149 0.149 rg 0.498 0.114 0.114 RG 347.00 65.00 8.00 30.51 re B
+BT /F1 6.6 Tf 0.216 0.255 0.318 rg 339.40 54.00 Td (HO-1) Tj ET
+0.60 w 0.278 0.333 0.412 rg 0.118 0.161 0.231 RG 373.00 65.00 8.00 42.09 re B
+0.60 w 0.863 0.149 0.149 rg 0.498 0.114 0.114 RG 383.00 65.00 8.00 54.96 re B
+BT /F1 6.6 Tf 0.216 0.255 0.318 rg 375.40 54.00 Td (HO-2) Tj ET
+0.60 w 0.278 0.333 0.412 rg 0.118 0.161 0.231 RG 409.00 65.00 8.00 2.99 re B
+0.60 w 0.863 0.149 0.149 rg 0.498 0.114 0.114 RG 419.00 65.00 8.00 49.13 re B
+BT /F1 6.6 Tf 0.216 0.255 0.318 rg 411.40 54.00 Td (HO-3) Tj ET
+0.60 w 0.278 0.333 0.412 rg 0.118 0.161 0.231 RG 445.00 65.00 8.00 41.90 re B
+0.60 w 0.863 0.149 0.149 rg 0.498 0.114 0.114 RG 455.00 65.00 8.00 57.54 re B
+BT /F1 6.6 Tf 0.216 0.255 0.318 rg 447.40 54.00 Td (HO-4) Tj ET
+0.60 w 0.278 0.333 0.412 rg 0.118 0.161 0.231 RG 481.00 65.00 8.00 83.96 re B
+0.60 w 0.863 0.149 0.149 rg 0.498 0.114 0.114 RG 491.00 65.00 8.00 23.62 re B
+BT /F1 6.6 Tf 0.216 0.255 0.318 rg 483.40 54.00 Td (HO-5) Tj ET
+0.60 w 0.278 0.333 0.412 rg 0.118 0.161 0.231 RG 517.00 65.00 8.00 1.76 re B
+0.60 w 0.863 0.149 0.149 rg 0.498 0.114 0.114 RG 527.00 65.00 8.00 8.73 re B
+BT /F1 6.6 Tf 0.216 0.255 0.318 rg 519.40 54.00 Td (HO-6) Tj ET
+BT /F2 7.0 Tf 0.600 0.106 0.106 rg 332.41 40.00 Td (Mean RMSE: H0=0.130 vs H3=0.143 \(p=0.82 -> H3 falsified\)) Tj ET
+BT /F1 7.0 Tf 0.118 0.227 0.541 rg 335.00 28.00 Td (Live A-3 verdict: independent local H0 wins \(BIC = 115.05\)) Tj ET
+Q
+q 0.60 w 0.796 0.835 0.882 RG 72.32 460.00 467.36 278.00 re S Q
+BT /F5 8.5 Tf 0.200 0.255 0.333 rg 48.00 450.00 Td (Figure 3. ) Tj ET
+BT /F6 8.5 Tf 0.200 0.255 0.333 rg 84.78 450.00 Td (CN-01 synthetic colored-noise validation across 550 replicates \(a\), measured DD16 stagger curves across 10 couplers on) Tj ET
+BT /F6 8.5 Tf 0.200 0.255 0.333 rg 48.00 438.80 Td (ibm_marrakesh \(b\), and 6-coupler held-out RMSE kill gate \(c\).) Tj ET
+BT /F5 8.4 Tf 0.059 0.090 0.165 rg 48.00 421.60 Td (TABLE IV\(a\). CN-01 hardware mechanistic contrasts across 10 couplers \(>=5 hops apart, df=9, Holm-adjusted\).) Tj ET
+q 0.886 0.910 0.941 rg 48.00 395.00 516.00 14.60 re f Q
+q [] 0 d 1.00 w 0.059 0.090 0.165 RG 48.00 409.60 m 564.00 409.60 l S Q
+BT /F2 7.0 Tf 0.059 0.090 0.165 rg 51.00 400.80 Td (Contrast) Tj ET
+BT /F2 7.0 Tf 0.059 0.090 0.165 rg 273.89 400.80 Td (Physical Observable) Tj ET
+BT /F2 7.0 Tf 0.059 0.090 0.165 rg 370.67 400.80 Td (Mean \(pp\)) Tj ET
+BT /F2 7.0 Tf 0.059 0.090 0.165 rg 471.28 400.80 Td (95% CI \(pp\)) Tj ET
+BT /F2 7.0 Tf 0.059 0.090 0.165 rg 538.34 400.80 Td (Holm p) Tj ET
+q [] 0 d 0.80 w 0.200 0.255 0.333 RG 48.00 395.00 m 564.00 395.00 l S Q
+BT /F1 7.0 Tf 0.118 0.161 0.231 rg 51.00 386.60 Td (C_{DFS) Tj ET
+BT /F3 7.0 Tf 0.118 0.161 0.231 rg 148.10 386.60 Td (\\Phi^+ vs \\Psi^+ stagger asymmetry \(0->256 ns\)) Tj ET
+BT /F3 7.0 Tf 0.118 0.161 0.231 rg 382.78 386.60 Td (+0.43) Tj ET
+BT /F3 7.0 Tf 0.118 0.161 0.231 rg 449.79 386.60 Td ([-0.13, +1.00]) Tj ET
+BT /F3 7.0 Tf 0.118 0.161 0.231 rg 544.20 386.60 Td (0.47) Tj ET
+q [] 0 d 0.40 w 0.886 0.910 0.941 RG 48.00 381.20 m 564.00 381.20 l S Q
+q 0.973 0.980 0.988 rg 48.00 367.40 516.00 13.80 re f Q
+BT /F1 7.0 Tf 0.118 0.161 0.231 rg 51.00 372.80 Td (C_{spec) Tj ET
+BT /F3 7.0 Tf 0.118 0.161 0.231 rg 177.50 372.80 Td (Spectator in |{+\\rangle minus |0\\rangle) Tj ET
+BT /F3 7.0 Tf 0.118 0.161 0.231 rg 382.78 372.80 Td (-0.20) Tj ET
+BT /F3 7.0 Tf 0.118 0.161 0.231 rg 449.79 372.80 Td ([-0.50, +0.11]) Tj ET
+BT /F3 7.0 Tf 0.118 0.161 0.231 rg 544.20 372.80 Td (0.53) Tj ET
+q [] 0 d 0.40 w 0.886 0.910 0.941 RG 48.00 367.40 m 564.00 367.40 l S Q
+BT /F1 7.0 Tf 0.118 0.161 0.231 rg 51.00 359.00 Td (C_{stag) Tj ET
+BT /F3 7.0 Tf 0.118 0.161 0.231 rg 227.90 359.00 Td (\\Phi^+\(256 ns\)-\\Phi^+\(0 ns\)) Tj ET
+BT /F3 7.0 Tf 0.118 0.161 0.231 rg 382.78 359.00 Td (+0.20) Tj ET
+BT /F3 7.0 Tf 0.118 0.161 0.231 rg 449.79 359.00 Td ([-0.22, +0.62]) Tj ET
+BT /F3 7.0 Tf 0.118 0.161 0.231 rg 544.20 359.00 Td (0.61) Tj ET
+q [] 0 d 0.40 w 0.886 0.910 0.941 RG 48.00 353.60 m 564.00 353.60 l S Q
+q 0.973 0.980 0.988 rg 48.00 339.80 516.00 13.80 re f Q
+BT /F1 7.0 Tf 0.118 0.161 0.231 rg 51.00 345.20 Td (C_{mem) Tj ET
+BT /F3 7.0 Tf 0.118 0.161 0.231 rg 202.70 345.20 Td (DD32 minus Hahn echo at 16.384 us) Tj ET
+BT /F3 7.0 Tf 0.118 0.161 0.231 rg 382.78 345.20 Td (-0.14) Tj ET
+BT /F3 7.0 Tf 0.118 0.161 0.231 rg 449.79 345.20 Td ([-2.25, +1.97]) Tj ET
+BT /F3 7.0 Tf 0.118 0.161 0.231 rg 544.20 345.20 Td (0.89) Tj ET
+q [] 0 d 0.40 w 0.886 0.910 0.941 RG 48.00 339.80 m 564.00 339.80 l S Q
+q [] 0 d 1.00 w 0.059 0.090 0.165 RG 48.00 339.80 m 564.00 339.80 l S Q
+BT /F5 8.4 Tf 0.059 0.090 0.165 rg 48.00 331.30 Td (TABLE IV\(b\). Training-cohort GLS fits \(4 couplers; held-out RMSE H0=0.130 vs H3=0.143, t_5=-0.24, p=0.82\).) Tj ET
+q 0.886 0.910 0.941 rg 48.00 304.80 516.00 14.50 re f Q
+q [] 0 d 1.00 w 0.059 0.090 0.165 RG 48.00 319.30 m 564.00 319.30 l S Q
+BT /F2 6.9 Tf 0.059 0.090 0.165 rg 51.00 310.60 Td (Noise Hypothesis) Tj ET
+BT /F2 6.9 Tf 0.059 0.090 0.165 rg 251.36 310.60 Td (Scope) Tj ET
+BT /F2 6.9 Tf 0.059 0.090 0.165 rg 294.12 310.60 Td (k) Tj ET
+BT /F2 6.9 Tf 0.059 0.090 0.165 rg 333.29 310.60 Td (chi2_lock) Tj ET
+BT /F2 6.9 Tf 0.059 0.090 0.165 rg 401.04 310.60 Td (BIC_lock) Tj ET
+BT /F2 6.9 Tf 0.059 0.090 0.165 rg 467.25 310.60 Td (chi2_A3) Tj ET
+BT /F2 6.9 Tf 0.059 0.090 0.165 rg 535.00 310.60 Td (BIC_A3) Tj ET
+q [] 0 d 0.80 w 0.200 0.255 0.333 RG 48.00 304.80 m 564.00 304.80 l S Q
+BT /F1 6.9 Tf 0.118 0.161 0.231 rg 51.00 296.50 Td (Local white \(H_0\)) Tj ET
+BT /F3 6.9 Tf 0.118 0.161 0.231 rg 250.94 296.50 Td (local) Tj ET
+BT /F3 6.9 Tf 0.118 0.161 0.231 rg 293.80 296.50 Td (5) Tj ET
+BT /F3 6.9 Tf 0.118 0.161 0.231 rg 331.60 296.50 Td (10,420.9) Tj ET
+BT /F3 6.9 Tf 0.118 0.161 0.231 rg 398.37 296.50 Td (10,436.6) Tj ET
+BT /F3 6.9 Tf 0.118 0.161 0.231 rg 473.52 296.50 Td (100.3) Tj ET
+BT /F3 6.9 Tf 0.118 0.161 0.231 rg 536.16 296.50 Td (115.05) Tj ET
+q [] 0 d 0.40 w 0.886 0.910 0.941 RG 48.00 291.10 m 564.00 291.10 l S Q
+q 0.973 0.980 0.988 rg 48.00 277.40 516.00 13.70 re f Q
+BT /F1 6.9 Tf 0.118 0.161 0.231 rg 51.00 282.80 Td (Local 1/f + white \(H_{0,1/f\)) Tj ET
+BT /F3 6.9 Tf 0.118 0.161 0.231 rg 250.94 282.80 Td (local) Tj ET
+BT /F3 6.9 Tf 0.118 0.161 0.231 rg 293.80 282.80 Td (6) Tj ET
+BT /F3 6.9 Tf 0.118 0.161 0.231 rg 356.44 282.80 Td (--) Tj ET
+BT /F3 6.9 Tf 0.118 0.161 0.231 rg 423.21 282.80 Td (--) Tj ET
+BT /F3 6.9 Tf 0.118 0.161 0.231 rg 473.52 282.80 Td (825.6) Tj ET
+BT /F3 6.9 Tf 0.118 0.161 0.231 rg 536.16 282.80 Td (843.22) Tj ET
+q [] 0 d 0.40 w 0.886 0.910 0.941 RG 48.00 277.40 m 564.00 277.40 l S Q
+BT /F1 6.9 Tf 0.118 0.161 0.231 rg 51.00 269.10 Td (Local OU bath \(H_{3,loc\)) Tj ET
+BT /F3 6.9 Tf 0.118 0.161 0.231 rg 250.94 269.10 Td (local) Tj ET
+BT /F3 6.9 Tf 0.118 0.161 0.231 rg 293.80 269.10 Td (7) Tj ET
+BT /F3 6.9 Tf 0.118 0.161 0.231 rg 356.44 269.10 Td (--) Tj ET
+BT /F3 6.9 Tf 0.118 0.161 0.231 rg 423.21 269.10 Td (--) Tj ET
+BT /F3 6.9 Tf 0.118 0.161 0.231 rg 473.52 269.10 Td (825.4) Tj ET
+BT /F3 6.9 Tf 0.118 0.161 0.231 rg 536.16 269.10 Td (845.97) Tj ET
+q [] 0 d 0.40 w 0.886 0.910 0.941 RG 48.00 263.70 m 564.00 263.70 l S Q
+q 0.973 0.980 0.988 rg 48.00 250.00 516.00 13.70 re f Q
+BT /F1 6.9 Tf 0.118 0.161 0.231 rg 51.00 255.40 Td (Static spectator ZZ \(H_1\)) Tj ET
+BT /F3 6.9 Tf 0.118 0.161 0.231 rg 234.38 255.40 Td (non-local) Tj ET
+BT /F3 6.9 Tf 0.118 0.161 0.231 rg 293.80 255.40 Td (6) Tj ET
+BT /F3 6.9 Tf 0.118 0.161 0.231 rg 335.74 255.40 Td (2,482.6) Tj ET
+BT /F3 6.9 Tf 0.118 0.161 0.231 rg 402.51 255.40 Td (2,501.4) Tj ET
+BT /F3 6.9 Tf 0.118 0.161 0.231 rg 477.66 255.40 Td (97.6) Tj ET
+BT /F3 6.9 Tf 0.118 0.161 0.231 rg 536.16 255.40 Td (115.27) Tj ET
+q [] 0 d 0.40 w 0.886 0.910 0.941 RG 48.00 250.00 m 564.00 250.00 l S Q
+BT /F1 6.9 Tf 0.118 0.161 0.231 rg 51.00 241.70 Td (Correlated Markov \(H_2\)) Tj ET
+BT /F3 6.9 Tf 0.118 0.161 0.231 rg 234.38 241.70 Td (non-local) Tj ET
+BT /F3 6.9 Tf 0.118 0.161 0.231 rg 293.80 241.70 Td (7) Tj ET
+BT /F3 6.9 Tf 0.118 0.161 0.231 rg 331.60 241.70 Td (10,361.5) Tj ET
+BT /F3 6.9 Tf 0.118 0.161 0.231 rg 398.37 241.70 Td (10,383.4) Tj ET
+BT /F3 6.9 Tf 0.118 0.161 0.231 rg 477.66 241.70 Td (95.2) Tj ET
+BT /F3 6.9 Tf 0.118 0.161 0.231 rg 536.16 241.70 Td (115.83) Tj ET
+q [] 0 d 0.40 w 0.886 0.910 0.941 RG 48.00 236.30 m 564.00 236.30 l S Q
+q 0.973 0.980 0.988 rg 48.00 222.60 516.00 13.70 re f Q
+BT /F1 6.9 Tf 0.118 0.161 0.231 rg 51.00 228.00 Td (Correlated OU bath \(H_3\)) Tj ET
+BT /F3 6.9 Tf 0.118 0.161 0.231 rg 234.38 228.00 Td (non-local) Tj ET
+BT /F3 6.9 Tf 0.118 0.161 0.231 rg 293.80 228.00 Td (8) Tj ET
+BT /F3 6.9 Tf 0.118 0.161 0.231 rg 344.02 228.00 Td (148.6) Tj ET
+BT /F3 6.9 Tf 0.118 0.161 0.231 rg 410.79 228.00 Td (173.7) Tj ET
+BT /F3 6.9 Tf 0.118 0.161 0.231 rg 473.52 228.00 Td (825.4) Tj ET
+BT /F3 6.9 Tf 0.118 0.161 0.231 rg 536.16 228.00 Td (848.92) Tj ET
+q [] 0 d 0.40 w 0.886 0.910 0.941 RG 48.00 222.60 m 564.00 222.60 l S Q
+BT /F1 6.9 Tf 0.118 0.161 0.231 rg 51.00 214.30 Td (Pulse collision) Tj ET
+BT /F3 6.9 Tf 0.118 0.161 0.231 rg 234.38 214.30 Td (apparatus) Tj ET
+BT /F3 6.9 Tf 0.118 0.161 0.231 rg 293.80 214.30 Td (6) Tj ET
+BT /F3 6.9 Tf 0.118 0.161 0.231 rg 331.60 214.30 Td (10,402.6) Tj ET
+BT /F3 6.9 Tf 0.118 0.161 0.231 rg 398.37 214.30 Td (10,421.4) Tj ET
+BT /F3 6.9 Tf 0.118 0.161 0.231 rg 473.52 214.30 Td (100.3) Tj ET
+BT /F3 6.9 Tf 0.118 0.161 0.231 rg 536.16 214.30 Td (118.00) Tj ET
+q [] 0 d 0.40 w 0.886 0.910 0.941 RG 48.00 208.90 m 564.00 208.90 l S Q
+q [] 0 d 1.00 w 0.059 0.090 0.165 RG 48.00 208.90 m 564.00 208.90 l S Q
+BT /F5 8.4 Tf 0.059 0.090 0.165 rg 48.00 200.40 Td (TABLE IV\(c\). Pre-execution synthetic validation \(550 replicates across 7 ground-truth baths\).) Tj ET
+q 0.886 0.910 0.941 rg 48.00 173.90 516.00 14.50 re f Q
+q [] 0 d 1.00 w 0.059 0.090 0.165 RG 48.00 188.40 m 564.00 188.40 l S Q
+BT /F2 6.9 Tf 0.059 0.090 0.165 rg 51.00 179.70 Td (Synthetic Ground Truth) Tj ET
+BT /F2 6.9 Tf 0.059 0.090 0.165 rg 242.20 179.70 Td (Reps) Tj ET
+BT /F2 6.9 Tf 0.059 0.090 0.165 rg 278.78 179.70 Td (Med. dBIC_lock) Tj ET
+BT /F2 6.9 Tf 0.059 0.090 0.165 rg 358.13 179.70 Td (Lock H3) Tj ET
+BT /F2 6.9 Tf 0.059 0.090 0.165 rg 410.25 179.70 Td (Lock Stg2) Tj ET
+BT /F2 6.9 Tf 0.059 0.090 0.165 rg 463.22 179.70 Td (A-3 Non-Loc) Tj ET
+BT /F2 6.9 Tf 0.059 0.090 0.165 rg 533.60 179.70 Td (A-3 Corr) Tj ET
+q [] 0 d 0.80 w 0.200 0.255 0.333 RG 48.00 173.90 m 564.00 173.90 l S Q
+BT /F1 6.9 Tf 0.118 0.161 0.231 rg 51.00 165.60 Td (Local white \(H_0\)) Tj ET
+BT /F3 6.9 Tf 0.118 0.161 0.231 rg 246.24 165.60 Td (100) Tj ET
+BT /F3 6.9 Tf 0.118 0.161 0.231 rg 327.08 165.60 Td (0) Tj ET
+BT /F3 6.9 Tf 0.118 0.161 0.231 rg 377.36 165.60 Td (0%) Tj ET
+BT /F3 6.9 Tf 0.118 0.161 0.231 rg 435.81 165.60 Td (0%) Tj ET
+BT /F3 6.9 Tf 0.118 0.161 0.231 rg 496.28 165.60 Td (0%) Tj ET
+BT /F3 6.9 Tf 0.118 0.161 0.231 rg 552.72 165.60 Td (0%) Tj ET
+q [] 0 d 0.40 w 0.886 0.910 0.941 RG 48.00 160.20 m 564.00 160.20 l S Q
+q 0.973 0.980 0.988 rg 48.00 146.50 516.00 13.70 re f Q
+BT /F1 6.9 Tf 0.118 0.161 0.231 rg 51.00 151.90 Td (Local 1/f dephasing) Tj ET
+BT /F3 6.9 Tf 0.118 0.161 0.231 rg 246.24 151.90 Td (100) Tj ET
+BT /F3 6.9 Tf 0.118 0.161 0.231 rg 310.52 151.90 Td (3,397) Tj ET
+BT /F3 6.9 Tf 0.118 0.161 0.231 rg 369.08 151.90 Td (100%) Tj ET
+BT /F3 6.9 Tf 0.118 0.161 0.231 rg 427.53 151.90 Td (100%) Tj ET
+BT /F3 6.9 Tf 0.118 0.161 0.231 rg 496.28 151.90 Td (0%) Tj ET
+BT /F3 6.9 Tf 0.118 0.161 0.231 rg 552.72 151.90 Td (0%) Tj ET
+q [] 0 d 0.40 w 0.886 0.910 0.941 RG 48.00 146.50 m 564.00 146.50 l S Q
+BT /F1 6.9 Tf 0.118 0.161 0.231 rg 51.00 138.20 Td (Local 1/f + Ramsey detuning) Tj ET
+BT /F3 6.9 Tf 0.118 0.161 0.231 rg 246.24 138.20 Td (100) Tj ET
+BT /F3 6.9 Tf 0.118 0.161 0.231 rg 306.38 138.20 Td (17,456) Tj ET
+BT /F3 6.9 Tf 0.118 0.161 0.231 rg 369.08 138.20 Td (100%) Tj ET
+BT /F3 6.9 Tf 0.118 0.161 0.231 rg 431.67 138.20 Td (99%) Tj ET
+BT /F3 6.9 Tf 0.118 0.161 0.231 rg 496.28 138.20 Td (0%) Tj ET
+BT /F3 6.9 Tf 0.118 0.161 0.231 rg 552.72 138.20 Td (0%) Tj ET
+q [] 0 d 0.40 w 0.886 0.910 0.941 RG 48.00 132.80 m 564.00 132.80 l S Q
+q 0.973 0.980 0.988 rg 48.00 119.10 516.00 13.70 re f Q
+BT /F1 6.9 Tf 0.118 0.161 0.231 rg 51.00 124.50 Td (Local Ornstein-Uhlenbeck) Tj ET
+BT /F3 6.9 Tf 0.118 0.161 0.231 rg 246.24 124.50 Td (100) Tj ET
+BT /F3 6.9 Tf 0.118 0.161 0.231 rg 318.80 124.50 Td (415) Tj ET
+BT /F3 6.9 Tf 0.118 0.161 0.231 rg 369.08 124.50 Td (100%) Tj ET
+BT /F3 6.9 Tf 0.118 0.161 0.231 rg 431.67 124.50 Td (95%) Tj ET
+BT /F3 6.9 Tf 0.118 0.161 0.231 rg 496.28 124.50 Td (0%) Tj ET
+BT /F3 6.9 Tf 0.118 0.161 0.231 rg 552.72 124.50 Td (0%) Tj ET
+q [] 0 d 0.40 w 0.886 0.910 0.941 RG 48.00 119.10 m 564.00 119.10 l S Q
+BT /F1 6.9 Tf 0.118 0.161 0.231 rg 51.00 110.80 Td (Spatially correlated Markov \(H_2\)) Tj ET
+BT /F3 6.9 Tf 0.118 0.161 0.231 rg 250.38 110.80 Td (50) Tj ET
+BT /F3 6.9 Tf 0.118 0.161 0.231 rg 318.80 110.80 Td (462) Tj ET
+BT /F3 6.9 Tf 0.118 0.161 0.231 rg 377.36 110.80 Td (0%) Tj ET
+BT /F3 6.9 Tf 0.118 0.161 0.231 rg 435.81 110.80 Td (0%) Tj ET
+BT /F3 6.9 Tf 0.118 0.161 0.231 rg 492.14 110.80 Td (56%) Tj ET
+BT /F3 6.9 Tf 0.118 0.161 0.231 rg 548.58 110.80 Td (56%) Tj ET
+q [] 0 d 0.40 w 0.886 0.910 0.941 RG 48.00 105.40 m 564.00 105.40 l S Q
+q 0.973 0.980 0.988 rg 48.00 91.70 516.00 13.70 re f Q
+BT /F1 6.9 Tf 0.118 0.161 0.231 rg 51.00 97.10 Td (Correlated OU bath, fast \(H_3\)) Tj ET
+BT /F3 6.9 Tf 0.118 0.161 0.231 rg 250.38 97.10 Td (50) Tj ET
+BT /F3 6.9 Tf 0.118 0.161 0.231 rg 310.52 97.10 Td (1,289) Tj ET
+BT /F3 6.9 Tf 0.118 0.161 0.231 rg 369.08 97.10 Td (100%) Tj ET
+BT /F3 6.9 Tf 0.118 0.161 0.231 rg 427.53 97.10 Td (100%) Tj ET
+BT /F3 6.9 Tf 0.118 0.161 0.231 rg 492.14 97.10 Td (44%) Tj ET
+BT /F3 6.9 Tf 0.118 0.161 0.231 rg 548.58 97.10 Td (44%) Tj ET
+q [] 0 d 0.40 w 0.886 0.910 0.941 RG 48.00 91.70 m 564.00 91.70 l S Q
+BT /F1 6.9 Tf 0.118 0.161 0.231 rg 51.00 83.40 Td (Correlated OU bath, slow \(H_3\)) Tj ET
+BT /F3 6.9 Tf 0.118 0.161 0.231 rg 250.38 83.40 Td (50) Tj ET
+BT /F3 6.9 Tf 0.118 0.161 0.231 rg 318.80 83.40 Td (582) Tj ET
+BT /F3 6.9 Tf 0.118 0.161 0.231 rg 369.08 83.40 Td (100%) Tj ET
+BT /F3 6.9 Tf 0.118 0.161 0.231 rg 431.67 83.40 Td (96%) Tj ET
+BT /F3 6.9 Tf 0.118 0.161 0.231 rg 496.28 83.40 Td (0%) Tj ET
+BT /F3 6.9 Tf 0.118 0.161 0.231 rg 552.72 83.40 Td (0%) Tj ET
+q [] 0 d 0.40 w 0.886 0.910 0.941 RG 48.00 78.00 m 564.00 78.00 l S Q
+q [] 0 d 1.00 w 0.059 0.090 0.165 RG 48.00 78.00 m 564.00 78.00 l S Q
+BT /F6 8.0 Tf 0.392 0.455 0.545 rg 48.00 762.00 Td (Calibration Staleness, Readout Telegraphing & Colored-Noise Nulls on Heron r2) Tj ET
+BT /F1 7.5 Tf 0.392 0.455 0.545 rg 343.05 762.00 Td (Devin Phillip Davis  |  OSIRIS-HERON-R2-UNIFIED-SYNTHESIS) Tj ET
+q [] 0 d 0.60 w 0.796 0.835 0.882 RG 48.00 756.00 m 564.00 756.00 l S Q
+q [] 0 d 0.60 w 0.796 0.835 0.882 RG 48.00 42.00 m 564.00 42.00 l S Q
+BT /F3 7.0 Tf 0.392 0.455 0.545 rg 48.00 29.00 Td (42 Jobs | 2,174,976 Shots | ibm_marrakesh, ibm_fez, ibm_kingston | RFC8785: 9631f34a6c54d7eb...) Tj ET
+BT /F2 7.6 Tf 0.200 0.255 0.333 rg 523.30 29.00 Td (Page 4 of 5) Tj ET
+endstream
+endobj
+16 0 obj
+<< /Type /Page /Parent 8 0 R /MediaBox [0 0 612.00 792.00] /Resources << /Font << /F1 1 0 R /F2 2 0 R /F3 3 0 R /F4 4 0 R /F5 5 0 R /F6 6 0 R /F7 7 0 R >> >> /Contents 15 0 R >>
+endobj
+17 0 obj
+<< /Length 6372 >>
+stream
+1 1 1 rg
+0 0 612.00 792.00 re f
+BT /F2 10.4 Tf 0.059 0.090 0.165 rg 48.00 738.00 Td (5. Operational Design Rules & Data Availability) Tj ET
+q [] 0 d 0.70 w 0.796 0.835 0.882 RG 48.00 733.00 m 564.00 733.00 l S Q
+q [] 0 d 1.40 w 0.114 0.306 0.847 RG 48.00 733.00 m 106.00 733.00 l S Q
+q 0.80 w 0.925 0.992 0.961 rg 0.655 0.953 0.816 RG 48.00 591.20 516.00 131.10 re B Q
+q 0.016 0.471 0.341 rg 48.00 591.20 3.20 131.10 re f Q
+BT /F2 8.8 Tf 0.024 0.306 0.231 rg 58.00 711.50 Td (FOUR GOVERNANCE RULES FOR REPRODUCIBLE NISQ BENCHMARKING) Tj ET
+q 0.016 0.471 0.341 rg 59.00 700.60 2.80 2.80 re f Q
+BT /F4 8.8 Tf 0.122 0.161 0.216 rg 67.00 699.00 Td (Rule 1 \(Interleaved Block Randomization + Embedded A/A Sentinels\): Never treat individual shots as independent replicates;) Tj ET
+BT /F4 8.8 Tf 0.122 0.161 0.216 rg 67.00 687.60 Td (interleave randomized blocks with identical-circuit A/A sentinels to anchor empirical within-job drift.) Tj ET
+q 0.016 0.471 0.341 rg 59.00 675.80 2.80 2.80 re f Q
+BT /F4 8.8 Tf 0.122 0.161 0.216 rg 67.00 674.20 Td (Rule 2 \(Surgical Readout Screening Over Global Probe Re-Weighting\): Run a rapid 6-PUB full-chip |0>/|1> probe before) Tj ET
+BT /F4 8.8 Tf 0.122 0.161 0.216 rg 67.00 662.80 Td (execution to mask gross faults \(e_probe > 15%\), while preserving gate/T2 calibration rankings and embedding union |0>/|1>) Tj ET
+BT /F4 8.8 Tf 0.122 0.161 0.216 rg 67.00 651.40 Td (SPAM sentinels.) Tj ET
+q 0.016 0.471 0.341 rg 59.00 639.60 2.80 2.80 re f Q
+BT /F4 8.8 Tf 0.122 0.161 0.216 rg 67.00 638.00 Td (Rule 3 \(Multi-Epoch Replication Across Calibration Windows\): Single-job layout benchmarks measure transient hourly defect) Tj ET
+BT /F4 8.8 Tf 0.122 0.161 0.216 rg 67.00 626.60 Td (states \(inverting within 82--85 min across all 3 QPUs\); compiler claims require separated calibration epochs.) Tj ET
+q 0.016 0.471 0.341 rg 59.00 614.80 2.80 2.80 re f Q
+BT /F4 8.8 Tf 0.122 0.161 0.216 rg 67.00 613.20 Td (Rule 4 \(Local Colored-Noise Nulls + Spatially Held-Out Kill Gates\): Include local 1/f and local OU nulls on matched echo) Tj ET
+BT /F4 8.8 Tf 0.122 0.161 0.216 rg 67.00 601.80 Td (baselines \(verified at 0% synthetic FP\) paired with simultaneous held-out spatial couplers.) Tj ET
+BT /F4 9.4 Tf 0.067 0.094 0.153 rg 48.00 583.20 Td (All raw SamplerV2 bitstring histograms \(1,062 PUBs, 2,174,976 shots across 42 jobs\), QPY binaries, SHA-256 lock) Tj ET
+BT /F4 9.4 Tf 0.067 0.094 0.153 rg 48.00 570.70 Td (manifests, calibration snapshots, and analysis scripts are archived on Zenodo: TMAP-02 \(10.5281/zenodo.24406426\),) Tj ET
+BT /F4 9.4 Tf 0.067 0.094 0.153 rg 48.00 558.20 Td (TMAP-03 \(10.5281/zenodo.24406496, 10.5281/zenodo.24406525\), TMAP-04 \(10.5281/zenodo.24406640,) Tj ET
+BT /F4 9.4 Tf 0.067 0.094 0.153 rg 48.00 545.70 Td (10.5281/zenodo.24407001\), TMAP-05 \(10.5281/zenodo.24407538, 10.5281/zenodo.24407875\), RO-06/RO-07) Tj ET
+BT /F4 9.4 Tf 0.067 0.094 0.153 rg 48.00 533.20 Td (\(10.5281/zenodo.24407897, 10.5281/zenodo.24419327, 10.5281/zenodo.24420902\), and CN-01 \(10.5281/zenodo.24406435\),) Tj ET
+BT /F4 9.4 Tf 0.067 0.094 0.153 rg 48.00 520.70 Td (bound by reproducibility_capsule.json \(RFC 8785 SHA-256 9631f34a6c54d7eb334b78f1...\). We acknowledge the use of IBM) Tj ET
+BT /F4 9.4 Tf 0.067 0.094 0.153 rg 48.00 508.20 Td (Quantum services for this work; the views expressed are those of the author and do not reflect the official policy or position of) Tj ET
+BT /F4 9.4 Tf 0.067 0.094 0.153 rg 48.00 495.70 Td (IBM or the IBM Quantum team.) Tj ET
+BT /F2 10.4 Tf 0.059 0.090 0.165 rg 48.00 473.20 Td (References) Tj ET
+q [] 0 d 0.70 w 0.796 0.835 0.882 RG 48.00 468.20 m 564.00 468.20 l S Q
+q [] 0 d 1.40 w 0.114 0.306 0.847 RG 48.00 468.20 m 106.00 468.20 l S Q
+BT /F4 8.2 Tf 0.200 0.255 0.333 rg 48.00 457.50 Td ([1] P. V. Klimov et al., Phys. Rev. Lett. 121, 090502 \(2018\).) Tj ET
+BT /F4 8.2 Tf 0.200 0.255 0.333 rg 48.00 445.10 Td ([2] J. J. Burnett et al., npj Quantum Inf. 5, 54 \(2019\).) Tj ET
+BT /F4 8.2 Tf 0.200 0.255 0.333 rg 48.00 432.70 Td ([3] T. Proctor et al., Nat. Commun. 11, 5396 \(2020\).) Tj ET
+BT /F4 8.2 Tf 0.200 0.255 0.333 rg 48.00 420.30 Td ([4] T. Thorbeck et al., PRX Quantum 4, 020356 \(2023\).) Tj ET
+BT /F4 8.2 Tf 0.200 0.255 0.333 rg 48.00 407.90 Td ([5] P. D. Nation and M. Treinish, PRX Quantum 4, 010327 \(2023\).) Tj ET
+BT /F4 8.2 Tf 0.200 0.255 0.333 rg 48.00 395.50 Td ([6] G. A. Paz-Silva, L. M. Norris, and L. Viola, Phys. Rev. A 95, 022121 \(2017\).) Tj ET
+BT /F4 8.2 Tf 0.200 0.255 0.333 rg 48.00 383.10 Td ([7] Y. Sung et al., Nat. Commun. 12, 967 \(2021\).) Tj ET
+BT /F4 8.2 Tf 0.200 0.255 0.333 rg 48.00 370.70 Td ([8] V. Tripathi et al., Phys. Rev. Applied 18, 024068 \(2022\).) Tj ET
+BT /F4 8.2 Tf 0.200 0.255 0.333 rg 48.00 358.30 Td ([9] C. Chamberland et al., Phys. Rev. X 10, 011022 \(2020\).) Tj ET
+BT /F4 8.2 Tf 0.200 0.255 0.333 rg 48.00 345.90 Td ([10] E. H. Chen et al., Phys. Rev. A 107, 032602 \(2023\).) Tj ET
+BT /F4 8.2 Tf 0.200 0.255 0.333 rg 48.00 333.50 Td ([11] L. Cywinski, R. M. Lutchyn, C. P. Nave, and S. Das Sarma, Phys. Rev. B 77, 174509 \(2008\).) Tj ET
+BT /F4 8.2 Tf 0.200 0.255 0.333 rg 48.00 321.10 Td ([12] J. Bylander et al., Nat. Phys. 7, 565 \(2011\).) Tj ET
+BT /F4 8.2 Tf 0.200 0.255 0.333 rg 48.00 308.70 Td ([13] D. P. Davis, TMAP-02: 10.5281/zenodo.24406426; CN-01: 10.5281/zenodo.24406435; TMAP-03: 10.5281/zenodo.24406496,) Tj ET
+BT /F4 8.2 Tf 0.200 0.255 0.333 rg 62.00 298.10 Td (10.5281/zenodo.24406525; TMAP-04: 10.5281/zenodo.24406640, 10.5281/zenodo.24407001; TMAP-05: 10.5281/zenodo.24407538,) Tj ET
+BT /F4 8.2 Tf 0.200 0.255 0.333 rg 62.00 287.50 Td (10.5281/zenodo.24407875; RO-06/07: 10.5281/zenodo.24407897, 10.5281/zenodo.24419327, 10.5281/zenodo.24420902 \(Zenodo, 2026\).) Tj ET
+BT /F6 8.0 Tf 0.392 0.455 0.545 rg 48.00 762.00 Td (Calibration Staleness, Readout Telegraphing & Colored-Noise Nulls on Heron r2) Tj ET
+BT /F1 7.5 Tf 0.392 0.455 0.545 rg 343.05 762.00 Td (Devin Phillip Davis  |  OSIRIS-HERON-R2-UNIFIED-SYNTHESIS) Tj ET
+q [] 0 d 0.60 w 0.796 0.835 0.882 RG 48.00 756.00 m 564.00 756.00 l S Q
+q [] 0 d 0.60 w 0.796 0.835 0.882 RG 48.00 42.00 m 564.00 42.00 l S Q
+BT /F3 7.0 Tf 0.392 0.455 0.545 rg 48.00 29.00 Td (42 Jobs | 2,174,976 Shots | ibm_marrakesh, ibm_fez, ibm_kingston | RFC8785: 9631f34a6c54d7eb...) Tj ET
+BT /F2 7.6 Tf 0.200 0.255 0.333 rg 523.30 29.00 Td (Page 5 of 5) Tj ET
+endstream
+endobj
+18 0 obj
+<< /Type /Page /Parent 8 0 R /MediaBox [0 0 612.00 792.00] /Resources << /Font << /F1 1 0 R /F2 2 0 R /F3 3 0 R /F4 4 0 R /F5 5 0 R /F6 6 0 R /F7 7 0 R >> >> /Contents 17 0 R >>
+endobj
+19 0 obj
+<< /Type /Catalog /Pages 8 0 R >>
+endobj
+20 0 obj
+<< /Producer (OSIRIS Deterministic PDF 1.4 Preprint Renderer) /Title (Calibration Staleness, Transient Readout Telegraphing, and Colored-Noise False Positives Across Three 156-Qubit Superconducting Quantum Processors) /Author (Devin Phillip Davis) >>
+endobj
+xref
+0 21
+0000000000 65535 f 
+0000000015 00000 n 
+0000000085 00000 n 
+0000000160 00000 n 
+0000000228 00000 n 
+0000000300 00000 n 
+0000000371 00000 n 
+0000000444 00000 n 
+0000000517 00000 n 
+0000000603 00000 n 
+0000012439 00000 n 
+0000012632 00000 n 
+0000032423 00000 n 
+0000032617 00000 n 
+0000068975 00000 n 
+0000069169 00000 n 
+0000091026 00000 n 
+0000091220 00000 n 
+0000097644 00000 n 
+0000097838 00000 n 
+0000097888 00000 n 
+trailer
+<< /Size 21 /Root 19 0 R /Info 20 0 R >>
+startxref
+98155
+%%EOF
