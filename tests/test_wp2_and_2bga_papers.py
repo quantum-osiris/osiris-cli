@@ -19,7 +19,21 @@ from pathlib import Path
 from typing import Dict, Mapping, Set
 
 import pytest
-import rfc8785
+
+try:
+    import rfc8785
+except ImportError:
+    from osiris_cli import orchestration_departments as _od
+
+    class _Rfc8785Fallback:
+        @staticmethod
+        def dumps(obj):
+            return _od.jcs_bytes(obj)
+
+    import sys as _sys
+
+    rfc8785 = _Rfc8785Fallback()  # type: ignore[assignment]
+    _sys.modules.setdefault("rfc8785", rfc8785)  # type: ignore[arg-type]
 
 from osiris_cli import claim_provenance, claims
 from papers.nonabelian_2bga_and_adv1 import generate_2bga_adv1_assets as gen_2bga

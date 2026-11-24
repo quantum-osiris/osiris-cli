@@ -17,6 +17,7 @@ BT2T_FEZ_DIR = REPO_ROOT / "experiments" / "bt2t_fez"
 
 
 def _load_fez_runner():
+    pytest.importorskip("qiskit_ibm_runtime")
     if str(REPO_ROOT) not in sys.path:
         sys.path.insert(0, str(REPO_ROOT))
     mod_name = "_test_bt2t_fez_runner"

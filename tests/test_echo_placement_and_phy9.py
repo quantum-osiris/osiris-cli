@@ -11,6 +11,10 @@ from typing import Any
 
 import numpy as np
 import pytest
+
+pytest.importorskip("qiskit")
+pytest.importorskip("qiskit_aer")
+
 from qiskit import QuantumCircuit, transpile
 from qiskit.circuit.library import RXGate, RZZGate
 from qiskit.quantum_info import Operator
