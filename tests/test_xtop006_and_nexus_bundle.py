@@ -312,8 +312,8 @@ def test_xtop005_decisive_manifest_jcs_and_hqc_budget_1336():
     """Verify 18-circuit L=3 decisive manifest JCS lock, HQC=1,336 budget, and Stage-1 predictions."""
     from pathlib import Path
 
-    bundle_dir = rnh.BUNDLE_DIR if rnh is not None else (Path(__file__).resolve().parents[1] / "xtop005" / "decisive_h2_bundle")
-    m_path = bundle_dir / (rnh.MANIFEST_NAME if rnh is not None else "manifest_xtop005_h2_decisive.json")
+    bundle_dir = rnh.BUNDLE_DIR if rnh is not None else (Path(__file__).resolve().parents[1] / "xtop005/nexus_h2_bundle")
+    m_path = bundle_dir / (rnh.MANIFEST_NAME if rnh is not None else "nexus_h2_decisive_manifest.json")
     raw = m_path.read_bytes()
     m = json.loads(raw.decode("utf-8"))
 
