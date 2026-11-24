@@ -32,6 +32,7 @@ EXPECTED_NOV23_PAPERS = (
     "wp2_27q_debiased_ot_fez",
     "nonabelian_2bga_and_adv1",
     "heron_r2_calibration_staleness_and_colored_nulls",
+    "bt2t001_binary_tetrahedral_fez",
 )
 
 
@@ -75,7 +76,7 @@ def test_zenodo_dry_run_all_four_papers_pass_sys024_and_sha256sums(
     assert manifest["mode"] == "DRY_RUN_STAGED"
     assert manifest["network_calls"] == 0
     assert manifest["publication_date"] == "2026-11-23"
-    assert manifest["paper_count"] == 4
+    assert manifest["paper_count"] == len(EXPECTED_NOV23_PAPERS)
     assert tuple(manifest["paper_order"]) == EXPECTED_NOV23_PAPERS
 
     body = {k: v for k, v in manifest.items() if k != "manifest_sha256"}

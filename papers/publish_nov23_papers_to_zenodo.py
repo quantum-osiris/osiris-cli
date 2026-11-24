@@ -67,6 +67,9 @@ PAPER_ALIASES: Dict[str, str] = {
     "heron_r2_calibration_staleness_and_colored_nulls": (
         "heron_r2_calibration_staleness_and_colored_nulls"
     ),
+    "bt2t": "bt2t001_binary_tetrahedral_fez",
+    "bt2t001": "bt2t001_binary_tetrahedral_fez",
+    "bt2t001_binary_tetrahedral_fez": "bt2t001_binary_tetrahedral_fez",
 }
 
 PAPER_ORDER: Tuple[str, ...] = (
@@ -74,6 +77,7 @@ PAPER_ORDER: Tuple[str, ...] = (
     "wp2_27q_debiased_ot_fez",
     "nonabelian_2bga_and_adv1",
     "heron_r2_calibration_staleness_and_colored_nulls",
+    "bt2t001_binary_tetrahedral_fez",
 )
 
 PAPERS: Dict[str, Dict[str, Any]] = {
@@ -429,6 +433,117 @@ PAPERS: Dict[str, Dict[str, Any]] = {
                 "ibm_fez",
                 "ibm_kingston",
                 "preregistration",
+            ],
+        },
+    },
+    "bt2t001_binary_tetrahedral_fez": {
+        "dir": "papers/bt2t001_binary_tetrahedral_fez",
+        "tex_file": "bt2t001_binary_tetrahedral_fez.tex",
+        "publication_type": "preprint",
+        "version": "1.0.0",
+        "related": [
+            {
+                "identifier": "10.5281/zenodo.24420902",
+                "relation": "references",
+                "scheme": "doi",
+            },
+            {
+                "identifier": "10.5281/zenodo.24406426",
+                "relation": "references",
+                "scheme": "doi",
+            },
+        ],
+        "files": [
+            ("papers/bt2t001_binary_tetrahedral_fez/bt2t001_binary_tetrahedral_fez.tex", None),
+            ("papers/bt2t001_binary_tetrahedral_fez/generated.tex", None),
+            ("papers/bt2t001_binary_tetrahedral_fez/generate_bt2t001_paper_assets.py", None),
+            (
+                "papers/bt2t001_binary_tetrahedral_fez/"
+                "fig1_bt2t001_fez_synthesis_and_sectors.svg",
+                None,
+            ),
+            (
+                "papers/bt2t001_binary_tetrahedral_fez/"
+                "fig1_bt2t001_fez_synthesis_and_sectors.pdf",
+                None,
+            ),
+            (
+                "papers/bt2t001_binary_tetrahedral_fez/"
+                "fig2_bt2t001_fez_elementwise_and_spam_drift.svg",
+                None,
+            ),
+            (
+                "papers/bt2t001_binary_tetrahedral_fez/"
+                "fig2_bt2t001_fez_elementwise_and_spam_drift.pdf",
+                None,
+            ),
+            ("papers/bt2t001_binary_tetrahedral_fez/reproducibility_capsule.json", None),
+            ("papers/bt2t001_binary_tetrahedral_fez/SHA256SUMS.txt", None),
+            ("experiments/bt2t_fez/PRE_REGISTRATION.md", None),
+            ("experiments/bt2t_fez/stage_and_harvest_bt2t_fez.py", None),
+            ("experiments/bt2t_fez/physical_bt2t_fez_results.json", None),
+            ("experiments/bt2t_fez/physical_bt2t_fez_raw_counts.json.gz", None),
+            ("experiments/bt2t_fez/bt2t_fez_staged_circuits.qpy", None),
+            ("experiments/bt2t_fez/bt2t_fez_staging_manifest.json", None),
+            ("experiments/bt2t_fez/bt2t_fez_calibration_snapshot.json", None),
+            ("experiments/bt2t_fez/bt2t_fez_submitted_job.json", None),
+            ("experiments/bt2t_inversion/G1_INDEPENDENT_REVIEW.md", None),
+            ("experiments/bt2t_inversion/bt2t.py", None),
+            ("experiments/bt2t_inversion/verify.py", None),
+            ("experiments/bt2t_inversion/manifest.py", "bt2t_inversion_manifest.py"),
+            ("experiments/bt2t_inversion/manifest.json", "bt2t_inversion_manifest.json"),
+        ],
+        "optional_files": [
+            ("papers/bt2t001_binary_tetrahedral_fez/bt2t001_binary_tetrahedral_fez.pdf", None),
+        ],
+        "meta": {
+            "title": (
+                "Exact Binary Tetrahedral Group Inversion on a 5-Qubit Heavy-Hex Superconducting "
+                "Register: Coset-Parity Synthesis Compression and Unflagged Readout Staleness "
+                "(OSIRIS-BT2T-001-FEZ)"
+            ),
+            "description": (
+                "<p>Write-ahead preregistered benchmark (<code>OSIRIS-BT2T-001-FEZ</code>, "
+                "<code>Card A</code>; independent gate <code>G1</code> signed off prior to "
+                "submission) of exact non-abelian group inversion <code>g -&gt; g^-1</code> in "
+                "the 24-element binary tetrahedral group <code>2T = Q_8 |x Z_3</code> embedded in "
+                "a 5-qubit register (frozen encoding <code>bt2t-enc-1</code>) on a five-transmon "
+                "heavy-hex T-junction <code>[21, 22, 23, 16, 24]</code> of the 156-qubit IBM "
+                "Heron r2 processor <code>ibm_fez</code> (job <code>dc2ee3uq4uuc73a56o6g</code>; "
+                "<code>HARDWARE_ATTESTED</code>, 288 ISA circuits, 27,648 equal-shot physical "
+                "measurements across 3 interleaved randomized blocks, 11 s QPU, "
+                "<code>N_windows = 1</code>).</p><ul>"
+                "<li>Coset-parity Boolean factoring over <code>2T = Q_8 |x Z_3</code> compresses "
+                "heavy-hex <code>CZ</code> count 10.04x from 723 <code>CZ</code> (1,560 "
+                "<code>sqrt(X)</code>, unitary depth 2,073) in the generic 11-transposition "
+                "reference to 72 <code>CZ</code> (151 <code>sqrt(X)</code>, unitary depth 218) "
+                "for the identical 32x32 permutation unitary, and compresses local "
+                "<code>pytket</code> <code>H2</code>-native compilation from 400 to 47 "
+                "<code>ZZPhase</code> gates (8.51x).</li>"
+                "<li>Uniform valid-24 raw inversion accuracy rises from 0.0661 +/- 0.0030 "
+                "to 0.5337 +/- 0.0059 (0.6104 readout-mitigated, <code>cond(M_32) = "
+                "1.4524</code>), yielding Delta P_valid24 = +0.4676 (paired block t = 73.23, "
+                "one-sided p = 9.32e-5; 24/24 elementwise wins, Wilcoxon p = 1.19e-7; "
+                "<code>H1 = SUPPORTED</code>) and 32/32 exact modal majority-vote recovery.</li>"
+                "<li>Unused-codeword fixed-point preservation rises by +0.4818 (0.5595 vs 0.0777) "
+                "while valid-to-unused subspace leakage drops to 0.0940 &lt; 0.15 below the 0.25 "
+                "uniform random baseline (<code>H2 = SUPPORTED</code>).</li>"
+                "<li>The interleaved 0-<code>CZ</code> SPAM control achieves 0.9076 &ge; 0.90 on "
+                "unused-8 but 0.8643 &lt; 0.90 on valid-24, honestly refuting <code>H3</code> "
+                "(<code>REFUTED</code>) and isolating an unflagged 14.91x live readout staleness "
+                "excursion on leaf transmon <code>q24</code> (0.33% published vs 4.92% live) and "
+                "a 2.70x excursion on <code>q21</code> (2.34% vs 6.33%).</li></ul>"
+            ),
+            "keywords": [
+                "binary tetrahedral group",
+                "non-abelian group primitives",
+                "quantum circuit synthesis",
+                "lattice gauge theory",
+                "calibration staleness",
+                "IBM Heron r2",
+                "ibm_fez",
+                "preregistration",
+                "OSIRIS-BT2T-001-FEZ",
             ],
         },
     },

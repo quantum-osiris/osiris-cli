@@ -1,0 +1,51 @@
+{
+  "backend": "ibm_fez",
+  "combined_qpu_seconds": 11,
+  "combined_shots": 27648,
+  "encoding_sha256": "3e3b02d13539daaf431af39056d031f777a785a556eb9da21ef4ea6097dfc4c5",
+  "encoding_version": "bt2t-enc-1",
+  "execution_tier": "HARDWARE_ATTESTED",
+  "fez_t5_layout": [
+    21,
+    22,
+    23,
+    16,
+    24
+  ],
+  "hypothesis_verdicts": {
+    "H1_structured_vs_generic_valid24": "SUPPORTED",
+    "H2_unused_codeword_preservation_and_confinement": "SUPPORTED",
+    "H3_spam_control_integrity": "REFUTED"
+  },
+  "paper_id": "OSIRIS-BT2T-001-FEZ-PAPER",
+  "protocol_id": "OSIRIS-BT2T-001-FEZ",
+  "provider_job_id": "dc2ee3uq4uuc73a56o6g",
+  "provider_job_ids": [
+    "dc2ee3uq4uuc73a56o6g"
+  ],
+  "rfc8785_canonical_sha256": "c6ce4301304ddeab3e4cd29bd300cbdad96abe7439b69ec782d9f86c711d6098",
+  "schema": "osiris.reproducibility_capsule/1",
+  "shots_per_pub": 96,
+  "source_artifacts": {
+    "experiments/bt2t_fez/PRE_REGISTRATION.md": "513f55909f613c0d7ec94197622e0be6a875a62b847d5a49eea9a6efb627c952",
+    "experiments/bt2t_fez/bt2t_fez_calibration_snapshot.json": "f6316b95b102338973ebdd5a86c610939fca26e4c3cbaa7dfc4dc29af1e25b21",
+    "experiments/bt2t_fez/bt2t_fez_staged_circuits.qpy": "81a90cf823da78f29aa51b33dec982f8e2c48395e9edb99c488c740f4e5484c4",
+    "experiments/bt2t_fez/bt2t_fez_staging_manifest.json": "071f149b8d4c0d99a4dab55a248c72605b79c4aad01db6222a54899f2cdf4410",
+    "experiments/bt2t_fez/bt2t_fez_submitted_job.json": "d88d9dbf2d621406bee6e86e9cc86127ee759f5ddc78c69c42f6bb8199fb309a",
+    "experiments/bt2t_fez/physical_bt2t_fez_raw_counts.json.gz": "b3be6057b50a9223f4b61a09b4c9ae9ce89308894e2862d65cf1a8487ec6f45c",
+    "experiments/bt2t_fez/physical_bt2t_fez_results.json": "4b70cf7210a73ba39bb1e9118f23cd43effbb6362af55c533c7310f70d3686d6",
+    "experiments/bt2t_fez/stage_and_harvest_bt2t_fez.py": "174c0e96ac373a703a299c39da4a855381f36c0d48e4df1adeef421c6f55889f",
+    "experiments/bt2t_inversion/G1_INDEPENDENT_REVIEW.md": "f543aa9613469e34ebdc47d47eab6f7ef2517ce245ffda3708ef3d8e31120826",
+    "experiments/bt2t_inversion/bt2t.py": "e179cfb1cd431615a75b2cf30a389d5ba1d406c289b394919b23e5c594117dac",
+    "experiments/bt2t_inversion/manifest.json": "098dc803446aecb75245fa1fa5e4bbb2c2e71aa291db8b5dc52389438be0903f",
+    "experiments/bt2t_inversion/manifest.py": "0ae94a8c4340b1d914265ad4f1f886ad2c15afe8c6403ced16bf1b1bd390e9af",
+    "experiments/bt2t_inversion/verify.py": "1860daba0c9a0d5440c4601e64a8c50f0e5139a16972fb38ad9c2f3c0724cd33"
+  },
+  "total_pubs": 288,
+  "unit_of_inference": {
+    "calibration_windows": 1,
+    "paired_valid_group_elements": 24,
+    "scope": "within_single_calibration_window_hardware_attestation",
+    "within_window_blocks": 3
+  }
+}
