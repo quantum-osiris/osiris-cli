@@ -1,0 +1,1997 @@
+{
+  "cells": {
+    "repetition_d3_5q__FEZ_DRIFTED_SPAM": {
+      "cell_stop_go": {
+        "arm4a_crosses_below_both": true,
+        "arm4b_crosses_below_both": true,
+        "falsifier_triggered": false,
+        "r_cross_arm4a_vs_both": 1,
+        "r_cross_arm4b_vs_both": 2,
+        "verdict": "PASS_CROSSING_OBSERVED"
+      },
+      "code_id": "repetition_d3_5q",
+      "code_label": "[[3,1,3]] distance-3 phase-flip repetition code (5 qubits: 3 data + 2 ancillas)",
+      "exact_kraus_branch_crosschecks_r1_to_r3": {
+        "1": {
+          "abs_diff": 9.538e-05,
+          "exact_kraus_branch_p_fail": 0.00705113,
+          "trajectory_mc_p_fail": 0.00714652
+        },
+        "2": {
+          "abs_diff": 2.903e-05,
+          "exact_kraus_branch_p_fail": 0.0076922,
+          "trajectory_mc_p_fail": 0.00772123
+        },
+        "3": {
+          "abs_diff": 0.00058962,
+          "exact_kraus_branch_p_fail": 0.0093923,
+          "trajectory_mc_p_fail": 0.00880267
+        }
+      },
+      "memory_basis": "X",
+      "n_shots_per_round": 30000,
+      "per_round_table": [
+        {
+          "arm1_unencoded_p_fail": 0.0470547,
+          "arm2_encoded_no_correction_p_fail": 0.0075208,
+          "arm3_postselected_acceptance_rate": 0.7860594,
+          "arm3_postselected_conditional_p_fail": 6.75e-05,
+          "arm4a_decoded_pauli_frame_p_fail": 0.0071465,
+          "arm4b_decoded_physical_feedforward_p_fail": 0.0076956,
+          "matched_task_duration_us": 1.65,
+          "rounds": 1
+        },
+        {
+          "arm1_unencoded_p_fail": 0.0523409,
+          "arm2_encoded_no_correction_p_fail": 0.0100781,
+          "arm3_postselected_acceptance_rate": 0.702451,
+          "arm3_postselected_conditional_p_fail": 6.73e-05,
+          "arm4a_decoded_pauli_frame_p_fail": 0.0077212,
+          "arm4b_decoded_physical_feedforward_p_fail": 0.0088073,
+          "matched_task_duration_us": 3.3,
+          "rounds": 2
+        },
+        {
+          "arm1_unencoded_p_fail": 0.0576292,
+          "arm2_encoded_no_correction_p_fail": 0.012759,
+          "arm3_postselected_acceptance_rate": 0.627742,
+          "arm3_postselected_conditional_p_fail": 6.79e-05,
+          "arm4a_decoded_pauli_frame_p_fail": 0.0088027,
+          "arm4b_decoded_physical_feedforward_p_fail": 0.010498,
+          "matched_task_duration_us": 4.95,
+          "rounds": 3
+        },
+        {
+          "arm1_unencoded_p_fail": 0.0682063,
+          "arm2_encoded_no_correction_p_fail": 0.0184831,
+          "arm3_postselected_acceptance_rate": 0.5013163,
+          "arm3_postselected_conditional_p_fail": 6.92e-05,
+          "arm4a_decoded_pauli_frame_p_fail": 0.0104178,
+          "arm4b_decoded_physical_feedforward_p_fail": 0.0127796,
+          "matched_task_duration_us": 8.25,
+          "rounds": 5
+        },
+        {
+          "arm1_unencoded_p_fail": 0.0787744,
+          "arm2_encoded_no_correction_p_fail": 0.024675,
+          "arm3_postselected_acceptance_rate": 0.4003525,
+          "arm3_postselected_conditional_p_fail": 7.06e-05,
+          "arm4a_decoded_pauli_frame_p_fail": 0.0122162,
+          "arm4b_decoded_physical_feedforward_p_fail": 0.0158682,
+          "matched_task_duration_us": 11.55,
+          "rounds": 7
+        },
+        {
+          "arm1_unencoded_p_fail": 0.0893228,
+          "arm2_encoded_no_correction_p_fail": 0.0313148,
+          "arm3_postselected_acceptance_rate": 0.3197225,
+          "arm3_postselected_conditional_p_fail": 7.19e-05,
+          "arm4a_decoded_pauli_frame_p_fail": 0.0138646,
+          "arm4b_decoded_physical_feedforward_p_fail": 0.0180888,
+          "matched_task_duration_us": 14.85,
+          "rounds": 9
+        }
+      ],
+      "postselected_arm_reported_separately": {
+        "arm3_postselected_detection": {
+          "acceptance_rate_by_round": {
+            "1": 0.7860594,
+            "2": 0.702451,
+            "3": 0.627742,
+            "5": 0.5013163,
+            "7": 0.4003525,
+            "9": 0.3197225
+          },
+          "arm_label": "postselected_zero_detector_events_only",
+          "conditional_fit": {
+            "epsilon_L_at_max_round": 7.99e-06,
+            "epsilon_L_at_max_round_ci95": [
+              0.0,
+              3.476e-05
+            ],
+            "epsilon_L_slope_ci95": [
+              0.0,
+              2.505e-05
+            ],
+            "epsilon_L_slope_fit": 6e-07,
+            "per_round_epsilon_L": {
+              "1": 6.75e-05,
+              "2": 3.365e-05,
+              "3": 2.264e-05,
+              "5": 1.385e-05,
+              "7": 1.008e-05,
+              "9": 7.99e-06
+            }
+          },
+          "conditional_p_fail_by_round": {
+            "1": 6.75e-05,
+            "2": 6.73e-05,
+            "3": 6.79e-05,
+            "5": 6.92e-05,
+            "7": 7.06e-05,
+            "9": 7.19e-05
+          },
+          "postselection_applied": true
+        }
+      },
+      "rounds_evaluated": [
+        1,
+        2,
+        3,
+        5,
+        7,
+        9
+      ],
+      "simulation_engine": "exact_5q_kraus_density_matrix_and_quantum_instrument",
+      "target_profile_id": "FEZ_DRIFTED_SPAM",
+      "unconditional_arms": {
+        "arm1_unencoded": {
+          "arm_label": "unencoded_bare_qubit",
+          "fit": {
+            "epsilon_L_at_max_round": 0.01081469,
+            "epsilon_L_at_max_round_ci95": [
+              0.01039401,
+              0.0112411
+            ],
+            "epsilon_L_slope_ci95": [
+              0.00560794,
+              0.00659413
+            ],
+            "epsilon_L_slope_fit": 0.00608346,
+            "per_round_epsilon_L": {
+              "1": 0.04705468,
+              "2": 0.02689373,
+              "3": 0.019999,
+              "5": 0.01445301,
+              "7": 0.01209695,
+              "9": 0.01081469
+            }
+          },
+          "p_fail_by_round": {
+            "1": 0.0470547,
+            "2": 0.0523409,
+            "3": 0.0576292,
+            "5": 0.0682063,
+            "7": 0.0787744,
+            "9": 0.0893228
+          }
+        },
+        "arm2_encoded_no_correction": {
+          "arm_label": "encoded_idle_terminal_decode_only",
+          "fit": {
+            "epsilon_L_at_max_round": 0.00358027,
+            "epsilon_L_at_max_round_ci95": [
+              0.00335143,
+              0.00382616
+            ],
+            "epsilon_L_slope_ci95": [
+              0.00284609,
+              0.00333285
+            ],
+            "epsilon_L_slope_fit": 0.0030818,
+            "per_round_epsilon_L": {
+              "1": 0.0075208,
+              "2": 0.00506471,
+              "3": 0.00428969,
+              "5": 0.00375252,
+              "7": 0.00360191,
+              "9": 0.00358027
+            }
+          },
+          "p_fail_by_round": {
+            "1": 0.0075208,
+            "2": 0.0100781,
+            "3": 0.012759,
+            "5": 0.0184831,
+            "7": 0.024675,
+            "9": 0.0313148
+          }
+        },
+        "arm4a_decoded_pauli_frame": {
+          "arm_label": "decoded_correction_offline_pauli_frame",
+          "conditional_physical_gates": false,
+          "crossing_analysis": {
+            "beats_arm2_at_any_tested_round": true,
+            "crosses_below_both_sustained": true,
+            "r_cross_vs_arm1_unencoded": 1,
+            "r_cross_vs_arm2_no_correction": 1,
+            "r_cross_vs_both_first": 1,
+            "r_cross_vs_both_sustained": 1
+          },
+          "decoding_mode": "offline_pauli_frame",
+          "feedforward_latency_us": 0.0,
+          "fit": {
+            "epsilon_L_at_max_round": 0.00155984,
+            "epsilon_L_at_max_round_ci95": [
+              0.00141205,
+              0.00170844
+            ],
+            "epsilon_L_slope_ci95": [
+              0.0007072,
+              0.00104739
+            ],
+            "epsilon_L_slope_fit": 0.00087266,
+            "per_round_epsilon_L": {
+              "1": 0.00714652,
+              "2": 0.00387563,
+              "3": 0.00295161,
+              "5": 0.00210115,
+              "7": 0.00176373,
+              "9": 0.00155984
+            }
+          },
+          "p_fail_by_round": {
+            "1": 0.0071465,
+            "2": 0.0077212,
+            "3": 0.0088027,
+            "5": 0.0104178,
+            "7": 0.0122162,
+            "9": 0.0138646
+          }
+        },
+        "arm4b_decoded_physical_feedforward": {
+          "arm_label": "decoded_correction_physical_feedforward",
+          "conditional_physical_gates": true,
+          "crossing_analysis": {
+            "beats_arm2_at_any_tested_round": true,
+            "crosses_below_both_sustained": true,
+            "r_cross_vs_arm1_unencoded": 1,
+            "r_cross_vs_arm2_no_correction": 2,
+            "r_cross_vs_both_first": 2,
+            "r_cross_vs_both_sustained": 2
+          },
+          "decoding_mode": "physical_feedforward",
+          "feedforward_latency_us": 0.35,
+          "fit": {
+            "epsilon_L_at_max_round": 0.00204294,
+            "epsilon_L_at_max_round_ci95": [
+              0.00187224,
+              0.00222436
+            ],
+            "epsilon_L_slope_ci95": [
+              0.00115748,
+              0.00153971
+            ],
+            "epsilon_L_slope_fit": 0.00135442,
+            "per_round_epsilon_L": {
+              "1": 0.0076956,
+              "2": 0.00442319,
+              "3": 0.00352411,
+              "5": 0.00258246,
+              "7": 0.00229834,
+              "9": 0.00204294
+            }
+          },
+          "p_fail_by_round": {
+            "1": 0.0076956,
+            "2": 0.0088073,
+            "3": 0.010498,
+            "5": 0.0127796,
+            "7": 0.0158682,
+            "9": 0.0180888
+          }
+        }
+      }
+    },
+    "repetition_d3_5q__FEZ_PUBLISHED": {
+      "cell_stop_go": {
+        "arm4a_crosses_below_both": true,
+        "arm4b_crosses_below_both": true,
+        "falsifier_triggered": false,
+        "r_cross_arm4a_vs_both": 1,
+        "r_cross_arm4b_vs_both": 1,
+        "verdict": "PASS_CROSSING_OBSERVED"
+      },
+      "code_id": "repetition_d3_5q",
+      "code_label": "[[3,1,3]] distance-3 phase-flip repetition code (5 qubits: 3 data + 2 ancillas)",
+      "exact_kraus_branch_crosschecks_r1_to_r3": {
+        "1": {
+          "abs_diff": 4.985e-05,
+          "exact_kraus_branch_p_fail": 0.00209485,
+          "trajectory_mc_p_fail": 0.0021447
+        },
+        "2": {
+          "abs_diff": 5.145e-05,
+          "exact_kraus_branch_p_fail": 0.00267029,
+          "trajectory_mc_p_fail": 0.00261884
+        },
+        "3": {
+          "abs_diff": 8.469e-05,
+          "exact_kraus_branch_p_fail": 0.0035886,
+          "trajectory_mc_p_fail": 0.00350391
+        }
+      },
+      "memory_basis": "X",
+      "n_shots_per_round": 30000,
+      "per_round_table": [
+        {
+          "arm1_unencoded_p_fail": 0.0243106,
+          "arm2_encoded_no_correction_p_fail": 0.0028856,
+          "arm3_postselected_acceptance_rate": 0.8851882,
+          "arm3_postselected_conditional_p_fail": 5.6e-06,
+          "arm4a_decoded_pauli_frame_p_fail": 0.0021447,
+          "arm4b_decoded_physical_feedforward_p_fail": 0.0025744,
+          "matched_task_duration_us": 1.65,
+          "rounds": 1
+        },
+        {
+          "arm1_unencoded_p_fail": 0.0298623,
+          "arm2_encoded_no_correction_p_fail": 0.004876,
+          "arm3_postselected_acceptance_rate": 0.8294361,
+          "arm3_postselected_conditional_p_fail": 6.1e-06,
+          "arm4a_decoded_pauli_frame_p_fail": 0.0026188,
+          "arm4b_decoded_physical_feedforward_p_fail": 0.003582,
+          "matched_task_duration_us": 3.3,
+          "rounds": 2
+        },
+        {
+          "arm1_unencoded_p_fail": 0.0354162,
+          "arm2_encoded_no_correction_p_fail": 0.0070121,
+          "arm3_postselected_acceptance_rate": 0.7771964,
+          "arm3_postselected_conditional_p_fail": 6.7e-06,
+          "arm4a_decoded_pauli_frame_p_fail": 0.0035039,
+          "arm4b_decoded_physical_feedforward_p_fail": 0.0048428,
+          "matched_task_duration_us": 4.95,
+          "rounds": 3
+        },
+        {
+          "arm1_unencoded_p_fail": 0.0465243,
+          "arm2_encoded_no_correction_p_fail": 0.0117127,
+          "arm3_postselected_acceptance_rate": 0.6823803,
+          "arm3_postselected_conditional_p_fail": 8e-06,
+          "arm4a_decoded_pauli_frame_p_fail": 0.0050189,
+          "arm4b_decoded_physical_feedforward_p_fail": 0.0069212,
+          "matched_task_duration_us": 8.25,
+          "rounds": 5
+        },
+        {
+          "arm1_unencoded_p_fail": 0.0576231,
+          "arm2_encoded_no_correction_p_fail": 0.0169683,
+          "arm3_postselected_acceptance_rate": 0.5991315,
+          "arm3_postselected_conditional_p_fail": 9.2e-06,
+          "arm4a_decoded_pauli_frame_p_fail": 0.0061137,
+          "arm4b_decoded_physical_feedforward_p_fail": 0.009269,
+          "matched_task_duration_us": 11.55,
+          "rounds": 7
+        },
+        {
+          "arm1_unencoded_p_fail": 0.0687011,
+          "arm2_encoded_no_correction_p_fail": 0.0227576,
+          "arm3_postselected_acceptance_rate": 0.5260389,
+          "arm3_postselected_conditional_p_fail": 1.04e-05,
+          "arm4a_decoded_pauli_frame_p_fail": 0.0075702,
+          "arm4b_decoded_physical_feedforward_p_fail": 0.0113423,
+          "matched_task_duration_us": 14.85,
+          "rounds": 9
+        }
+      ],
+      "postselected_arm_reported_separately": {
+        "arm3_postselected_detection": {
+          "acceptance_rate_by_round": {
+            "1": 0.8851882,
+            "2": 0.8294361,
+            "3": 0.7771964,
+            "5": 0.6823803,
+            "7": 0.5991315,
+            "9": 0.5260389
+          },
+          "arm_label": "postselected_zero_detector_events_only",
+          "conditional_fit": {
+            "epsilon_L_at_max_round": 1.15e-06,
+            "epsilon_L_at_max_round_ci95": [
+              0.0,
+              7.04e-06
+            ],
+            "epsilon_L_slope_ci95": [
+              0.0,
+              7.58e-06
+            ],
+            "epsilon_L_slope_fit": 6e-07,
+            "per_round_epsilon_L": {
+              "1": 5.64e-06,
+              "2": 3.07e-06,
+              "3": 2.25e-06,
+              "5": 1.59e-06,
+              "7": 1.31e-06,
+              "9": 1.15e-06
+            }
+          },
+          "conditional_p_fail_by_round": {
+            "1": 5.6e-06,
+            "2": 6.1e-06,
+            "3": 6.7e-06,
+            "5": 8e-06,
+            "7": 9.2e-06,
+            "9": 1.04e-05
+          },
+          "postselection_applied": true
+        }
+      },
+      "rounds_evaluated": [
+        1,
+        2,
+        3,
+        5,
+        7,
+        9
+      ],
+      "simulation_engine": "exact_5q_kraus_density_matrix_and_quantum_instrument",
+      "target_profile_id": "FEZ_PUBLISHED",
+      "unconditional_arms": {
+        "arm1_unencoded": {
+          "arm_label": "unencoded_bare_qubit",
+          "fit": {
+            "epsilon_L_at_max_round": 0.00814443,
+            "epsilon_L_at_max_round_ci95": [
+              0.00779461,
+              0.0085256
+            ],
+            "epsilon_L_slope_ci95": [
+              0.00570254,
+              0.00648993
+            ],
+            "epsilon_L_slope_fit": 0.00608346,
+            "per_round_epsilon_L": {
+              "1": 0.02431063,
+              "2": 0.01516101,
+              "3": 0.01209564,
+              "5": 0.00967188,
+              "7": 0.00867009,
+              "9": 0.00814443
+            }
+          },
+          "p_fail_by_round": {
+            "1": 0.0243106,
+            "2": 0.0298623,
+            "3": 0.0354162,
+            "5": 0.0465243,
+            "7": 0.0576231,
+            "9": 0.0687011
+          }
+        },
+        "arm2_encoded_no_correction": {
+          "arm_label": "encoded_idle_terminal_decode_only",
+          "fit": {
+            "epsilon_L_at_max_round": 0.00258129,
+            "epsilon_L_at_max_round_ci95": [
+              0.00237413,
+              0.0027834
+            ],
+            "epsilon_L_slope_ci95": [
+              0.00232927,
+              0.00273416
+            ],
+            "epsilon_L_slope_fit": 0.00253932,
+            "per_round_epsilon_L": {
+              "1": 0.0028856,
+              "2": 0.00244396,
+              "3": 0.00234836,
+              "5": 0.0023648,
+              "7": 0.00246007,
+              "9": 0.00258129
+            }
+          },
+          "p_fail_by_round": {
+            "1": 0.0028856,
+            "2": 0.004876,
+            "3": 0.0070121,
+            "5": 0.0117127,
+            "7": 0.0169683,
+            "9": 0.0227576
+          }
+        },
+        "arm4a_decoded_pauli_frame": {
+          "arm_label": "decoded_correction_offline_pauli_frame",
+          "conditional_physical_gates": false,
+          "crossing_analysis": {
+            "beats_arm2_at_any_tested_round": true,
+            "crosses_below_both_sustained": true,
+            "r_cross_vs_arm1_unencoded": 1,
+            "r_cross_vs_arm2_no_correction": 1,
+            "r_cross_vs_both_first": 1,
+            "r_cross_vs_both_sustained": 1
+          },
+          "decoding_mode": "offline_pauli_frame",
+          "feedforward_latency_us": 0.0,
+          "fit": {
+            "epsilon_L_at_max_round": 0.00084685,
+            "epsilon_L_at_max_round_ci95": [
+              0.00073767,
+              0.00095918
+            ],
+            "epsilon_L_slope_ci95": [
+              0.00058183,
+              0.00080674
+            ],
+            "epsilon_L_slope_fit": 0.00069143,
+            "per_round_epsilon_L": {
+              "1": 0.0021447,
+              "2": 0.00131114,
+              "3": 0.00117071,
+              "5": 0.00100782,
+              "7": 0.000878,
+              "9": 0.00084685
+            }
+          },
+          "p_fail_by_round": {
+            "1": 0.0021447,
+            "2": 0.0026188,
+            "3": 0.0035039,
+            "5": 0.0050189,
+            "7": 0.0061137,
+            "9": 0.0075702
+          }
+        },
+        "arm4b_decoded_physical_feedforward": {
+          "arm_label": "decoded_correction_physical_feedforward",
+          "conditional_physical_gates": true,
+          "crossing_analysis": {
+            "beats_arm2_at_any_tested_round": true,
+            "crosses_below_both_sustained": true,
+            "r_cross_vs_arm1_unencoded": 1,
+            "r_cross_vs_arm2_no_correction": 1,
+            "r_cross_vs_both_first": 1,
+            "r_cross_vs_both_sustained": 1
+          },
+          "decoding_mode": "physical_feedforward",
+          "feedforward_latency_us": 0.35,
+          "fit": {
+            "epsilon_L_at_max_round": 0.00127315,
+            "epsilon_L_at_max_round_ci95": [
+              0.00113997,
+              0.00141593
+            ],
+            "epsilon_L_slope_ci95": [
+              0.00097205,
+              0.00126271
+            ],
+            "epsilon_L_slope_fit": 0.00111838,
+            "per_round_epsilon_L": {
+              "1": 0.00257444,
+              "2": 0.0017942,
+              "3": 0.00161951,
+              "5": 0.00139196,
+              "7": 0.00133478,
+              "9": 0.00127315
+            }
+          },
+          "p_fail_by_round": {
+            "1": 0.0025744,
+            "2": 0.003582,
+            "3": 0.0048428,
+            "5": 0.0069212,
+            "7": 0.009269,
+            "9": 0.0113423
+          }
+        }
+      }
+    },
+    "repetition_d3_5q__H2_1_PUBLISHED": {
+      "cell_stop_go": {
+        "arm4a_crosses_below_both": true,
+        "arm4b_crosses_below_both": true,
+        "falsifier_triggered": false,
+        "r_cross_arm4a_vs_both": 1,
+        "r_cross_arm4b_vs_both": 1,
+        "verdict": "PASS_CROSSING_OBSERVED"
+      },
+      "code_id": "repetition_d3_5q",
+      "code_label": "[[3,1,3]] distance-3 phase-flip repetition code (5 qubits: 3 data + 2 ancillas)",
+      "exact_kraus_branch_crosschecks_r1_to_r3": {
+        "1": {
+          "abs_diff": 3.72e-06,
+          "exact_kraus_branch_p_fail": 5.689e-05,
+          "trajectory_mc_p_fail": 5.318e-05
+        },
+        "2": {
+          "abs_diff": 1.57e-06,
+          "exact_kraus_branch_p_fail": 7.398e-05,
+          "trajectory_mc_p_fail": 7.555e-05
+        },
+        "3": {
+          "abs_diff": 3.9e-07,
+          "exact_kraus_branch_p_fail": 9.545e-05,
+          "trajectory_mc_p_fail": 9.506e-05
+        }
+      },
+      "memory_basis": "X",
+      "n_shots_per_round": 30000,
+      "per_round_table": [
+        {
+          "arm1_unencoded_p_fail": 0.0034486,
+          "arm2_encoded_no_correction_p_fail": 0.0001349,
+          "arm3_postselected_acceptance_rate": 0.9796988,
+          "arm3_postselected_conditional_p_fail": 0.0,
+          "arm4a_decoded_pauli_frame_p_fail": 5.32e-05,
+          "arm4b_decoded_physical_feedforward_p_fail": 7.6e-05,
+          "matched_task_duration_us": 1200.0,
+          "rounds": 1
+        },
+        {
+          "arm1_unencoded_p_fail": 0.0038655,
+          "arm2_encoded_no_correction_p_fail": 0.0002431,
+          "arm3_postselected_acceptance_rate": 0.968617,
+          "arm3_postselected_conditional_p_fail": 0.0,
+          "arm4a_decoded_pauli_frame_p_fail": 7.56e-05,
+          "arm4b_decoded_physical_feedforward_p_fail": 0.0001241,
+          "matched_task_duration_us": 2400.0,
+          "rounds": 2
+        },
+        {
+          "arm1_unencoded_p_fail": 0.00429,
+          "arm2_encoded_no_correction_p_fail": 0.0003524,
+          "arm3_postselected_acceptance_rate": 0.9576606,
+          "arm3_postselected_conditional_p_fail": 0.0,
+          "arm4a_decoded_pauli_frame_p_fail": 9.51e-05,
+          "arm4b_decoded_physical_feedforward_p_fail": 0.0001523,
+          "matched_task_duration_us": 3600.0,
+          "rounds": 3
+        },
+        {
+          "arm1_unencoded_p_fail": 0.0051617,
+          "arm2_encoded_no_correction_p_fail": 0.0005743,
+          "arm3_postselected_acceptance_rate": 0.9361182,
+          "arm3_postselected_conditional_p_fail": 0.0,
+          "arm4a_decoded_pauli_frame_p_fail": 0.0001104,
+          "arm4b_decoded_physical_feedforward_p_fail": 0.0002281,
+          "matched_task_duration_us": 6000.0,
+          "rounds": 5
+        },
+        {
+          "arm1_unencoded_p_fail": 0.0060635,
+          "arm2_encoded_no_correction_p_fail": 0.000801,
+          "arm3_postselected_acceptance_rate": 0.9150604,
+          "arm3_postselected_conditional_p_fail": 0.0,
+          "arm4a_decoded_pauli_frame_p_fail": 0.0001892,
+          "arm4b_decoded_physical_feedforward_p_fail": 0.0002936,
+          "matched_task_duration_us": 8400.0,
+          "rounds": 7
+        },
+        {
+          "arm1_unencoded_p_fail": 0.0069952,
+          "arm2_encoded_no_correction_p_fail": 0.001033,
+          "arm3_postselected_acceptance_rate": 0.8944763,
+          "arm3_postselected_conditional_p_fail": 0.0,
+          "arm4a_decoded_pauli_frame_p_fail": 0.0001936,
+          "arm4b_decoded_physical_feedforward_p_fail": 0.0003751,
+          "matched_task_duration_us": 10800.0,
+          "rounds": 9
+        }
+      ],
+      "postselected_arm_reported_separately": {
+        "arm3_postselected_detection": {
+          "acceptance_rate_by_round": {
+            "1": 0.9796988,
+            "2": 0.968617,
+            "3": 0.9576606,
+            "5": 0.9361182,
+            "7": 0.9150604,
+            "9": 0.8944763
+          },
+          "arm_label": "postselected_zero_detector_events_only",
+          "conditional_fit": {
+            "epsilon_L_at_max_round": 0.0,
+            "epsilon_L_at_max_round_ci95": [
+              0.0,
+              0.0
+            ],
+            "epsilon_L_slope_ci95": [
+              0.0,
+              0.0
+            ],
+            "epsilon_L_slope_fit": 0.0,
+            "per_round_epsilon_L": {
+              "1": 2e-08,
+              "2": 1e-08,
+              "3": 1e-08,
+              "5": 1e-08,
+              "7": 0.0,
+              "9": 0.0
+            }
+          },
+          "conditional_p_fail_by_round": {
+            "1": 0.0,
+            "2": 0.0,
+            "3": 0.0,
+            "5": 0.0,
+            "7": 0.0,
+            "9": 0.0
+          },
+          "postselection_applied": true
+        }
+      },
+      "rounds_evaluated": [
+        1,
+        2,
+        3,
+        5,
+        7,
+        9
+      ],
+      "simulation_engine": "exact_5q_kraus_density_matrix_and_quantum_instrument",
+      "target_profile_id": "H2_1_PUBLISHED",
+      "unconditional_arms": {
+        "arm1_unencoded": {
+          "arm_label": "unencoded_bare_qubit",
+          "fit": {
+            "epsilon_L_at_max_round": 0.00078212,
+            "epsilon_L_at_max_round_ci95": [
+              0.00067399,
+              0.00089527
+            ],
+            "epsilon_L_slope_ci95": [
+              0.00032827,
+              0.00056687
+            ],
+            "epsilon_L_slope_fit": 0.0004476,
+            "per_round_epsilon_L": {
+              "1": 0.00344856,
+              "2": 0.0019365,
+              "3": 0.00143411,
+              "5": 0.00103663,
+              "7": 0.00087075,
+              "9": 0.00078212
+            }
+          },
+          "p_fail_by_round": {
+            "1": 0.0034486,
+            "2": 0.0038655,
+            "3": 0.00429,
+            "5": 0.0051617,
+            "7": 0.0060635,
+            "9": 0.0069952
+          }
+        },
+        "arm2_encoded_no_correction": {
+          "arm_label": "encoded_idle_terminal_decode_only",
+          "fit": {
+            "epsilon_L_at_max_round": 0.00011488,
+            "epsilon_L_at_max_round_ci95": [
+              7.783e-05,
+              0.00015575
+            ],
+            "epsilon_L_slope_ci95": [
+              7.375e-05,
+              0.00015283
+            ],
+            "epsilon_L_slope_fit": 0.00011232,
+            "per_round_epsilon_L": {
+              "1": 0.0001349,
+              "2": 0.00012159,
+              "3": 0.0001175,
+              "5": 0.00011492,
+              "7": 0.00011451,
+              "9": 0.00011488
+            }
+          },
+          "p_fail_by_round": {
+            "1": 0.0001349,
+            "2": 0.0002431,
+            "3": 0.0003524,
+            "5": 0.0005743,
+            "7": 0.000801,
+            "9": 0.001033
+          }
+        },
+        "arm4a_decoded_pauli_frame": {
+          "arm_label": "decoded_correction_offline_pauli_frame",
+          "conditional_physical_gates": false,
+          "crossing_analysis": {
+            "beats_arm2_at_any_tested_round": true,
+            "crosses_below_both_sustained": true,
+            "r_cross_vs_arm1_unencoded": 1,
+            "r_cross_vs_arm2_no_correction": 1,
+            "r_cross_vs_both_first": 1,
+            "r_cross_vs_both_sustained": 1
+          },
+          "decoding_mode": "offline_pauli_frame",
+          "feedforward_latency_us": 0.0,
+          "fit": {
+            "epsilon_L_at_max_round": 2.151e-05,
+            "epsilon_L_at_max_round_ci95": [
+              7.41e-06,
+              4.075e-05
+            ],
+            "epsilon_L_slope_ci95": [
+              0.0,
+              3.792e-05
+            ],
+            "epsilon_L_slope_fit": 1.857e-05,
+            "per_round_epsilon_L": {
+              "1": 5.318e-05,
+              "2": 3.778e-05,
+              "3": 3.169e-05,
+              "5": 2.208e-05,
+              "7": 2.704e-05,
+              "9": 2.151e-05
+            }
+          },
+          "p_fail_by_round": {
+            "1": 5.32e-05,
+            "2": 7.56e-05,
+            "3": 9.51e-05,
+            "5": 0.0001104,
+            "7": 0.0001892,
+            "9": 0.0001936
+          }
+        },
+        "arm4b_decoded_physical_feedforward": {
+          "arm_label": "decoded_correction_physical_feedforward",
+          "conditional_physical_gates": true,
+          "crossing_analysis": {
+            "beats_arm2_at_any_tested_round": true,
+            "crosses_below_both_sustained": true,
+            "r_cross_vs_arm1_unencoded": 1,
+            "r_cross_vs_arm2_no_correction": 1,
+            "r_cross_vs_both_first": 1,
+            "r_cross_vs_both_sustained": 1
+          },
+          "decoding_mode": "physical_feedforward",
+          "feedforward_latency_us": 250.0,
+          "fit": {
+            "epsilon_L_at_max_round": 4.169e-05,
+            "epsilon_L_at_max_round_ci95": [
+              1.852e-05,
+              6.67e-05
+            ],
+            "epsilon_L_slope_ci95": [
+              1.158e-05,
+              6.319e-05
+            ],
+            "epsilon_L_slope_fit": 3.646e-05,
+            "per_round_epsilon_L": {
+              "1": 7.601e-05,
+              "2": 6.207e-05,
+              "3": 5.079e-05,
+              "5": 4.563e-05,
+              "7": 4.196e-05,
+              "9": 4.169e-05
+            }
+          },
+          "p_fail_by_round": {
+            "1": 7.6e-05,
+            "2": 0.0001241,
+            "3": 0.0001523,
+            "5": 0.0002281,
+            "7": 0.0002936,
+            "9": 0.0003751
+          }
+        }
+      }
+    },
+    "rotated_surface_d3_17q__FEZ_DRIFTED_SPAM": {
+      "cell_stop_go": {
+        "arm4a_crosses_below_both": false,
+        "arm4b_crosses_below_both": false,
+        "falsifier_triggered": false,
+        "r_cross_arm4a_vs_both": null,
+        "r_cross_arm4b_vs_both": null,
+        "verdict": "STOP_NO_CROSSING_AT_TESTED_ROUNDS"
+      },
+      "code_id": "rotated_surface_d3_17q",
+      "code_label": "[[9,1,3]] rotated d=3 surface code (17 qubits: 9 data + 8 ancillas)",
+      "heavy_hex_bridge_cz_overhead_per_round": 8,
+      "memory_basis": "X",
+      "n_shots_per_round": 40000,
+      "native_topology_supported": false,
+      "per_round_table": [
+        {
+          "arm1_unencoded_p_fail": 0.0470547,
+          "arm2_encoded_no_correction_p_fail": 0.039175,
+          "arm3_postselected_acceptance_rate": 0.515925,
+          "arm3_postselected_conditional_p_fail": 0.0009691,
+          "arm4a_decoded_pauli_frame_p_fail": 0.039575,
+          "arm4b_decoded_physical_feedforward_p_fail": 0.0414,
+          "matched_task_duration_us": 1.65,
+          "rounds": 1
+        },
+        {
+          "arm1_unencoded_p_fail": 0.0523409,
+          "arm2_encoded_no_correction_p_fail": 0.04985,
+          "arm3_postselected_acceptance_rate": 0.38265,
+          "arm3_postselected_conditional_p_fail": 0.0004573,
+          "arm4a_decoded_pauli_frame_p_fail": 0.04805,
+          "arm4b_decoded_physical_feedforward_p_fail": 0.0519,
+          "matched_task_duration_us": 3.3,
+          "rounds": 2
+        },
+        {
+          "arm1_unencoded_p_fail": 0.0576292,
+          "arm2_encoded_no_correction_p_fail": 0.05795,
+          "arm3_postselected_acceptance_rate": 0.2835,
+          "arm3_postselected_conditional_p_fail": 0.0007937,
+          "arm4a_decoded_pauli_frame_p_fail": 0.056425,
+          "arm4b_decoded_physical_feedforward_p_fail": 0.062325,
+          "matched_task_duration_us": 4.95,
+          "rounds": 3
+        },
+        {
+          "arm1_unencoded_p_fail": 0.0682063,
+          "arm2_encoded_no_correction_p_fail": 0.081025,
+          "arm3_postselected_acceptance_rate": 0.157225,
+          "arm3_postselected_conditional_p_fail": 0.000318,
+          "arm4a_decoded_pauli_frame_p_fail": 0.0741,
+          "arm4b_decoded_physical_feedforward_p_fail": 0.08215,
+          "matched_task_duration_us": 8.25,
+          "rounds": 5
+        },
+        {
+          "arm1_unencoded_p_fail": 0.0787744,
+          "arm2_encoded_no_correction_p_fail": 0.10495,
+          "arm3_postselected_acceptance_rate": 0.089275,
+          "arm3_postselected_conditional_p_fail": 0.0005601,
+          "arm4a_decoded_pauli_frame_p_fail": 0.084225,
+          "arm4b_decoded_physical_feedforward_p_fail": 0.095125,
+          "matched_task_duration_us": 11.55,
+          "rounds": 7
+        },
+        {
+          "arm1_unencoded_p_fail": 0.0893228,
+          "arm2_encoded_no_correction_p_fail": 0.124225,
+          "arm3_postselected_acceptance_rate": 0.051175,
+          "arm3_postselected_conditional_p_fail": 0.0014656,
+          "arm4a_decoded_pauli_frame_p_fail": 0.10085,
+          "arm4b_decoded_physical_feedforward_p_fail": 0.1149,
+          "matched_task_duration_us": 14.85,
+          "rounds": 9
+        }
+      ],
+      "postselected_arm_reported_separately": {
+        "arm3_postselected_detection": {
+          "acceptance_rate_by_round": {
+            "1": 0.515925,
+            "2": 0.38265,
+            "3": 0.2835,
+            "5": 0.157225,
+            "7": 0.089275,
+            "9": 0.051175
+          },
+          "arm_label": "postselected_zero_detector_events_only",
+          "conditional_fit": {
+            "epsilon_L_at_max_round": 0.00016305,
+            "epsilon_L_at_max_round_ci95": [
+              0.0,
+              0.00038112
+            ],
+            "epsilon_L_slope_ci95": [
+              0.0,
+              0.00023551
+            ],
+            "epsilon_L_slope_fit": 5.124e-05,
+            "per_round_epsilon_L": {
+              "1": 0.00096913,
+              "2": 0.00022872,
+              "3": 0.00026469,
+              "5": 6.362e-05,
+              "7": 8.005e-05,
+              "9": 0.00016305
+            }
+          },
+          "conditional_p_fail_by_round": {
+            "1": 0.0009691,
+            "2": 0.0004573,
+            "3": 0.0007937,
+            "5": 0.000318,
+            "7": 0.0005601,
+            "9": 0.0014656
+          },
+          "postselection_applied": true
+        }
+      },
+      "rounds_evaluated": [
+        1,
+        2,
+        3,
+        5,
+        7,
+        9
+      ],
+      "simulation_engine": "vectorized_17q_circuit_level_pauli_and_coherent_channel",
+      "target_profile_id": "FEZ_DRIFTED_SPAM",
+      "unconditional_arms": {
+        "arm1_unencoded": {
+          "arm_label": "unencoded_bare_qubit",
+          "fit": {
+            "epsilon_L_at_max_round": 0.01081469,
+            "epsilon_L_at_max_round_ci95": [
+              0.01045514,
+              0.01117671
+            ],
+            "epsilon_L_slope_ci95": [
+              0.00567356,
+              0.00651843
+            ],
+            "epsilon_L_slope_fit": 0.00608346,
+            "per_round_epsilon_L": {
+              "1": 0.04705468,
+              "2": 0.02689373,
+              "3": 0.019999,
+              "5": 0.01445301,
+              "7": 0.01209695,
+              "9": 0.01081469
+            }
+          },
+          "p_fail_by_round": {
+            "1": 0.0470547,
+            "2": 0.0523409,
+            "3": 0.0576292,
+            "5": 0.0682063,
+            "7": 0.0787744,
+            "9": 0.0893228
+          }
+        },
+        "arm2_encoded_no_correction": {
+          "arm_label": "encoded_idle_terminal_decode_only",
+          "fit": {
+            "epsilon_L_at_max_round": 0.0156185,
+            "epsilon_L_at_max_round_ci95": [
+              0.01518661,
+              0.01607856
+            ],
+            "epsilon_L_slope_ci95": [
+              0.01227419,
+              0.01329205
+            ],
+            "epsilon_L_slope_fit": 0.01277868,
+            "per_round_epsilon_L": {
+              "1": 0.039175,
+              "2": 0.0255793,
+              "3": 0.02011504,
+              "5": 0.01737077,
+              "7": 0.01654823,
+              "9": 0.0156185
+            }
+          },
+          "p_fail_by_round": {
+            "1": 0.039175,
+            "2": 0.04985,
+            "3": 0.05795,
+            "5": 0.081025,
+            "7": 0.10495,
+            "9": 0.124225
+          }
+        },
+        "arm4a_decoded_pauli_frame": {
+          "arm_label": "decoded_correction_offline_pauli_frame",
+          "conditional_physical_gates": false,
+          "crossing_analysis": {
+            "beats_arm2_at_any_tested_round": true,
+            "crosses_below_both_sustained": false,
+            "r_cross_vs_arm1_unencoded": 1,
+            "r_cross_vs_arm2_no_correction": 2,
+            "r_cross_vs_both_first": 2,
+            "r_cross_vs_both_sustained": null
+          },
+          "decoding_mode": "offline_pauli_frame",
+          "feedforward_latency_us": 0.0,
+          "fit": {
+            "epsilon_L_at_max_round": 0.01235972,
+            "epsilon_L_at_max_round_ci95": [
+              0.01197061,
+              0.01277524
+            ],
+            "epsilon_L_slope_ci95": [
+              0.00827722,
+              0.00916913
+            ],
+            "epsilon_L_slope_fit": 0.00870515,
+            "per_round_epsilon_L": {
+              "1": 0.039575,
+              "2": 0.02463172,
+              "3": 0.01956384,
+              "5": 0.01578579,
+              "7": 0.0130039,
+              "9": 0.01235972
+            }
+          },
+          "p_fail_by_round": {
+            "1": 0.039575,
+            "2": 0.04805,
+            "3": 0.056425,
+            "5": 0.0741,
+            "7": 0.084225,
+            "9": 0.10085
+          }
+        },
+        "arm4b_decoded_physical_feedforward": {
+          "arm_label": "decoded_correction_physical_feedforward",
+          "conditional_physical_gates": true,
+          "crossing_analysis": {
+            "beats_arm2_at_any_tested_round": true,
+            "crosses_below_both_sustained": false,
+            "r_cross_vs_arm1_unencoded": 1,
+            "r_cross_vs_arm2_no_correction": 7,
+            "r_cross_vs_both_first": null,
+            "r_cross_vs_both_sustained": null
+          },
+          "decoding_mode": "physical_feedforward",
+          "feedforward_latency_us": 0.35,
+          "fit": {
+            "epsilon_L_at_max_round": 0.01429744,
+            "epsilon_L_at_max_round_ci95": [
+              0.01386804,
+              0.01474445
+            ],
+            "epsilon_L_slope_ci95": [
+              0.01014178,
+              0.01105899
+            ],
+            "epsilon_L_slope_fit": 0.0105823,
+            "per_round_epsilon_L": {
+              "1": 0.0414,
+              "2": 0.0266608,
+              "3": 0.02170345,
+              "5": 0.01763023,
+              "7": 0.01484861,
+              "9": 0.01429744
+            }
+          },
+          "p_fail_by_round": {
+            "1": 0.0414,
+            "2": 0.0519,
+            "3": 0.062325,
+            "5": 0.08215,
+            "7": 0.095125,
+            "9": 0.1149
+          }
+        }
+      }
+    },
+    "rotated_surface_d3_17q__FEZ_PUBLISHED": {
+      "cell_stop_go": {
+        "arm4a_crosses_below_both": true,
+        "arm4b_crosses_below_both": false,
+        "falsifier_triggered": false,
+        "r_cross_arm4a_vs_both": 2,
+        "r_cross_arm4b_vs_both": null,
+        "verdict": "PASS_CROSSING_OBSERVED"
+      },
+      "code_id": "rotated_surface_d3_17q",
+      "code_label": "[[9,1,3]] rotated d=3 surface code (17 qubits: 9 data + 8 ancillas)",
+      "heavy_hex_bridge_cz_overhead_per_round": 8,
+      "memory_basis": "X",
+      "n_shots_per_round": 40000,
+      "native_topology_supported": false,
+      "per_round_table": [
+        {
+          "arm1_unencoded_p_fail": 0.0243106,
+          "arm2_encoded_no_correction_p_fail": 0.014175,
+          "arm3_postselected_acceptance_rate": 0.694875,
+          "arm3_postselected_conditional_p_fail": 0.0001079,
+          "arm4a_decoded_pauli_frame_p_fail": 0.0153,
+          "arm4b_decoded_physical_feedforward_p_fail": 0.016475,
+          "matched_task_duration_us": 1.65,
+          "rounds": 1
+        },
+        {
+          "arm1_unencoded_p_fail": 0.0298623,
+          "arm2_encoded_no_correction_p_fail": 0.0237,
+          "arm3_postselected_acceptance_rate": 0.570125,
+          "arm3_postselected_conditional_p_fail": 0.0001754,
+          "arm4a_decoded_pauli_frame_p_fail": 0.021825,
+          "arm4b_decoded_physical_feedforward_p_fail": 0.024825,
+          "matched_task_duration_us": 3.3,
+          "rounds": 2
+        },
+        {
+          "arm1_unencoded_p_fail": 0.0354162,
+          "arm2_encoded_no_correction_p_fail": 0.031575,
+          "arm3_postselected_acceptance_rate": 0.4677,
+          "arm3_postselected_conditional_p_fail": 0.0001069,
+          "arm4a_decoded_pauli_frame_p_fail": 0.029825,
+          "arm4b_decoded_physical_feedforward_p_fail": 0.03475,
+          "matched_task_duration_us": 4.95,
+          "rounds": 3
+        },
+        {
+          "arm1_unencoded_p_fail": 0.0465243,
+          "arm2_encoded_no_correction_p_fail": 0.0511,
+          "arm3_postselected_acceptance_rate": 0.317125,
+          "arm3_postselected_conditional_p_fail": 7.88e-05,
+          "arm4a_decoded_pauli_frame_p_fail": 0.0418,
+          "arm4b_decoded_physical_feedforward_p_fail": 0.049,
+          "matched_task_duration_us": 8.25,
+          "rounds": 5
+        },
+        {
+          "arm1_unencoded_p_fail": 0.0576231,
+          "arm2_encoded_no_correction_p_fail": 0.069825,
+          "arm3_postselected_acceptance_rate": 0.217275,
+          "arm3_postselected_conditional_p_fail": 0.0,
+          "arm4a_decoded_pauli_frame_p_fail": 0.05395,
+          "arm4b_decoded_physical_feedforward_p_fail": 0.0626,
+          "matched_task_duration_us": 11.55,
+          "rounds": 7
+        },
+        {
+          "arm1_unencoded_p_fail": 0.0687011,
+          "arm2_encoded_no_correction_p_fail": 0.089175,
+          "arm3_postselected_acceptance_rate": 0.142225,
+          "arm3_postselected_conditional_p_fail": 0.0003516,
+          "arm4a_decoded_pauli_frame_p_fail": 0.06595,
+          "arm4b_decoded_physical_feedforward_p_fail": 0.07735,
+          "matched_task_duration_us": 14.85,
+          "rounds": 9
+        }
+      ],
+      "postselected_arm_reported_separately": {
+        "arm3_postselected_detection": {
+          "acceptance_rate_by_round": {
+            "1": 0.694875,
+            "2": 0.570125,
+            "3": 0.4677,
+            "5": 0.317125,
+            "7": 0.217275,
+            "9": 0.142225
+          },
+          "arm_label": "postselected_zero_detector_events_only",
+          "conditional_fit": {
+            "epsilon_L_at_max_round": 3.907e-05,
+            "epsilon_L_at_max_round_ci95": [
+              0.0,
+              9.773e-05
+            ],
+            "epsilon_L_slope_ci95": [
+              0.0,
+              7.173e-05
+            ],
+            "epsilon_L_slope_fit": 1.358e-05,
+            "per_round_epsilon_L": {
+              "1": 0.00010793,
+              "2": 8.771e-05,
+              "3": 3.564e-05,
+              "5": 1.577e-05,
+              "7": 0.0,
+              "9": 3.907e-05
+            }
+          },
+          "conditional_p_fail_by_round": {
+            "1": 0.0001079,
+            "2": 0.0001754,
+            "3": 0.0001069,
+            "5": 7.88e-05,
+            "7": 0.0,
+            "9": 0.0003516
+          },
+          "postselection_applied": true
+        }
+      },
+      "rounds_evaluated": [
+        1,
+        2,
+        3,
+        5,
+        7,
+        9
+      ],
+      "simulation_engine": "vectorized_17q_circuit_level_pauli_and_coherent_channel",
+      "target_profile_id": "FEZ_PUBLISHED",
+      "unconditional_arms": {
+        "arm1_unencoded": {
+          "arm_label": "unencoded_bare_qubit",
+          "fit": {
+            "epsilon_L_at_max_round": 0.00814443,
+            "epsilon_L_at_max_round_ci95": [
+              0.00780933,
+              0.00846188
+            ],
+            "epsilon_L_slope_ci95": [
+              0.00571253,
+              0.00642359
+            ],
+            "epsilon_L_slope_fit": 0.00608346,
+            "per_round_epsilon_L": {
+              "1": 0.02431063,
+              "2": 0.01516101,
+              "3": 0.01209564,
+              "5": 0.00967188,
+              "7": 0.00867009,
+              "9": 0.00814443
+            }
+          },
+          "p_fail_by_round": {
+            "1": 0.0243106,
+            "2": 0.0298623,
+            "3": 0.0354162,
+            "5": 0.0465243,
+            "7": 0.0576231,
+            "9": 0.0687011
+          }
+        },
+        "arm2_encoded_no_correction": {
+          "arm_label": "encoded_idle_terminal_decode_only",
+          "fit": {
+            "epsilon_L_at_max_round": 0.01079514,
+            "epsilon_L_at_max_round_ci95": [
+              0.01044552,
+              0.01115708
+            ],
+            "epsilon_L_slope_ci95": [
+              0.00997996,
+              0.01074915
+            ],
+            "epsilon_L_slope_fit": 0.01035465,
+            "per_round_epsilon_L": {
+              "1": 0.014175,
+              "2": 0.01199385,
+              "3": 0.01075467,
+              "5": 0.0106654,
+              "7": 0.01062939,
+              "9": 0.01079514
+            }
+          },
+          "p_fail_by_round": {
+            "1": 0.014175,
+            "2": 0.0237,
+            "3": 0.031575,
+            "5": 0.0511,
+            "7": 0.069825,
+            "9": 0.089175
+          }
+        },
+        "arm4a_decoded_pauli_frame": {
+          "arm_label": "decoded_correction_offline_pauli_frame",
+          "conditional_physical_gates": false,
+          "crossing_analysis": {
+            "beats_arm2_at_any_tested_round": true,
+            "crosses_below_both_sustained": true,
+            "r_cross_vs_arm1_unencoded": 1,
+            "r_cross_vs_arm2_no_correction": 2,
+            "r_cross_vs_both_first": 2,
+            "r_cross_vs_both_sustained": 2
+          },
+          "decoding_mode": "offline_pauli_frame",
+          "feedforward_latency_us": 0.0,
+          "fit": {
+            "epsilon_L_at_max_round": 0.00779681,
+            "epsilon_L_at_max_round_ci95": [
+              0.00749822,
+              0.00809695
+            ],
+            "epsilon_L_slope_ci95": [
+              0.00651594,
+              0.00715293
+            ],
+            "epsilon_L_slope_fit": 0.00682671,
+            "per_round_epsilon_L": {
+              "1": 0.0153,
+              "2": 0.01103425,
+              "3": 0.01014616,
+              "5": 0.00865446,
+              "7": 0.00808935,
+              "9": 0.00779681
+            }
+          },
+          "p_fail_by_round": {
+            "1": 0.0153,
+            "2": 0.021825,
+            "3": 0.029825,
+            "5": 0.0418,
+            "7": 0.05395,
+            "9": 0.06595
+          }
+        },
+        "arm4b_decoded_physical_feedforward": {
+          "arm_label": "decoded_correction_physical_feedforward",
+          "conditional_physical_gates": true,
+          "crossing_analysis": {
+            "beats_arm2_at_any_tested_round": true,
+            "crosses_below_both_sustained": false,
+            "r_cross_vs_arm1_unencoded": 1,
+            "r_cross_vs_arm2_no_correction": 5,
+            "r_cross_vs_both_first": null,
+            "r_cross_vs_both_sustained": null
+          },
+          "decoding_mode": "physical_feedforward",
+          "feedforward_latency_us": 0.35,
+          "fit": {
+            "epsilon_L_at_max_round": 0.00925023,
+            "epsilon_L_at_max_round_ci95": [
+              0.00893175,
+              0.00957694
+            ],
+            "epsilon_L_slope_ci95": [
+              0.00790347,
+              0.00860606
+            ],
+            "epsilon_L_slope_fit": 0.00824316,
+            "per_round_epsilon_L": {
+              "1": 0.016475,
+              "2": 0.01257052,
+              "3": 0.01186255,
+              "5": 0.01020842,
+              "7": 0.00946358,
+              "9": 0.00925023
+            }
+          },
+          "p_fail_by_round": {
+            "1": 0.016475,
+            "2": 0.024825,
+            "3": 0.03475,
+            "5": 0.049,
+            "7": 0.0626,
+            "9": 0.07735
+          }
+        }
+      }
+    },
+    "rotated_surface_d3_17q__H2_1_PUBLISHED": {
+      "cell_stop_go": {
+        "arm4a_crosses_below_both": true,
+        "arm4b_crosses_below_both": true,
+        "falsifier_triggered": false,
+        "r_cross_arm4a_vs_both": 3,
+        "r_cross_arm4b_vs_both": 3,
+        "verdict": "PASS_CROSSING_OBSERVED"
+      },
+      "code_id": "rotated_surface_d3_17q",
+      "code_label": "[[9,1,3]] rotated d=3 surface code (17 qubits: 9 data + 8 ancillas)",
+      "heavy_hex_bridge_cz_overhead_per_round": 0,
+      "memory_basis": "X",
+      "n_shots_per_round": 40000,
+      "native_topology_supported": true,
+      "per_round_table": [
+        {
+          "arm1_unencoded_p_fail": 0.0034486,
+          "arm2_encoded_no_correction_p_fail": 0.0009,
+          "arm3_postselected_acceptance_rate": 0.937725,
+          "arm3_postselected_conditional_p_fail": 0.0,
+          "arm4a_decoded_pauli_frame_p_fail": 0.000775,
+          "arm4b_decoded_physical_feedforward_p_fail": 0.0008,
+          "matched_task_duration_us": 1200.0,
+          "rounds": 1
+        },
+        {
+          "arm1_unencoded_p_fail": 0.0038655,
+          "arm2_encoded_no_correction_p_fail": 0.000675,
+          "arm3_postselected_acceptance_rate": 0.900475,
+          "arm3_postselected_conditional_p_fail": 0.0,
+          "arm4a_decoded_pauli_frame_p_fail": 0.000875,
+          "arm4b_decoded_physical_feedforward_p_fail": 0.000925,
+          "matched_task_duration_us": 2400.0,
+          "rounds": 2
+        },
+        {
+          "arm1_unencoded_p_fail": 0.00429,
+          "arm2_encoded_no_correction_p_fail": 0.001375,
+          "arm3_postselected_acceptance_rate": 0.86975,
+          "arm3_postselected_conditional_p_fail": 0.0,
+          "arm4a_decoded_pauli_frame_p_fail": 0.001175,
+          "arm4b_decoded_physical_feedforward_p_fail": 0.001225,
+          "matched_task_duration_us": 3600.0,
+          "rounds": 3
+        },
+        {
+          "arm1_unencoded_p_fail": 0.0051617,
+          "arm2_encoded_no_correction_p_fail": 0.0025,
+          "arm3_postselected_acceptance_rate": 0.803825,
+          "arm3_postselected_conditional_p_fail": 0.0,
+          "arm4a_decoded_pauli_frame_p_fail": 0.001575,
+          "arm4b_decoded_physical_feedforward_p_fail": 0.0016,
+          "matched_task_duration_us": 6000.0,
+          "rounds": 5
+        },
+        {
+          "arm1_unencoded_p_fail": 0.0060635,
+          "arm2_encoded_no_correction_p_fail": 0.00305,
+          "arm3_postselected_acceptance_rate": 0.747,
+          "arm3_postselected_conditional_p_fail": 0.0,
+          "arm4a_decoded_pauli_frame_p_fail": 0.002,
+          "arm4b_decoded_physical_feedforward_p_fail": 0.002175,
+          "matched_task_duration_us": 8400.0,
+          "rounds": 7
+        },
+        {
+          "arm1_unencoded_p_fail": 0.0069952,
+          "arm2_encoded_no_correction_p_fail": 0.00415,
+          "arm3_postselected_acceptance_rate": 0.695,
+          "arm3_postselected_conditional_p_fail": 0.0,
+          "arm4a_decoded_pauli_frame_p_fail": 0.002575,
+          "arm4b_decoded_physical_feedforward_p_fail": 0.002675,
+          "matched_task_duration_us": 10800.0,
+          "rounds": 9
+        }
+      ],
+      "postselected_arm_reported_separately": {
+        "arm3_postselected_detection": {
+          "acceptance_rate_by_round": {
+            "1": 0.937725,
+            "2": 0.900475,
+            "3": 0.86975,
+            "5": 0.803825,
+            "7": 0.747,
+            "9": 0.695
+          },
+          "arm_label": "postselected_zero_detector_events_only",
+          "conditional_fit": {
+            "epsilon_L_at_max_round": 0.0,
+            "epsilon_L_at_max_round_ci95": [
+              0.0,
+              0.0
+            ],
+            "epsilon_L_slope_ci95": [
+              0.0,
+              0.0
+            ],
+            "epsilon_L_slope_fit": 0.0,
+            "per_round_epsilon_L": {
+              "1": 0.0,
+              "2": 0.0,
+              "3": 0.0,
+              "5": 0.0,
+              "7": 0.0,
+              "9": 0.0
+            }
+          },
+          "conditional_p_fail_by_round": {
+            "1": 0.0,
+            "2": 0.0,
+            "3": 0.0,
+            "5": 0.0,
+            "7": 0.0,
+            "9": 0.0
+          },
+          "postselection_applied": true
+        }
+      },
+      "rounds_evaluated": [
+        1,
+        2,
+        3,
+        5,
+        7,
+        9
+      ],
+      "simulation_engine": "vectorized_17q_circuit_level_pauli_and_coherent_channel",
+      "target_profile_id": "H2_1_PUBLISHED",
+      "unconditional_arms": {
+        "arm1_unencoded": {
+          "arm_label": "unencoded_bare_qubit",
+          "fit": {
+            "epsilon_L_at_max_round": 0.00078212,
+            "epsilon_L_at_max_round_ci95": [
+              0.00068703,
+              0.00088119
+            ],
+            "epsilon_L_slope_ci95": [
+              0.00033315,
+              0.00055314
+            ],
+            "epsilon_L_slope_fit": 0.0004476,
+            "per_round_epsilon_L": {
+              "1": 0.00344856,
+              "2": 0.0019365,
+              "3": 0.00143411,
+              "5": 0.00103663,
+              "7": 0.00087075,
+              "9": 0.00078212
+            }
+          },
+          "p_fail_by_round": {
+            "1": 0.0034486,
+            "2": 0.0038655,
+            "3": 0.00429,
+            "5": 0.0051617,
+            "7": 0.0060635,
+            "9": 0.0069952
+          }
+        },
+        "arm2_encoded_no_correction": {
+          "arm_label": "encoded_idle_terminal_decode_only",
+          "fit": {
+            "epsilon_L_at_max_round": 0.00046282,
+            "epsilon_L_at_max_round_ci95": [
+              0.00039569,
+              0.00053282
+            ],
+            "epsilon_L_slope_ci95": [
+              0.00037042,
+              0.00050579
+            ],
+            "epsilon_L_slope_fit": 0.0004366,
+            "per_round_epsilon_L": {
+              "1": 0.0009,
+              "2": 0.00033761,
+              "3": 0.00045875,
+              "5": 0.000501,
+              "7": 0.00043686,
+              "9": 0.00046282
+            }
+          },
+          "p_fail_by_round": {
+            "1": 0.0009,
+            "2": 0.000675,
+            "3": 0.001375,
+            "5": 0.0025,
+            "7": 0.00305,
+            "9": 0.00415
+          }
+        },
+        "arm4a_decoded_pauli_frame": {
+          "arm_label": "decoded_correction_offline_pauli_frame",
+          "conditional_physical_gates": false,
+          "crossing_analysis": {
+            "beats_arm2_at_any_tested_round": true,
+            "crosses_below_both_sustained": true,
+            "r_cross_vs_arm1_unencoded": 1,
+            "r_cross_vs_arm2_no_correction": 1,
+            "r_cross_vs_both_first": 1,
+            "r_cross_vs_both_sustained": 3
+          },
+          "decoding_mode": "offline_pauli_frame",
+          "feedforward_latency_us": 0.0,
+          "fit": {
+            "epsilon_L_at_max_round": 0.00028677,
+            "epsilon_L_at_max_round_ci95": [
+              0.00023377,
+              0.00034819
+            ],
+            "epsilon_L_slope_ci95": [
+              0.00016757,
+              0.00028577
+            ],
+            "epsilon_L_slope_fit": 0.00022621,
+            "per_round_epsilon_L": {
+              "1": 0.000775,
+              "2": 0.00043769,
+              "3": 0.00039197,
+              "5": 0.0003154,
+              "7": 0.00028621,
+              "9": 0.00028677
+            }
+          },
+          "p_fail_by_round": {
+            "1": 0.000775,
+            "2": 0.000875,
+            "3": 0.001175,
+            "5": 0.001575,
+            "7": 0.002,
+            "9": 0.002575
+          }
+        },
+        "arm4b_decoded_physical_feedforward": {
+          "arm_label": "decoded_correction_physical_feedforward",
+          "conditional_physical_gates": true,
+          "crossing_analysis": {
+            "beats_arm2_at_any_tested_round": true,
+            "crosses_below_both_sustained": true,
+            "r_cross_vs_arm1_unencoded": 1,
+            "r_cross_vs_arm2_no_correction": 1,
+            "r_cross_vs_both_first": 1,
+            "r_cross_vs_both_sustained": 3
+          },
+          "decoding_mode": "physical_feedforward",
+          "feedforward_latency_us": 250.0,
+          "fit": {
+            "epsilon_L_at_max_round": 0.00029793,
+            "epsilon_L_at_max_round_ci95": [
+              0.00024214,
+              0.00035936
+            ],
+            "epsilon_L_slope_ci95": [
+              0.00017973,
+              0.00030018
+            ],
+            "epsilon_L_slope_fit": 0.00023918,
+            "per_round_epsilon_L": {
+              "1": 0.0008,
+              "2": 0.00046271,
+              "3": 0.00040867,
+              "5": 0.00032041,
+              "7": 0.0003113,
+              "9": 0.00029793
+            }
+          },
+          "p_fail_by_round": {
+            "1": 0.0008,
+            "2": 0.000925,
+            "3": 0.001225,
+            "5": 0.0016,
+            "7": 0.002175,
+            "9": 0.002675
+          }
+        }
+      }
+    }
+  },
+  "execution_tier": "SIMULATED",
+  "experiment_card": "Card C: OSIRIS-QEC (phase1/verification_queue.md)",
+  "hardware_execution_authorized": false,
+  "noise_model_documentation": {
+    "modeled_mechanisms": [
+      "amplitude_damping_t1",
+      "phase_damping_t2",
+      "coherent_over_rotation_1q_2q",
+      "mid_circuit_and_terminal_readout_confusion",
+      "active_reset_bit_flip",
+      "correlated_spectator_zz_crosstalk",
+      "feedforward_classical_latency_and_conditional_gate_error",
+      "heavy_hex_degree3_bridge_routing_overhead_for_surface_code"
+    ],
+    "omitted_mechanisms": [
+      "non_computational_state_2_leakage"
+    ],
+    "omitted_mechanisms_impact_note": "Non-computational |2> leakage (and hyperfine Zeeman leakage on trapped ions) is not explicitly simulated in the 2-level computational Hilbert space. On physical transmons without active Leakage Reduction Units (LRUs), leakage during strong mid-circuit readout or two-qubit CZ drives creates multi-round time-correlated space-time hook/syndrome streaks that reduce effective fault distance and raise the asymptotic logical error floor epsilon_L at large round counts R.",
+    "target_profiles": {
+      "FEZ_DRIFTED_SPAM": {
+        "calibration_provenance": "experiments/bt2t_fez/physical_bt2t_fez_results.json (H3_spam_control_integrity)",
+        "delta_theta_rad": 0.012,
+        "description": "IBM Heron r2 (`ibm_fez`) regime with drifted p_readout=0.0320 reflecting live PREP_RO_CTRL SPAM degradation observed in OSIRIS-BT2T-001-FEZ.",
+        "heavy_hex_bridge_cz_overhead_per_round": 8,
+        "p_1q": 0.00031,
+        "p_2q": 0.0023,
+        "p_corr": 0.0006,
+        "p_idle_nominal": 0.005657,
+        "p_readout": 0.032,
+        "p_reset": 0.01,
+        "profile_id": "FEZ_DRIFTED_SPAM",
+        "supports_native_d3_repetition": true,
+        "supports_native_d3_surface": false,
+        "t1_us": 210.0,
+        "t2_us": 145.0,
+        "t_ff_us": 0.35,
+        "t_gates_us": 0.15,
+        "t_readout_us": 1.2,
+        "t_reset_us": 0.3,
+        "t_round_us": 1.65,
+        "target_family": "ibm_fez (Heron r2 heavy-hex with live-observed SPAM staleness)"
+      },
+      "FEZ_PUBLISHED": {
+        "calibration_provenance": "experiments/bt2t_fez/bt2t_fez_calibration_snapshot.json (sha256_16=f6316b95b1023389) & experiments/qec001/qec001_fez_calibration_snapshot.json",
+        "delta_theta_rad": 0.012,
+        "description": "Published IBM Heron r2 (`ibm_fez`) calibration regime: CZ=0.0023, SX=0.00031, RO=0.0085, reset=0.0100, T1=210 us, T2=145 us, T_round=1.65 us.",
+        "heavy_hex_bridge_cz_overhead_per_round": 8,
+        "p_1q": 0.00031,
+        "p_2q": 0.0023,
+        "p_corr": 0.0006,
+        "p_idle_nominal": 0.005657,
+        "p_readout": 0.0085,
+        "p_reset": 0.01,
+        "profile_id": "FEZ_PUBLISHED",
+        "supports_native_d3_repetition": true,
+        "supports_native_d3_surface": false,
+        "t1_us": 210.0,
+        "t2_us": 145.0,
+        "t_ff_us": 0.35,
+        "t_gates_us": 0.15,
+        "t_readout_us": 1.2,
+        "t_reset_us": 0.3,
+        "t_round_us": 1.65,
+        "target_family": "ibm_fez (156Q Heron r2 superconducting heavy-hex)"
+      },
+      "H2_1_PUBLISHED": {
+        "calibration_provenance": "Published Quantinuum H2-1 system benchmark specifications",
+        "delta_theta_rad": 0.004,
+        "description": "Published Quantinuum H2-1 specifications: ZZ=0.0012, 1Q=0.00003, RO=0.0015, reset=0.0015, shuttling memory idle=0.0004/round, all-to-all connectivity.",
+        "heavy_hex_bridge_cz_overhead_per_round": 0,
+        "p_1q": 3e-05,
+        "p_2q": 0.0012,
+        "p_corr": 5e-05,
+        "p_idle_nominal": 0.0004,
+        "p_readout": 0.0015,
+        "p_reset": 0.0015,
+        "profile_id": "H2_1_PUBLISHED",
+        "supports_native_d3_repetition": true,
+        "supports_native_d3_surface": true,
+        "t1_us": 10000000.0,
+        "t2_us": 1500000.0,
+        "t_ff_us": 250.0,
+        "t_gates_us": 450.0,
+        "t_readout_us": 600.0,
+        "t_reset_us": 150.0,
+        "t_round_us": 1200.0,
+        "target_family": "Quantinuum H2-1 (56Q QCCD all-to-all trapped-ion)"
+      }
+    }
+  },
+  "provider_job_id": null,
+  "qpu_seconds": 0,
+  "schema": "osiris.qec_card_c.crossing_report/1",
+  "seed": 20261124,
+  "stop_go_decision": {
+    "decoder_audits_verified": true,
+    "fez_drifted_spam_rep3_verdict": "PASS_CROSSING_OBSERVED",
+    "fez_drifted_spam_surface_d3_verdict": "STOP_NO_CROSSING_AT_TESTED_ROUNDS",
+    "fez_published_rep3_verdict": "PASS_CROSSING_OBSERVED",
+    "fez_published_surface_d3_verdict": "PASS_CROSSING_OBSERVED",
+    "governance_note": "Offline SIMULATED stop/go crossing gate only (0 QPU seconds, provider_job_id=None). Postselected outcomes (arm3) and acceptance rates A(R) are isolated from unconditional arms (arm1, arm2, arm4a, arm4b), and offline Pauli-frame tracking (arm4a) is labeled separately from physical feed-forward (arm4b). A single code distance (d=3) answers the crossing question for that size only. Scaling with distance remains open in this gate, and a single-size result is not evidence of scalable fault tolerance.",
+    "h2_1_published_rep3_verdict": "PASS_CROSSING_OBSERVED",
+    "h2_1_published_surface_d3_verdict": "PASS_CROSSING_OBSERVED",
+    "kraus_analytical_baseline_verified": true,
+    "scope_limit": "A single code distance (d=3) answers the crossing question for that size only. Scaling with distance remains open in this gate, and a single-size result is not evidence of scalable fault tolerance."
+  },
+  "summary_crossing_matrix": [
+    {
+      "arm1_eps_L_slope": 0.00608346,
+      "arm2_eps_L_slope": 0.00253932,
+      "arm4a_pauli_frame_eps_L_slope": 0.00069143,
+      "arm4b_feedforward_eps_L_slope": 0.00111838,
+      "code_id": "repetition_d3_5q",
+      "r_cross_arm4a_vs_both": 1,
+      "r_cross_arm4b_vs_both": 1,
+      "target_profile_id": "FEZ_PUBLISHED",
+      "verdict": "PASS_CROSSING_OBSERVED"
+    },
+    {
+      "arm1_eps_L_slope": 0.00608346,
+      "arm2_eps_L_slope": 0.01035465,
+      "arm4a_pauli_frame_eps_L_slope": 0.00682671,
+      "arm4b_feedforward_eps_L_slope": 0.00824316,
+      "code_id": "rotated_surface_d3_17q",
+      "r_cross_arm4a_vs_both": 2,
+      "r_cross_arm4b_vs_both": null,
+      "target_profile_id": "FEZ_PUBLISHED",
+      "verdict": "PASS_CROSSING_OBSERVED"
+    },
+    {
+      "arm1_eps_L_slope": 0.00608346,
+      "arm2_eps_L_slope": 0.0030818,
+      "arm4a_pauli_frame_eps_L_slope": 0.00087266,
+      "arm4b_feedforward_eps_L_slope": 0.00135442,
+      "code_id": "repetition_d3_5q",
+      "r_cross_arm4a_vs_both": 1,
+      "r_cross_arm4b_vs_both": 2,
+      "target_profile_id": "FEZ_DRIFTED_SPAM",
+      "verdict": "PASS_CROSSING_OBSERVED"
+    },
+    {
+      "arm1_eps_L_slope": 0.00608346,
+      "arm2_eps_L_slope": 0.01277868,
+      "arm4a_pauli_frame_eps_L_slope": 0.00870515,
+      "arm4b_feedforward_eps_L_slope": 0.0105823,
+      "code_id": "rotated_surface_d3_17q",
+      "r_cross_arm4a_vs_both": null,
+      "r_cross_arm4b_vs_both": null,
+      "target_profile_id": "FEZ_DRIFTED_SPAM",
+      "verdict": "STOP_NO_CROSSING_AT_TESTED_ROUNDS"
+    },
+    {
+      "arm1_eps_L_slope": 0.0004476,
+      "arm2_eps_L_slope": 0.00011232,
+      "arm4a_pauli_frame_eps_L_slope": 1.857e-05,
+      "arm4b_feedforward_eps_L_slope": 3.646e-05,
+      "code_id": "repetition_d3_5q",
+      "r_cross_arm4a_vs_both": 1,
+      "r_cross_arm4b_vs_both": 1,
+      "target_profile_id": "H2_1_PUBLISHED",
+      "verdict": "PASS_CROSSING_OBSERVED"
+    },
+    {
+      "arm1_eps_L_slope": 0.0004476,
+      "arm2_eps_L_slope": 0.0004366,
+      "arm4a_pauli_frame_eps_L_slope": 0.00022621,
+      "arm4b_feedforward_eps_L_slope": 0.00023918,
+      "code_id": "rotated_surface_d3_17q",
+      "r_cross_arm4a_vs_both": 3,
+      "r_cross_arm4b_vs_both": 3,
+      "target_profile_id": "H2_1_PUBLISHED",
+      "verdict": "PASS_CROSSING_OBSERVED"
+    }
+  ],
+  "verification_controls": {
+    "all_single_fault_audits_passed": true,
+    "arm1_5q_kraus_max_abs_diff": 1.8735013540549517e-16,
+    "arm1_5q_kraus_vs_analytical_checks": [
+      {
+        "basis": "X",
+        "full_spam_coherent_abs_diff": 1.8735013540549517e-16,
+        "pure_t1_t2_abs_diff": 5.811323644522304e-17,
+        "rounds": 1
+      },
+      {
+        "basis": "X",
+        "full_spam_coherent_abs_diff": 1.0408340855860843e-16,
+        "pure_t1_t2_abs_diff": 2.42861286636753e-17,
+        "rounds": 5
+      },
+      {
+        "basis": "X",
+        "full_spam_coherent_abs_diff": 1.249000902703301e-16,
+        "pure_t1_t2_abs_diff": 4.85722573273506e-17,
+        "rounds": 9
+      },
+      {
+        "basis": "Z",
+        "full_spam_coherent_abs_diff": 2.0816681711721685e-17,
+        "pure_t1_t2_abs_diff": 0.0,
+        "rounds": 1
+      },
+      {
+        "basis": "Z",
+        "full_spam_coherent_abs_diff": 2.7755575615628914e-17,
+        "pure_t1_t2_abs_diff": 0.0,
+        "rounds": 5
+      },
+      {
+        "basis": "Z",
+        "full_spam_coherent_abs_diff": 2.7755575615628914e-17,
+        "pure_t1_t2_abs_diff": 2.0816681711721685e-17,
+        "rounds": 9
+      }
+    ],
+    "single_fault_decoder_audits": {
+      "rep3_x_memory": {
+        "basis": "X",
+        "code_id": "repetition_d3_5q",
+        "ml_syndrome_table_crosscheck": {
+          "all_syndromes_agree_count": 248,
+          "exact_ml_dem_p_fail": 0.00334265,
+          "mwpm_dem_p_fail": 0.00334677,
+          "n_syndromes": 256,
+          "single_fault_syndromes_exact_match": true,
+          "table_prob_sum": 1.0
+        },
+        "n_detectors": 8,
+        "n_graph_edges": 24,
+        "recovered_single_fault_locations": 291,
+        "rounds": 3,
+        "single_fault_recovery_rate": 1.0,
+        "total_single_fault_locations": 291,
+        "zero_single_fault_failures": true
+      },
+      "rep3_z_memory": {
+        "basis": "Z",
+        "code_id": "repetition_d3_5q",
+        "ml_syndrome_table_crosscheck": {
+          "all_syndromes_agree_count": 251,
+          "exact_ml_dem_p_fail": 0.00215458,
+          "mwpm_dem_p_fail": 0.00215614,
+          "n_syndromes": 256,
+          "single_fault_syndromes_exact_match": true,
+          "table_prob_sum": 1.0
+        },
+        "n_detectors": 8,
+        "n_graph_edges": 21,
+        "recovered_single_fault_locations": 237,
+        "rounds": 3,
+        "single_fault_recovery_rate": 1.0,
+        "total_single_fault_locations": 237,
+        "zero_single_fault_failures": true
+      },
+      "surface_d3_x_memory": {
+        "basis": "X",
+        "code_id": "rotated_surface_d3_17q",
+        "ml_syndrome_table_crosscheck": null,
+        "n_detectors": 16,
+        "n_graph_edges": 64,
+        "recovered_single_fault_locations": 1425,
+        "rounds": 3,
+        "single_fault_recovery_rate": 1.0,
+        "total_single_fault_locations": 1425,
+        "zero_single_fault_failures": true
+      },
+      "surface_d3_z_memory": {
+        "basis": "Z",
+        "code_id": "rotated_surface_d3_17q",
+        "ml_syndrome_table_crosscheck": null,
+        "n_detectors": 16,
+        "n_graph_edges": 55,
+        "recovered_single_fault_locations": 1371,
+        "rounds": 3,
+        "single_fault_recovery_rate": 1.0,
+        "total_single_fault_locations": 1371,
+        "zero_single_fault_failures": true
+      }
+    }
+  }
+}
