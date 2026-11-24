@@ -13,6 +13,7 @@ import json
 import os
 import re
 import shutil
+import sys
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Dict, List, Mapping, Optional, Sequence, Tuple
@@ -183,6 +184,7 @@ def classify(req: CommandRequest) -> Classification:
         return refuse([error])
     path_env = scrubbed_env(os.environ).get("PATH", "")
     resolved = _resolve_program(inner[0], cwd, path_env)
+    inner, resolved, source = _resolve_bare_program(inner, resolved, cwd, root, path_env, pol)
     given = os.path.basename(inner[0])
     verdict = _rules((given,) + inner[1:], pol)
     if resolved:
@@ -199,8 +201,16 @@ def classify(req: CommandRequest) -> Classification:
                     verdict = _merge(verdict, current)
     if any(tok in pol["publish_flags"] for tok in inner):
         verdict = _merge(verdict, _Verdict(agent_deny=True, reasons=["publish flag"]))
+    if source:
+        verdict.reasons.insert(0, source)
     if wrappers:
         verdict.reasons.insert(0, "classified the program inside " + " -> ".join(wrappers))
+    if (resolved is None and req.origin in AGENT_ORIGINS
+            and _needs_resolvable_program(inner[0], pol)):
+        return refuse([f"{inner[0]} is not installed on this system (checked PATH, the running "
+                       "interpreter's environment, the configured project interpreter, workspace "
+                       "virtualenvs and interpreter aliases); refusing to guess an interpreter or "
+                       "verifier that may lack the project's dependencies"])
     normalized = ((resolved or inner[0]),) + inner[1:]
     return _decide(verdict, req.origin, pol, sha, normalized)
 
@@ -520,3 +530,148 @@ def _git_branch(sargs: List[str], g: dict) -> _Verdict:
             continue
         return _agent_deny("MUTATE", "git branch that creates, renames or deletes")
     return _Verdict(tier="READ", reasons=["git branch listing"])
+
+
+def _resolve_bare_program(
+    inner: Tuple[str, ...], resolved: Optional[str], cwd: str, root: Optional[str],
+    path_env: str, pol: dict,
+) -> Tuple[Tuple[str, ...], Optional[str], Optional[str]]:
+    """Deterministic resolution for bare interpreter/verifier names.
+
+    Only bare names (no ``/``) matching an interpreter, a configured alias or the
+    workspace-venv program list take part. Sources in order, first executable wins:
+      1. ``OSIRIS_PROJECT_PYTHON``: the operator-configured project interpreter.
+      2. A workspace virtualenv ``<cwd|root>/{.venv,venv}/bin/<name>``: the environment
+         that actually holds the project's dependencies.
+      3. The running interpreter's own bin directory: the environment OSIRIS itself was
+         started from (its ``python``/``pip``/``pytest`` are the governed toolchain).
+      4. The operator's PATH (the caller's hit ranks here; else a fresh lookup).
+      5. A policy interpreter alias (PEP 394: ``python`` -> ``python3``, ``pip`` -> ``pip3``).
+      6. The nearest installed interpreter sibling (``python3.12`` -> ``python3``).
+    The configured interpreter, the workspace venv and the running interpreter's own
+    environment rank above a generic PATH python so a verification command is not
+    silently run under an interpreter that lacks the project's dependencies. Every
+    resolved target is judged like any other program, including its full symlink chain,
+    so resolution can make a valid command runnable but can never soften a verdict.
+    Returns ``(inner, resolved, source_reason)``; ``source_reason`` is None for a plain PATH
+    hit and a recorded note for every other source.
+    """
+    if "/" in inner[0] or not isinstance(inner[0], str):
+        return inner, resolved, None
+    name = inner[0]
+    aliases = pol.get("interpreter_aliases") or {}
+    venv_dirs = tuple(pol.get("workspace_venv_dirs") or ())
+    venv_programs = set(pol.get("workspace_venv_programs") or ())
+    interpreter_family = bool(_PYTHON_NAME.match(name)) or name in ("pip", "pip3")
+    if not (interpreter_family or name in aliases or name in venv_programs):
+        return inner, resolved, None
+
+    bindir = "Scripts" if os.name == "nt" else "bin"
+
+    def _in(base: str, cand: str) -> Optional[str]:
+        if not base:
+            return None
+        candidate = os.path.join(base, cand)
+        return os.path.abspath(candidate) if (os.path.isfile(candidate)
+                                              and os.access(candidate, os.X_OK)) else None
+
+    def venv_find(cand: str) -> Optional[str]:
+        bases: List[str] = []
+        for base in (cwd, root or ""):
+            if base and base not in bases:
+                bases.append(base)
+        for base in bases:
+            for vdir in venv_dirs:
+                found = _in(os.path.join(base, vdir, bindir), cand)
+                if found:
+                    return found
+        return None
+
+    def own_find(cand: str) -> Optional[str]:
+        # The interpreter running OSIRIS; trusted because OSIRIS itself imports from it.
+        return _in(os.path.dirname(sys.executable), cand)
+
+    def program_find(cand: str) -> Optional[str]:
+        if "/" in cand:
+            if os.path.isfile(cand) and os.access(cand, os.X_OK):
+                return os.path.abspath(cand)
+            return None
+        return _resolve_program(cand, cwd, path_env) or own_find(cand)
+
+    # 1. Configured project interpreter
+    if interpreter_family:
+        configured = os.environ.get("OSIRIS_PROJECT_PYTHON", "").strip()
+        if configured and os.path.isfile(configured) and os.access(configured, os.X_OK):
+            return inner, os.path.abspath(configured), (
+                f"used OSIRIS_PROJECT_PYTHON for {name} ({os.path.basename(configured)})")
+
+    # 2. Workspace virtualenv, same name first, then its python / pip
+    venv_names = [name]
+    if _PYTHON_NAME.match(name):
+        venv_names.append("python")
+    if name in ("pip", "pip3"):
+        venv_names += ["pip", "pip3"]
+    for cand in dict.fromkeys(venv_names):
+        found = venv_find(cand)
+        if found:
+            note = (f"resolved {name} from the workspace virtualenv"
+                    if cand == name else
+                    f"resolved {name} from the workspace virtualenv (as {cand})")
+            return inner, found, note
+
+    # 3. The running interpreter's own environment
+    found = own_find(name)
+    if found:
+        return inner, found, f"resolved {name} from the running interpreter's environment"
+
+    # 4. The operator's PATH (the caller's hit ranks here; else look it up directly)
+    if resolved is not None:
+        return inner, resolved, None
+    path_hit = _resolve_program(name, cwd, path_env)
+    if path_hit:
+        return inner, path_hit, None
+
+    # 5. Policy alias, resolved under the same rules
+    target = aliases.get(name)
+    if target and "/" not in target and target != name:
+        target_resolved = program_find(target) or venv_find(target)
+        if target_resolved:
+            return (target,) + inner[1:], target_resolved, (
+                f"{name} is not installed; resolved the {name} -> {target} alias")
+
+    # 6. Nearest installed interpreter sibling
+    if _PYTHON_NAME.match(name) and name not in ("python", "python3"):
+        for neighbor in ("python3", "python"):
+            neighbor_resolved = program_find(neighbor) or venv_find(neighbor)
+            if neighbor_resolved:
+                return (neighbor,) + inner[1:], neighbor_resolved, (
+                    f"{name} is not installed; resolved to the installed {neighbor}")
+
+    return inner, None, None
+
+
+def resolve_interpreter(name: str, cwd: str, root: Optional[str] = None,
+                        path_env: Optional[str] = None) -> Tuple[Optional[str], Optional[str]]:
+    """Public deterministic resolution for a bare interpreter/verifier name.
+
+    Returns ``(absolute_path_or_None, source_note_or_None)``. Callers re-judge the
+    resolved program through :func:`classify`, so this only makes a valid command
+    runnable; it can never soften a verdict."""
+    if path_env is None:
+        path_env = scrubbed_env(os.environ).get("PATH", "")
+    pol, _path = load_policy()
+    _inner, resolved, source = _resolve_bare_program(
+        (name,), None, os.path.realpath(cwd), os.path.realpath(root) if root else None,
+        path_env, pol)
+    return resolved, source
+
+
+
+
+def _needs_resolvable_program(name: str, pol: dict) -> bool:
+    """True for bare-named programs that must exist on this system: interpreters, the
+    environment tooling they invoke, and the configured verify programs. Unknown programs
+    keep the historical behavior (classified by name; a missing binary fails at spawn)."""
+    return bool(_PYTHON_NAME.match(name) or name in (pol.get("interpreter_aliases") or {})
+                or name in (pol.get("workspace_venv_programs") or {})
+                or name in ("pip", "pip3"))

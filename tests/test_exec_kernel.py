@@ -2,6 +2,7 @@
 
 import hashlib
 import json
+import os
 import sys
 import time
 from pathlib import Path
@@ -325,3 +326,21 @@ def test_pytest_current_test_env_cannot_divert_default_journal_to_tmp(tmp_path, 
     assert a_dir == tmp_path / "home" / ".osiris" / "runs"
     assert "/tmp/osiris_pytest_exec" not in str(j_path)
     assert "/tmp/osiris_pytest_exec" not in str(a_dir)
+
+
+def test_bare_python_alias_spawns_the_real_interpreter(tmp_path, monkeypatch):
+    """Invite-the-bug test: python is on no PATH here, python3 is; `python -V` must actually run."""
+    sysdir = tmp_path / "aliasbin"
+    sysdir.mkdir()
+    os.symlink(sys.executable, sysdir / "python3")
+    monkeypatch.setattr(sys, "executable", str(tmp_path / "ghost" / "python"))
+    monkeypatch.setenv("PATH", str(sysdir))
+    journal = ExecJournal(tmp_path / "j.jsonl")
+    res = run(CommandRequest(argv=("python", "-V"), cwd=str(tmp_path), origin="human",
+                             root=str(tmp_path)),
+              _ask_yes, journal, artifacts_dir=tmp_path / "runs")
+    assert res.decision == "ALLOW", res.decision
+    assert res.exit_code == 0, getattr(res, "reasons", None)
+    assert res.stdout_view.startswith("Python "), res.stdout_view
+    arrival = json.loads(journal.path.read_text().splitlines()[0])["body"]
+    assert arrival["argv"][0].endswith("python3"), arrival["argv"]  # the receipt is honest

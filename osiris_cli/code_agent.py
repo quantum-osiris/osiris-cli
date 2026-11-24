@@ -1130,7 +1130,17 @@ class CodeAgent:
         if prog.startswith(("./", "../")) or (os.sep in prog and not os.path.isabs(prog)):
             cand = self._confine(os.path.join(work, prog))
             return cand if (os.path.isfile(cand) and os.access(cand, os.X_OK)) else None
-        return shutil.which(prog)
+        found = shutil.which(prog)
+        if found:
+            return os.path.abspath(found)
+        # Bare interpreters/verifiers: deterministic resolution (configured project
+        # interpreter, workspace venv, the running interpreter's own environment, PEP 394
+        # aliases, interpreter siblings) instead of a bare-PATH dead end. The resolved
+        # absolute path is what the exec policy judges and what the receipt records.
+        from osiris_cli.exec_policy import resolve_interpreter
+        resolved, source = resolve_interpreter(prog, work, root=self.root)
+        self._last_resolution_note = source
+        return resolved
 
     def _command_binding_payload(self, argv: List[str], work: str) -> Tuple[Optional[str], Dict[str, Any]]:
         resolved_bin = self._resolve_command_binary(argv[0], work)
