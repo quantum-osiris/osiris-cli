@@ -1,0 +1,122 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="576" height="306" viewBox="0 0 576 306">
+<rect x="0" y="0" width="576" height="306" fill="#ffffff"/>
+<text x="288.00" y="15.50" font-family="Helvetica, Arial, sans-serif" font-size="9.3" font-weight="bold" fill="#111827" text-anchor="middle">OSIRIS-BT2T-002 (SIMULATED / PROXY, provider_job_id = null, bt2t-enc-1, seed = 20261124)</text>
+<text x="288.00" y="27.50" font-family="Helvetica, Arial, sans-serif" font-size="7.1" font-weight="normal" fill="#475569" text-anchor="middle">Semidirect-Product Q_8 |x Z_3 Synthesis Compression (19.00x All-to-All, 21.31x 10Q Heavy-Hex) vs. M1 ibm_fez Anchor</text>
+<text x="46.00" y="41.00" font-family="Helvetica, Arial, sans-serif" font-size="7.9" font-weight="bold" fill="#0f172a" text-anchor="start">(a) Two-Qubit Entangling Gate Count (Log10 Scale: CZ / ZZPhase)</text>
+<rect x="46.00" y="47.00" width="344.00" height="194.00" fill="#fafafa" stroke="#334155" stroke-width="0.90"/>
+<rect x="46.60" y="197.40" width="342.80" height="43.00" fill="#ecfdf5"/>
+<line x1="46.00" y1="241.00" x2="390.00" y2="241.00" stroke="#e2e8f0" stroke-width="0.60"/>
+<text x="41.50" y="243.40" font-family="monospace" font-size="6.5" font-weight="normal" fill="#334155" text-anchor="end">10^1</text>
+<line x1="46.00" y1="197.40" x2="390.00" y2="197.40" stroke="#e2e8f0" stroke-width="0.60"/>
+<text x="41.50" y="199.80" font-family="monospace" font-size="6.5" font-weight="normal" fill="#334155" text-anchor="end">10^2</text>
+<line x1="46.00" y1="153.81" x2="390.00" y2="153.81" stroke="#e2e8f0" stroke-width="0.60"/>
+<text x="41.50" y="156.21" font-family="monospace" font-size="6.5" font-weight="normal" fill="#334155" text-anchor="end">10^3</text>
+<line x1="46.00" y1="110.21" x2="390.00" y2="110.21" stroke="#e2e8f0" stroke-width="0.60"/>
+<text x="41.50" y="112.61" font-family="monospace" font-size="6.5" font-weight="normal" fill="#334155" text-anchor="end">10^4</text>
+<line x1="46.00" y1="66.62" x2="390.00" y2="66.62" stroke="#e2e8f0" stroke-width="0.60"/>
+<text x="41.50" y="69.02" font-family="monospace" font-size="6.5" font-weight="normal" fill="#334155" text-anchor="end">10^5</text>
+<line x1="46.00" y1="159.95" x2="390.00" y2="159.95" stroke="#b45309" stroke-width="0.80" stroke-dasharray="5,3"/>
+<rect x="52.00" y="53.00" width="134.00" height="33.00" fill="#ffffff" stroke="#cbd5e1" stroke-width="0.60"/>
+<text x="56.00" y="62.00" font-family="Helvetica, Arial, sans-serif" font-size="5.6" font-weight="bold" fill="#0f172a" text-anchor="start">M1 ibm_fez Hardware Regimes:</text>
+<text x="56.00" y="71.00" font-family="Helvetica, Arial, sans-serif" font-size="5.3" font-weight="bold" fill="#b45309" text-anchor="start">-- 723 CZ: P=0.0661 (QCCD/FT above)</text>
+<text x="56.00" y="80.00" font-family="Helvetica, Arial, sans-serif" font-size="5.3" font-weight="bold" fill="#047857" text-anchor="start">[] &lt;100 CZ: NISQ viable (72 CZ P=0.534)</text>
+<rect x="59.40" y="171.16" width="19.50" height="69.84" fill="#ef4444" stroke="#991b1b" stroke-width="0.75"/>
+<rect x="81.90" y="211.30" width="19.50" height="29.70" fill="#2563eb" stroke="#1e3a8a" stroke-width="0.75"/>
+<text x="69.15" y="167.66" font-family="monospace" font-size="5.6" font-weight="bold" fill="#991b1b" text-anchor="middle">400</text>
+<text x="91.65" y="207.80" font-family="monospace" font-size="5.6" font-weight="bold" fill="#1e3a8a" text-anchor="middle">48</text>
+<text x="91.65" y="199.30" font-family="monospace" font-size="5.9" font-weight="bold" fill="#0f172a" text-anchor="middle">8.33x</text>
+<line x1="80.40" y1="241.00" x2="80.40" y2="244.00" stroke="#334155" stroke-width="0.70"/>
+<text x="80.40" y="251.50" font-family="Helvetica, Arial, sans-serif" font-size="6.3" font-weight="bold" fill="#0f172a" text-anchor="middle">M1 5Q Inv</text>
+<text x="80.40" y="259.20" font-family="Helvetica, Arial, sans-serif" font-size="5.8" font-weight="normal" fill="#475569" text-anchor="middle">All-to-All</text>
+<rect x="128.20" y="159.95" width="19.50" height="81.05" fill="#ef4444" stroke="#991b1b" stroke-width="0.75"/>
+<rect x="150.70" y="203.62" width="19.50" height="37.38" fill="#2563eb" stroke="#1e3a8a" stroke-width="0.75"/>
+<text x="137.95" y="156.45" font-family="monospace" font-size="5.6" font-weight="bold" fill="#991b1b" text-anchor="middle">723</text>
+<text x="160.45" y="200.12" font-family="monospace" font-size="5.6" font-weight="bold" fill="#1e3a8a" text-anchor="middle">72</text>
+<text x="160.45" y="191.62" font-family="monospace" font-size="5.9" font-weight="bold" fill="#0f172a" text-anchor="middle">10.04x</text>
+<line x1="149.20" y1="241.00" x2="149.20" y2="244.00" stroke="#334155" stroke-width="0.70"/>
+<text x="149.20" y="251.50" font-family="Helvetica, Arial, sans-serif" font-size="6.3" font-weight="bold" fill="#0f172a" text-anchor="middle">M1 5Q Inv</text>
+<text x="149.20" y="259.20" font-family="Helvetica, Arial, sans-serif" font-size="5.8" font-weight="normal" fill="#475569" text-anchor="middle">ibm_fez T5</text>
+<rect x="197.00" y="87.58" width="19.50" height="153.42" fill="#ef4444" stroke="#991b1b" stroke-width="0.75"/>
+<rect x="219.50" y="143.33" width="19.50" height="97.67" fill="#2563eb" stroke="#1e3a8a" stroke-width="0.75"/>
+<text x="206.75" y="84.08" font-family="monospace" font-size="5.6" font-weight="bold" fill="#991b1b" text-anchor="middle">33,042</text>
+<text x="229.25" y="139.83" font-family="monospace" font-size="5.6" font-weight="bold" fill="#1e3a8a" text-anchor="middle">1,739</text>
+<text x="229.25" y="131.33" font-family="monospace" font-size="5.9" font-weight="bold" fill="#0f172a" text-anchor="middle">19.00x</text>
+<line x1="218.00" y1="241.00" x2="218.00" y2="244.00" stroke="#334155" stroke-width="0.70"/>
+<text x="218.00" y="251.50" font-family="Helvetica, Arial, sans-serif" font-size="6.3" font-weight="bold" fill="#0f172a" text-anchor="middle">M2 10Q Mul</text>
+<text x="218.00" y="259.20" font-family="Helvetica, Arial, sans-serif" font-size="5.8" font-weight="normal" fill="#475569" text-anchor="middle">All-to-All</text>
+<rect x="265.80" y="71.31" width="19.50" height="169.69" fill="#ef4444" stroke="#991b1b" stroke-width="0.75"/>
+<rect x="288.30" y="129.23" width="19.50" height="111.77" fill="#2563eb" stroke="#1e3a8a" stroke-width="0.75"/>
+<text x="275.55" y="67.81" font-family="monospace" font-size="5.6" font-weight="bold" fill="#991b1b" text-anchor="middle">78,035</text>
+<text x="298.05" y="125.73" font-family="monospace" font-size="5.6" font-weight="bold" fill="#1e3a8a" text-anchor="middle">3,662</text>
+<text x="298.05" y="117.23" font-family="monospace" font-size="5.9" font-weight="bold" fill="#0f172a" text-anchor="middle">21.31x</text>
+<line x1="286.80" y1="241.00" x2="286.80" y2="244.00" stroke="#334155" stroke-width="0.70"/>
+<text x="286.80" y="251.50" font-family="Helvetica, Arial, sans-serif" font-size="6.3" font-weight="bold" fill="#0f172a" text-anchor="middle">M2 10Q Mul</text>
+<text x="286.80" y="259.20" font-family="Helvetica, Arial, sans-serif" font-size="5.8" font-weight="normal" fill="#475569" text-anchor="middle">10Q H-Hex</text>
+<rect x="334.60" y="163.07" width="19.50" height="77.93" fill="#a78bfa" stroke="#5b21b6" stroke-width="0.75"/>
+<rect x="357.10" y="170.10" width="19.50" height="70.90" fill="#7c3aed" stroke="#4c1d95" stroke-width="0.75"/>
+<text x="344.35" y="159.57" font-family="monospace" font-size="5.6" font-weight="bold" fill="#5b21b6" text-anchor="middle">613</text>
+<text x="366.85" y="166.60" font-family="monospace" font-size="5.6" font-weight="bold" fill="#4c1d95" text-anchor="middle">423</text>
+<text x="355.60" y="150.57" font-family="monospace" font-size="6.0" font-weight="bold" fill="#4c1d95" text-anchor="middle">1.45x</text>
+<line x1="355.60" y1="241.00" x2="355.60" y2="244.00" stroke="#334155" stroke-width="0.70"/>
+<text x="355.60" y="251.50" font-family="Helvetica, Arial, sans-serif" font-size="6.3" font-weight="bold" fill="#0f172a" text-anchor="middle">M2 5Q QFT</text>
+<text x="355.60" y="259.20" font-family="Helvetica, Arial, sans-serif" font-size="5.8" font-weight="normal" fill="#475569" text-anchor="middle">T5 / All(H2)</text>
+<text x="406.00" y="41.00" font-family="Helvetica, Arial, sans-serif" font-size="7.9" font-weight="bold" fill="#0f172a" text-anchor="start">(b) 10Q Zero-Ancilla Logical Synthesis</text>
+<rect x="406.00" y="47.00" width="156.00" height="194.00" fill="#fafafa" stroke="#334155" stroke-width="0.90"/>
+<rect x="407.00" y="48.00" width="154.00" height="15.00" fill="#e2e8f0"/>
+<text x="411.00" y="59.00" font-family="Helvetica, Arial, sans-serif" font-size="6.0" font-weight="bold" fill="#0f172a" text-anchor="start">Metric</text>
+<text x="482.00" y="59.00" font-family="Helvetica, Arial, sans-serif" font-size="6.0" font-weight="bold" fill="#991b1b" text-anchor="end">GEN</text>
+<text x="520.00" y="59.00" font-family="Helvetica, Arial, sans-serif" font-size="6.0" font-weight="bold" fill="#1e3a8a" text-anchor="end">STR</text>
+<text x="557.00" y="59.00" font-family="Helvetica, Arial, sans-serif" font-size="6.0" font-weight="bold" fill="#047857" text-anchor="end">Gain</text>
+<line x1="406.00" y1="63.00" x2="562.00" y2="63.00" stroke="#334155" stroke-width="0.70"/>
+<text x="411.00" y="75.00" font-family="Helvetica, Arial, sans-serif" font-size="5.9" font-weight="bold" fill="#1e293b" text-anchor="start">Total Gates</text>
+<text x="482.00" y="75.00" font-family="monospace" font-size="5.8" font-weight="normal" fill="#991b1b" text-anchor="end">4,904</text>
+<text x="520.00" y="75.00" font-family="monospace" font-size="5.8" font-weight="bold" fill="#1e3a8a" text-anchor="end">337</text>
+<text x="557.00" y="75.00" font-family="monospace" font-size="5.8" font-weight="bold" fill="#047857" text-anchor="end">14.55x</text>
+<rect x="407.00" y="80.20" width="154.00" height="13.50" fill="#f1f5f9"/>
+<text x="411.00" y="89.20" font-family="Helvetica, Arial, sans-serif" font-size="5.9" font-weight="bold" fill="#1e293b" text-anchor="start">Log. Depth</text>
+<text x="482.00" y="89.20" font-family="monospace" font-size="5.8" font-weight="normal" fill="#991b1b" text-anchor="end">3,760</text>
+<text x="520.00" y="89.20" font-family="monospace" font-size="5.8" font-weight="bold" fill="#1e3a8a" text-anchor="end">300</text>
+<text x="557.00" y="89.20" font-family="monospace" font-size="5.8" font-weight="bold" fill="#047857" text-anchor="end">12.53x</text>
+<text x="411.00" y="103.40" font-family="Helvetica, Arial, sans-serif" font-size="5.9" font-weight="bold" fill="#1e293b" text-anchor="start">MCX (k&gt;=3)</text>
+<text x="482.00" y="103.40" font-family="monospace" font-size="5.8" font-weight="normal" fill="#991b1b" text-anchor="end">2,040</text>
+<text x="520.00" y="103.40" font-family="monospace" font-size="5.8" font-weight="bold" fill="#1e3a8a" text-anchor="end">0</text>
+<text x="557.00" y="103.40" font-family="monospace" font-size="5.8" font-weight="bold" fill="#047857" text-anchor="end">Elim.</text>
+<rect x="407.00" y="108.60" width="154.00" height="13.50" fill="#f1f5f9"/>
+<text x="411.00" y="117.60" font-family="Helvetica, Arial, sans-serif" font-size="5.9" font-weight="bold" fill="#1e293b" text-anchor="start">Pure CCX</text>
+<text x="482.00" y="117.60" font-family="monospace" font-size="5.8" font-weight="normal" fill="#991b1b" text-anchor="end">0</text>
+<text x="520.00" y="117.60" font-family="monospace" font-size="5.8" font-weight="bold" fill="#1e3a8a" text-anchor="end">270</text>
+<text x="557.00" y="117.60" font-family="monospace" font-size="5.8" font-weight="bold" fill="#047857" text-anchor="end">Dirty</text>
+<text x="411.00" y="131.80" font-family="Helvetica, Arial, sans-serif" font-size="5.9" font-weight="bold" fill="#1e293b" text-anchor="start">CSWAP</text>
+<text x="482.00" y="131.80" font-family="monospace" font-size="5.8" font-weight="normal" fill="#991b1b" text-anchor="end">144</text>
+<text x="520.00" y="131.80" font-family="monospace" font-size="5.8" font-weight="bold" fill="#1e3a8a" text-anchor="end">14</text>
+<text x="557.00" y="131.80" font-family="monospace" font-size="5.8" font-weight="bold" fill="#047857" text-anchor="end">10.3x</text>
+<rect x="407.00" y="137.00" width="154.00" height="13.50" fill="#f1f5f9"/>
+<text x="411.00" y="146.00" font-family="Helvetica, Arial, sans-serif" font-size="5.9" font-weight="bold" fill="#1e293b" text-anchor="start">CX / X</text>
+<text x="482.00" y="146.00" font-family="monospace" font-size="5.8" font-weight="normal" fill="#991b1b" text-anchor="end">1656/1064</text>
+<text x="520.00" y="146.00" font-family="monospace" font-size="5.8" font-weight="bold" fill="#1e3a8a" text-anchor="end">35/18</text>
+<text x="557.00" y="146.00" font-family="monospace" font-size="5.8" font-weight="bold" fill="#047857" text-anchor="end">Exact</text>
+<text x="411.00" y="160.20" font-family="Helvetica, Arial, sans-serif" font-size="5.9" font-weight="bold" fill="#1e293b" text-anchor="start">Ancillas</text>
+<text x="482.00" y="160.20" font-family="monospace" font-size="5.8" font-weight="normal" fill="#991b1b" text-anchor="end">0</text>
+<text x="520.00" y="160.20" font-family="monospace" font-size="5.8" font-weight="bold" fill="#1e3a8a" text-anchor="end">0</text>
+<text x="557.00" y="160.20" font-family="monospace" font-size="5.8" font-weight="bold" fill="#047857" text-anchor="end">10Q</text>
+<rect x="407.00" y="165.40" width="154.00" height="13.50" fill="#f1f5f9"/>
+<text x="411.00" y="174.40" font-family="Helvetica, Arial, sans-serif" font-size="5.9" font-weight="bold" fill="#1e293b" text-anchor="start">||U - P||</text>
+<text x="482.00" y="174.40" font-family="monospace" font-size="5.8" font-weight="normal" fill="#991b1b" text-anchor="end">0.0</text>
+<text x="520.00" y="174.40" font-family="monospace" font-size="5.8" font-weight="bold" fill="#1e3a8a" text-anchor="end">0.0</text>
+<text x="557.00" y="174.40" font-family="monospace" font-size="5.8" font-weight="bold" fill="#047857" text-anchor="end">+1 ph</text>
+<line x1="410.00" y1="183.00" x2="558.00" y2="183.00" stroke="#cbd5e1" stroke-width="0.60"/>
+<text x="412.00" y="193.50" font-family="Helvetica, Arial, sans-serif" font-size="5.7" font-weight="bold" fill="#0f172a" text-anchor="start">Barenco Dirty-Ancilla Theorem:</text>
+<text x="412.00" y="201.50" font-family="Helvetica, Arial, sans-serif" font-size="5.7" font-weight="normal" fill="#334155" text-anchor="start">Live register wires replace clean</text>
+<text x="412.00" y="209.50" font-family="Helvetica, Arial, sans-serif" font-size="5.7" font-weight="normal" fill="#334155" text-anchor="start">ancillas via pure {0,+1} CCX</text>
+<text x="412.00" y="217.50" font-family="Helvetica, Arial, sans-serif" font-size="5.7" font-weight="normal" fill="#334155" text-anchor="start">cascades -&gt; zero phase error</text>
+<text x="412.00" y="225.50" font-family="Helvetica, Arial, sans-serif" font-size="5.7" font-weight="normal" fill="#334155" text-anchor="start">across all 1,024 basis states</text>
+<text x="412.00" y="233.50" font-family="Helvetica, Arial, sans-serif" font-size="5.7" font-weight="normal" fill="#334155" text-anchor="start">(CZ(0,5) ctrl caught: err=2.0).</text>
+<rect x="46.00" y="266.00" width="516.00" height="32.00" fill="#f8fafc" stroke="#cbd5e1" stroke-width="0.70"/>
+<rect x="54.00" y="271.00" width="9.00" height="6.20" fill="#ef4444" stroke="#991b1b" stroke-width="0.70"/>
+<text x="66.00" y="276.50" font-family="Helvetica, Arial, sans-serif" font-size="5.9" font-weight="bold" fill="#1e293b" text-anchor="start">GENERIC Cayley Cycle/Transposition</text>
+<rect x="198.00" y="271.00" width="9.00" height="6.20" fill="#2563eb" stroke="#1e3a8a" stroke-width="0.70"/>
+<text x="210.00" y="276.50" font-family="Helvetica, Arial, sans-serif" font-size="5.9" font-weight="bold" fill="#1e293b" text-anchor="start">STRUCTURED Q_8 |x Z_3 Synthesis</text>
+<rect x="332.00" y="271.00" width="9.00" height="6.20" fill="#7c3aed" stroke="#4c1d95" stroke-width="0.70"/>
+<text x="344.00" y="276.50" font-family="Helvetica, Arial, sans-serif" font-size="5.9" font-weight="bold" fill="#1e293b" text-anchor="start">5Q Non-Abelian QFT (613 T5 CZ / 423 All-to-All CZ &amp; H2 ZZPhase)</text>
+<text x="288.00" y="290.50" font-family="Helvetica, Arial, sans-serif" font-size="6.0" font-weight="bold" fill="#0f172a" text-anchor="middle">Exact 1024x1024 Unitary (576 Cayley Pairs + 448 Unused Fixed): 1,739 CZ (All-to-All) &amp; 423 ZZPhase (QFT) Target QCCD / Fault-Tolerant Execution</text>
+</svg>

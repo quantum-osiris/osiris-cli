@@ -1,0 +1,177 @@
+%PDF-1.4
+%‚„œ”
+1 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>
+endobj
+2 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica-Bold >>
+endobj
+3 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Courier >>
+endobj
+4 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Times-Roman >>
+endobj
+5 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Times-Bold >>
+endobj
+6 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Times-Italic >>
+endobj
+7 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Courier-Bold >>
+endobj
+8 0 obj
+<< /Type /Pages /Kids [10 0 R] /Count 1 >>
+endobj
+9 0 obj
+<< /Length 8891 >>
+stream
+1 1 1 rg
+0 0 576.00 306.00 re f
+BT /F2 9.3 Tf 0.067 0.094 0.153 rg 73.89 290.50 Td (OSIRIS-BT2T-002 \(SIMULATED / PROXY, provider_job_id = null, bt2t-enc-1, seed = 20261124\)) Tj ET
+BT /F1 7.1 Tf 0.278 0.333 0.412 rg 94.98 278.50 Td (Semidirect-Product Q_8 |x Z_3 Synthesis Compression \(19.00x All-to-All, 21.31x 10Q Heavy-Hex\) vs. M1 ibm_fez Anchor) Tj ET
+BT /F2 7.9 Tf 0.059 0.090 0.165 rg 46.00 265.00 Td (\(a\) Two-Qubit Entangling Gate Count \(Log10 Scale: CZ / ZZPhase\)) Tj ET
+0.90 w 0.980 0.980 0.980 rg 0.200 0.255 0.333 RG 46.00 65.00 344.00 194.00 re B
+0.925 0.992 0.961 rg 46.60 65.60 342.80 43.00 re f
+q [] 0 d 0.60 w 0.886 0.910 0.941 RG 46.00 65.00 m 390.00 65.00 l S Q
+BT /F3 6.5 Tf 0.200 0.255 0.333 rg 25.90 62.60 Td (10^1) Tj ET
+q [] 0 d 0.60 w 0.886 0.910 0.941 RG 46.00 108.60 m 390.00 108.60 l S Q
+BT /F3 6.5 Tf 0.200 0.255 0.333 rg 25.90 106.20 Td (10^2) Tj ET
+q [] 0 d 0.60 w 0.886 0.910 0.941 RG 46.00 152.19 m 390.00 152.19 l S Q
+BT /F3 6.5 Tf 0.200 0.255 0.333 rg 25.90 149.79 Td (10^3) Tj ET
+q [] 0 d 0.60 w 0.886 0.910 0.941 RG 46.00 195.79 m 390.00 195.79 l S Q
+BT /F3 6.5 Tf 0.200 0.255 0.333 rg 25.90 193.39 Td (10^4) Tj ET
+q [] 0 d 0.60 w 0.886 0.910 0.941 RG 46.00 239.38 m 390.00 239.38 l S Q
+BT /F3 6.5 Tf 0.200 0.255 0.333 rg 25.90 236.98 Td (10^5) Tj ET
+q [5 3] 0 d 0.80 w 0.706 0.325 0.035 RG 46.00 146.05 m 390.00 146.05 l S Q
+0.60 w 1.000 1.000 1.000 rg 0.796 0.835 0.882 RG 52.00 220.00 134.00 33.00 re B
+BT /F2 5.6 Tf 0.059 0.090 0.165 rg 56.00 244.00 Td (M1 ibm_fez Hardware Regimes:) Tj ET
+BT /F2 5.3 Tf 0.706 0.325 0.035 rg 56.00 235.00 Td (-- 723 CZ: P=0.0661 \(QCCD/FT above\)) Tj ET
+BT /F2 5.3 Tf 0.016 0.471 0.341 rg 56.00 226.00 Td ([] <100 CZ: NISQ viable \(72 CZ P=0.534\)) Tj ET
+0.75 w 0.937 0.267 0.267 rg 0.600 0.106 0.106 RG 59.40 65.00 19.50 69.84 re B
+0.75 w 0.145 0.388 0.922 rg 0.118 0.227 0.541 RG 81.90 65.00 19.50 29.70 re B
+BT /F7 5.6 Tf 0.600 0.106 0.106 rg 64.11 138.34 Td (400) Tj ET
+BT /F7 5.6 Tf 0.118 0.227 0.541 rg 88.29 98.20 Td (48) Tj ET
+BT /F7 5.9 Tf 0.059 0.090 0.165 rg 82.80 106.70 Td (8.33x) Tj ET
+q [] 0 d 0.70 w 0.200 0.255 0.333 RG 80.40 65.00 m 80.40 62.00 l S Q
+BT /F2 6.3 Tf 0.059 0.090 0.165 rg 64.87 54.50 Td (M1 5Q Inv) Tj ET
+BT /F1 5.8 Tf 0.278 0.333 0.412 rg 68.68 46.80 Td (All-to-All) Tj ET
+0.75 w 0.937 0.267 0.267 rg 0.600 0.106 0.106 RG 128.20 65.00 19.50 81.05 re B
+0.75 w 0.145 0.388 0.922 rg 0.118 0.227 0.541 RG 150.70 65.00 19.50 37.38 re B
+BT /F7 5.6 Tf 0.600 0.106 0.106 rg 132.91 149.55 Td (723) Tj ET
+BT /F7 5.6 Tf 0.118 0.227 0.541 rg 157.09 105.88 Td (72) Tj ET
+BT /F7 5.9 Tf 0.059 0.090 0.165 rg 149.83 114.38 Td (10.04x) Tj ET
+q [] 0 d 0.70 w 0.200 0.255 0.333 RG 149.20 65.00 m 149.20 62.00 l S Q
+BT /F2 6.3 Tf 0.059 0.090 0.165 rg 133.67 54.50 Td (M1 5Q Inv) Tj ET
+BT /F1 5.8 Tf 0.278 0.333 0.412 rg 134.48 46.80 Td (ibm_fez T5) Tj ET
+0.75 w 0.937 0.267 0.267 rg 0.600 0.106 0.106 RG 197.00 65.00 19.50 153.42 re B
+0.75 w 0.145 0.388 0.922 rg 0.118 0.227 0.541 RG 219.50 65.00 19.50 97.67 re B
+BT /F7 5.6 Tf 0.600 0.106 0.106 rg 196.67 221.92 Td (33,042) Tj ET
+BT /F7 5.6 Tf 0.118 0.227 0.541 rg 220.85 166.17 Td (1,739) Tj ET
+BT /F7 5.9 Tf 0.059 0.090 0.165 rg 218.63 174.67 Td (19.00x) Tj ET
+q [] 0 d 0.70 w 0.200 0.255 0.333 RG 218.00 65.00 m 218.00 62.00 l S Q
+BT /F2 6.3 Tf 0.059 0.090 0.165 rg 199.75 54.50 Td (M2 10Q Mul) Tj ET
+BT /F1 5.8 Tf 0.278 0.333 0.412 rg 206.28 46.80 Td (All-to-All) Tj ET
+0.75 w 0.937 0.267 0.267 rg 0.600 0.106 0.106 RG 265.80 65.00 19.50 169.69 re B
+0.75 w 0.145 0.388 0.922 rg 0.118 0.227 0.541 RG 288.30 65.00 19.50 111.77 re B
+BT /F7 5.6 Tf 0.600 0.106 0.106 rg 265.47 238.19 Td (78,035) Tj ET
+BT /F7 5.6 Tf 0.118 0.227 0.541 rg 289.65 180.27 Td (3,662) Tj ET
+BT /F7 5.9 Tf 0.059 0.090 0.165 rg 287.43 188.77 Td (21.31x) Tj ET
+q [] 0 d 0.70 w 0.200 0.255 0.333 RG 286.80 65.00 m 286.80 62.00 l S Q
+BT /F2 6.3 Tf 0.059 0.090 0.165 rg 268.55 54.50 Td (M2 10Q Mul) Tj ET
+BT /F1 5.8 Tf 0.278 0.333 0.412 rg 272.76 46.80 Td (10Q H-Hex) Tj ET
+0.75 w 0.655 0.545 0.980 rg 0.357 0.129 0.714 RG 334.60 65.00 19.50 77.93 re B
+0.75 w 0.486 0.227 0.929 rg 0.298 0.114 0.584 RG 357.10 65.00 19.50 70.90 re B
+BT /F7 5.6 Tf 0.357 0.129 0.714 rg 339.31 146.43 Td (613) Tj ET
+BT /F7 5.6 Tf 0.298 0.114 0.584 rg 361.81 139.40 Td (423) Tj ET
+BT /F7 6.0 Tf 0.298 0.114 0.584 rg 346.60 155.43 Td (1.45x) Tj ET
+q [] 0 d 0.70 w 0.200 0.255 0.333 RG 355.60 65.00 m 355.60 62.00 l S Q
+BT /F2 6.3 Tf 0.059 0.090 0.165 rg 337.99 54.50 Td (M2 5Q QFT) Tj ET
+BT /F1 5.8 Tf 0.278 0.333 0.412 rg 340.19 46.80 Td (T5 / All\(H2\)) Tj ET
+BT /F2 7.9 Tf 0.059 0.090 0.165 rg 406.00 265.00 Td (\(b\) 10Q Zero-Ancilla Logical Synthesis) Tj ET
+0.90 w 0.980 0.980 0.980 rg 0.200 0.255 0.333 RG 406.00 65.00 156.00 194.00 re B
+0.886 0.910 0.941 rg 407.00 243.00 154.00 15.00 re f
+BT /F2 6.0 Tf 0.059 0.090 0.165 rg 411.00 247.00 Td (Metric) Tj ET
+BT /F2 6.0 Tf 0.600 0.106 0.106 rg 468.99 247.00 Td (GEN) Tj ET
+BT /F2 6.0 Tf 0.118 0.227 0.541 rg 506.99 247.00 Td (STR) Tj ET
+BT /F2 6.0 Tf 0.016 0.471 0.341 rg 544.26 247.00 Td (Gain) Tj ET
+q [] 0 d 0.70 w 0.200 0.255 0.333 RG 406.00 243.00 m 562.00 243.00 l S Q
+BT /F2 5.9 Tf 0.118 0.161 0.231 rg 411.00 231.00 Td (Total Gates) Tj ET
+BT /F3 5.8 Tf 0.600 0.106 0.106 rg 464.60 231.00 Td (4,904) Tj ET
+BT /F7 5.8 Tf 0.118 0.227 0.541 rg 509.56 231.00 Td (337) Tj ET
+BT /F7 5.8 Tf 0.016 0.471 0.341 rg 536.12 231.00 Td (14.55x) Tj ET
+0.945 0.961 0.976 rg 407.00 212.30 154.00 13.50 re f
+BT /F2 5.9 Tf 0.118 0.161 0.231 rg 411.00 216.80 Td (Log. Depth) Tj ET
+BT /F3 5.8 Tf 0.600 0.106 0.106 rg 464.60 216.80 Td (3,760) Tj ET
+BT /F7 5.8 Tf 0.118 0.227 0.541 rg 509.56 216.80 Td (300) Tj ET
+BT /F7 5.8 Tf 0.016 0.471 0.341 rg 536.12 216.80 Td (12.53x) Tj ET
+BT /F2 5.9 Tf 0.118 0.161 0.231 rg 411.00 202.60 Td (MCX \(k>=3\)) Tj ET
+BT /F3 5.8 Tf 0.600 0.106 0.106 rg 464.60 202.60 Td (2,040) Tj ET
+BT /F7 5.8 Tf 0.118 0.227 0.541 rg 516.52 202.60 Td (0) Tj ET
+BT /F7 5.8 Tf 0.016 0.471 0.341 rg 539.60 202.60 Td (Elim.) Tj ET
+0.945 0.961 0.976 rg 407.00 183.90 154.00 13.50 re f
+BT /F2 5.9 Tf 0.118 0.161 0.231 rg 411.00 188.40 Td (Pure CCX) Tj ET
+BT /F3 5.8 Tf 0.600 0.106 0.106 rg 478.52 188.40 Td (0) Tj ET
+BT /F7 5.8 Tf 0.118 0.227 0.541 rg 509.56 188.40 Td (270) Tj ET
+BT /F7 5.8 Tf 0.016 0.471 0.341 rg 539.60 188.40 Td (Dirty) Tj ET
+BT /F2 5.9 Tf 0.118 0.161 0.231 rg 411.00 174.20 Td (CSWAP) Tj ET
+BT /F3 5.8 Tf 0.600 0.106 0.106 rg 471.56 174.20 Td (144) Tj ET
+BT /F7 5.8 Tf 0.118 0.227 0.541 rg 513.04 174.20 Td (14) Tj ET
+BT /F7 5.8 Tf 0.016 0.471 0.341 rg 539.60 174.20 Td (10.3x) Tj ET
+0.945 0.961 0.976 rg 407.00 155.50 154.00 13.50 re f
+BT /F2 5.9 Tf 0.118 0.161 0.231 rg 411.00 160.00 Td (CX / X) Tj ET
+BT /F3 5.8 Tf 0.600 0.106 0.106 rg 450.68 160.00 Td (1656/1064) Tj ET
+BT /F7 5.8 Tf 0.118 0.227 0.541 rg 502.60 160.00 Td (35/18) Tj ET
+BT /F7 5.8 Tf 0.016 0.471 0.341 rg 539.60 160.00 Td (Exact) Tj ET
+BT /F2 5.9 Tf 0.118 0.161 0.231 rg 411.00 145.80 Td (Ancillas) Tj ET
+BT /F3 5.8 Tf 0.600 0.106 0.106 rg 478.52 145.80 Td (0) Tj ET
+BT /F7 5.8 Tf 0.118 0.227 0.541 rg 516.52 145.80 Td (0) Tj ET
+BT /F7 5.8 Tf 0.016 0.471 0.341 rg 546.56 145.80 Td (10Q) Tj ET
+0.945 0.961 0.976 rg 407.00 127.10 154.00 13.50 re f
+BT /F2 5.9 Tf 0.118 0.161 0.231 rg 411.00 131.60 Td (||U - P||) Tj ET
+BT /F3 5.8 Tf 0.600 0.106 0.106 rg 471.56 131.60 Td (0.0) Tj ET
+BT /F7 5.8 Tf 0.118 0.227 0.541 rg 509.56 131.60 Td (0.0) Tj ET
+BT /F7 5.8 Tf 0.016 0.471 0.341 rg 539.60 131.60 Td (+1 ph) Tj ET
+q [] 0 d 0.60 w 0.796 0.835 0.882 RG 410.00 123.00 m 558.00 123.00 l S Q
+BT /F2 5.7 Tf 0.059 0.090 0.165 rg 412.00 112.50 Td (Barenco Dirty-Ancilla Theorem:) Tj ET
+BT /F1 5.7 Tf 0.200 0.255 0.333 rg 412.00 104.50 Td (Live register wires replace clean) Tj ET
+BT /F1 5.7 Tf 0.200 0.255 0.333 rg 412.00 96.50 Td (ancillas via pure {0,+1} CCX) Tj ET
+BT /F1 5.7 Tf 0.200 0.255 0.333 rg 412.00 88.50 Td (cascades -> zero phase error) Tj ET
+BT /F1 5.7 Tf 0.200 0.255 0.333 rg 412.00 80.50 Td (across all 1,024 basis states) Tj ET
+BT /F1 5.7 Tf 0.200 0.255 0.333 rg 412.00 72.50 Td (\(CZ\(0,5\) ctrl caught: err=2.0\).) Tj ET
+0.70 w 0.973 0.980 0.988 rg 0.796 0.835 0.882 RG 46.00 8.00 516.00 32.00 re B
+0.70 w 0.937 0.267 0.267 rg 0.600 0.106 0.106 RG 54.00 28.80 9.00 6.20 re B
+BT /F2 5.9 Tf 0.118 0.161 0.231 rg 66.00 29.50 Td (GENERIC Cayley Cycle/Transposition) Tj ET
+0.70 w 0.145 0.388 0.922 rg 0.118 0.227 0.541 RG 198.00 28.80 9.00 6.20 re B
+BT /F2 5.9 Tf 0.118 0.161 0.231 rg 210.00 29.50 Td (STRUCTURED Q_8 |x Z_3 Synthesis) Tj ET
+0.70 w 0.486 0.227 0.929 rg 0.298 0.114 0.584 RG 332.00 28.80 9.00 6.20 re B
+BT /F2 5.9 Tf 0.118 0.161 0.231 rg 344.00 29.50 Td (5Q Non-Abelian QFT \(613 T5 CZ / 423 All-to-All CZ & H2 ZZPhase\)) Tj ET
+BT /F2 6.0 Tf 0.059 0.090 0.165 rg 74.37 15.50 Td (Exact 1024x1024 Unitary \(576 Cayley Pairs + 448 Unused Fixed\): 1,739 CZ \(All-to-All\) & 423 ZZPhase \(QFT\) Target QCCD / Fault-Tolerant Execution) Tj ET
+endstream
+endobj
+10 0 obj
+<< /Type /Page /Parent 8 0 R /MediaBox [0 0 576.00 306.00] /Resources << /Font << /F1 1 0 R /F2 2 0 R /F3 3 0 R /F4 4 0 R /F5 5 0 R /F6 6 0 R /F7 7 0 R >> >> /Contents 9 0 R >>
+endobj
+11 0 obj
+<< /Type /Catalog /Pages 8 0 R >>
+endobj
+xref
+0 12
+0000000000 65535 f 
+0000000015 00000 n 
+0000000085 00000 n 
+0000000160 00000 n 
+0000000228 00000 n 
+0000000300 00000 n 
+0000000371 00000 n 
+0000000444 00000 n 
+0000000517 00000 n 
+0000000575 00000 n 
+0000009517 00000 n 
+0000009710 00000 n 
+trailer
+<< /Size 12 /Root 11 0 R >>
+startxref
+9760
+%%EOF
