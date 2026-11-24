@@ -19,6 +19,7 @@ from pathlib import Path
 from typing import Dict, List, Sequence, Tuple
 
 import pytest
+
 from osiris_cli import claim_provenance, claims, plan_gates
 from papers._pdf_preprint_renderer import (
     PreprintDocument,
