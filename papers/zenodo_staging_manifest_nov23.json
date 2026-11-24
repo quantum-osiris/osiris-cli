@@ -1,0 +1,824 @@
+{
+  "manifest_sha256": "a96141e2ea46ca5c7b3b86a538e80a4e5ec4f9dbb005dd6f03d6e703772d7eed",
+  "mode": "DRY_RUN_STAGED",
+  "network_calls": 0,
+  "paper_count": 4,
+  "paper_order": [
+    "xtop006_non_clifford_kraus_fez",
+    "wp2_27q_debiased_ot_fez",
+    "nonabelian_2bga_and_adv1",
+    "heron_r2_calibration_staleness_and_colored_nulls"
+  ],
+  "papers": {
+    "heron_r2_calibration_staleness_and_colored_nulls": {
+      "bundle_sha256": "279ae1ebc3df5cbb58504e5d420582cbe9a3fe99dbfeaa268ed567069e0ebc19",
+      "files": [
+        {
+          "required": true,
+          "sha256": "06d170f1ac1dce2f826ee164ecb838120f955e4732c2a7f9c884e64b95a95179",
+          "size_bytes": 57087,
+          "source_relpath": "papers/heron_r2_calibration_staleness_and_colored_nulls/heron_r2_calibration_staleness_and_colored_nulls.tex",
+          "upload_name": "heron_r2_calibration_staleness_and_colored_nulls.tex"
+        },
+        {
+          "required": true,
+          "sha256": "1bafee2bfc55bd260ce49a4463c2bbcf119a5a2d2747fc3abebedeee0c4cb4b8",
+          "size_bytes": 13817,
+          "source_relpath": "papers/heron_r2_calibration_staleness_and_colored_nulls/generated.tex",
+          "upload_name": "generated.tex"
+        },
+        {
+          "required": true,
+          "sha256": "13511bb814affb6870050af8db1e0c052a06397b28f2f48d20e8c0f8cf149cfc",
+          "size_bytes": 77145,
+          "source_relpath": "papers/heron_r2_calibration_staleness_and_colored_nulls/generate_unified_assets.py",
+          "upload_name": "generate_unified_assets.py"
+        },
+        {
+          "required": true,
+          "sha256": "65cac6337ebc82e41557478b34cc2a63ec9fb3dc006385a7f52fb41c46624503",
+          "size_bytes": 9611,
+          "source_relpath": "papers/heron_r2_calibration_staleness_and_colored_nulls/fig1_tmap_sign_reversal_three_qpus.pdf",
+          "upload_name": "fig1_tmap_sign_reversal_three_qpus.pdf"
+        },
+        {
+          "required": true,
+          "sha256": "16f9e0a7de490c7483ec2f37a4d9c7d9f3f5f09f79ac42ab0066c606a999a51b",
+          "size_bytes": 13134,
+          "source_relpath": "papers/heron_r2_calibration_staleness_and_colored_nulls/fig1_tmap_sign_reversal_three_qpus.svg",
+          "upload_name": "fig1_tmap_sign_reversal_three_qpus.svg"
+        },
+        {
+          "required": true,
+          "sha256": "8f515e7117e96ac79dad98470e82e57af9d914fe6d09da6fa91950c9130cc024",
+          "size_bytes": 31322,
+          "source_relpath": "papers/heron_r2_calibration_staleness_and_colored_nulls/fig2_ro06_07_staleness_persistence.pdf",
+          "upload_name": "fig2_ro06_07_staleness_persistence.pdf"
+        },
+        {
+          "required": true,
+          "sha256": "00a981f2638d9141c1ee46b1855fe926415ee830780be6c36963f6fd248232a2",
+          "size_bytes": 24596,
+          "source_relpath": "papers/heron_r2_calibration_staleness_and_colored_nulls/fig2_ro06_07_staleness_persistence.svg",
+          "upload_name": "fig2_ro06_07_staleness_persistence.svg"
+        },
+        {
+          "required": true,
+          "sha256": "9d1cafce06d0b28d16412a9a65ddd179c46579c546158f38a09b7bde4393609b",
+          "size_bytes": 8912,
+          "source_relpath": "papers/heron_r2_calibration_staleness_and_colored_nulls/fig3_cn01_colored_noise_heldout_gate.pdf",
+          "upload_name": "fig3_cn01_colored_noise_heldout_gate.pdf"
+        },
+        {
+          "required": true,
+          "sha256": "a555a0909e1701d368c14ce0c661f1998d069dd98e5877a83dcf271ebfffdb5d",
+          "size_bytes": 13840,
+          "source_relpath": "papers/heron_r2_calibration_staleness_and_colored_nulls/fig3_cn01_colored_noise_heldout_gate.svg",
+          "upload_name": "fig3_cn01_colored_noise_heldout_gate.svg"
+        },
+        {
+          "required": true,
+          "sha256": "f90aa89d48032f47b052fc5504505b81b9367f3d563948e6fbd4426654d15950",
+          "size_bytes": 37883,
+          "source_relpath": "papers/heron_r2_calibration_staleness_and_colored_nulls/reproducibility_capsule.json",
+          "upload_name": "reproducibility_capsule.json"
+        },
+        {
+          "required": true,
+          "sha256": "375038e451baf13d17d69baa32cb4d9177a8a637b72d837da1d4f0e604a08e4c",
+          "size_bytes": 1021,
+          "source_relpath": "papers/heron_r2_calibration_staleness_and_colored_nulls/SHA256SUMS.txt",
+          "upload_name": "SHA256SUMS.txt"
+        },
+        {
+          "required": true,
+          "sha256": "62d110e0611ac6e0607373a150b223aaf0abfcf9a8c401b1a266d2f9e08372c4",
+          "size_bytes": 14488,
+          "source_relpath": "docs/phase3/PHASE3_PREREG_AMENDMENTS.md",
+          "upload_name": "PHASE3_PREREG_AMENDMENTS.md"
+        }
+      ],
+      "metadata": {
+        "access_right": "open",
+        "creators": [
+          {
+            "affiliation": "Agile Defense Systems LLC",
+            "name": "Davis, Devin Phillip"
+          }
+        ],
+        "description": "<p>Unified synthesis of 7 preregistered hardware campaigns (42 IBM Quantum jobs, 1,062 PUBs, 2,174,976 physical circuit shots, 673 s QPU) across all three 156-qubit IBM Heron r2 processors (<code>ibm_marrakesh</code>, <code>ibm_fez</code>, and <code>ibm_kingston</code>).</p><ul><li>In 40-qubit compilation benchmarks at fixed 39-CZ depth 66 (<code>TMAP-02</code>&ndash;<code>TMAP-05</code>), calibration-ranked vs median path fidelity reversed from +10.54 pp to &minus;4.29 pp four days later due to an unflagged q46 readout excursion (35.0% actual vs 1.1% published), and repeating a pre-job readout-probe selector 82&ndash;85 minutes apart flipped the probe-vs-calibration sign on all three processors while tensored readout mitigation restored calibration-path superiority on all three.</li><li>Longitudinal monitoring and isolation experiments (<code>RO-06</code> and <code>RO-07</code>, 27 jobs, 516,096 shots) show hidden faults (&gt;15% actual vs &lt;3% listed) are transient (6 of 6 recovered below 5%), persist across 15-minute rounds at 87.4% (Fisher OR 1,095), and exhibit &le;1.16 pp multiplexing shift (&le;1.61 pp neighbor state-flip shift), tracing reversals to calibration snapshots static up to 16.0 h rather than readout crosstalk.</li><li>Multiplexed DD spectroscopy across 10 couplers &ge;5 hops apart (<code>CN-01</code>, 499,712 shots) gave null mechanistic contrasts (C_DFS = +0.43 pp, p_Holm = 0.47) while white-noise-only GLS falsely favored a non-local OU bath by Delta-BIC = 10,263 before failing its preregistered 6-coupler held-out gate (p = 0.82); a 550-replicate synthetic audit proves white-noise nulls misclassify 100% of local 1/f dephasing whereas local colored-noise nulls cut false non-local selection to 0%.</li></ul>",
+        "keywords": [
+          "quantum benchmarking",
+          "calibration staleness",
+          "readout error",
+          "telegraph noise",
+          "colored dephasing",
+          "dynamical decoupling",
+          "IBM Heron r2",
+          "ibm_marrakesh",
+          "ibm_fez",
+          "ibm_kingston",
+          "preregistration"
+        ],
+        "language": "eng",
+        "license": "cc-by-4.0",
+        "publication_date": "2026-11-23",
+        "publication_type": "article",
+        "related_identifiers": [
+          {
+            "identifier": "https://github.com/quantum-osiris/osiris-cli",
+            "relation": "isSupplementedBy",
+            "scheme": "url"
+          },
+          {
+            "identifier": "10.5281/zenodo.24406426",
+            "relation": "compiles",
+            "scheme": "doi"
+          },
+          {
+            "identifier": "10.5281/zenodo.24406435",
+            "relation": "compiles",
+            "scheme": "doi"
+          },
+          {
+            "identifier": "10.5281/zenodo.24406496",
+            "relation": "compiles",
+            "scheme": "doi"
+          },
+          {
+            "identifier": "10.5281/zenodo.24406525",
+            "relation": "compiles",
+            "scheme": "doi"
+          },
+          {
+            "identifier": "10.5281/zenodo.24406640",
+            "relation": "compiles",
+            "scheme": "doi"
+          },
+          {
+            "identifier": "10.5281/zenodo.24407001",
+            "relation": "compiles",
+            "scheme": "doi"
+          },
+          {
+            "identifier": "10.5281/zenodo.24407538",
+            "relation": "compiles",
+            "scheme": "doi"
+          },
+          {
+            "identifier": "10.5281/zenodo.24407875",
+            "relation": "compiles",
+            "scheme": "doi"
+          },
+          {
+            "identifier": "10.5281/zenodo.24407897",
+            "relation": "compiles",
+            "scheme": "doi"
+          },
+          {
+            "identifier": "10.5281/zenodo.24419327",
+            "relation": "compiles",
+            "scheme": "doi"
+          },
+          {
+            "identifier": "10.5281/zenodo.24420902",
+            "relation": "compiles",
+            "scheme": "doi"
+          }
+        ],
+        "title": "Calibration Staleness, Transient Readout Telegraphing, and Colored-Noise False Positives Across Three 156-Qubit Superconducting Quantum Processors",
+        "upload_type": "publication",
+        "version": "1.0.0"
+      },
+      "paper_dir": "papers/heron_r2_calibration_staleness_and_colored_nulls",
+      "paper_key": "heron_r2_calibration_staleness_and_colored_nulls",
+      "pdf_compiled": false,
+      "sha256sums_check": {
+        "capsule_sha256": "f90aa89d48032f47b052fc5504505b81b9367f3d563948e6fbd4426654d15950",
+        "passed": true,
+        "sha256sums_sha256": "375038e451baf13d17d69baa32cb4d9177a8a637b72d837da1d4f0e604a08e4c",
+        "verified_count": 10
+      },
+      "sys024_check": {
+        "flagged_claims": [],
+        "passed": true,
+        "quarantined_constants": [],
+        "surfaces_checked": [
+          "raw_tex",
+          "generated_tex",
+          "expanded_tex",
+          "zenodo_metadata"
+        ]
+      },
+      "total_bytes": 302856,
+      "total_files": 12
+    },
+    "nonabelian_2bga_and_adv1": {
+      "bundle_sha256": "a072b148f5e4f8e416693d133a5dcc3cf5ce9088c2cae774a6084ce417f6591f",
+      "files": [
+        {
+          "required": true,
+          "sha256": "fb5cdbfa8e12076429e0488bf04887cd18255f79d38986080e882fc662b45c3b",
+          "size_bytes": 32486,
+          "source_relpath": "papers/nonabelian_2bga_and_adv1/nonabelian_2bga_and_adv1.tex",
+          "upload_name": "nonabelian_2bga_and_adv1.tex"
+        },
+        {
+          "required": true,
+          "sha256": "e19c3ffa9fdea76a0e2a57f51445273f88895db80c337a1f29f1867d65ebc661",
+          "size_bytes": 5815,
+          "source_relpath": "papers/nonabelian_2bga_and_adv1/generated.tex",
+          "upload_name": "generated.tex"
+        },
+        {
+          "required": true,
+          "sha256": "2c4aa66f0879c7440c1e044cc7a57bf21a4d1b7951f411b95e217c97015a69c1",
+          "size_bytes": 35801,
+          "source_relpath": "papers/nonabelian_2bga_and_adv1/generate_2bga_adv1_assets.py",
+          "upload_name": "generate_2bga_adv1_assets.py"
+        },
+        {
+          "required": true,
+          "sha256": "51261d84a0bbd3452abd5c4bd688131f36d95f73affd3d5982cb10247fa62994",
+          "size_bytes": 12695,
+          "source_relpath": "papers/nonabelian_2bga_and_adv1/fig1_odd_k_nonabelian_2bga_codes_and_bposd.svg",
+          "upload_name": "fig1_odd_k_nonabelian_2bga_codes_and_bposd.svg"
+        },
+        {
+          "required": true,
+          "sha256": "6c31f2fc4d472c44b498445e7cfdeb66f687d08ac580579f959d790475323eed",
+          "size_bytes": 14117,
+          "source_relpath": "papers/nonabelian_2bga_and_adv1/fig1_odd_k_nonabelian_2bga_codes_and_bposd.pdf",
+          "upload_name": "fig1_odd_k_nonabelian_2bga_codes_and_bposd.pdf"
+        },
+        {
+          "required": true,
+          "sha256": "aeaa93292a10a9abe84796e806920279579ebfacd4da8ff0a186c066ceec3a35",
+          "size_bytes": 15328,
+          "source_relpath": "papers/nonabelian_2bga_and_adv1/fig2_adv1_three_attack_ablation_m6.svg",
+          "upload_name": "fig2_adv1_three_attack_ablation_m6.svg"
+        },
+        {
+          "required": true,
+          "sha256": "b5aca603d8f7142ecc8e13df91355f4ca9f85ce91284fd4ecf823a56b16b5816",
+          "size_bytes": 16494,
+          "source_relpath": "papers/nonabelian_2bga_and_adv1/fig2_adv1_three_attack_ablation_m6.pdf",
+          "upload_name": "fig2_adv1_three_attack_ablation_m6.pdf"
+        },
+        {
+          "required": true,
+          "sha256": "2f3690f1fda83cefc7b2e1f362bfabd7ebd706a68e1e6f6f63f03e36bf60573f",
+          "size_bytes": 2377,
+          "source_relpath": "papers/nonabelian_2bga_and_adv1/reproducibility_capsule.json",
+          "upload_name": "reproducibility_capsule.json"
+        },
+        {
+          "required": true,
+          "sha256": "10e7abea28bf19599a0af94f051c66ec2905d87cdbb3d7d6cb5013e2dd5d15bd",
+          "size_bytes": 1556,
+          "source_relpath": "papers/nonabelian_2bga_and_adv1/SHA256SUMS.txt",
+          "upload_name": "SHA256SUMS.txt"
+        },
+        {
+          "required": true,
+          "sha256": "8827f5761ff47037f6444be9b0a1b3f01bf638fabac4f25e6eeefaa5e1c2353e",
+          "size_bytes": 44463,
+          "source_relpath": "qldpc_nonabelian/nonabelian_2bga.py",
+          "upload_name": "nonabelian_2bga.py"
+        },
+        {
+          "required": true,
+          "sha256": "bbf42da6c61662dc05c9b2aab79a7ce028f6fc1481599171db44d5510a6928ad",
+          "size_bytes": 25764,
+          "source_relpath": "qldpc_nonabelian/artifacts/nonabelian_2bga_report.json",
+          "upload_name": "nonabelian_2bga_report.json"
+        },
+        {
+          "required": true,
+          "sha256": "7ea55e9df640b122fa8447b6a7b045d058e39b9163f10362a24453e1e51a7da9",
+          "size_bytes": 16061,
+          "source_relpath": "adv1/looped_peaked.py",
+          "upload_name": "looped_peaked.py"
+        },
+        {
+          "required": true,
+          "sha256": "5acce4798fe3e880851d922d24cd506e6e3bec80f5c1d46dc45f8e5f58d32b2e",
+          "size_bytes": 23156,
+          "source_relpath": "adv1/pregate.py",
+          "upload_name": "pregate.py"
+        },
+        {
+          "required": true,
+          "sha256": "85c85e07b9b9d9d01ae527dac4134d5ac3f18d93aeaae2bbccbbb739b1653b13",
+          "size_bytes": 30098,
+          "source_relpath": "adv1/artifacts/adv1_pregate_report.json",
+          "upload_name": "adv1_pregate_report.json"
+        }
+      ],
+      "metadata": {
+        "access_right": "open",
+        "creators": [
+          {
+            "affiliation": "Agile Defense Systems LLC",
+            "name": "Davis, Devin Phillip"
+          }
+        ],
+        "description": "<p>Algebraic proofs and reproducible SIMULATED benchmarks (<code>provider_job_id: null</code>) calibrated to the 98-qubit Quantinuum <code>Helios-1</code> all-to-all QCCD architecture across non-abelian quantum LDPC coding and pre-submission peaked-circuit classical-hardness gating.</p><ul><li>Proves via group-inversion anti-automorphism and Frobenius / Wedderburn&ndash;Artin duality that unquotiented regular two-block group-algebra (2BGA) CSS codes over F_2[G] satisfy rank(H_X) = rank(H_Z) identically for every finite group G, forcing even logical dimension k (0 violations across 6,480 subset pairs over 11 non-abelian groups).</li><li>Breaking left-right regularity via subgroup-quotient cosets (including D_9/Z_2 with n = 21, k = 3) or symplectic minimum-weight gauge pinning yields 16 odd-k (k in {1, 3, 5}, d &ge; 4) non-abelian CSS codes&mdash;including exact D_9 [[36,3,6]], C_7 x| C_3 [[42,3,6]], and ISD-witnessed C_19 x| C_3 [[114,3,12]] (kd^2/n = 3.7895)&mdash;benchmarked under log-domain Sum-Product BP+OSD-CS decoding.</li><li>Formulates the fail-closed ADV-1 pre-gate requiring candidate peaked circuits to defeat bounded-chi MPS (chi &le; 128), truncated Pauli-path (w_max &le; 4), and causal light-cone (&le; 20 qubits) attacks; appending the 15-CX involution M_6 = J_6 - I_6 (mod 2) eliminates weight-four Pauli leakage and yields 24-qubit and 30-qubit chorded circuits surviving all three classical attacks (predicted Helios-1 peaks 0.3908 and 0.3508).</li></ul>",
+        "keywords": [
+          "quantum LDPC codes",
+          "non-abelian group algebra",
+          "two-block group-algebra codes",
+          "BP+OSD decoding",
+          "peaked circuits",
+          "classical hardness pre-gate",
+          "Quantinuum Helios",
+          "QCCD"
+        ],
+        "language": "eng",
+        "license": "cc-by-4.0",
+        "publication_date": "2026-11-23",
+        "publication_type": "preprint",
+        "related_identifiers": [
+          {
+            "identifier": "https://github.com/quantum-osiris/osiris-cli",
+            "relation": "isSupplementedBy",
+            "scheme": "url"
+          }
+        ],
+        "title": "Left-Right Rank Duality in Non-Abelian Two-Block Group-Algebra Quantum LDPC Codes and a Three-Attack Classical-Hardness Pre-Gate for Looped Non-Mirror Peaked Circuits",
+        "upload_type": "publication",
+        "version": "1.0.0"
+      },
+      "paper_dir": "papers/nonabelian_2bga_and_adv1",
+      "paper_key": "nonabelian_2bga_and_adv1",
+      "pdf_compiled": false,
+      "sha256sums_check": {
+        "capsule_sha256": "2f3690f1fda83cefc7b2e1f362bfabd7ebd706a68e1e6f6f63f03e36bf60573f",
+        "passed": true,
+        "sha256sums_sha256": "10e7abea28bf19599a0af94f051c66ec2905d87cdbb3d7d6cb5013e2dd5d15bd",
+        "verified_count": 13
+      },
+      "sys024_check": {
+        "flagged_claims": [],
+        "passed": true,
+        "quarantined_constants": [],
+        "surfaces_checked": [
+          "raw_tex",
+          "generated_tex",
+          "expanded_tex",
+          "zenodo_metadata"
+        ]
+      },
+      "total_bytes": 276211,
+      "total_files": 14
+    },
+    "wp2_27q_debiased_ot_fez": {
+      "bundle_sha256": "850cf09e4f57d37dad6ab853b75a1a66fe055367a221daa36ee7f140800f2739",
+      "files": [
+        {
+          "required": true,
+          "sha256": "a440f6779436487b4f7409fe52555a90ef1fef3ac33669fae99ca6f26465301c",
+          "size_bytes": 30774,
+          "source_relpath": "papers/wp2_27q_debiased_ot_fez/wp2_27q_debiased_ot_fez.tex",
+          "upload_name": "wp2_27q_debiased_ot_fez.tex"
+        },
+        {
+          "required": true,
+          "sha256": "4ae4910c953fd617a7009df6f496935acd3ca0fb7f2232682e316acb94ee893b",
+          "size_bytes": 7782,
+          "source_relpath": "papers/wp2_27q_debiased_ot_fez/generated.tex",
+          "upload_name": "generated.tex"
+        },
+        {
+          "required": true,
+          "sha256": "12fbcfd53c2e3bdd86dfa87e082e6b595e51e746bc94f09f2cbb99e6b05ad042",
+          "size_bytes": 48835,
+          "source_relpath": "papers/wp2_27q_debiased_ot_fez/generate_wp2_paper_assets.py",
+          "upload_name": "generate_wp2_paper_assets.py"
+        },
+        {
+          "required": true,
+          "sha256": "72c46456b081eaad0172fe623dd3d4b3482ca6a3b8f8dae46d0938e921706032",
+          "size_bytes": 11657,
+          "source_relpath": "papers/wp2_27q_debiased_ot_fez/fig1_27q_fez_sparsity_collapse_vs_eq7.svg",
+          "upload_name": "fig1_27q_fez_sparsity_collapse_vs_eq7.svg"
+        },
+        {
+          "required": true,
+          "sha256": "751679599d2f18fb2c176b8643861d4e33008281173db0e8f3b14aa81be6ce48",
+          "size_bytes": 11098,
+          "source_relpath": "papers/wp2_27q_debiased_ot_fez/fig1_27q_fez_sparsity_collapse_vs_eq7.pdf",
+          "upload_name": "fig1_27q_fez_sparsity_collapse_vs_eq7.pdf"
+        },
+        {
+          "required": true,
+          "sha256": "ecb5befbe513eee3fabe9edcb6c32173a711bd1d801b5d6e96cf12c71d4e5aa1",
+          "size_bytes": 9303,
+          "source_relpath": "papers/wp2_27q_debiased_ot_fez/fig2_coherent_drift_calibration_and_heron_rescoring.svg",
+          "upload_name": "fig2_coherent_drift_calibration_and_heron_rescoring.svg"
+        },
+        {
+          "required": true,
+          "sha256": "acd9025aa96c5bb109c9691b61e5117c495b352769e076a7bbb73fff2b0b6415",
+          "size_bytes": 6768,
+          "source_relpath": "papers/wp2_27q_debiased_ot_fez/fig2_coherent_drift_calibration_and_heron_rescoring.pdf",
+          "upload_name": "fig2_coherent_drift_calibration_and_heron_rescoring.pdf"
+        },
+        {
+          "required": true,
+          "sha256": "07aad73b583cb5d69f7d10dda82e1d442ce7009847af202841e1515a2bd2761c",
+          "size_bytes": 3622,
+          "source_relpath": "papers/wp2_27q_debiased_ot_fez/reproducibility_capsule.json",
+          "upload_name": "reproducibility_capsule.json"
+        },
+        {
+          "required": true,
+          "sha256": "afcebb5e057b76f8bbf545b2f1b252032cff70d01888f9fc3c6c0c86c2b10b99",
+          "size_bytes": 2569,
+          "source_relpath": "papers/wp2_27q_debiased_ot_fez/SHA256SUMS.txt",
+          "upload_name": "SHA256SUMS.txt"
+        },
+        {
+          "required": true,
+          "sha256": "56a44572c8176a9e7c8f2b25ff3bf5a06438a4796ac37eda8f853b36a57d5165",
+          "size_bytes": 2559,
+          "source_relpath": "experiments/wp2_27q_fez/PRE_REGISTRATION.md",
+          "upload_name": "PRE_REGISTRATION.md"
+        },
+        {
+          "required": true,
+          "sha256": "99125bb296d639eba120633bc8066b2ba2b22c2a2322ea5112512eb9cd32be17",
+          "size_bytes": 29643,
+          "source_relpath": "experiments/wp2_27q_fez/stage_and_harvest_wp2_27q_fez.py",
+          "upload_name": "stage_and_harvest_wp2_27q_fez.py"
+        },
+        {
+          "required": true,
+          "sha256": "ac6a677eed4363d3abdb093fa05d1f029a9e81772eee1ff593e04b2108fa2a19",
+          "size_bytes": 12528,
+          "source_relpath": "experiments/wp2_27q_fez/physical_wp2_27q_fez_results.json",
+          "upload_name": "physical_wp2_27q_fez_results.json"
+        },
+        {
+          "required": true,
+          "sha256": "2b150d5b016e5821a0b30d934760c8b816251d17bd53c2990e87e0447b4be412",
+          "size_bytes": 368803,
+          "source_relpath": "experiments/wp2_27q_fez/physical_wp2_27q_fez_raw_counts.json.gz",
+          "upload_name": "physical_wp2_27q_fez_raw_counts.json.gz"
+        },
+        {
+          "required": true,
+          "sha256": "566406e47e55f37067ce29ae072a67e95db931ec307bf46fb7a3faa17bbcbe02",
+          "size_bytes": 2371692,
+          "source_relpath": "experiments/wp2_27q_fez/wp2_27q_fez_staged_circuits.qpy",
+          "upload_name": "wp2_27q_fez_staged_circuits.qpy"
+        },
+        {
+          "required": true,
+          "sha256": "1fbab5208198ce3722f9f032ecb38d028a0b9fe30c7f75203a13178044b98793",
+          "size_bytes": 14011,
+          "source_relpath": "experiments/wp2_27q_fez/wp2_27q_fez_staging_manifest.json",
+          "upload_name": "wp2_27q_fez_staging_manifest.json"
+        },
+        {
+          "required": true,
+          "sha256": "21c1afebd35268dcc267e5c6c4aae03d04d9b0edafff67595c50b06dabc2edfe",
+          "size_bytes": 499,
+          "source_relpath": "experiments/wp2_27q_fez/wp2_27q_fez_calibration_snapshot.json",
+          "upload_name": "wp2_27q_fez_calibration_snapshot.json"
+        },
+        {
+          "required": true,
+          "sha256": "51e0260401ef987adda9305bd1c45bee7de859aab1c6a70fdc8f13eb0eb23a9c",
+          "size_bytes": 488,
+          "source_relpath": "experiments/wp2_27q_fez/wp2_27q_fez_submitted_job.json",
+          "upload_name": "wp2_27q_fez_submitted_job.json"
+        },
+        {
+          "required": true,
+          "sha256": "aea0b9c5313df3c8cf835c61e97d47cea01d9ed886f724a4ca12c5fe331f3214",
+          "size_bytes": 44104,
+          "source_relpath": "experiments/wp2_debiased_sinkhorn/debiased_ot.py",
+          "upload_name": "debiased_ot.py"
+        },
+        {
+          "required": true,
+          "sha256": "83a64c01188276d20c315aef4f78f2f0a0662990c51c50d5a8e54906d235226c",
+          "size_bytes": 66377,
+          "source_relpath": "experiments/wp2_debiased_sinkhorn/artifacts/wp2_debiased_ot_report.json",
+          "upload_name": "wp2_debiased_ot_report.json"
+        },
+        {
+          "required": true,
+          "sha256": "099bdd32d84294baa9e5164ace343be7c8dabd4ea8466833159b5541b86402e7",
+          "size_bytes": 22682,
+          "source_relpath": "experiments/osiris_advantage_marrakesh/dau0q3qhcrkc73durtgg.counts.json",
+          "upload_name": "dau0q3qhcrkc73durtgg.counts.json"
+        },
+        {
+          "required": true,
+          "sha256": "cdae697c364e2aad2085cc3585039d079baf4b3d1bb619dcb6178647b75646c1",
+          "size_bytes": 444821,
+          "source_relpath": "experiments/qec001/physical_qec001_fez_raw_counts.json.gz",
+          "upload_name": "physical_qec001_fez_raw_counts.json.gz"
+        }
+      ],
+      "metadata": {
+        "access_right": "open",
+        "creators": [
+          {
+            "affiliation": "Agile Defense Systems LLC",
+            "name": "Davis, Devin Phillip"
+          }
+        ],
+        "description": "<p>Preregistered 27-qubit stability benchmark on the IBM Heron r2 processor <code>ibm_fez</code> (protocol <code>OSIRIS-WP2-27Q-FEZ</code>, job <code>dc1tqvinj2vs73dfrts0</code>; 48 ISA circuits, 98,304 raw shots, 28 s QPU, constant 52-CZ / 378-SX heavy-hex tree with zero routing SWAPs) paired with multi-width SIMULATED hypercube benchmarks up to 96 qubits and hardware re-scoring of archived Heron r2 datasets.</p><ul><li>Resolves both the refuted legacy Eq. (7) marginal-product self-cost artifact (0.50918 at Q = 27) and the Weed&ndash;Bach O(S^{-1/Q}) finite-shot sparsity artifact of raw plug-in Kantorovich optimal transport via exact multivariate-hypergeometric sample-size-matched two-by-two split-sample Kantorovich and Sinkhorn (epsilon = 0.05) U-statistics.</li><li>Across theta in {2.118, 2.618, 3.118} rad on <code>ibm_fez</code>, matched split-sample Sinkhorn collapses inter-block A/A drift to &le; 0.000076 (&lt; 0.005 threshold, H1 supported), confirms no special stability advantage at the golden-ratio angle theta* = 2.618 rad (H2 supported), and detects controlled coherent perturbations Delta-theta = 0.45 rad monotonically at 13.76 sigma (H3 supported).</li><li>On SIMULATED Uniform({0,1}^96), raw plug-in LP suffers a +855.48 sigma false-drift artifact whereas matched split-sample Sinkhorn yields z = -0.34 sigma; archived <code>ibm_marrakesh</code> (job <code>dau0q3qhcrkc73durtgg</code>) and 49-bit <code>OSIRIS-QEC-001</code> (job <code>dbtl2vb2kf8s73c9a0d0</code>) counts corroborate clean separation of hardware drift from sampling sparsity.</li></ul>",
+        "keywords": [
+          "optimal transport",
+          "Sinkhorn divergence",
+          "finite-sample debiasing",
+          "quantum benchmarking",
+          "IBM Heron r2",
+          "ibm_fez",
+          "preregistration",
+          "OSIRIS-WP2-27Q-FEZ"
+        ],
+        "language": "eng",
+        "license": "cc-by-4.0",
+        "publication_date": "2026-11-23",
+        "publication_type": "preprint",
+        "related_identifiers": [
+          {
+            "identifier": "https://github.com/quantum-osiris/osiris-cli",
+            "relation": "isSupplementedBy",
+            "scheme": "url"
+          },
+          {
+            "identifier": "10.5281/zenodo.19864030",
+            "relation": "continues",
+            "scheme": "doi"
+          },
+          {
+            "identifier": "10.5281/zenodo.23967473",
+            "relation": "references",
+            "scheme": "doi"
+          }
+        ],
+        "title": "Eliminating Finite-Shot Hypercube Sparsity Bias in 27-Qubit Quantum Processor Stability Benchmarks via Split-Sample-Debiased Optimal Transport",
+        "upload_type": "publication",
+        "version": "1.0.0"
+      },
+      "paper_dir": "papers/wp2_27q_debiased_ot_fez",
+      "paper_key": "wp2_27q_debiased_ot_fez",
+      "pdf_compiled": false,
+      "sha256sums_check": {
+        "capsule_sha256": "07aad73b583cb5d69f7d10dda82e1d442ce7009847af202841e1515a2bd2761c",
+        "passed": true,
+        "sha256sums_sha256": "afcebb5e057b76f8bbf545b2f1b252032cff70d01888f9fc3c6c0c86c2b10b99",
+        "verified_count": 20
+      },
+      "sys024_check": {
+        "flagged_claims": [],
+        "passed": true,
+        "quarantined_constants": [],
+        "surfaces_checked": [
+          "raw_tex",
+          "generated_tex",
+          "expanded_tex",
+          "zenodo_metadata"
+        ]
+      },
+      "total_bytes": 3510615,
+      "total_files": 21
+    },
+    "xtop006_non_clifford_kraus_fez": {
+      "bundle_sha256": "cc0d70df188f472b26694adfb37f294ee1a1551984c2dd4e2a8d92eb164c9332",
+      "files": [
+        {
+          "required": true,
+          "sha256": "de7439cf4196fd21e4eac3bf509fd4f7325dd2e1d2dee3c1da3f9588786c3799",
+          "size_bytes": 9076,
+          "source_relpath": "papers/xtop006_non_clifford_kraus_fez/xtop006_non_clifford_kraus_fez.tex",
+          "upload_name": "xtop006_non_clifford_kraus_fez.tex"
+        },
+        {
+          "required": true,
+          "sha256": "446f68df6c019e889f8feb80c12f8e13a4f1ee13b77b3b88b9d7f46b3b5e8378",
+          "size_bytes": 3215,
+          "source_relpath": "papers/xtop006_non_clifford_kraus_fez/generated.tex",
+          "upload_name": "generated.tex"
+        },
+        {
+          "required": true,
+          "sha256": "5562a77edf2f170ce8bd3a3f8ca8fd04a8cb9660e6c93399f7058f32a6712db6",
+          "size_bytes": 16271,
+          "source_relpath": "papers/xtop006_non_clifford_kraus_fez/generate_xtop006_paper_assets.py",
+          "upload_name": "generate_xtop006_paper_assets.py"
+        },
+        {
+          "required": true,
+          "sha256": "304bed7ab69b60fc697acdeadb9020a82757d90f4dc5ff6a74f8c6e194253fab",
+          "size_bytes": 4869,
+          "source_relpath": "papers/xtop006_non_clifford_kraus_fez/fig1_xtop006_fez_kraus_trajectory.svg",
+          "upload_name": "fig1_xtop006_fez_kraus_trajectory.svg"
+        },
+        {
+          "required": true,
+          "sha256": "be47c5194d3e54066dca99343a4233045f0edceaaf166186e70339f3baea7dce",
+          "size_bytes": 2586,
+          "source_relpath": "papers/xtop006_non_clifford_kraus_fez/fig2_xtop006b_fez_4twirl_discriminator.svg",
+          "upload_name": "fig2_xtop006b_fez_4twirl_discriminator.svg"
+        },
+        {
+          "required": true,
+          "sha256": "1b33fc8a98c5fff72281f22fc0cc131bca971384fcd611acfe81c554a8b19ccc",
+          "size_bytes": 747,
+          "source_relpath": "papers/xtop006_non_clifford_kraus_fez/reproducibility_capsule.json",
+          "upload_name": "reproducibility_capsule.json"
+        },
+        {
+          "required": true,
+          "sha256": "1d639e31f16af51b9cd2c8696546915551372e5e0812562594290649c26eb097",
+          "size_bytes": 588,
+          "source_relpath": "papers/xtop006_non_clifford_kraus_fez/SHA256SUMS.txt",
+          "upload_name": "SHA256SUMS.txt"
+        },
+        {
+          "required": true,
+          "sha256": "a7eb21315731b93cd02fffe492b699ed800971a90933df896d80909efd438fe9",
+          "size_bytes": 3069,
+          "source_relpath": "experiments/xtop006_fez/PRE_REGISTRATION.md",
+          "upload_name": "xtop006_fez_PRE_REGISTRATION.md"
+        },
+        {
+          "required": true,
+          "sha256": "09b8bcea9d575b9271f1242e6d640c8cd95be02fd2f9ca98471356d26eec8647",
+          "size_bytes": 35839,
+          "source_relpath": "experiments/xtop006_fez/stage_and_harvest_xtop006_fez.py",
+          "upload_name": "stage_and_harvest_xtop006_fez.py"
+        },
+        {
+          "required": true,
+          "sha256": "2ec221c1598f27c6bcc119c92fb4e07ba3046ecacd149dab67295da9ab36fbf1",
+          "size_bytes": 6172,
+          "source_relpath": "experiments/xtop006_fez/physical_xtop006_fez_results.json",
+          "upload_name": "physical_xtop006_fez_results.json"
+        },
+        {
+          "required": true,
+          "sha256": "1016ca5b66abcfb8714c5c8479ea05285d1b32400476e75538fa7dc5dd1c604e",
+          "size_bytes": 4098,
+          "source_relpath": "experiments/xtop006_fez/physical_xtop006_fez_raw_counts.json.gz",
+          "upload_name": "physical_xtop006_fez_raw_counts.json.gz"
+        },
+        {
+          "required": true,
+          "sha256": "fb2d6e4701178e885596c369a58f8d30fa477a27361c5d0f340e7f3374ce20be",
+          "size_bytes": 77876,
+          "source_relpath": "experiments/xtop006_fez/xtop006_fez_staging_manifest.json",
+          "upload_name": "xtop006_fez_staging_manifest.json"
+        },
+        {
+          "required": true,
+          "sha256": "46b5ddf0a1e8f1a1f47aee25cc5ae2f07a650d3f6755a2c19b767eff72f3ebce",
+          "size_bytes": 1136,
+          "source_relpath": "experiments/xtop006_fez/xtop006_fez_calibration_snapshot.json",
+          "upload_name": "xtop006_fez_calibration_snapshot.json"
+        },
+        {
+          "required": true,
+          "sha256": "38fc606bc4490f97f0d3eab34f14b0dc2299ce1b0ae3cd3fb76c96464d33147e",
+          "size_bytes": 489,
+          "source_relpath": "experiments/xtop006_fez/xtop006_fez_submitted_job.json",
+          "upload_name": "xtop006_fez_submitted_job.json"
+        },
+        {
+          "required": true,
+          "sha256": "33159c4851347a4977cf4e18369e79cf62acf24d559e00628b49f76df6e7dc10",
+          "size_bytes": 1969,
+          "source_relpath": "experiments/xtop006b_fez/PRE_REGISTRATION.md",
+          "upload_name": "xtop006b_fez_PRE_REGISTRATION.md"
+        },
+        {
+          "required": true,
+          "sha256": "79caad86430939970dfdcf028781eb9563283c64dbbf23e7216f85f7cc97eb59",
+          "size_bytes": 17762,
+          "source_relpath": "experiments/xtop006b_fez/stage_and_harvest_xtop006b_fez.py",
+          "upload_name": "stage_and_harvest_xtop006b_fez.py"
+        },
+        {
+          "required": true,
+          "sha256": "5e74a32d7c1dad84a29508d13c837861e1bb21786c6bd718467c64ae69b00311",
+          "size_bytes": 2850,
+          "source_relpath": "experiments/xtop006b_fez/physical_xtop006b_fez_results.json",
+          "upload_name": "physical_xtop006b_fez_results.json"
+        },
+        {
+          "required": true,
+          "sha256": "530cecbbc38a93c1290c28d47632ede5f31726c146ade9325f8c0b413a9b4ef4",
+          "size_bytes": 4130,
+          "source_relpath": "experiments/xtop006b_fez/physical_xtop006b_fez_raw_counts.json.gz",
+          "upload_name": "physical_xtop006b_fez_raw_counts.json.gz"
+        },
+        {
+          "required": true,
+          "sha256": "7dd75ef9c187b05e9bd7ac9052302d423d51f52185651f53890bbea2161b46d4",
+          "size_bytes": 94148,
+          "source_relpath": "experiments/xtop006b_fez/xtop006b_fez_staging_manifest.json",
+          "upload_name": "xtop006b_fez_staging_manifest.json"
+        },
+        {
+          "required": true,
+          "sha256": "bac339291d2a6540389b0786882e8d6059d320ac05ec10bc7248f187da36b97f",
+          "size_bytes": 209,
+          "source_relpath": "experiments/xtop006b_fez/xtop006b_fez_calibration_snapshot.json",
+          "upload_name": "xtop006b_fez_calibration_snapshot.json"
+        },
+        {
+          "required": true,
+          "sha256": "af104eb48ee996a8e0d5d556923d664f02c50677fd40b1dfaa019c97f7430a52",
+          "size_bytes": 488,
+          "source_relpath": "experiments/xtop006b_fez/xtop006b_fez_submitted_job.json",
+          "upload_name": "xtop006b_fez_submitted_job.json"
+        },
+        {
+          "required": true,
+          "sha256": "1af448f37e4f0637da84408f5ef5c36094646731b3c81ca16904c0756dda3858",
+          "size_bytes": 38682,
+          "source_relpath": "xtop006/artifacts/xtop006_h2_manifest.json",
+          "upload_name": "xtop006_h2_manifest.json"
+        },
+        {
+          "required": true,
+          "sha256": "ce8f2d1f51c970862763ef79a651b5c412fa5900ebed7e9ebddfd50851f95d75",
+          "size_bytes": 366181,
+          "source_relpath": "xtop006/artifacts/xtop006_h2_1_compiled_circuits.json",
+          "upload_name": "xtop006_h2_1_compiled_circuits.json"
+        }
+      ],
+      "metadata": {
+        "access_right": "open",
+        "creators": [
+          {
+            "affiliation": "Agile Defense Systems LLC",
+            "name": "Davis, Devin Phillip"
+          }
+        ],
+        "description": "<p>Hardware-attested Hayden&ndash;Preskill conditional recovery experiment on a seven-transmon heavy-hex T-junction of the 156-qubit IBM Heron r2 processor <code>ibm_fez</code> (jobs <code>dc1tqaanj2vs73dfrt40</code> and <code>dc23ouqnj2vs73dg3bog</code>; 184,320 total shots, 54 s QPU) measuring the exact 16-operator remnant Kraus trajectory for a continuous non-Clifford three-qubit scrambler <code>U(theta)</code>.</p><ul><li>A universal two-sqrt(X) Euler synthesis locks an identical 28-CZ, 126-SX native gate skeleton with zero routing SWAPs across every angle theta, reducing continuous scrambling sweeps to pure virtual-Z frame updates.</li><li>Six-state conditional recovery rises monotonically from F_6(0 | Phi+) = 0.4964 (P_Phi+ = 0.8913) through peak stabilizer magic theta = pi/4 (F_6 = 0.5998, P_Phi+ = 0.5198) to F_6(pi/2 | Phi+) = 0.8568 +/- 0.0043 raw (0.8771 readout-mitigated, P_Phi+ = 0.2454), exceeding theta = 0 by +0.3602 (t = 62.39, p = 4.54e-6).</li><li>Confirmatory job <code>dc23ouqnj2vs73dg3bog</code> executes all four non-trivial mid-scrambler Pauli-Z twirls inside every randomized block, separating coherent scrambling from dephasing on the identical 28-CZ pulse schedule by +0.1481 +/- 0.0101 (t = 14.61) at 3pi/8 and +0.2283 +/- 0.0149 (t = 15.28, p_Holm = 6.09e-4) at pi/2.</li><li>Includes an offline-compiled [[4,2,2]] codespace companion bundle staged for Quantinuum H2-1 (2,330 HQC).</li></ul>",
+        "keywords": [
+          "quantum information scrambling",
+          "Hayden-Preskill protocol",
+          "Yoshida-Kitaev decoding",
+          "non-Clifford circuits",
+          "Kraus channel",
+          "IBM Heron r2",
+          "ibm_fez",
+          "preregistration",
+          "OSIRIS-XTOP-006"
+        ],
+        "language": "eng",
+        "license": "cc-by-4.0",
+        "publication_date": "2026-11-23",
+        "publication_type": "preprint",
+        "related_identifiers": [
+          {
+            "identifier": "https://github.com/quantum-osiris/osiris-cli",
+            "relation": "isSupplementedBy",
+            "scheme": "url"
+          },
+          {
+            "identifier": "10.5281/zenodo.24425416",
+            "relation": "continues",
+            "scheme": "doi"
+          }
+        ],
+        "title": "Continuous-Angle Non-Clifford Hayden-Preskill Scrambling Trajectory and Stratified Decoherence Discrimination on a 156-Qubit Superconducting Processor (OSIRIS-XTOP-006)",
+        "upload_type": "publication",
+        "version": "1.0.0"
+      },
+      "paper_dir": "papers/xtop006_non_clifford_kraus_fez",
+      "paper_key": "xtop006_non_clifford_kraus_fez",
+      "pdf_compiled": false,
+      "sha256sums_check": {
+        "capsule_sha256": "1b33fc8a98c5fff72281f22fc0cc131bca971384fcd611acfe81c554a8b19ccc",
+        "passed": true,
+        "sha256sums_sha256": "1d639e31f16af51b9cd2c8696546915551372e5e0812562594290649c26eb097",
+        "verified_count": 6
+      },
+      "sys024_check": {
+        "flagged_claims": [],
+        "passed": true,
+        "quarantined_constants": [],
+        "surfaces_checked": [
+          "raw_tex",
+          "generated_tex",
+          "expanded_tex",
+          "zenodo_metadata"
+        ]
+      },
+      "total_bytes": 692450,
+      "total_files": 23
+    }
+  },
+  "publication_date": "2026-11-23",
+  "schema": "osiris.zenodo_staging_manifest/1"
+}
