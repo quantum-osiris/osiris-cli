@@ -1,0 +1,444 @@
+%PDF-1.4
+%‚„œ”
+1 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>
+endobj
+2 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica-Bold >>
+endobj
+3 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Courier >>
+endobj
+4 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Times-Roman >>
+endobj
+5 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Times-Bold >>
+endobj
+6 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Times-Italic >>
+endobj
+7 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Courier-Bold >>
+endobj
+8 0 obj
+<< /Type /Pages /Kids [10 0 R 12 0 R 14 0 R 16 0 R] /Count 4 >>
+endobj
+9 0 obj
+<< /Length 9243 >>
+stream
+1 1 1 rg
+0 0 612.00 792.00 re f
+q 0.60 w 0.973 0.980 0.988 rg 0.886 0.910 0.941 RG 48.00 743.00 516.00 16.00 re B Q
+BT /F2 7.4 Tf 0.200 0.255 0.333 rg 55.00 748.00 Td (OSIRIS ARCHIVAL PREPRINT  |  OSIRIS-XTOP-006-FEZ-LETTER) Tj ET
+q 0.60 w 0.925 0.992 0.961 rg 0.431 0.906 0.718 RG 361.16 745.00 199.84 12.00 re B Q
+BT /F2 7.2 Tf 0.024 0.373 0.275 rg 367.16 748.20 Td (TIER: HARDWARE_ATTESTED  |  November 23, 2026) Tj ET
+BT /F5 13.4 Tf 0.059 0.090 0.165 rg 48.00 728.00 Td (Continuous-Angle Non-Clifford Hayden-Preskill Scrambling Trajectory and) Tj ET
+BT /F5 13.4 Tf 0.059 0.090 0.165 rg 48.00 711.20 Td (Stratified Decoherence Discrimination on a 156-Qubit Superconducting Processor) Tj ET
+BT /F5 10.0 Tf 0.118 0.161 0.231 rg 48.00 692.40 Td (Devin Phillip Davis) Tj ET
+BT /F6 9.0 Tf 0.278 0.333 0.412 rg 48.00 679.90 Td (Agile Defense Systems LLC, Lexington, Kentucky, USA  |  November 23, 2026) Tj ET
+q 0.70 w 0.973 0.980 0.988 rg 0.796 0.835 0.882 RG 48.00 620.30 516.00 49.60 re B Q
+q 0.114 0.306 0.847 rg 48.00 620.30 2.80 49.60 re f Q
+BT /F2 7.4 Tf 0.118 0.161 0.231 rg 57.00 659.90 Td (Primary Hardware Jobs: ) Tj ET
+BT /F3 7.2 Tf 0.200 0.255 0.333 rg 141.32 659.90 Td (ibm_fez: dc1tqaanj2vs73dfrt40 \(118,784 shots, 34s\) & dc23ouqnj2vs73dg3bog \(65,536 shots, 20s\)) Tj ET
+BT /F2 7.4 Tf 0.118 0.161 0.231 rg 57.00 649.50 Td (Pinned 7Q T-Junction: ) Tj ET
+BT /F3 7.2 Tf 0.200 0.255 0.333 rg 135.65 649.50 Td ([q99, q115, q95, q93, q94, q92, q79] | Constant Skeleton: 28 CZ, 126 sqrt\(X\), 0 routing SWAPs) Tj ET
+BT /F2 7.4 Tf 0.118 0.161 0.231 rg 57.00 639.10 Td (Write-Ahead QPY SHA-256: ) Tj ET
+BT /F3 7.2 Tf 0.200 0.255 0.333 rg 156.52 639.10 Td (Job A: d22bece14a187bd2f348f25a... | Job B: 4e127f993f8040922e21222a...) Tj ET
+BT /F2 7.4 Tf 0.118 0.161 0.231 rg 57.00 628.70 Td (RFC 8785 Capsule SHA-256: ) Tj ET
+BT /F3 7.2 Tf 0.200 0.255 0.333 rg 161.03 628.70 Td (73915b7934d80678b50e19269026565c99681d3c5408c249859db1bb840252bc) Tj ET
+q 0.60 w 0.988 0.988 0.992 rg 0.796 0.835 0.882 RG 48.00 425.10 516.00 185.20 re B Q
+BT /F2 8.4 Tf 0.059 0.090 0.165 rg 58.00 598.80 Td (ABSTRACT) Tj ET
+BT /F4 9.0 Tf 0.122 0.161 0.216 rg 58.00 587.30 Td (Out-of-time-order correlator decay in noisy quantum circuits is notoriously confounded with incoherent depolarization and) Tj ET
+BT /F4 9.0 Tf 0.122 0.161 0.216 rg 58.00 575.50 Td (transpilation-depth variation across circuit parameters. Following the conditional Bell-postselected Hayden-Preskill recovery) Tj ET
+BT /F4 9.0 Tf 0.122 0.161 0.216 rg 58.00 563.70 Td (formalism of Yoshida-Kitaev and Landsman-Figgatt, we derive the exact 16-operator remnant Kraus channel E_{Phi+}\(rho_in\) =) Tj ET
+BT /F4 9.0 Tf 0.122 0.161 0.216 rg 58.00 551.90 Td (sum_r M_r\(theta\) rho_in M_r^+\(theta\) for a continuous non-Clifford three-qubit scrambler U\(theta\) satisfying P_{Phi+}\(theta\)) Tj ET
+BT /F4 9.0 Tf 0.122 0.161 0.216 rg 58.00 540.10 Td (= \(1 - 0.5 sin^2 theta\)^2 and P_{Phi+}\(theta\) F_ent\(theta | Phi+\) = 1/4. Using a universal two-sqrt\(X\) single-qubit synthesis) Tj ET
+BT /F4 9.0 Tf 0.122 0.161 0.216 rg 58.00 528.30 Td (identity that locks an identical 28-CZ, 126-sqrt\(X\) pulse schedule across every angle theta on a seven-transmon heavy-hex) Tj ET
+BT /F4 9.0 Tf 0.122 0.161 0.216 rg 58.00 516.50 Td (T-junction of ibm_fez \(184,320 total shots across jobs dc1tqaanj2vs73dfrt40 and dc23ouqnj2vs73dg3bog, 54 s QPU\), we) Tj ET
+BT /F4 9.0 Tf 0.122 0.161 0.216 rg 58.00 504.70 Td (measure a monotonic recovery climb from F_6\(0 | Phi+\) = 0.4964 \(P_{Phi+} = 0.8913\) through the peak stabilizer-magic point) Tj ET
+BT /F4 9.0 Tf 0.122 0.161 0.216 rg 58.00 492.90 Td (theta = pi/4 \(F_6 = 0.5998, P_{Phi+} = 0.5198\) to F_6\(pi/2 | Phi+\) = 0.8568 +/- 0.0043 \(0.8771 readout-mitigated, P_{Phi+} =) Tj ET
+BT /F4 9.0 Tf 0.122 0.161 0.216 rg 58.00 481.10 Td (0.2454\), exceeding F_6\(0 | Phi+\) by +0.3602 \(t = 62.39, p = 4.54e-06\) and surpassing the 2/3 classical teleportation ceiling at a) Tj ET
+BT /F4 9.0 Tf 0.122 0.161 0.216 rg 58.00 469.30 Td (95% lower confidence limit of 0.8465. A preregistered confirmatory run \(dc23ouqnj2vs73dg3bog\) executing all four) Tj ET
+BT /F4 9.0 Tf 0.122 0.161 0.216 rg 58.00 457.50 Td (mid-scrambler Pauli-Z dephasing twirls inside every randomized block separates coherent scrambling from decoherence on the) Tj ET
+BT /F4 9.0 Tf 0.122 0.161 0.216 rg 58.00 445.70 Td (identical 28-CZ skeleton by +0.1481 +/- 0.0101 \(t = 14.61\) at theta = 3pi/8 and +0.2283 +/- 0.0149 \(t = 15.28, p_Holm =) Tj ET
+BT /F4 9.0 Tf 0.122 0.161 0.216 rg 58.00 433.90 Td (6.09e-04\) at theta = pi/2.) Tj ET
+q 0.80 w 0.925 0.992 0.961 rg 0.655 0.953 0.816 RG 48.00 320.20 516.00 92.90 re B Q
+q 0.016 0.471 0.341 rg 48.00 320.20 3.20 92.90 re f Q
+BT /F2 8.8 Tf 0.024 0.306 0.231 rg 58.00 402.30 Td (PREREGISTERED HYPOTHESIS VERDICTS \(HARDWARE_ATTESTED ON IBM_FEZ\)) Tj ET
+q 0.016 0.471 0.341 rg 59.00 391.40 2.80 2.80 re f Q
+BT /F4 8.8 Tf 0.122 0.161 0.216 rg 67.00 389.80 Td (H1 \(Continuous Non-Clifford Kraus Recovery Climb\) -- SUPPORTED: Raw F_6\(theta | Phi+\) climbs strictly monotonically) Tj ET
+BT /F4 8.8 Tf 0.122 0.161 0.216 rg 67.00 378.40 Td (across all 5 angles from 0.4964 \(theta = 0\) to 0.8568 +/- 0.0043 \(theta = pi/2\), a +0.3602 shift \(t = 62.39, p = 4.54e-06, 95% LCL) Tj ET
+BT /F4 8.8 Tf 0.122 0.161 0.216 rg 67.00 367.00 Td (= 0.8465 > 2/3\).) Tj ET
+q 0.016 0.471 0.341 rg 59.00 355.20 2.80 2.80 re f Q
+BT /F4 8.8 Tf 0.122 0.161 0.216 rg 67.00 353.60 Td (H2 \(Stratified Intra-Block 4-Twirl Scrambling vs. Decoherence\) -- SUPPORTED: Executing all 4 mid-scrambler Pauli-Z twirls) Tj ET
+BT /F4 8.8 Tf 0.122 0.161 0.216 rg 67.00 342.20 Td (inside every randomized block \(dc23ouqnj2vs73dg3bog\) isolates coherent operator spreading above dephasing by +0.1481 \(t =) Tj ET
+BT /F4 8.8 Tf 0.122 0.161 0.216 rg 67.00 330.80 Td (14.61\) at theta = 3pi/8 and +0.2283 \(t = 15.28, p_Holm = 6.09e-04\) at theta = pi/2.) Tj ET
+BT /F2 10.4 Tf 0.059 0.090 0.165 rg 48.00 307.20 Td (1. Introduction) Tj ET
+q [] 0 d 0.70 w 0.796 0.835 0.882 RG 48.00 302.20 m 564.00 302.20 l S Q
+q [] 0 d 1.40 w 0.114 0.306 0.847 RG 48.00 302.20 m 106.00 302.20 l S Q
+BT /F4 9.4 Tf 0.067 0.094 0.153 rg 48.00 291.50 Td (Distinguishing genuine unitary operator growth from Markovian or non-Markovian decoherence is a central methodological) Tj ET
+BT /F4 9.4 Tf 0.067 0.094 0.153 rg 48.00 279.00 Td (requirement of quantum information scrambling experiments [1, 2]. Standard out-of-time-order correlators decay both when) Tj ET
+BT /F4 9.4 Tf 0.067 0.094 0.153 rg 48.00 266.50 Td (local Pauli operators spread into high-weight strings and when single-qubit or two-qubit noise damps expectation values.) Tj ET
+BT /F4 9.4 Tf 0.067 0.094 0.153 rg 48.00 254.00 Td (Verified teleportation via the Yoshida-Kitaev decoding protocol resolves this ambiguity in principle by converting operator) Tj ET
+BT /F4 9.4 Tf 0.067 0.094 0.153 rg 48.00 241.50 Td (spreading into a positive recovery shift on Bob's output wire conditioned on projecting a single Einstein-Podolsky-Rosen pair) Tj ET
+BT /F4 9.4 Tf 0.067 0.094 0.153 rg 48.00 229.00 Td (onto |Phi+>.) Tj ET
+BT /F4 9.4 Tf 0.067 0.094 0.153 rg 48.00 211.50 Td (Two experimental confounds nevertheless arise when sweeping a continuous non-Clifford scrambling family U\(theta\) on) Tj ET
+BT /F4 9.4 Tf 0.067 0.094 0.153 rg 48.00 199.00 Td (superconducting processors: \(i\) standard transpilers collapse special Clifford angles \(theta = 0, pi/2\) to shorter two-qubit gate) Tj ET
+BT /F4 9.4 Tf 0.067 0.094 0.153 rg 48.00 186.50 Td (counts than generic non-Clifford angles \(theta = pi/8, pi/4, 3pi/8\), coupling scrambling angle to T1/T2 idle decay, and \(ii\)) Tj ET
+BT /F4 9.4 Tf 0.067 0.094 0.153 rg 48.00 174.00 Td (un-stratified twirl controls that assign distinct Pauli operators across temporal blocks mix deterministic twirl-to-twirl) Tj ET
+BT /F4 9.4 Tf 0.067 0.094 0.153 rg 48.00 161.50 Td (dispersion into block standard errors. Here we eliminate both confounds on ibm_fez.) Tj ET
+BT /F2 10.4 Tf 0.059 0.090 0.165 rg 48.00 139.00 Td (2. Analytical Kraus Trajectory and Constant-Skeleton Compilation) Tj ET
+q [] 0 d 0.70 w 0.796 0.835 0.882 RG 48.00 134.00 m 564.00 134.00 l S Q
+q [] 0 d 1.40 w 0.114 0.306 0.847 RG 48.00 134.00 m 106.00 134.00 l S Q
+BT /F4 9.4 Tf 0.067 0.094 0.153 rg 48.00 123.30 Td (Consider the seven-qubit register \(q0, q1, q2, q3, q4, q5, q6\) initialized with Alice's input rho_in on q0 and three Bell pairs on) Tj ET
+BT /F4 9.4 Tf 0.067 0.094 0.153 rg 48.00 110.80 Td (\(q1, q5\), \(q2, q4\), and \(q3, q6\). Applying U\(theta\) to \(q0, q1, q2\) and U*\(theta\) = U\(-theta\) to \(q3, q5, q4\) followed by |Phi+>) Tj ET
+BT /F4 9.4 Tf 0.067 0.094 0.153 rg 48.00 98.30 Td (projection on \(q2, q4\) induces sixteen 2x2 remnant Kraus operators indexed by the four unmeasured remnant wires r = \(i, j, m,) Tj ET
+BT /F4 9.4 Tf 0.067 0.094 0.153 rg 48.00 85.80 Td (n\) with output wire x = q6:) Tj ET
+q [] 0 d 0.60 w 0.796 0.835 0.882 RG 48.00 42.00 m 564.00 42.00 l S Q
+BT /F3 7.0 Tf 0.392 0.455 0.545 rg 48.00 29.00 Td (ibm_fez Jobs dc1tqaanj2vs73dfrt40 & dc23ouqnj2vs73dg3bog  |  RFC8785 Capsule: 73915b7934d80678...) Tj ET
+BT /F2 7.6 Tf 0.200 0.255 0.333 rg 523.30 29.00 Td (Page 1 of 4) Tj ET
+endstream
+endobj
+10 0 obj
+<< /Type /Page /Parent 8 0 R /MediaBox [0 0 612.00 792.00] /Resources << /Font << /F1 1 0 R /F2 2 0 R /F3 3 0 R /F4 4 0 R /F5 5 0 R /F6 6 0 R /F7 7 0 R >> >> /Contents 9 0 R >>
+endobj
+11 0 obj
+<< /Length 16353 >>
+stream
+1 1 1 rg
+0 0 612.00 792.00 re f
+q 0.50 w 0.973 0.980 0.988 rg 0.886 0.910 0.941 RG 62.00 720.80 488.00 20.20 re B Q
+BT /F3 8.2 Tf 0.059 0.090 0.165 rg 87.06 730.50 Td (\(M_r\(theta\)\)_{xa} = \(1/4\) * sum_{b,c,k in {0,1}} U_{ijk,abc}\(theta\) * U*_{nmk,xbc}\(theta\)) Tj ET
+BT /F4 8.6 Tf 0.278 0.333 0.412 rg 533.72 730.50 Td (\(1\)) Tj ET
+BT /F4 9.4 Tf 0.067 0.094 0.153 rg 48.00 711.80 Td (Defining the tunable two-qubit entangler G_{c,t}\(theta\) = exp\(i*theta/2\) Rz\(theta\)_c Rx\(theta\)_t CZ_{c,t} Rx\(-theta\)_t) Tj ET
+BT /F4 9.4 Tf 0.067 0.094 0.153 rg 48.00 699.30 Td (CZ_{c,t} and setting U\(theta\) = G_{0,2}\(theta\) G_{0,1}\(theta\) H^\(x3\) G_{0,2}\(theta\) G_{0,1}\(theta\) H^\(x3\) yields the exact) Tj ET
+BT /F4 9.4 Tf 0.067 0.094 0.153 rg 48.00 686.80 Td (closed-form trajectory:) Tj ET
+q 0.50 w 0.973 0.980 0.988 rg 0.886 0.910 0.941 RG 62.00 639.90 488.00 32.40 re B Q
+BT /F3 8.2 Tf 0.059 0.090 0.165 rg 60.00 661.80 Td (P_{Phi+}\(theta\) = \(1 - 0.5 * sin^2\(theta\)\)^2,    F_6\(theta | Phi+\) = 1/3 + 1 / \(6 * P_{Phi+}\(theta\)\)) Tj ET
+BT /F3 8.2 Tf 0.059 0.090 0.165 rg 74.76 649.60 Td (Branching Invariant:  P_{Phi+}\(theta\) * F_ent\(theta | Phi+\) = 1/4   for all theta in [0, pi/2]) Tj ET
+BT /F4 8.6 Tf 0.278 0.333 0.412 rg 533.72 649.60 Td (\(2\)) Tj ET
+BT /F4 9.4 Tf 0.067 0.094 0.153 rg 48.00 630.90 Td (This continuous family saturates the unitary Yoshida-Kitaev branching invariant identically across all theta in [0, pi/2] while) Tj ET
+BT /F4 9.4 Tf 0.067 0.094 0.153 rg 48.00 618.40 Td (reaching peak non-Clifford stabilizer Renyi magic M_2 = 4 bits at theta = pi/4. To enforce zero pulse-duration variation across) Tj ET
+BT /F4 9.4 Tf 0.067 0.094 0.153 rg 48.00 605.90 Td (theta on heavy-hex hardware, every contiguous single-qubit operation between CZ gates is contracted into W in U\(2\) and) Tj ET
+BT /F4 9.4 Tf 0.067 0.094 0.153 rg 48.00 593.40 Td (emitted via the exact universal Euler template W == Rz\(phi\) sqrt\(X\) Rz\(pi - vartheta\) sqrt\(X\) Rz\(lambda + pi\). Routing initial) Tj ET
+BT /F4 9.4 Tf 0.067 0.094 0.153 rg 48.00 580.90 Td (Bell pair \(q1, q5\) across clean |0> wires prior to preparing q0, q2, q3, q4, q6 maps the entire protocol onto a seven-transmon) Tj ET
+BT /F4 9.4 Tf 0.067 0.094 0.153 rg 48.00 568.40 Td (heavy-hex T-junction \([q99, q115, q95, q93, q94, q92, q79]\) with zero routing SWAPs during U\(theta\) \(x\) U*\(theta\) and strictly) Tj ET
+BT /F4 9.4 Tf 0.067 0.094 0.153 rg 48.00 555.90 Td (constant gate counts \(28 CZ and 126 sqrt\(X\) gates\) for every circuit.) Tj ET
+q 0.9214 0 0 0.9214 48.00 275.79 cm
+1 1 1 rg
+0 0 560.00 285.00 re f
+BT /F2 9.8 Tf 0.067 0.094 0.153 rg 75.51 268.00 Td (OSIRIS-XTOP-006-FEZ \(ibm_fez, Job dc1tqaanj2vs73dfrt40, 28 CZ Constant Skeleton\)) Tj ET
+BT /F1 7.6 Tf 0.294 0.333 0.388 rg 82.40 255.00 Td (Continuous Non-Clifford Kraus Scrambling Trajectory: F_6\(theta | Phi+\), P_{Phi+}\(theta\), and YK Branching Product) Tj ET
+1.00 w 0.980 0.980 0.980 rg 0.216 0.255 0.318 RG 58.00 46.00 478.00 195.00 re B
+q [] 0 d 0.70 w 0.820 0.835 0.859 RG 58.00 46.00 m 536.00 46.00 l S Q
+BT /F3 7.2 Tf 0.216 0.255 0.318 rg 34.72 43.20 Td (0.00) Tj ET
+q [5 3] 0 d 0.70 w 0.820 0.835 0.859 RG 58.00 92.43 m 536.00 92.43 l S Q
+BT /F3 7.2 Tf 0.216 0.255 0.318 rg 34.72 89.63 Td (0.25) Tj ET
+q [] 0 d 0.70 w 0.820 0.835 0.859 RG 58.00 138.86 m 536.00 138.86 l S Q
+BT /F3 7.2 Tf 0.216 0.255 0.318 rg 34.72 136.06 Td (0.50) Tj ET
+q [5 3] 0 d 1.00 w 0.725 0.110 0.110 RG 58.00 169.81 m 536.00 169.81 l S Q
+BT /F7 7.2 Tf 0.725 0.110 0.110 rg 39.04 167.01 Td (2/3) Tj ET
+q [] 0 d 0.70 w 0.820 0.835 0.859 RG 58.00 185.29 m 536.00 185.29 l S Q
+BT /F3 7.2 Tf 0.216 0.255 0.318 rg 34.72 182.49 Td (0.75) Tj ET
+q [] 0 d 0.70 w 0.820 0.835 0.859 RG 58.00 231.71 m 536.00 231.71 l S Q
+BT /F3 7.2 Tf 0.216 0.255 0.318 rg 34.72 228.91 Td (1.00) Tj ET
+BT /F2 6.8 Tf 0.725 0.110 0.110 rg 418.95 173.81 Td (2/3 Classical Teleportation Ceiling) Tj ET
+q [] 0 d 0.90 w 0.216 0.255 0.318 RG 84.00 46.00 m 84.00 42.00 l S Q
+BT /F7 7.8 Tf 0.067 0.094 0.153 rg 81.66 32.00 Td (0) Tj ET
+q [] 0 d 0.90 w 0.216 0.255 0.318 RG 190.50 46.00 m 190.50 42.00 l S Q
+BT /F7 7.8 Tf 0.067 0.094 0.153 rg 181.14 32.00 Td (pi/8) Tj ET
+q [] 0 d 0.90 w 0.216 0.255 0.318 RG 297.00 46.00 m 297.00 42.00 l S Q
+BT /F7 7.8 Tf 0.067 0.094 0.153 rg 287.64 32.00 Td (pi/4) Tj ET
+q [] 0 d 0.90 w 0.216 0.255 0.318 RG 403.50 46.00 m 403.50 42.00 l S Q
+BT /F7 7.8 Tf 0.067 0.094 0.153 rg 391.80 32.00 Td (3pi/8) Tj ET
+q [] 0 d 0.90 w 0.216 0.255 0.318 RG 510.00 46.00 m 510.00 42.00 l S Q
+BT /F7 7.8 Tf 0.067 0.094 0.153 rg 500.64 32.00 Td (pi/2) Tj ET
+BT /F2 8.2 Tf 0.067 0.094 0.153 rg 242.02 10.00 Td (Scrambling Angle theta \(rad\)) Tj ET
+q [5 3] 0 d 1.30 w 0.576 0.773 0.992 RG 84.00 138.86 m 190.50 143.94 l 297.00 162.93 l 403.50 202.10 l 510.00 231.71 l S Q
+q [5 3] 0 d 1.50 w 0.118 0.227 0.541 RG 84.00 138.18 m 190.50 143.15 l 297.00 158.16 l 403.50 188.89 l 510.00 208.88 l S Q
+q [] 0 d 2.00 w 0.145 0.388 0.922 RG 84.00 138.20 m 190.50 142.94 l 297.00 157.39 l 403.50 186.71 l 510.00 205.11 l S Q
+q [5 3] 0 d 1.30 w 0.992 0.729 0.455 RG 84.00 231.71 m 190.50 205.51 l 297.00 150.46 l 403.50 107.02 l 510.00 92.43 l S Q
+q [] 0 d 1.80 w 0.851 0.467 0.024 RG 84.00 211.52 m 190.50 188.08 l 297.00 142.53 l 403.50 105.00 l 510.00 91.58 l S Q
+q [] 0 d 1.70 w 0.020 0.588 0.412 RG 84.00 86.50 m 190.50 86.20 l 297.00 84.58 l 403.50 83.56 l 510.00 81.79 l S Q
+q [] 0 d 1.20 w 0.114 0.306 0.847 RG 84.00 137.50 m 84.00 138.89 l S Q
+q 0.80 w 0.145 0.388 0.922 rg 1.000 1.000 1.000 RG 87.20 138.20 m 87.20 139.96 85.77 141.40 84.00 141.40 c 82.23 141.40 80.80 139.96 80.80 138.20 c 80.80 136.43 82.23 135.00 84.00 135.00 c 85.77 135.00 87.20 136.43 87.20 138.20 c B Q
+q 0.80 w 0.851 0.467 0.024 rg 1.000 1.000 1.000 RG 87.00 211.52 m 87.00 213.18 85.66 214.52 84.00 214.52 c 82.34 214.52 81.00 213.18 81.00 211.52 c 81.00 209.87 82.34 208.52 84.00 208.52 c 85.66 208.52 87.00 209.87 87.00 211.52 c B Q
+q 0.80 w 0.020 0.588 0.412 rg 1.000 1.000 1.000 RG 86.80 86.50 m 86.80 88.04 85.55 89.30 84.00 89.30 c 82.45 89.30 81.20 88.04 81.20 86.50 c 81.20 84.95 82.45 83.70 84.00 83.70 c 85.55 83.70 86.80 84.95 86.80 86.50 c B Q
+q [] 0 d 1.20 w 0.114 0.306 0.847 RG 190.50 142.25 m 190.50 143.63 l S Q
+q 0.80 w 0.145 0.388 0.922 rg 1.000 1.000 1.000 RG 193.70 142.94 m 193.70 144.70 192.27 146.14 190.50 146.14 c 188.73 146.14 187.30 144.70 187.30 142.94 c 187.30 141.17 188.73 139.74 190.50 139.74 c 192.27 139.74 193.70 141.17 193.70 142.94 c B Q
+q 0.80 w 0.851 0.467 0.024 rg 1.000 1.000 1.000 RG 193.50 188.08 m 193.50 189.74 192.16 191.08 190.50 191.08 c 188.84 191.08 187.50 189.74 187.50 188.08 c 187.50 186.42 188.84 185.08 190.50 185.08 c 192.16 185.08 193.50 186.42 193.50 188.08 c B Q
+q 0.80 w 0.020 0.588 0.412 rg 1.000 1.000 1.000 RG 193.30 86.20 m 193.30 87.75 192.05 89.00 190.50 89.00 c 188.95 89.00 187.70 87.75 187.70 86.20 c 187.70 84.66 188.95 83.40 190.50 83.40 c 192.05 83.40 193.30 84.66 193.30 86.20 c B Q
+q [] 0 d 1.20 w 0.114 0.306 0.847 RG 297.00 155.44 m 297.00 159.34 l S Q
+q 0.80 w 0.145 0.388 0.922 rg 1.000 1.000 1.000 RG 300.20 157.39 m 300.20 159.16 298.77 160.59 297.00 160.59 c 295.23 160.59 293.80 159.16 293.80 157.39 c 293.80 155.63 295.23 154.19 297.00 154.19 c 298.77 154.19 300.20 155.63 300.20 157.39 c B Q
+q 0.80 w 0.851 0.467 0.024 rg 1.000 1.000 1.000 RG 300.00 142.53 m 300.00 144.19 298.66 145.53 297.00 145.53 c 295.34 145.53 294.00 144.19 294.00 142.53 c 294.00 140.87 295.34 139.53 297.00 139.53 c 298.66 139.53 300.00 140.87 300.00 142.53 c B Q
+q 0.80 w 0.020 0.588 0.412 rg 1.000 1.000 1.000 RG 299.80 84.58 m 299.80 86.13 298.55 87.38 297.00 87.38 c 295.45 87.38 294.20 86.13 294.20 84.58 c 294.20 83.04 295.45 81.78 297.00 81.78 c 298.55 81.78 299.80 83.04 299.80 84.58 c B Q
+q [] 0 d 1.20 w 0.114 0.306 0.847 RG 403.50 185.25 m 403.50 188.18 l S Q
+q 0.80 w 0.145 0.388 0.922 rg 1.000 1.000 1.000 RG 406.70 186.71 m 406.70 188.48 405.27 189.91 403.50 189.91 c 401.73 189.91 400.30 188.48 400.30 186.71 c 400.30 184.95 401.73 183.51 403.50 183.51 c 405.27 183.51 406.70 184.95 406.70 186.71 c B Q
+q 0.80 w 0.851 0.467 0.024 rg 1.000 1.000 1.000 RG 406.50 105.00 m 406.50 106.66 405.16 108.00 403.50 108.00 c 401.84 108.00 400.50 106.66 400.50 105.00 c 400.50 103.35 401.84 102.00 403.50 102.00 c 405.16 102.00 406.50 103.35 406.50 105.00 c B Q
+q 0.80 w 0.020 0.588 0.412 rg 1.000 1.000 1.000 RG 406.30 83.56 m 406.30 85.10 405.05 86.36 403.50 86.36 c 401.95 86.36 400.70 85.10 400.70 83.56 c 400.70 82.01 401.95 80.76 403.50 80.76 c 405.05 80.76 406.30 82.01 406.30 83.56 c B Q
+q [] 0 d 1.20 w 0.114 0.306 0.847 RG 510.00 204.31 m 510.00 205.91 l S Q
+q 0.80 w 0.145 0.388 0.922 rg 1.000 1.000 1.000 RG 513.20 205.11 m 513.20 206.88 511.77 208.31 510.00 208.31 c 508.23 208.31 506.80 206.88 506.80 205.11 c 506.80 203.35 508.23 201.91 510.00 201.91 c 511.77 201.91 513.20 203.35 513.20 205.11 c B Q
+q 0.80 w 0.851 0.467 0.024 rg 1.000 1.000 1.000 RG 513.00 91.58 m 513.00 93.24 511.66 94.58 510.00 94.58 c 508.34 94.58 507.00 93.24 507.00 91.58 c 507.00 89.93 508.34 88.58 510.00 88.58 c 511.66 88.58 513.00 89.93 513.00 91.58 c B Q
+q 0.80 w 0.020 0.588 0.412 rg 1.000 1.000 1.000 RG 512.80 81.79 m 512.80 83.34 511.55 84.59 510.00 84.59 c 508.45 84.59 507.20 83.34 507.20 81.79 c 507.20 80.24 508.45 78.99 510.00 78.99 c 511.55 78.99 512.80 80.24 512.80 81.79 c B Q
+0.70 w 1.000 1.000 1.000 rg 0.820 0.835 0.859 RG 66.00 194.00 268.00 42.00 re B
+q [] 0 d 2.00 w 0.145 0.388 0.922 RG 72.00 227.50 m 88.00 227.50 l S Q
+BT /F1 6.7 Tf 0.067 0.094 0.153 rg 93.00 225.00 Td (Live Raw F_6\(theta|Phi+\): 0.496 -> 0.857 \(t=62.4\)) Tj ET
+q [] 0 d 2.00 w 0.851 0.467 0.024 RG 72.00 215.50 m 88.00 215.50 l S Q
+BT /F1 6.7 Tf 0.067 0.094 0.153 rg 93.00 213.00 Td (Live Raw P_Phi+\(theta\): 0.891 -> 0.245 \(dashed: ideal\)) Tj ET
+q [] 0 d 2.00 w 0.020 0.588 0.412 RG 72.00 203.50 m 88.00 203.50 l S Q
+BT /F1 6.7 Tf 0.067 0.094 0.153 rg 93.00 201.00 Td (Branching Product P_Phi+ * F_ent: 0.218 -> 0.193) Tj ET
+Q
+q 0.60 w 0.796 0.835 0.882 RG 48.00 275.79 516.00 262.61 re S Q
+BT /F5 8.5 Tf 0.200 0.255 0.333 rg 48.00 265.79 Td (Figure 1. ) Tj ET
+BT /F6 8.5 Tf 0.200 0.255 0.333 rg 84.78 265.79 Td (Constant-skeleton \(28 CZ, 126 sqrt\(X\)\) continuous-angle Kraus scrambling trajectory on ibm_fez \(job dc1tqaanj2vs73dfrt40,) Tj ET
+BT /F6 8.5 Tf 0.200 0.255 0.333 rg 48.00 254.59 Td (118,784 total shots, 34 s QPU\). Raw conditional 6-state fidelity F_6\(theta | Phi+\) rises monotonically from 0.4964 to 0.8568 +/- 0.0043,) Tj ET
+BT /F6 8.5 Tf 0.200 0.255 0.333 rg 48.00 243.39 Td (crossing the 2/3 classical teleportation bound at both theta = 3pi/8 and theta = pi/2 without readout mitigation while P_{Phi+} contracts from) Tj ET
+BT /F6 8.5 Tf 0.200 0.255 0.333 rg 48.00 232.19 Td (0.8913 to 0.2454.) Tj ET
+BT /F5 8.4 Tf 0.059 0.090 0.165 rg 48.00 214.99 Td (TABLE I. Constant-skeleton \(28 CZ, 126 sqrt\(X\)\) continuous-angle Kraus trajectory on ibm_fez \(job dc1tqaanj2vs73dfrt40, 118,784) Tj ET
+BT /F5 8.4 Tf 0.059 0.090 0.165 rg 48.00 203.99 Td (shots, 34 s QPU, RO cond. 1.0603\).) Tj ET
+q 0.886 0.910 0.941 rg 48.00 177.19 516.00 14.80 re f Q
+q [] 0 d 1.00 w 0.059 0.090 0.165 RG 48.00 191.99 m 564.00 191.99 l S Q
+BT /F2 7.2 Tf 0.059 0.090 0.165 rg 51.00 182.99 Td (theta) Tj ET
+BT /F2 7.2 Tf 0.059 0.090 0.165 rg 105.49 182.99 Td (Ideal P_Phi+) Tj ET
+BT /F2 7.2 Tf 0.059 0.090 0.165 rg 166.08 182.99 Td (Raw P_Phi+) Tj ET
+BT /F2 7.2 Tf 0.059 0.090 0.165 rg 230.24 182.99 Td (Ideal F_6) Tj ET
+BT /F2 7.2 Tf 0.059 0.090 0.165 rg 310.61 182.99 Td (Raw F_6 +/- SE) Tj ET
+BT /F2 7.2 Tf 0.059 0.090 0.165 rg 386.29 182.99 Td (RO-Mit F_6) Tj ET
+BT /F2 7.2 Tf 0.059 0.090 0.165 rg 444.75 182.99 Td (Raw P*F_ent) Tj ET
+BT /F2 7.2 Tf 0.059 0.090 0.165 rg 504.55 182.99 Td (RO-Mit P*F_ent) Tj ET
+q [] 0 d 0.80 w 0.200 0.255 0.333 RG 48.00 177.19 m 564.00 177.19 l S Q
+BT /F3 7.2 Tf 0.118 0.161 0.231 rg 51.00 168.59 Td (0) Tj ET
+BT /F3 7.2 Tf 0.118 0.161 0.231 rg 123.96 168.59 Td (1.0000) Tj ET
+BT /F3 7.2 Tf 0.118 0.161 0.231 rg 182.69 168.59 Td (0.8913) Tj ET
+BT /F3 7.2 Tf 0.118 0.161 0.231 rg 237.23 168.59 Td (0.5000) Tj ET
+BT /F3 7.2 Tf 0.118 0.161 0.231 rg 292.49 168.59 Td (0.4964 +/- 0.0038) Tj ET
+BT /F3 7.2 Tf 0.118 0.161 0.231 rg 400.84 168.59 Td (0.4964) Tj ET
+BT /F3 7.2 Tf 0.118 0.161 0.231 rg 465.86 168.59 Td (0.2181) Tj ET
+BT /F3 7.2 Tf 0.118 0.161 0.231 rg 535.08 168.59 Td (0.2204) Tj ET
+q [] 0 d 0.40 w 0.886 0.910 0.941 RG 48.00 163.19 m 564.00 163.19 l S Q
+q 0.973 0.980 0.988 rg 48.00 149.19 516.00 14.00 re f Q
+BT /F3 7.2 Tf 0.118 0.161 0.231 rg 51.00 154.59 Td (pi/8) Tj ET
+BT /F3 7.2 Tf 0.118 0.161 0.231 rg 123.96 154.59 Td (0.8589) Tj ET
+BT /F3 7.2 Tf 0.118 0.161 0.231 rg 182.69 154.59 Td (0.7651) Tj ET
+BT /F3 7.2 Tf 0.118 0.161 0.231 rg 237.23 154.59 Td (0.5274) Tj ET
+BT /F3 7.2 Tf 0.118 0.161 0.231 rg 292.49 154.59 Td (0.5220 +/- 0.0037) Tj ET
+BT /F3 7.2 Tf 0.118 0.161 0.231 rg 400.84 154.59 Td (0.5231) Tj ET
+BT /F3 7.2 Tf 0.118 0.161 0.231 rg 465.86 154.59 Td (0.2165) Tj ET
+BT /F3 7.2 Tf 0.118 0.161 0.231 rg 535.08 154.59 Td (0.2199) Tj ET
+q [] 0 d 0.40 w 0.886 0.910 0.941 RG 48.00 149.19 m 564.00 149.19 l S Q
+BT /F3 7.2 Tf 0.118 0.161 0.231 rg 51.00 140.59 Td (pi/4) Tj ET
+BT /F3 7.2 Tf 0.118 0.161 0.231 rg 123.96 140.59 Td (0.5625) Tj ET
+BT /F3 7.2 Tf 0.118 0.161 0.231 rg 182.69 140.59 Td (0.5198) Tj ET
+BT /F3 7.2 Tf 0.118 0.161 0.231 rg 237.23 140.59 Td (0.6296) Tj ET
+BT /F3 7.2 Tf 0.118 0.161 0.231 rg 292.49 140.59 Td (0.5998 +/- 0.0105) Tj ET
+BT /F3 7.2 Tf 0.118 0.161 0.231 rg 400.84 140.59 Td (0.6039) Tj ET
+BT /F3 7.2 Tf 0.118 0.161 0.231 rg 465.86 140.59 Td (0.2078) Tj ET
+BT /F3 7.2 Tf 0.118 0.161 0.231 rg 535.08 140.59 Td (0.2122) Tj ET
+q [] 0 d 0.40 w 0.886 0.910 0.941 RG 48.00 135.19 m 564.00 135.19 l S Q
+q 0.973 0.980 0.988 rg 48.00 121.19 516.00 14.00 re f Q
+BT /F3 7.2 Tf 0.118 0.161 0.231 rg 51.00 126.59 Td (3pi/8) Tj ET
+BT /F3 7.2 Tf 0.118 0.161 0.231 rg 123.96 126.59 Td (0.3286) Tj ET
+BT /F3 7.2 Tf 0.118 0.161 0.231 rg 182.69 126.59 Td (0.3177) Tj ET
+BT /F3 7.2 Tf 0.118 0.161 0.231 rg 237.23 126.59 Td (0.8406) Tj ET
+BT /F3 7.2 Tf 0.118 0.161 0.231 rg 292.49 126.59 Td (0.7577 +/- 0.0079) Tj ET
+BT /F3 7.2 Tf 0.118 0.161 0.231 rg 400.84 126.59 Td (0.7694) Tj ET
+BT /F3 7.2 Tf 0.118 0.161 0.231 rg 465.86 126.59 Td (0.2022) Tj ET
+BT /F3 7.2 Tf 0.118 0.161 0.231 rg 535.08 126.59 Td (0.2074) Tj ET
+q [] 0 d 0.40 w 0.886 0.910 0.941 RG 48.00 121.19 m 564.00 121.19 l S Q
+BT /F3 7.2 Tf 0.118 0.161 0.231 rg 51.00 112.59 Td (pi/2) Tj ET
+BT /F3 7.2 Tf 0.118 0.161 0.231 rg 123.96 112.59 Td (0.2500) Tj ET
+BT /F3 7.2 Tf 0.118 0.161 0.231 rg 182.69 112.59 Td (0.2454) Tj ET
+BT /F3 7.2 Tf 0.118 0.161 0.231 rg 237.23 112.59 Td (1.0000) Tj ET
+BT /F3 7.2 Tf 0.118 0.161 0.231 rg 292.49 112.59 Td (0.8568 +/- 0.0043) Tj ET
+BT /F3 7.2 Tf 0.118 0.161 0.231 rg 400.84 112.59 Td (0.8771) Tj ET
+BT /F3 7.2 Tf 0.118 0.161 0.231 rg 465.86 112.59 Td (0.1927) Tj ET
+BT /F3 7.2 Tf 0.118 0.161 0.231 rg 535.08 112.59 Td (0.1984) Tj ET
+q [] 0 d 0.40 w 0.886 0.910 0.941 RG 48.00 107.19 m 564.00 107.19 l S Q
+q [] 0 d 1.00 w 0.059 0.090 0.165 RG 48.00 107.19 m 564.00 107.19 l S Q
+BT /F2 10.4 Tf 0.059 0.090 0.165 rg 48.00 93.69 Td (3. Live ibm_fez Trajectory and Confirmatory 4-Twirl Discrimination) Tj ET
+q [] 0 d 0.70 w 0.796 0.835 0.882 RG 48.00 88.69 m 564.00 88.69 l S Q
+q [] 0 d 1.40 w 0.114 0.306 0.847 RG 48.00 88.69 m 106.00 88.69 l S Q
+BT /F4 9.4 Tf 0.067 0.094 0.153 rg 48.00 77.99 Td (Table I and Figure 1 report the primary five-angle trajectory from ibm_fez job dc1tqaanj2vs73dfrt40 \(118,784 shots across) Tj ET
+BT /F4 9.4 Tf 0.067 0.094 0.153 rg 48.00 65.49 Td (four interleaved randomized blocks, readout calibration condition number 1.0603, intra-block A/A sentinel RMS 0.0537\). Raw) Tj ET
+BT /F6 8.0 Tf 0.392 0.455 0.545 rg 48.00 762.00 Td (Continuous-Angle Non-Clifford Hayden-Preskill Scrambling on ibm_fez) Tj ET
+BT /F1 7.5 Tf 0.392 0.455 0.545 rg 374.09 762.00 Td (Devin Phillip Davis  |  OSIRIS-XTOP-006-FEZ-LETTER) Tj ET
+q [] 0 d 0.60 w 0.796 0.835 0.882 RG 48.00 756.00 m 564.00 756.00 l S Q
+q [] 0 d 0.60 w 0.796 0.835 0.882 RG 48.00 42.00 m 564.00 42.00 l S Q
+BT /F3 7.0 Tf 0.392 0.455 0.545 rg 48.00 29.00 Td (ibm_fez Jobs dc1tqaanj2vs73dfrt40 & dc23ouqnj2vs73dg3bog  |  RFC8785 Capsule: 73915b7934d80678...) Tj ET
+BT /F2 7.6 Tf 0.200 0.255 0.333 rg 523.30 29.00 Td (Page 2 of 4) Tj ET
+endstream
+endobj
+12 0 obj
+<< /Type /Page /Parent 8 0 R /MediaBox [0 0 612.00 792.00] /Resources << /Font << /F1 1 0 R /F2 2 0 R /F3 3 0 R /F4 4 0 R /F5 5 0 R /F6 6 0 R /F7 7 0 R >> >> /Contents 11 0 R >>
+endobj
+13 0 obj
+<< /Length 10499 >>
+stream
+1 1 1 rg
+0 0 612.00 792.00 re f
+BT /F4 9.4 Tf 0.067 0.094 0.153 rg 48.00 738.00 Td (six-state recovery rises monotonically across all five angles from 0.4964 at theta = 0 through 0.5220 \(pi/8\), 0.5998 \(pi/4\), and) Tj ET
+BT /F4 9.4 Tf 0.067 0.094 0.153 rg 48.00 725.50 Td (0.7577 \(3pi/8\) to 0.8568 +/- 0.0043 \(0.8771 readout-mitigated\) at theta = pi/2, while P_{Phi+} contracts from 0.8913 to 0.2454.) Tj ET
+BT /F4 9.4 Tf 0.067 0.094 0.153 rg 48.00 713.00 Td (Both theta = 3pi/8 and theta = pi/2 surpass the 2/3 classical teleportation bound without readout mitigation, and the) Tj ET
+BT /F4 9.4 Tf 0.067 0.094 0.153 rg 48.00 700.50 Td (constant-duration branching product P_{Phi+}\(theta\) F_ent\(theta | Phi+\) remains tightly bounded between 0.1927 and 0.2181) Tj ET
+BT /F4 9.4 Tf 0.067 0.094 0.153 rg 48.00 688.00 Td (\(0.1984 mitigated at pi/2\).) Tj ET
+q 0.9214 0 0 0.9214 48.00 423.56 cm
+1 1 1 rg
+0 0 560.00 268.00 re f
+BT /F2 9.8 Tf 0.067 0.094 0.153 rg 49.99 251.00 Td (OSIRIS-XTOP-006B-FEZ \(ibm_fez, Job dc23ouqnj2vs73dg3bog\): Intra-Block 4-Twirl Discriminator) Tj ET
+BT /F1 7.6 Tf 0.294 0.333 0.388 rg 110.33 238.00 Td (Coherent Scrambling vs. All-4 Mid-Scrambler Pauli-Z Dephasing Twirls on Identical 28-CZ Skeleton) Tj ET
+1.00 w 0.980 0.980 0.980 rg 0.216 0.255 0.318 RG 58.00 46.00 478.00 178.00 re B
+q [] 0 d 0.70 w 0.898 0.906 0.922 RG 58.00 46.00 m 536.00 46.00 l S Q
+BT /F3 7.2 Tf 0.216 0.255 0.318 rg 34.72 43.20 Td (0.00) Tj ET
+q [] 0 d 0.70 w 0.898 0.906 0.922 RG 58.00 90.50 m 536.00 90.50 l S Q
+BT /F3 7.2 Tf 0.216 0.255 0.318 rg 34.72 87.70 Td (0.25) Tj ET
+q [] 0 d 0.70 w 0.898 0.906 0.922 RG 58.00 135.00 m 536.00 135.00 l S Q
+BT /F3 7.2 Tf 0.216 0.255 0.318 rg 34.72 132.20 Td (0.50) Tj ET
+q [5 3] 0 d 1.00 w 0.725 0.110 0.110 RG 58.00 164.67 m 536.00 164.67 l S Q
+BT /F7 7.2 Tf 0.725 0.110 0.110 rg 39.04 161.87 Td (2/3) Tj ET
+q [] 0 d 0.70 w 0.898 0.906 0.922 RG 58.00 197.30 m 536.00 197.30 l S Q
+BT /F3 7.2 Tf 0.216 0.255 0.318 rg 34.72 194.50 Td (0.85) Tj ET
+q [] 0 d 0.70 w 0.898 0.906 0.922 RG 58.00 224.00 m 536.00 224.00 l S Q
+BT /F3 7.2 Tf 0.216 0.255 0.318 rg 34.72 221.20 Td (1.00) Tj ET
+0.90 w 0.145 0.388 0.922 rg 0.118 0.227 0.541 RG 147.18 46.00 54.00 131.50 re B
+q [] 0 d 1.30 w 0.059 0.090 0.165 RG 174.18 176.27 m 174.18 178.73 l S Q
+0.90 w 0.796 0.835 0.882 rg 0.278 0.333 0.412 RG 211.18 46.00 54.00 105.14 re B
+q [] 0 d 1.30 w 0.059 0.090 0.165 RG 238.18 150.13 m 238.18 152.15 l S Q
+BT /F7 7.6 Tf 0.118 0.227 0.541 rg 160.50 183.50 Td (0.7388) Tj ET
+BT /F3 7.6 Tf 0.200 0.255 0.333 rg 224.50 157.14 Td (0.5907) Tj ET
+BT /F7 8.0 Tf 0.067 0.094 0.153 rg 174.98 32.00 Td (theta = 3pi/8) Tj ET
+BT /F2 7.0 Tf 0.016 0.471 0.341 rg 121.96 20.00 Td (Delta F = +14.81 pp \(t = 14.61, p_Holm = 6.09e-04\)) Tj ET
+0.90 w 0.145 0.388 0.922 rg 0.118 0.227 0.541 RG 338.38 46.00 54.00 150.87 re B
+q [] 0 d 1.30 w 0.059 0.090 0.165 RG 365.38 193.46 m 365.38 200.27 l S Q
+0.90 w 0.796 0.835 0.882 rg 0.278 0.333 0.412 RG 402.38 46.00 54.00 110.23 re B
+q [] 0 d 1.30 w 0.059 0.090 0.165 RG 429.38 154.77 m 429.38 157.69 l S Q
+BT /F7 7.6 Tf 0.118 0.227 0.541 rg 351.70 202.87 Td (0.8476) Tj ET
+BT /F3 7.6 Tf 0.200 0.255 0.333 rg 415.70 162.23 Td (0.6193) Tj ET
+BT /F7 8.0 Tf 0.067 0.094 0.153 rg 368.58 32.00 Td (theta = pi/2) Tj ET
+BT /F2 7.0 Tf 0.016 0.471 0.341 rg 313.16 20.00 Td (Delta F = +22.83 pp \(t = 15.28, p_Holm = 6.09e-04\)) Tj ET
+0.70 w 1.000 1.000 1.000 rg 0.820 0.835 0.859 RG 68.00 190.00 178.00 26.00 re B
+0.70 w 0.145 0.388 0.922 rg 0.118 0.227 0.541 RG 74.00 205.00 10.00 7.00 re B
+BT /F1 6.6 Tf 0.067 0.094 0.153 rg 88.00 206.00 Td (Coherent Scrambling U\(theta\) x U\(-theta\)) Tj ET
+0.70 w 0.796 0.835 0.882 rg 0.278 0.333 0.412 RG 74.00 195.00 10.00 7.00 re B
+BT /F1 6.6 Tf 0.067 0.094 0.153 rg 88.00 196.00 Td (Stratified Intra-Block 4-Twirl Dephased Control) Tj ET
+Q
+q 0.60 w 0.796 0.835 0.882 RG 48.00 423.56 516.00 246.94 re S Q
+BT /F5 8.5 Tf 0.200 0.255 0.333 rg 48.00 413.56 Td (Figure 2. ) Tj ET
+BT /F6 8.5 Tf 0.200 0.255 0.333 rg 84.78 413.56 Td (Confirmatory intra-block 4-twirl scrambling-vs-decoherence discriminator on ibm_fez \(job dc23ouqnj2vs73dg3bog, 65,536 shots,) Tj ET
+BT /F6 8.5 Tf 0.200 0.255 0.333 rg 48.00 402.36 Td (20 s QPU\). Executing all four mid-scrambler Pauli-Z twirls inside every randomized block eliminates inter-block twirl variance and separates) Tj ET
+BT /F6 8.5 Tf 0.200 0.255 0.333 rg 48.00 391.16 Td (coherent scrambling from dephasing by +14.81 pp \(t = 14.61\) at 3pi/8 and +22.83 pp \(t = 15.28\) at pi/2.) Tj ET
+BT /F5 8.4 Tf 0.059 0.090 0.165 rg 48.00 373.96 Td (TABLE II. Confirmatory intra-block 4-twirl scrambling-vs-decoherence discriminator on ibm_fez \(job dc23ouqnj2vs73dg3bog, 65,536) Tj ET
+BT /F5 8.4 Tf 0.059 0.090 0.165 rg 48.00 362.96 Td (shots, 20 s QPU, constant 28-CZ schedule\).) Tj ET
+q 0.886 0.910 0.941 rg 48.00 336.16 516.00 14.80 re f Q
+q [] 0 d 1.00 w 0.059 0.090 0.165 RG 48.00 350.96 m 564.00 350.96 l S Q
+BT /F2 7.2 Tf 0.059 0.090 0.165 rg 51.00 341.96 Td (theta) Tj ET
+BT /F2 7.2 Tf 0.059 0.090 0.165 rg 109.61 341.96 Td (Ideal F_6) Tj ET
+BT /F2 7.2 Tf 0.059 0.090 0.165 rg 178.51 341.96 Td (Coherent Raw F_6) Tj ET
+BT /F2 7.2 Tf 0.059 0.090 0.165 rg 269.69 341.96 Td (4-Twirl Dephased F_6) Tj ET
+BT /F2 7.2 Tf 0.059 0.090 0.165 rg 395.70 341.96 Td (Delta F +/- SE) Tj ET
+BT /F2 7.2 Tf 0.059 0.090 0.165 rg 471.39 341.96 Td (Paired t) Tj ET
+BT /F2 7.2 Tf 0.059 0.090 0.165 rg 535.39 341.96 Td (p_Holm) Tj ET
+q [] 0 d 0.80 w 0.200 0.255 0.333 RG 48.00 336.16 m 564.00 336.16 l S Q
+BT /F3 7.2 Tf 0.118 0.161 0.231 rg 51.00 327.56 Td (3pi/8) Tj ET
+BT /F3 7.2 Tf 0.118 0.161 0.231 rg 116.59 327.56 Td (0.8406) Tj ET
+BT /F3 7.2 Tf 0.118 0.161 0.231 rg 168.62 327.56 Td (0.7388 +/- 0.0069) Tj ET
+BT /F3 7.2 Tf 0.118 0.161 0.231 rg 272.22 327.56 Td (0.5907 +/- 0.0057) Tj ET
+BT /F3 7.2 Tf 0.118 0.161 0.231 rg 367.44 327.56 Td (+0.1481 +/- 0.0101) Tj ET
+BT /F3 7.2 Tf 0.118 0.161 0.231 rg 476.42 327.56 Td (14.61) Tj ET
+BT /F3 7.2 Tf 0.118 0.161 0.231 rg 526.44 327.56 Td (6.09e-04) Tj ET
+q [] 0 d 0.40 w 0.886 0.910 0.941 RG 48.00 322.16 m 564.00 322.16 l S Q
+q 0.973 0.980 0.988 rg 48.00 308.16 516.00 14.00 re f Q
+BT /F3 7.2 Tf 0.118 0.161 0.231 rg 51.00 313.56 Td (pi/2) Tj ET
+BT /F3 7.2 Tf 0.118 0.161 0.231 rg 116.59 313.56 Td (1.0000) Tj ET
+BT /F3 7.2 Tf 0.118 0.161 0.231 rg 168.62 313.56 Td (0.8476 +/- 0.0191) Tj ET
+BT /F3 7.2 Tf 0.118 0.161 0.231 rg 272.22 313.56 Td (0.6193 +/- 0.0082) Tj ET
+BT /F3 7.2 Tf 0.118 0.161 0.231 rg 367.44 313.56 Td (+0.2283 +/- 0.0149) Tj ET
+BT /F3 7.2 Tf 0.118 0.161 0.231 rg 476.42 313.56 Td (15.28) Tj ET
+BT /F3 7.2 Tf 0.118 0.161 0.231 rg 526.44 313.56 Td (6.09e-04) Tj ET
+q [] 0 d 0.40 w 0.886 0.910 0.941 RG 48.00 308.16 m 564.00 308.16 l S Q
+q [] 0 d 1.00 w 0.059 0.090 0.165 RG 48.00 308.16 m 564.00 308.16 l S Q
+BT /F4 9.4 Tf 0.067 0.094 0.153 rg 48.00 299.66 Td (In dc1tqaanj2vs73dfrt40, rotating a single deterministic mid-scrambler Pauli-Z twirl per block yielded a pooled theta = pi/2) Tj ET
+BT /F4 9.4 Tf 0.067 0.094 0.153 rg 48.00 287.16 Td (fidelity right on the classical 2/3 dephased limit, but mixed deterministic twirl-to-twirl variance into block standard errors.) Tj ET
+BT /F4 9.4 Tf 0.067 0.094 0.153 rg 48.00 274.66 Td (Executing all four non-trivial Pauli-Z twirls inside every block in confirmatory job dc23ouqnj2vs73dg3bog \(Table II\) eliminates) Tj ET
+BT /F4 9.4 Tf 0.067 0.094 0.153 rg 48.00 262.16 Td (inter-block twirl variance identically: coherent scrambling exceeds the four-twirl dephased channel on the identical 28-CZ pulse) Tj ET
+BT /F4 9.4 Tf 0.067 0.094 0.153 rg 48.00 249.66 Td (schedule by +0.1481 +/- 0.0101 \(t = 14.61\) at theta = 3pi/8 and +0.2283 +/- 0.0149 \(0.8476 versus 0.6193, t = 15.28, p_Holm =) Tj ET
+BT /F4 9.4 Tf 0.067 0.094 0.153 rg 48.00 237.16 Td (6.09e-04\) at theta = pi/2.) Tj ET
+BT /F2 10.4 Tf 0.059 0.090 0.165 rg 48.00 214.66 Td (4. Conclusion, Cross-Architecture Outlook, and Data Availability) Tj ET
+q [] 0 d 0.70 w 0.796 0.835 0.882 RG 48.00 209.66 m 564.00 209.66 l S Q
+q [] 0 d 1.40 w 0.114 0.306 0.847 RG 48.00 209.66 m 106.00 209.66 l S Q
+BT /F4 9.4 Tf 0.067 0.094 0.153 rg 48.00 198.96 Td (Locking constant two-qubit and single-qubit gate skeletons reduces continuous scrambling sweeps to pure virtual-Z phase) Tj ET
+BT /F4 9.4 Tf 0.067 0.094 0.153 rg 48.00 186.46 Td (updates, isolating coherent non-Clifford operator spreading at >60 sigma and separating it from dephasing at >15 sigma on) Tj ET
+BT /F4 9.4 Tf 0.067 0.094 0.153 rg 48.00 173.96 Td (superconducting hardware. A companion offline-compiled [[4,2,2]] codespace compilation staged for Quantinuum H2-1 \(2,330) Tj ET
+BT /F4 9.4 Tf 0.067 0.094 0.153 rg 48.00 161.46 Td (HQC budget across 60 compiled circuits, evidence_class=SIMULATED, provider_job_id=null\) extends this exact trajectory) Tj ET
+BT /F4 9.4 Tf 0.067 0.094 0.153 rg 48.00 148.96 Td (into an error-detected logical subspace with zero routing SWAPs.) Tj ET
+BT /F4 9.4 Tf 0.067 0.094 0.153 rg 48.00 131.46 Td (Write-ahead QPY circuit bundles, SHA-256 staging manifests, raw shot archives \(raw_counts_gz_sha256) Tj ET
+BT /F4 9.4 Tf 0.067 0.094 0.153 rg 48.00 118.96 Td (1016ca5b66abcfb8714c... and 530cecbbc38a93c1290c...\), and the RFC 8785 reproducibility capsule) Tj ET
+BT /F4 9.4 Tf 0.067 0.094 0.153 rg 48.00 106.46 Td (\(73915b7934d80678b50e1926...\) for ibm_fez jobs dc1tqaanj2vs73dfrt40 and dc23ouqnj2vs73dg3bog are archived in the) Tj ET
+BT /F4 9.4 Tf 0.067 0.094 0.153 rg 48.00 93.96 Td (repository under experiments/xtop006_fez/, experiments/xtop006b_fez/, and papers/xtop006_non_clifford_kraus_fez/. We) Tj ET
+BT /F4 9.4 Tf 0.067 0.094 0.153 rg 48.00 81.46 Td (acknowledge the use of IBM Quantum services for this work; the views expressed are those of the author and do not reflect the) Tj ET
+BT /F4 9.4 Tf 0.067 0.094 0.153 rg 48.00 68.96 Td (official policy or position of IBM or the IBM Quantum team.) Tj ET
+BT /F6 8.0 Tf 0.392 0.455 0.545 rg 48.00 762.00 Td (Continuous-Angle Non-Clifford Hayden-Preskill Scrambling on ibm_fez) Tj ET
+BT /F1 7.5 Tf 0.392 0.455 0.545 rg 374.09 762.00 Td (Devin Phillip Davis  |  OSIRIS-XTOP-006-FEZ-LETTER) Tj ET
+q [] 0 d 0.60 w 0.796 0.835 0.882 RG 48.00 756.00 m 564.00 756.00 l S Q
+q [] 0 d 0.60 w 0.796 0.835 0.882 RG 48.00 42.00 m 564.00 42.00 l S Q
+BT /F3 7.0 Tf 0.392 0.455 0.545 rg 48.00 29.00 Td (ibm_fez Jobs dc1tqaanj2vs73dfrt40 & dc23ouqnj2vs73dg3bog  |  RFC8785 Capsule: 73915b7934d80678...) Tj ET
+BT /F2 7.6 Tf 0.200 0.255 0.333 rg 523.30 29.00 Td (Page 3 of 4) Tj ET
+endstream
+endobj
+14 0 obj
+<< /Type /Page /Parent 8 0 R /MediaBox [0 0 612.00 792.00] /Resources << /Font << /F1 1 0 R /F2 2 0 R /F3 3 0 R /F4 4 0 R /F5 5 0 R /F6 6 0 R /F7 7 0 R >> >> /Contents 13 0 R >>
+endobj
+15 0 obj
+<< /Length 1310 >>
+stream
+1 1 1 rg
+0 0 612.00 792.00 re f
+BT /F2 10.4 Tf 0.059 0.090 0.165 rg 48.00 738.00 Td (References) Tj ET
+q [] 0 d 0.70 w 0.796 0.835 0.882 RG 48.00 733.00 m 564.00 733.00 l S Q
+q [] 0 d 1.40 w 0.114 0.306 0.847 RG 48.00 733.00 m 106.00 733.00 l S Q
+BT /F4 8.2 Tf 0.200 0.255 0.333 rg 48.00 722.30 Td ([1] B. Yoshida and A. Kitaev, 'Efficient decoding for the Hayden-Preskill protocol,' arXiv:1710.03363 \(2017\).) Tj ET
+BT /F4 8.2 Tf 0.200 0.255 0.333 rg 48.00 709.90 Td ([2] K. A. Landsman, C. Figgatt, T. Schuster, N. M. Linke, B. Yoshida, N. Y. Yao, and C. Monroe, 'Verified quantum information scrambling,') Tj ET
+BT /F4 8.2 Tf 0.200 0.255 0.333 rg 62.00 699.30 Td (Nature 567, 61-65 \(2019\).) Tj ET
+BT /F6 8.0 Tf 0.392 0.455 0.545 rg 48.00 762.00 Td (Continuous-Angle Non-Clifford Hayden-Preskill Scrambling on ibm_fez) Tj ET
+BT /F1 7.5 Tf 0.392 0.455 0.545 rg 374.09 762.00 Td (Devin Phillip Davis  |  OSIRIS-XTOP-006-FEZ-LETTER) Tj ET
+q [] 0 d 0.60 w 0.796 0.835 0.882 RG 48.00 756.00 m 564.00 756.00 l S Q
+q [] 0 d 0.60 w 0.796 0.835 0.882 RG 48.00 42.00 m 564.00 42.00 l S Q
+BT /F3 7.0 Tf 0.392 0.455 0.545 rg 48.00 29.00 Td (ibm_fez Jobs dc1tqaanj2vs73dfrt40 & dc23ouqnj2vs73dg3bog  |  RFC8785 Capsule: 73915b7934d80678...) Tj ET
+BT /F2 7.6 Tf 0.200 0.255 0.333 rg 523.30 29.00 Td (Page 4 of 4) Tj ET
+endstream
+endobj
+16 0 obj
+<< /Type /Page /Parent 8 0 R /MediaBox [0 0 612.00 792.00] /Resources << /Font << /F1 1 0 R /F2 2 0 R /F3 3 0 R /F4 4 0 R /F5 5 0 R /F6 6 0 R /F7 7 0 R >> >> /Contents 15 0 R >>
+endobj
+17 0 obj
+<< /Type /Catalog /Pages 8 0 R >>
+endobj
+18 0 obj
+<< /Producer (OSIRIS Deterministic PDF 1.4 Preprint Renderer) /Title (Continuous-Angle Non-Clifford Hayden-Preskill Scrambling Trajectory and Stratified Decoherence Discrimination on a 156-Qubit Superconducting Processor) /Author (Devin Phillip Davis) >>
+endobj
+xref
+0 19
+0000000000 65535 f 
+0000000015 00000 n 
+0000000085 00000 n 
+0000000160 00000 n 
+0000000228 00000 n 
+0000000300 00000 n 
+0000000371 00000 n 
+0000000444 00000 n 
+0000000517 00000 n 
+0000000596 00000 n 
+0000009890 00000 n 
+0000010083 00000 n 
+0000026489 00000 n 
+0000026683 00000 n 
+0000037235 00000 n 
+0000037429 00000 n 
+0000038791 00000 n 
+0000038985 00000 n 
+0000039035 00000 n 
+trailer
+<< /Size 19 /Root 17 0 R /Info 18 0 R >>
+startxref
+39306
+%%EOF

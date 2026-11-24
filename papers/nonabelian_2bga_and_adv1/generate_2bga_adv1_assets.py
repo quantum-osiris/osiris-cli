@@ -18,6 +18,7 @@ from __future__ import annotations
 import hashlib
 import json
 import re
+import sys
 from pathlib import Path
 from typing import Any, Dict, List, Mapping, Sequence, Tuple
 
@@ -25,11 +26,16 @@ import rfc8785
 
 PAPER_DIR = Path(__file__).resolve().parent
 REPO_ROOT = PAPER_DIR.parent.parent
+if str(REPO_ROOT) not in sys.path:
+    sys.path.insert(0, str(REPO_ROOT))
+
+from papers._pdf_preprint_renderer import PreprintDocument  # noqa: E402
 
 QLDPC_REPORT_PATH = REPO_ROOT / "qldpc_nonabelian" / "artifacts" / "nonabelian_2bga_report.json"
 ADV1_REPORT_PATH = REPO_ROOT / "adv1" / "artifacts" / "adv1_pregate_report.json"
 
 TEX_FILENAME = "nonabelian_2bga_and_adv1.tex"
+PDF_FILENAME = "nonabelian_2bga_and_adv1.pdf"
 FIG1_STEM = "fig1_odd_k_nonabelian_2bga_codes_and_bposd"
 FIG2_STEM = "fig2_adv1_three_attack_ablation_m6"
 
@@ -707,6 +713,338 @@ def make_fig2(adv1: Mapping[str, Any]) -> VectorCanvas:
     return c
 
 
+def _plain_group_name(gname: str) -> str:
+    if "_semidirect_" in gname:
+        lhs, rhs = gname.split("_semidirect_")
+        return f"C_{lhs.split('_')[1]} |x C_{rhs.split('_')[1]}"
+    return gname
+
+
+def build_preprint_pdf(
+    qldpc: Mapping[str, Any],
+    adv1: Mapping[str, Any],
+    fig1: VectorCanvas,
+    fig2: VectorCanvas,
+) -> bytes:
+    """Render a multi-page Zenodo-ready PDF 1.4 preprint for Non-Abelian 2BGA & ADV-1."""
+    thm = qldpc["algebraic_rank_symmetry_theorem"]
+    odd_cands = qldpc["odd_k_candidates"]
+    exact_odd = [c for c in odd_cands if c["distance_type"] == "exact_d"]
+    ub_odd = [c for c in odd_cands if c["distance_type"] == "upper_bound_d"]
+    bench = qldpc["helios_1_bposd_cs_benchmarks"]
+    first_sweeps = next(iter(bench.values()))["sweeps"]
+    pol = adv1["pregate_policy"]
+    summ = adv1["summary"]
+
+    def _cand(lbl: str) -> Mapping[str, Any]:
+        return next(c for c in odd_cands if c["code_label"] == lbl)
+
+    c_114 = _cand("C_19_semidirect_C_3_odd_[[114,3,12]]")
+    c_60 = _cand("D_15_odd_[[60,3,8]]")
+    c_36 = _cand("D_9_odd_[[36,3,6]]")
+    c_42 = _cand("C_7_semidirect_C_3_odd_[[42,3,6]]")
+    c_16 = _cand("Q_8_odd_[[16,3,4]]")
+
+    ctrls = {c["candidate_id"]: c for c in adv1["adv0_twirled_mirror_controls"]}
+    cands = {c["candidate_id"]: c for c in adv1["adv1_looped_non_mirror_candidates"]}
+    c1_nom6 = cands["adv1_chorded_2q_n28_L5_no_m6"]
+    c1_n24 = cands["adv1_chorded_m6_n24_L5"]
+    c1_n30 = cands["adv1_chorded_m6_n30_L5"]
+
+    doc = PreprintDocument(
+        short_title="Non-Abelian 2BGA Odd-k qLDPC Codes & ADV-1 Pre-Gate",
+        manuscript_id="OSIRIS-PAPER-NONABELIAN-2BGA-AND-ADV1",
+        execution_tier="SIMULATED (provider_job_id: null)",
+        footer_left=(
+            f"SIMULATED (provider_job_id: null, seed={int(qldpc['seed'])})  |  "
+            f"Target Architecture: {adv1['target_architecture']}"
+        ),
+    )
+
+    abstract = (
+        "All-to-all quantum charge-coupled device (QCCD) trapped-ion processors unlock both non-planar quantum "
+        "low-density parity-check (qLDPC) memory codes and long-range chorded circuits whose output peaks resist "
+        "polynomial-time classical algorithms. Here we establish rigorous algebraic and computational results across "
+        f"both domains in verified SIMULATED benchmarks (provider_job_id: null) calibrated to the 98-qubit Quantinuum "
+        f"{adv1['target_architecture']} architecture. First, for Lin-Pryadko two-block group-algebra (2BGA) "
+        "Calderbank-Shor-Steane (CSS) codes H_X = [L(a) | R(b)], H_Z = [R(b)^T | L(a)^T] over F_2[G], we prove via "
+        "the group-inversion anti-automorphism and Frobenius / Wedderburn-Artin duality that rank_{F_2}(H_X) = "
+        "rank_{F_2}(H_Z) holds identically for every finite group G -- including odd-order non-abelian Frobenius "
+        "metacyclic groups C_p |x C_q -- forcing unquotiented regular 2BGA codes to carry strictly even logical "
+        f"dimension k = 2(|G| - rank_{{F_2}}(H_X)), verified with {int(thm['rank_asymmetry_violations'])} violations "
+        f"across {int(thm['unquotiented_pairs_checked']):,} subset pairs over {len(qldpc['group_catalog'])} non-abelian "
+        "groups. Breaking left-right duality via subgroup-quotient coset 2BGA (exemplified by a D_9/Z_2 code with "
+        f"n={int(thm['coset_2bga_d9_z2_example']['n'])}, k={int(thm['coset_2bga_d9_z2_example']['k'])}) or symplectic "
+        f"minimum-weight logical gauge pinning yields {int(qldpc['odd_k_d_ge_4_discoveries_count'])} odd-k "
+        f"(k in {{1, 3, 5}}, d >= 4) non-abelian CSS codes, including exact-distance D_9 [[36,3,6]] "
+        f"(kd^2/n = {float(c_36['kd2_over_n']):.2f}), C_7 |x C_3 [[42,3,6]] ({float(c_42['kd2_over_n']):.4f}), and "
+        f"ISD-witnessed C_19 |x C_3 [[114,3,12]] ({float(c_114['kd2_over_n']):.4f}), achieving strong logical "
+        "suppression under Sum-Product BP+OSD-CS decoding. Second, because prior twirled-mirror ADV-0 peaked circuits "
+        "fail classical-hardness audits due to hidden U^+ U cancellation, we introduce the fail-closed ADV-1 pre-gate "
+        f"requiring every candidate to defeat bounded-chi MPS (chi <= 128), truncated Pauli-path (w_max <= 4), and "
+        f"causal light-cone (|C| <= {int(pol['tractable_light_cone_limit'])}) attacks prior to QPU allocation. While "
+        f"naive non-mirror chorded circuits without Pauli amplification fail at w_max=3 "
+        f"({100.0 * float(c1_nom6['attack2_pauli_path']['w_max_curves'][1]['bit_accuracy']):.1f}% secret recovery), "
+        "appending the 15-CX involution M_6 = J_6 - I_6 (mod 2) lifts every single-qubit output Z_j to exact Pauli "
+        "weight five, enabling 24-qubit and 30-qubit chorded circuits to survive all three attacks with predicted "
+        f"Helios-1 peak probabilities {float(c1_n24['helios1_predicted_peak_prob']):.4f} and "
+        f"{float(c1_n30['helios1_predicted_peak_prob']):.4f}."
+    )
+
+    doc.add_title_block(
+        title=(
+            "Left-Right Rank Duality in Non-Abelian Two-Block Group-Algebra Quantum LDPC Codes "
+            "and a Three-Attack Classical-Hardness Pre-Gate for Looped Non-Mirror Peaked Circuits"
+        ),
+        author="Devin Phillip Davis",
+        affiliation="Agile Defense Systems LLC",
+        date_str="November 23, 2026",
+        metadata_rows=[
+            (
+                "Execution Tier & Seed",
+                f"SIMULATED (hardware_executed: false, provider_job_id: null)  |  Deterministic seed: {int(qldpc['seed'])}",
+            ),
+            (
+                "Non-Abelian 2BGA Audit",
+                f"{int(thm['unquotiented_pairs_checked']):,} regular pairs ({int(thm['rank_asymmetry_violations'])} rank violations) | {int(qldpc['odd_k_d_ge_4_discoveries_count'])} odd-k CSS codes (d >= 4)",
+            ),
+            (
+                "ADV-1 Pre-Gate Verdict",
+                f"{int(summ['adv0_controls_rejected'])}/{int(summ['adv0_controls_evaluated'])} ADV-0 controls rejected | Permitted: {', '.join(summ['adv1_permitted_candidates'])}",
+            ),
+            (
+                "Upstream Artifact SHA-256",
+                f"2BGA: {_sha256_file(QLDPC_REPORT_PATH)[:20]}... | ADV-1: {_sha256_file(ADV1_REPORT_PATH)[:20]}...",
+            ),
+        ],
+        abstract=abstract,
+    )
+
+    doc.add_callout_box(
+        "KEY ALGEBRAIC THEOREMS & FAIL-CLOSED CLASSICAL-HARDNESS PRE-GATE RESULTS",
+        [
+            f"Theorem 1 (Regular 2BGA Left-Right Rank Duality): Inversion anti-automorphism P_inv and Frobenius trace duality force rank_{{F_2}}(H_X) == rank_{{F_2}}(H_Z) and even k = 2(|G| - rank(H_X)) across all {int(thm['unquotiented_pairs_checked']):,} regular non-abelian pairs ({int(thm['rank_asymmetry_violations'])} violations).",
+            f"Odd-k Symmetry Breaking & Helios-1 BP+OSD-CS: Coset quotienting (D_9/Z_2: [[{int(thm['coset_2bga_d9_z2_example']['n'])},{int(thm['coset_2bga_d9_z2_example']['k'])},d]]) and symplectic logical gauge pinning unlock {int(qldpc['odd_k_d_ge_4_discoveries_count'])} odd-k codes ({len(exact_odd)} exact MITM, {len(ub_odd)} ISD + d>=5 MITM) up to kd^2/n = {float(c_114['kd2_over_n']):.4f}.",
+            f"Proposition 1 (M_6 = J_6 - I_6 Pauli-Weight-5 Amplification): Appending the 15-CX involution M_6 lifts every output Z_j to weight 5, reducing w_max=4 Pauli-path recovery from {100.0 * float(c1_nom6['attack2_pauli_path']['w_max_curves'][1]['bit_accuracy']):.1f}% (no M_6) to {100.0 * float(c1_n24['attack2_pauli_path']['w_max_curves'][-1]['bit_accuracy']):.1f}% (n=24) and {100.0 * float(c1_n30['attack2_pauli_path']['w_max_curves'][-1]['bit_accuracy']):.1f}% (n=30).",
+        ],
+        tone="info",
+    )
+
+    doc.add_section("1. Introduction & Frobenius Left-Right Rank Duality in Regular 2BGA Codes")
+    doc.add_paragraph(
+        "Reconfigurable trapped-ion QCCD architectures such as Quantinuum H2-1 and 98-qubit Helios-1 support arbitrary "
+        "nonlocal two-qubit connectivity via physical ion transport without SWAP-routing overhead [1], unlocking both "
+        "non-planar qLDPC codes [2-5] and long-range chorded circuits [9, 10]. For any finite group G and subsets "
+        "a, b subseteq G, the regular Lin-Pryadko 2BGA CSS code on n = 2|G| qubits is defined by H_X = [L(a) | R(b)] "
+        "and H_Z = [R(b)^T | L(a)^T], satisfying H_X H_Z^T = L(a)R(b) + R(b)L(a) = 0 (mod 2) by group associativity."
+    )
+    doc.add_equation(
+        [
+            "Theorem 1:  P_inv L(a) P_inv = R(a)^T,   P_inv R(b) P_inv = L(b)^T   =>   rank_{F_2}(H_X) = rank_{F_2}(H_Z)",
+            "Logical Dimension:  k = 2|G| - rank_{F_2}(H_X) - rank_{F_2}(H_Z) = 2(|G| - rank_{F_2}(H_X))   [strictly even]",
+        ],
+        eq_num="1",
+    )
+    doc.add_paragraph(
+        "Because F_2[G] is a symmetric Frobenius algebra under the identity-coefficient trace tau(sum c_g g) = c_1 "
+        "satisfying tau(xy) = tau(yx), the bimodule image im L(a) + im R(b) and its dual im R(b)^T + im L(a)^T have "
+        f"identical dimension over F_2 even when |G| is odd and F_2[G] decomposes into non-commutative matrix rings "
+        f"M_q(F_{{2^f}}). Exhaustive verification across {len(qldpc['group_catalog'])} non-abelian groups (Q_8, A_4, "
+        "S_4, D_7, D_9, D_15, C_7|xC_3, C_13|xC_3, C_11|xC_5, C_19|xC_3, C_31|xC_3; 16 <= n <= 186) confirmed "
+        f"{int(thm['rank_asymmetry_violations'])} violations across {int(thm['unquotiented_pairs_checked']):,} pairs."
+    )
+
+    doc.add_section("2. Breaking Left-Right Duality: 16 Odd-k Codes and Helios-1 BP+OSD-CS Thresholds")
+    doc.add_paragraph(
+        "We break regular left-right symmetry via two constructive CSS-preserving mechanisms: (1) Subgroup-Quotient "
+        f"Coset 2BGA replacing R(b) on F_2[G] by R_H(b) on F_2[G/H] for odd-index non-normal H <= G (realizing n="
+        f"{int(thm['coset_2bga_d9_z2_example']['n'])}, k={int(thm['coset_2bga_d9_z2_example']['k'])} on D_9/Z_2), and "
+        "(2) Symplectic Minimum-Weight Logical Gauge Pinning promoting an odd number r of independent minimum-weight "
+        "logical X-operators l_j in ker(H_Z) \\ rowspace(H_X) into H_X', lowering k = k_0 - r while preserving "
+        f"d(H_X', H_Z) >= d_0 by CSS subcode monotonicity. Across {len(qldpc['base_nonabelian_2bga_parents'])} parent "
+        f"codes, this yields {int(qldpc['odd_k_d_ge_4_discoveries_count'])} odd-k (k in {{1,3,5}}, d >= 4) codes."
+    )
+
+    doc.add_figure(
+        fig1,
+        f"Odd-k non-abelian 2BGA CSS code family ({int(qldpc['odd_k_d_ge_4_discoveries_count'])} codes, 16 <= n <= 186) "
+        f"and 3-round phenomenological logical error rate under log-domain Sum-Product BP+OSD-CS ({int(first_sweeps[0]['mc_shots'])} "
+        "Monte Carlo shots/cell, SIMULATED, provider_job_id: null).",
+    )
+
+    t1_rows = [
+        [
+            _plain_group_name(c["group_name"]),
+            str(int(c["group_order"])),
+            f"[[{int(c['n'])},{int(c['k'])},{int(c['d'])}]]",
+            "Exact MITM" if c["distance_type"] == "exact_d" else f"ISD (d>={int(c['certified_lower_bound_d'])})",
+            f"({int(c['d_x'])},{int(c['d_z'])})",
+            f"({int(c['max_row_weight_hx'])},{int(c['max_row_weight_hz'])})",
+            f"{float(c['kd2_over_n']):.4f}",
+        ]
+        for c in odd_cands
+    ]
+    doc.add_table(
+        f"TABLE I. Catalog of all {int(qldpc['odd_k_d_ge_4_discoveries_count'])} discovered odd-k non-abelian 2BGA CSS "
+        "codes (H_X' H_Z^T = 0 mod 2, d >= 4, SIMULATED).",
+        ["Group G", "|G|", "[[n, k, d]]", "Distance Cert.", "(d_X, d_Z)", "Max Wt (w_X,w_Z)", "k d^2 / n"],
+        t1_rows,
+        col_widths=[78, 34, 72, 82, 60, 82, 62],
+        alignments=["left", "right", "center", "center", "center", "center", "right"],
+        font_size=6.9,
+    )
+
+    bench_order = [
+        "Q_8_odd_[[16,3,4]]",
+        "D_7_odd_[[28,3,5]]",
+        "D_9_odd_[[36,3,6]]",
+        "C_7_semidirect_C_3_odd_[[42,3,6]]",
+        "D_15_odd_[[60,3,8]]",
+        "C_19_semidirect_C_3_odd_[[114,3,12]]",
+        "C_31_semidirect_C_3_odd_[[186,3,13]]",
+    ]
+    t2_rows: List[List[str]] = []
+    for key in bench_order:
+        b = bench[key]
+        sw = b["sweeps"]
+        t2_rows.append(
+            [
+                f"{_plain_group_name(b['group'])} [[{int(b['n'])},{int(b['k'])},{int(b['d'])}]]",
+                f"{float(sw[0]['code_capacity_ler']):.4f} / {float(sw[0]['phenomenological_3round_ler']):.5f}",
+                f"{float(sw[1]['code_capacity_ler']):.4f} / {float(sw[1]['phenomenological_3round_ler']):.5f}",
+                f"{float(sw[2]['code_capacity_ler']):.4f} / {float(sw[2]['phenomenological_3round_ler']):.5f}",
+            ]
+        )
+    t2_rows.append(
+        [
+            "Unencoded k=3 baseline 1-(1-p)^3",
+            f"{float(first_sweeps[0]['unencoded_k_qubit_error_prob']):.6f}",
+            f"{float(first_sweeps[1]['unencoded_k_qubit_error_prob']):.6f}",
+            f"{float(first_sweeps[2]['unencoded_k_qubit_error_prob']):.6f}",
+        ]
+    )
+    doc.add_table(
+        f"TABLE II. Helios-1 Sum-Product BP+OSD-CS logical error rates (SIMULATED, {int(first_sweeps[0]['mc_shots'])} "
+        "MC shots/cell; entries report code-capacity / 3-round phenomenological LER).",
+        [
+            "Code [[n,k,d]]",
+            f"p = {float(first_sweeps[0]['physical_depolarizing_p']):.5f}",
+            f"p = {float(first_sweeps[1]['physical_depolarizing_p']):.4f}",
+            f"p = {float(first_sweeps[2]['physical_depolarizing_p']):.4f}",
+        ],
+        t2_rows,
+        col_widths=[166, 110, 110, 110],
+        font_size=7.0,
+    )
+
+    doc.add_paragraph(
+        f"Under code-capacity depolarizing noise, all six benchmarked codes with d >= 5 record zero logical failures "
+        f"across all three error rates, while compact Q_8 [[16,3,4]] achieves "
+        f"{float(bench['Q_8_odd_[[16,3,4]]']['sweeps'][2]['suppression_vs_unencoded_cc']):.2f}x suppression at "
+        f"p={float(first_sweeps[2]['physical_depolarizing_p']):.4f}. Under 3-round phenomenological noise, D_9 "
+        f"[[36,3,6]] maintains {float(bench['D_9_odd_[[36,3,6]]']['sweeps'][2]['phenomenological_3round_ler']):.4f} LER, "
+        f"C_7 |x C_3 [[42,3,6]] suppresses p=0.0050 LER to "
+        f"{float(bench['C_7_semidirect_C_3_odd_[[42,3,6]]']['sweeps'][2]['phenomenological_3round_ler']):.5f}, and "
+        f"C_19 |x C_3 [[114,3,12]] achieves {float(bench['C_19_semidirect_C_3_odd_[[114,3,12]]']['sweeps'][0]['phenomenological_3round_ler']):.5f} "
+        f"at the native Helios-1 rate p={float(first_sweeps[0]['physical_depolarizing_p']):.5f} (vs {float(c_60['kd2_over_n']):.2f} "
+        f"kd^2/n on D_15 [[60,3,8]] and {float(c_16['kd2_over_n']):.2f} on Q_8 [[16,3,4]])."
+    )
+
+    doc.add_section("3. The ADV-1 Three-Attack Pre-Gate and M_6 = J_6 - I_6 Pauli-Weight-5 Involution")
+    doc.add_paragraph(
+        "Under protocol OSIRIS-ADV-1-PREGATE, QPU allocation is permitted if and only if a candidate passes the "
+        "structural non-mirror audit and simultaneously defeats: (1) Bounded-chi MPS across chi in "
+        f"{{{', '.join(str(x) for x in pol['mps_chi_sweep'])}}} (SNR < {float(pol['min_snr_over_uniform']):.1f} over "
+        f"2^{{-n}}), (2) Truncated Pauli-Path back-propagation across w_max in {{{', '.join(str(x) for x in pol['pauli_weight_cutoff_sweep'])}}}, "
+        f"and (3) Causal Light-Cone contraction (max_j |C(j)| > {int(pol['tractable_light_cone_limit'])}). Because "
+        f"two-qubit chorded refocusing without Stage D leaks {100.0 * float(c1_nom6['attack2_pauli_path']['w_max_curves'][1]['bit_accuracy']):.1f}% "
+        "of secret bits at w_max=3, Stage D appends the 15-CX binary involution M_6 = J_6 - I_6 (mod 2) on 6-qubit tuples:"
+    )
+    doc.add_equation(
+        ["Proposition 1:  M_6^2 == I_6 (mod 2),   U_{M_6}^+ Z_j U_{M_6} = prod_{r != j} Z_r,   wt(U_{M_6}^+ Z_j U_{M_6}) = 5"],
+        eq_num="2",
+    )
+
+    doc.add_figure(
+        fig2,
+        "Fail-closed ADV-1 classical-hardness pre-gate and M_6 = J_6 - I_6 (mod 2) ablation (SIMULATED, "
+        f"provider_job_id: null). Appending 15-CX M_6 lifts every output Z_j to Pauli weight 5, reducing w_max=4 "
+        f"recovery on n=24 and n=30 chorded circuits to chance ({100.0 * float(c1_n24['attack2_pauli_path']['w_max_curves'][-1]['bit_accuracy']):.1f}% "
+        f"and {100.0 * float(c1_n30['attack2_pauli_path']['w_max_curves'][-1]['bit_accuracy']):.1f}%).",
+    )
+
+    all_eval = list(adv1["adv0_twirled_mirror_controls"]) + list(adv1["adv1_looped_non_mirror_candidates"])
+    t3_rows: List[List[str]] = []
+    for item in all_eval:
+        mir = (
+            "Artifact"
+            if item["mirror_audit"]["mirror_structure_detected"]
+            else f"No ({float(item['mirror_audit']['mean_block_mirror_overlap']):.2f})"
+        )
+        mps_p128 = float(item["attack1_bounded_mps"]["chi_curves"][-1]["p_peak_est"])
+        mps_s = f"{'Win' if item['attack1_bounded_mps']['any_win'] else 'Fail'} ({mps_p128:.3f})"
+        w4 = item["attack2_pauli_path"]["w_max_curves"][-1]
+        pauli_s = f"{'Win' if item['attack2_pauli_path']['any_win'] else 'Fail'} ({100.0 * float(w4['bit_accuracy']):.1f}%)"
+        cone = item["attack3_light_cone"]
+        cone_s = f"{'Win' if cone['win'] else 'Fail'} ({int(cone['max_cone_size'])})"
+        gate_s = "PERMITTED" if item["qpu_allocation_permitted"] else "REJECTED"
+        t3_rows.append(
+            [
+                item["candidate_id"],
+                str(int(item["n_qubits"])),
+                str(int(item["n_cz"])),
+                mir,
+                mps_s,
+                pauli_s,
+                cone_s,
+                f"{float(item['helios1_predicted_peak_prob']):.3f} / {float(item['helios1_hqc_1000_shots']):.1f}",
+                gate_s,
+            ]
+        )
+    doc.add_table(
+        f"TABLE III. Complete OSIRIS-ADV-1-PREGATE adjudication (SIMULATED, provider_job_id: null) across "
+        f"{len(ctrls)} ADV-0 mirror controls and {len(cands)} looped non-mirror candidates.",
+        ["Candidate ID", "n", "CZ", "Mirror (Ov.)", "MPS (128)", "Pauli (w=4)", "Cone", "Peak / HQC", "Verdict"],
+        t3_rows,
+        col_widths=[136, 22, 26, 52, 54, 58, 46, 62, 54],
+        alignments=["left", "right", "right", "center", "center", "center", "center", "right", "center"],
+        font_size=6.6,
+    )
+
+    doc.add_section("4. Conclusion and Reproducibility")
+    doc.add_paragraph(
+        f"Only the {len(summ['adv1_permitted_candidates'])} full-width chorded M_6 circuits adv1_chorded_m6_n24_L5 "
+        f"(n=24, {int(c1_n24['n_cz'])} CZ, {int(c1_n24['n_1q_phys'])} 1Q gates, Helios-1 peak "
+        f"{float(c1_n24['helios1_predicted_peak_prob']):.4f}, {float(c1_n24['helios1_hqc_1000_shots']):.1f} HQC) and "
+        f"adv1_chorded_m6_n30_L5 (n=30, {int(c1_n30['n_cz'])} CZ, {int(c1_n30['n_1q_phys']):,} 1Q gates, Helios-1 peak "
+        f"{float(c1_n30['helios1_predicted_peak_prob']):.4f}, {float(c1_n30['helios1_hqc_1000_shots']):.1f} HQC) pass "
+        "the non-mirror audit and defeat all three classical simulation attacks simultaneously. All group-algebra, "
+        "MITM/ISD distance-certification, BP+OSD-CS decoder, and pre-gate modules (nonabelian_2bga.py, looped_peaked.py, "
+        "pregate.py), SIMULATED JSON reports, deterministic asset generator, RFC 8785 provenance capsule, and "
+        "SHA256SUMS.txt manifest are archived in the repository package."
+    )
+
+    doc.add_references(
+        [
+            "[1] S. A. Moses et al., 'A Race-Track Trapped-Ion Quantum Processor,' Phys. Rev. X 13, 041052 (2023).",
+            "[2] N. P. Breuckmann and J. N. Eberhardt, 'Quantum Low-Density Parity-Check Codes,' PRX Quantum 2, 040101 (2021).",
+            "[3] P. Panteleev and G. Kalachev, in Proc. ACM STOC, 375 (2022).",
+            "[4] S. Bravyi et al., 'High-threshold and low-overhead fault-tolerant quantum memory,' Nature 627, 778 (2024).",
+            "[5] H.-K. Lin and L. P. Pryadko, 'Quantum Two-Block Group Algebra Codes,' PRX Quantum 5, 010326 (2024).",
+            "[6] A. A. Kovalev and L. P. Pryadko, Phys. Rev. A 88, 012311 (2013).",
+            "[7] P. Panteleev and G. Kalachev, Quantum 5, 585 (2021).",
+            "[8] J. Roffe, D. R. White, S. Burton, and E. Campbell, Phys. Rev. Res. 2, 043423 (2020).",
+            "[9] S. Aaronson and Y. Zhang, 'Verifiable Quantum Randomness from Peaked Quantum Circuits,' arXiv:2404.10044 (2024).",
+            "[10] T. B. Propp, S. Aaronson, and S. Gharibian, Quantum Sci. Technol. 10, 025014 (2025).",
+            "[11] G. Vidal, Phys. Rev. Lett. 91, 147902 (2003).",
+            "[12] T. Begusic, J. Gray, and G. K.-L. Chan, Sci. Adv. 10, eadk4321 (2024).",
+            "[13] E. Fontana, M. S. Rudolph, R. Duncan, I. Rungger, and L. Cincio, Nat. Commun. 16, 1120 (2025).",
+        ]
+    )
+
+    return doc.to_pdf_bytes()
+
+
 def generate_all() -> Dict[str, Any]:
     qldpc = json.loads(QLDPC_REPORT_PATH.read_text(encoding="utf-8"))
     adv1 = json.loads(ADV1_REPORT_PATH.read_text(encoding="utf-8"))
@@ -720,6 +1058,9 @@ def generate_all() -> Dict[str, Any]:
     fig2 = make_fig2(adv1)
     fig2.save(PAPER_DIR / FIG2_STEM)
 
+    pdf_bytes = build_preprint_pdf(qldpc, adv1, fig1, fig2)
+    (PAPER_DIR / PDF_FILENAME).write_bytes(pdf_bytes)
+
     upstream_rels = [
         "qldpc_nonabelian/nonabelian_2bga.py",
         "qldpc_nonabelian/artifacts/nonabelian_2bga_report.json",
@@ -729,6 +1070,7 @@ def generate_all() -> Dict[str, Any]:
     ]
     generated_rels = [
         f"papers/nonabelian_2bga_and_adv1/{TEX_FILENAME}",
+        f"papers/nonabelian_2bga_and_adv1/{PDF_FILENAME}",
         "papers/nonabelian_2bga_and_adv1/generated.tex",
         "papers/nonabelian_2bga_and_adv1/generate_2bga_adv1_assets.py",
         f"papers/nonabelian_2bga_and_adv1/{FIG1_STEM}.svg",

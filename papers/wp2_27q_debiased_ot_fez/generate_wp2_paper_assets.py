@@ -21,6 +21,7 @@ import hashlib
 import json
 import math
 import re
+import sys
 from pathlib import Path
 from typing import Any, Dict, List, Mapping, Sequence, Tuple
 
@@ -28,12 +29,17 @@ import rfc8785
 
 PAPER_DIR = Path(__file__).resolve().parent
 REPO_ROOT = PAPER_DIR.parent.parent
+if str(REPO_ROOT) not in sys.path:
+    sys.path.insert(0, str(REPO_ROOT))
+
+from papers._pdf_preprint_renderer import PreprintDocument  # noqa: E402
 
 FEZ_DIR = REPO_ROOT / "experiments" / "wp2_27q_fez"
 OT_REPORT_PATH = (
     REPO_ROOT / "experiments" / "wp2_debiased_sinkhorn" / "artifacts" / "wp2_debiased_ot_report.json"
 )
 TEX_FILENAME = "wp2_27q_debiased_ot_fez.tex"
+PDF_FILENAME = "wp2_27q_debiased_ot_fez.pdf"
 FIG1_STEM = "fig1_27q_fez_sparsity_collapse_vs_eq7"
 FIG2_STEM = "fig2_coherent_drift_calibration_and_heron_rescoring"
 
@@ -1000,6 +1006,496 @@ def make_fig2(fez: Mapping[str, Any], ot_rep: Mapping[str, Any]) -> VectorCanvas
     return c
 
 
+def build_preprint_pdf(
+    fez: Mapping[str, Any],
+    manifest: Mapping[str, Any],
+    cal: Mapping[str, Any],
+    ot_rep: Mapping[str, Any],
+    fig1: VectorCanvas,
+    fig2: VectorCanvas,
+) -> bytes:
+    """Render a multi-page Zenodo-ready PDF 1.4 preprint for OSIRIS-WP2-27Q-FEZ."""
+    q27 = int(manifest["n_qubits"])
+    eq7_unif_27q = math.sqrt(0.25 + 1.0 / (4.0 * q27))
+    eps_sk = float(ot_rep["epsilon_sinkhorn_default"])
+    arm_a = fez["arm_theta_summaries"]["NB11_REPAIRED_27Q"]
+    arm_b = fez["arm_theta_summaries"]["ENTANGLED_BRICKWALL_27Q"]
+    h1 = fez["hypotheses"]["H1_weed_bach_sparsity_bias_eliminated"]
+    h3 = fez["hypotheses"]["H3_monotonic_coherent_drift_detection_gt_10sigma"]
+    cal_b = fez["controlled_drift_calibration_arm_b"]
+
+    pa = ot_rep["part_a_simulated_high_entropy_benchmark"]
+    u96 = pa["uniform_2_pow_96_stress_test"]
+    ngate = pa["null_unbiasedness_gate"]
+    dgate = pa["drift_detection_gate_eps_0_05"]
+    pb = ot_rep["part_b_hardware_attested_heron_r2_rescoring"]
+    marr = pb["marrakesh_dd_rescoring"]
+    qec = pb["fez_qec001_rescoring"]
+    qpu_s = int(fez["job_metadata"]["usage"]["qpu_charge_time_seconds"])
+    pooled_s = int(arm_a[0]["pooled_shots"])
+
+    doc = PreprintDocument(
+        short_title="Split-Sample-Debiased Optimal Transport on 27Q ibm_fez & Heron r2",
+        manuscript_id="OSIRIS-PAPER-WP2-27Q-DEBIASED-OT-FEZ",
+        execution_tier="HARDWARE_ATTESTED (+ SIMULATED COMPANION)",
+        footer_left=(
+            f"ibm_fez {fez['provider_job_id']} | ibm_marrakesh {marr['provider_job_id']} | "
+            f"QEC-001 {qec['provider_job_id']}"
+        ),
+    )
+
+    abstract = (
+        "Quantifying temporal and cross-block output stability on wide noisy intermediate-scale quantum processors "
+        "requires comparing finite-shot bitstring histograms over an exponentially large discrete hypercube {0,1}^Q. "
+        "Two distinct mathematical and statistical failure modes invalidate naive transport-based stability scores: "
+        "first, replacing the Kantorovich minimum-cost coupling with an independent marginal-product expectation "
+        f"violates self-distance identity and assigns a nonzero self-cost sqrt(1/4 + 1/(4Q)) = {eq7_unif_27q:.5f} to "
+        f"a uniform Q={q27} register; second, even exact plug-in Kantorovich linear programming suffers from the "
+        "Weed-Bach minimax finite-sample sparsity bias O(S^{-1/Q}), causing two noiseless draws from the same "
+        "high-entropy circuit to appear artificially unstable. Here we formulate sample-size-matched split-sample-"
+        f"debiased Kantorovich and entropic Sinkhorn (eps={eps_sk:.2f}) estimators constructed via exact multivariate-"
+        "hypergeometric histogram halving, whose expectation under the identical-distribution null is identically zero "
+        "for every circuit distribution and shot count S. We validate this framework prospectively on the IBM Heron r2 "
+        f"superconducting processor {fez['backend']} (protocol OSIRIS-WP2-27Q-FEZ, job {fez['provider_job_id']}, "
+        f"{int(manifest['total_pubs'])} ISA circuits, {int(manifest['total_shots']):,} raw shots, {qpu_s} s QPU time) "
+        f"using a constant-skeleton {q27}-qubit heavy-hex tree ({int(fez['constant_cz_count'])} native CZ and "
+        f"{int(fez['constant_sx_count'])} SX gates per circuit, zero routing SWAPs). Across theta in "
+        f"{{{arm_a[0]['theta_rad']:.3f}, {arm_a[1]['theta_rad']:.3f}, {arm_a[2]['theta_rad']:.3f}}} rad, defective "
+        "marginal-product and raw plug-in estimators inflate strongly with output entropy, whereas matched split-sample "
+        f"Sinkhorn collapses inter-block A/A drift to |S_{{eps,matched}}| <= {float(h1['max_abs_interblock_matched_S_eps']):.6f} "
+        f"< {float(h1['threshold']):.3f} across all conditions (H1 supported), reveals no golden-ratio stability "
+        f"advantage at theta* = phi^2 ~ {arm_a[1]['theta_rad']:.3f} rad (H2 supported), and detects controlled "
+        f"coherent perturbations Delta_theta in {{0.20, 0.45}} rad monotonically at {float(h3['z_score_0p45']):.2f} sigma "
+        f"(H3 supported). Multi-width simulations up to Q=96 (Uniform({{0,1}}^96), raw plug-in z=+{float(u96['raw_plugin_lp_w2_sq']['z_score']):.2f} sigma "
+        f"false drift vs matched Sinkhorn z={float(u96['debiased_sinkhorn_matched']['z_score']):+.2f} sigma) and "
+        f"hardware re-scoring of archived ibm_marrakesh dynamical decoupling (job {marr['provider_job_id']}, "
+        f"{int(marr['total_shots']):,} shots) and 49-bit OSIRIS-QEC-001 trajectories (job {qec['provider_job_id']}, "
+        f"{int(qec['total_shots']):,} shots) confirm clean separation of physical decoherence from hypercube sparsity."
+    )
+
+    doc.add_title_block(
+        title=(
+            "Eliminating Finite-Shot Hypercube Sparsity Bias in 27-Qubit Quantum Processor "
+            "Stability Benchmarks via Split-Sample-Debiased Optimal Transport"
+        ),
+        author="Devin Phillip Davis",
+        affiliation="Agile Defense Systems LLC",
+        date_str="November 23, 2026",
+        metadata_rows=[
+            (
+                "Primary 27Q Hardware Job",
+                f"{fez['backend']} job {fez['provider_job_id']} | {int(manifest['total_pubs'])} PUBs x {int(manifest['shots_per_pub']):,} = {int(manifest['total_shots']):,} shots ({qpu_s}s QPU)",
+            ),
+            (
+                "Hardware Re-Scoring Jobs",
+                f"ibm_marrakesh {marr['provider_job_id']} ({int(marr['total_shots']):,} shots) & ibm_fez QEC-001 {qec['provider_job_id']} ({int(qec['total_shots']):,} shots)",
+            ),
+            (
+                "Constant 27Q Tree Skeleton",
+                f"{int(fez['constant_cz_count'])} CZ, {int(fez['constant_sx_count'])} SX, 0 SWAPs | Konig matchings: {cal['konig_matching_sizes']}",
+            ),
+            (
+                "QPY & Raw Archive SHA-256",
+                f"QPY: {fez['qpy_sha256'][:22]}... | Counts: {fez['raw_counts_gz_sha256'][:22]}...",
+            ),
+        ],
+        abstract=abstract,
+    )
+
+    doc.add_callout_box(
+        "PREREGISTERED HYPOTHESES & MULTI-TIER VERIFICATION SUMMARY",
+        [
+            f"H1 (Weed-Bach O(S^{{-1/Q}}) Sparsity Bias Eliminated) -- {h1['verdict']}: Matched split-sample Sinkhorn collapses live 27Q inter-block A/A drift across all 6 (arm, theta) cells to |S_{{eps,matched}}| <= {float(h1['max_abs_interblock_matched_S_eps']):.6f} (< {float(h1['threshold']):.3f} ceiling).",
+            f"H2 (No Golden-Ratio theta* = phi^2 ~ {arm_a[1]['theta_rad']:.3f} rad Stability Advantage) -- {fez['hypotheses']['H2_golden_ratio_phi_sq_no_special_stability']['verdict']}: Debiased Arm A ({float(arm_a[0]['mean_matched_debiased_sinkhorn_S_eps']):+.6f}, {float(arm_a[1]['mean_matched_debiased_sinkhorn_S_eps']):+.6f}, {float(arm_a[2]['mean_matched_debiased_sinkhorn_S_eps']):+.6f}) and Arm B ({float(arm_b[0]['mean_matched_debiased_sinkhorn_S_eps']):+.6f}, {float(arm_b[1]['mean_matched_debiased_sinkhorn_S_eps']):+.6f}, {float(arm_b[2]['mean_matched_debiased_sinkhorn_S_eps']):+.6f}) are flat at zero; the legacy NB-11 gradient was an entropy/sparsity artifact.",
+            f"H3 (Monotonic Coherent-Drift Calibration > 10 sigma) -- {h3['verdict']}: Controlled perturbations Delta_theta in {{0, +0.20, +0.45}} rad grow strictly monotonically from {float(cal_b['intra_block_aa_null_matched_S_eps_mean']):+.6f} to {float(cal_b['delta_theta_0p20_matched_S_eps_mean']):+.6f} and {float(cal_b['delta_theta_0p45_matched_S_eps_mean']):+.6f} (z = +{float(h3['z_score_0p45']):.2f} sigma).",
+        ],
+        tone="success",
+    )
+
+    doc.add_section("1. Introduction and the Weed-Bach O(S^{-1/Q}) Trap")
+    doc.add_paragraph(
+        "Evaluating whether a multi-qubit quantum processor executes a target circuit family reproducibly across time "
+        "blocks, dynamical decoupling schedules, or syndrome extraction cycles requires a two-sample statistical "
+        "discrepancy functional on discrete bitstring distributions over {0,1}^Q. Optimal transport on normalized "
+        "Hamming ground distance d_H(x,y)/Q is sensitive to correlated multi-qubit shifts without requiring an "
+        "exponential classical reference statevector [1, 2]. However, deploying empirical Wasserstein or entropic "
+        "transport directly on wide quantum registers introduces severe statistical artifacts whenever finite-shot "
+        "sampling sparsity is not explicitly removed."
+    )
+    doc.add_paragraph(
+        f"In our prior audit of an exploratory {q27}-qubit robustness study (NB-11) [5], two compounding failure modes "
+        f"produced an apparent stability ordering across preparation angles theta in {{{arm_a[0]['theta_rad']:.3f}, "
+        f"{arm_a[1]['theta_rad']:.3f}, {arm_a[2]['theta_rad']:.3f}}} rad without genuine quantum interference. First, "
+        "the legacy Eq. (7) score substituted the independent product coupling p(x)q(y) for the infimum over joint "
+        f"couplings Pi(p,q), violating C(p,p)=0 and assigning sqrt(1/4 + 1/(4Q)) = {eq7_unif_27q:.5f} at Q={q27} to "
+        "identical uniform distributions. Second, by Weed and Bach [3], two independent S-shot empirical histograms "
+        "drawn from the same high-entropy distribution P on {0,1}^Q exhibit a positive expected plug-in Wasserstein "
+        f"bias artifact scaling at O(S^{{-1/Q}}) whenever S << 2^Q (at Q={q27}, 2^27 > 10^8 states vs S="
+        f"{int(manifest['shots_per_pub']):,} shots/PUB), conflating Shannon output entropy with hardware decoherence."
+    )
+
+    doc.add_section("2. Split-Sample-Debiased Kantorovich and Sinkhorn Estimators")
+    doc.add_paragraph(
+        "Let X, Y denote integer bitstring count histograms from two independent S-shot executions with normalized "
+        "squared Hamming cost c(x,y) = (d_H(x,y)/Q)^2. Exact Kantorovich LP T_0(p_X, q_Y) and entropic optimal "
+        f"transport OT_eps(p_X, q_Y) (regularization eps = {eps_sk:.2f}) both have strictly positive finite-shot "
+        "expectation under P = Q_out. Partitioning each integer S-shot histogram without replacement via exact "
+        "multivariate-hypergeometric thinning into two independent half-histograms (X^(1), X^(2)) of size m = floor(S/2) "
+        "yields the sample-size-matched 2x2 cross-split U-statistic estimator:"
+    )
+    doc.add_equation(
+        [
+            "D_{F,matched}(X, Y) = (1/4) sum_{a,b in {1,2}} F(p_{X^(a)}, q_{Y^(b)})",
+            "                      - (1/2) F(p_{X^(1)}, p_{X^(2)}) - (1/2) F(q_{Y^(1)}, q_{Y^(2)})",
+        ],
+        eq_num="1",
+    )
+    doc.add_paragraph(
+        "Under the identical-distribution null P = Q_out, all six empirical pairs have the exact same joint law "
+        "Multinomial(m, P) (x) Multinomial(m, P), guaranteeing E[D_{F,matched}(X, Y)] = 0 identically for every P, Q, "
+        f"and even S >= 2. Before hardware spend, SIMULATED sweeps (provider_job_id: null, S={int(pa['shots_per_replicate'])} "
+        "shots/replicate) across 27Q, 50Q, 96Q, and Uniform({0,1}^96) confirmed that while raw plug-in LP suffers a "
+        f"{float(u96['raw_plugin_lp_w2_sq']['mean']):.5f} (+{float(u96['raw_plugin_lp_w2_sq']['z_score']):.2f} sigma) "
+        f"false-drift artifact on Uniform({{0,1}}^96), matched split-sample LP ({float(u96['debiased_lp_w2_sq_matched']['mean']):+.6f}) "
+        f"and Sinkhorn ({float(u96['debiased_sinkhorn_matched']['mean']):+.6f}, z={float(u96['debiased_sinkhorn_matched']['z_score']):+.2f} sigma) "
+        f"stay centered at zero (|S_{{eps,matched}}| <= {float(ngate['max_abs_mean_debiased_sinkhorn_matched_eps0']):.6f} "
+        f"< {float(ngate['threshold_abs_mean']):.3f}) while detecting eps_depol={eps_sk:.2f} drift at >= "
+        f"{float(dgate['min_z_score_across_all_widths_and_thetas']):.2f} sigma."
+    )
+
+    doc.add_figure(
+        fig1,
+        f"Elimination of finite-shot hypercube sparsity bias across live {q27}-qubit Heron r2 hardware and multi-width "
+        f"simulations. (a) Inter-block A/A stability on {fez['backend']} (job {fez['provider_job_id']}, "
+        f"{int(manifest['total_shots']):,} total shots, constant {int(fez['constant_cz_count'])}-CZ / "
+        f"{int(fez['constant_sx_count'])}-SX skeleton). (b) SIMULATED noiseless A/A scaling (S={int(pa['shots_per_replicate'])}) "
+        f"across Q in {{27, 50, 96}} and Uniform({{0,1}}^96), eliminating the +{float(u96['raw_plugin_lp_w2_sq']['z_score']):.2f} sigma raw LP bias.",
+    )
+
+    doc.add_section("3. Constant-Skeleton 27-Qubit ibm_fez Experiment and Resolution of NB-11")
+    layout_str = ", ".join(str(q) for q in fez["layout_27q"])
+    km = cal["konig_matching_sizes"]
+    doc.add_paragraph(
+        "Because raw count archives for the six December 2025 ibm_fez jobs cited in Ref. [5] are absent from local "
+        "storage (NOT_PRESENT_ON_DISK_QUARANTINED), zero historical counts were guessed or reconstructed. Instead, "
+        f"we prospectively preregistered OSIRIS-WP2-27Q-FEZ on a connected {q27}-transmon heavy-hex tree "
+        f"{{{layout_str}}} of {fez['backend']} decomposed by Konig's theorem into three edge-disjoint matchings of sizes "
+        f"{km[0]}, {km[1]}, and {km[2]}. Every work circuit executes {int(fez['constant_cz_count'])} native CZ and "
+        f"{int(fez['constant_sx_count'])} SX gates across {int(manifest['n_blocks'])} randomized blocks of "
+        f"{int(manifest['pubs_per_block'])} PUBs ({int(manifest['total_pubs'])} PUBs x {int(manifest['shots_per_pub']):,} "
+        f"shots = {int(manifest['total_shots']):,} shots). In-job readout sentinels measured mean assignment error "
+        f"{100.0 * float(fez['readout_sentinel_27q']['mean_empirical_ro_error']):.2f}% (max "
+        f"{100.0 * float(fez['readout_sentinel_27q']['max_empirical_ro_error']):.2f}%, {len(fez['readout_sentinel_27q']['hidden_fault_qubits_gt_10pct'])} "
+        "hidden faults >10%)."
+    )
+
+    t1_rows: List[List[str]] = []
+    for arm_lbl, entries in (("Arm A (NB11_REPAIRED)", arm_a), ("Arm B (BRICKWALL)", arm_b)):
+        for e in entries:
+            raw_sk = 0.5 * (
+                float(e["pair_b0_b1"]["raw_sinkhorn_ot_eps"]) + float(e["pair_b2_b3"]["raw_sinkhorn_ot_eps"])
+            )
+            t1_rows.append(
+                [
+                    arm_lbl,
+                    f"{float(e['theta_rad']):.3f}",
+                    f"{int(e['unique_bitstrings_8192']):,}",
+                    f"{float(e['empirical_shannon_entropy_bits']):.2f}",
+                    f"{float(e['mean_defective_eq7_w2']):.4f}",
+                    f"{float(e['mean_raw_plugin_lp_w2']):.4f}",
+                    f"{raw_sk:.4f}",
+                    f"{float(e['mean_matched_debiased_lp_w2_sq']):+.6f}",
+                    f"{float(e['mean_matched_debiased_sinkhorn_S_eps']):+.6f}",
+                ]
+            )
+    doc.add_table(
+        f"TABLE I. Live HARDWARE_ATTESTED inter-block A/A stability on {q27}Q {fez['backend']} "
+        f"(job {fez['provider_job_id']}, {pooled_s:,} pooled shots/cell, {int(fez['constant_cz_count'])} CZ / {int(fez['constant_sx_count'])} SX).",
+        ["Circuit Arm", "theta", f"Uniq/{pooled_s:,}", "H_emp", "W2_Eq.7", "W2_raw", "OT_eps", "W2^2_match", "S_eps_match"],
+        t1_rows,
+        col_widths=[108, 38, 48, 38, 46, 46, 44, 68, 68],
+        font_size=6.8,
+    )
+
+    cells = pa["sweep_cells"]
+    sim_specs = [
+        ("SIM 27Q NB-11 (2.618, eps=0)", "NB-11_27Q_repaired", 2.618, 0.0),
+        ("SIM 27Q NB-11 (3.118, eps=0)", "NB-11_27Q_repaired", 3.118, 0.0),
+        ("SIM 27Q NB-11 (2.618, eps=0.05)", "NB-11_27Q_repaired", 2.618, 0.05),
+        ("SIM 50Q H2-1 (3.118, eps=0)", "WP2a_H2_1_50Q", 3.118, 0.0),
+        ("SIM 50Q H2-1 (2.618, eps=0.05)", "WP2a_H2_1_50Q", 2.618, 0.05),
+        ("SIM 96Q Helios-1 (3.118, eps=0)", "WP2b_Helios_1_96Q", 3.118, 0.0),
+        ("SIM 96Q Helios-1 (2.618, eps=0.05)", "WP2b_Helios_1_96Q", 2.618, 0.05),
+    ]
+    t2_rows: List[List[str]] = []
+    for lbl, fam, th, ep in sim_specs:
+        sc = _find_sweep_cell(cells, fam, th, ep)
+        t2_rows.append(
+            [
+                lbl,
+                str(int(sc["n_qubits"])),
+                f"{float(sc['ideal_shannon_entropy_bits']):.2f}",
+                f"{float(sc['raw_plugin_lp_w2_sq']['mean']):.5f}",
+                f"{float(sc['debiased_lp_w2_sq_matched']['mean']):+.6f}",
+                f"{float(sc['debiased_sinkhorn_matched']['mean']):+.6f}",
+                f"{float(sc['debiased_sinkhorn_matched']['z_score']):+.2f}",
+            ]
+        )
+    t2_rows.append(
+        [
+            "SIM Uniform({0,1}^96) null",
+            "96",
+            "96.00",
+            f"{float(u96['raw_plugin_lp_w2_sq']['mean']):.5f}",
+            f"{float(u96['debiased_lp_w2_sq_matched']['mean']):+.6f}",
+            f"{float(u96['debiased_sinkhorn_matched']['mean']):+.6f}",
+            f"{float(u96['debiased_sinkhorn_matched']['z_score']):+.2f}",
+        ]
+    )
+    z000 = float(cal_b["intra_block_aa_null_matched_S_eps_mean"]) / float(cal_b["intra_block_aa_null_se"])
+    z020 = float(cal_b["delta_theta_0p20_matched_S_eps_mean"]) / float(cal_b["delta_theta_0p20_se"])
+    t2_rows.extend(
+        [
+            [
+                "HW ibm_fez Arm B A/A (Delta_theta=0)",
+                "27",
+                f"{float(arm_b[1]['empirical_shannon_entropy_bits']):.2f}",
+                "--",
+                "--",
+                f"{float(cal_b['intra_block_aa_null_matched_S_eps_mean']):+.6f}",
+                f"{z000:+.2f}",
+            ],
+            [
+                "HW ibm_fez Arm B (Delta_theta=+0.20)",
+                "27",
+                "--",
+                "--",
+                "--",
+                f"{float(cal_b['delta_theta_0p20_matched_S_eps_mean']):+.6f}",
+                f"{z020:+.2f}",
+            ],
+            [
+                "HW ibm_fez Arm B (Delta_theta=+0.45)",
+                "27",
+                "--",
+                "--",
+                "--",
+                f"{float(cal_b['delta_theta_0p45_matched_S_eps_mean']):+.6f}",
+                f"+{float(h3['z_score_0p45']):.2f}",
+            ],
+        ]
+    )
+    doc.add_table(
+        f"TABLE II. Multi-width SIMULATED (S={int(pa['shots_per_replicate'])}, provider_job_id: null) scaling and "
+        f"live HARDWARE_ATTESTED 27Q Arm B coherent-drift calibration (job {fez['provider_job_id']}).",
+        ["Benchmark Regime / Condition", "Q", "H (bits)", "Raw LP Cost", "W2^2_matched", "S_eps_matched", "z-Score"],
+        t2_rows,
+        col_widths=[166, 28, 46, 62, 74, 74, 50],
+        font_size=6.9,
+    )
+
+    doc.add_section("4. Multi-Processor Re-Scoring on ibm_marrakesh and 49-Bit OSIRIS-QEC-001")
+    doc.add_figure(
+        fig2,
+        f"Controlled coherent-drift sensitivity on 27Q {fez['backend']} Arm B (z=+{float(h3['z_score_0p45']):.2f} sigma "
+        f"at Delta_theta=+0.45 rad) and HARDWARE_ATTESTED re-scoring of 8Q ibm_marrakesh dynamical decoupling "
+        f"({marr['provider_job_id']}) and 49-bit OSIRIS-QEC-001 repetition-code trajectories ({qec['provider_job_id']}).",
+    )
+
+    marr_aa = marr["aa_and_split_half_self_consistency"]
+    marr_none_32_aa = next(
+        x for x in marr_aa if math.isclose(float(x["T_us"]), 32.0) and x["condition"] == "none"
+    )
+    marr_stag_32_aa = next(
+        x for x in marr_aa if math.isclose(float(x["T_us"]), 32.0) and x["condition"] == "xy8_stag"
+    )
+
+    def _mc(t_us: float, a: str, b: str) -> Mapping[str, Any]:
+        return next(
+            r
+            for r in marr["dd_cross_condition_contrasts"]
+            if math.isclose(float(r["T_us"]), t_us, abs_tol=1e-6) and r["arm_a"] == a and r["arm_b"] == b
+        )
+
+    mc_16_pair = _mc(16.0, "xy8_stag", "xy4x2_stag")
+    mc_16_none = _mc(16.0, "xy8_stag", "none")
+    mc_32_std = _mc(32.0, "xy8_stag", "xy4x2")
+    mc_32_none = _mc(32.0, "xy8_stag", "none")
+    qec_evals = qec["evaluations"]
+    qec_z_49_aa = next(
+        x
+        for x in qec_evals
+        if x["comparison_type"] == "inter_block_AA_full_register"
+        and x["code_basis"] == "bit_flip_z"
+        and int(x["register_bits"]) == 49
+    )
+    qec_x_49_aa = next(
+        x
+        for x in qec_evals
+        if x["comparison_type"] == "inter_block_AA_full_register"
+        and x["code_basis"] == "phase_flip_x"
+        and int(x["register_bits"]) == 49
+    )
+    qec_49_hot = next(
+        x for x in qec_evals if x["comparison_type"] == "spectator_t2_hotspot_basis_contrast_full_49bit"
+    )
+    qec_z_r7 = next(
+        x
+        for x in qec_evals
+        if x["comparison_type"] == "round_scaling_7bit_data_marginal"
+        and x["code_basis"] == "bit_flip_z"
+        and int(x["target_rounds"]) == 7
+    )
+    qec_x_r7 = next(
+        x
+        for x in qec_evals
+        if x["comparison_type"] == "round_scaling_7bit_data_marginal"
+        and x["code_basis"] == "phase_flip_x"
+        and int(x["target_rounds"]) == 7
+    )
+
+    t3_rows = [
+        [
+            "ibm_marrakesh 32us xy8_stag A/A",
+            "8",
+            "512",
+            f"{float(marr_stag_32_aa['inter_rep_defective_eq7_cost']):.5f}",
+            f"{float(marr_stag_32_aa['inter_rep_raw_lp_w2_sq']):.5f}",
+            f"{float(marr_stag_32_aa['inter_rep_debiased_lp_w2_sq_matched']):+.6f}",
+            f"{float(marr_stag_32_aa['inter_rep_debiased_sinkhorn']):+.6f}",
+        ],
+        [
+            "ibm_marrakesh 32us none A/A",
+            "8",
+            "512",
+            f"{float(marr_none_32_aa['inter_rep_defective_eq7_cost']):.5f}",
+            f"{float(marr_none_32_aa['inter_rep_raw_lp_w2_sq']):.5f}",
+            f"{float(marr_none_32_aa['inter_rep_debiased_lp_w2_sq_matched']):+.6f}",
+            f"{float(marr_none_32_aa['inter_rep_debiased_sinkhorn']):+.6f}",
+        ],
+        [
+            "ibm_marrakesh 16us xy8_stag vs xy4x2_stag",
+            "8",
+            "1,024",
+            f"{float(mc_16_pair['defective_eq7_cost']):.5f}",
+            f"{float(mc_16_pair['raw_lp_w2_sq']):.5f}",
+            f"{float(mc_16_pair['debiased_lp_w2_sq_matched']):+.6f}",
+            f"{float(mc_16_pair['debiased_sinkhorn_matched']):+.6f}",
+        ],
+        [
+            "ibm_marrakesh 16us xy8_stag vs none",
+            "8",
+            "1,024",
+            f"{float(mc_16_none['defective_eq7_cost']):.5f}",
+            f"{float(mc_16_none['raw_lp_w2_sq']):.5f}",
+            f"{float(mc_16_none['debiased_lp_w2_sq_matched']):+.6f}",
+            f"{float(mc_16_none['debiased_sinkhorn_matched']):+.6f}",
+        ],
+        [
+            "ibm_marrakesh 32us xy8_stag vs xy4x2",
+            "8",
+            "1,024",
+            f"{float(mc_32_std['defective_eq7_cost']):.5f}",
+            f"{float(mc_32_std['raw_lp_w2_sq']):.5f}",
+            f"{float(mc_32_std['debiased_lp_w2_sq_matched']):+.6f}",
+            f"{float(mc_32_std['debiased_sinkhorn_matched']):+.6f}",
+        ],
+        [
+            "ibm_marrakesh 32us xy8_stag vs none",
+            "8",
+            "1,024",
+            f"{float(mc_32_none['defective_eq7_cost']):.5f}",
+            f"{float(mc_32_none['raw_lp_w2_sq']):.5f}",
+            f"{float(mc_32_none['debiased_lp_w2_sq_matched']):+.6f}",
+            f"{float(mc_32_none['debiased_sinkhorn_matched']):+.6f}",
+        ],
+        [
+            "ibm_fez QEC-001 Z-sector d=7,R=7 A/A",
+            "49",
+            "2,048",
+            f"{float(qec_z_49_aa['defective_eq7_cost']):.5f}",
+            f"{float(qec_z_49_aa['raw_lp_w2_sq']):.5f}",
+            f"{float(qec_z_49_aa['debiased_lp_w2_sq_matched']):+.6f}",
+            f"{float(qec_z_49_aa['debiased_sinkhorn_matched']):+.6f}",
+        ],
+        [
+            "ibm_fez QEC-001 X-sector d=7,R=7 A/A",
+            "49",
+            "2,048",
+            f"{float(qec_x_49_aa['defective_eq7_cost']):.5f}",
+            f"{float(qec_x_49_aa['raw_lp_w2_sq']):.5f}",
+            f"{float(qec_x_49_aa['debiased_lp_w2_sq_matched']):+.6f}",
+            f"{float(qec_x_49_aa['debiased_sinkhorn_matched']):+.6f}",
+        ],
+        [
+            "ibm_fez QEC-001 Z vs X (q107 T2 hotspot)",
+            "49",
+            "2,048",
+            f"{float(qec_49_hot['defective_eq7_cost']):.5f}",
+            f"{float(qec_49_hot['raw_lp_w2_sq']):.5f}",
+            f"{float(qec_49_hot['debiased_lp_w2_sq_matched']):+.6f}",
+            f"{float(qec_49_hot['debiased_sinkhorn_matched']):+.6f}",
+        ],
+        [
+            "ibm_fez QEC-001 Z-data R=1->7 marginal",
+            "7",
+            "2,048",
+            "--",
+            f"{float(qec_z_r7['raw_lp_w2_sq']):.5f}",
+            f"{float(qec_z_r7['debiased_lp_w2_sq']):+.6f}",
+            f"{float(qec_z_r7['debiased_sinkhorn']):+.6f}",
+        ],
+        [
+            "ibm_fez QEC-001 X-data R=1->7 marginal",
+            "7",
+            "2,048",
+            "--",
+            f"{float(qec_x_r7['raw_lp_w2_sq']):.5f}",
+            f"{float(qec_x_r7['debiased_lp_w2_sq']):+.6f}",
+            f"{float(qec_x_r7['debiased_sinkhorn']):+.6f}",
+        ],
+    ]
+    doc.add_table(
+        f"TABLE III. HARDWARE_ATTESTED re-scoring of 8Q ibm_marrakesh DD ({marr['provider_job_id']}, "
+        f"{int(marr['total_shots']):,} shots) and 49-bit OSIRIS-QEC-001 ({qec['provider_job_id']}, {int(qec['total_shots']):,} shots).",
+        ["Hardware Dataset & Comparison Pair", "Bits Q", "Shots/Arm", "C_Eq.7", "Raw LP", "W2^2_match", "S_eps_match"],
+        t3_rows,
+        col_widths=[182, 34, 48, 56, 56, 68, 68],
+        font_size=6.8,
+    )
+
+    doc.add_section("5. Conclusion and Data Availability")
+    doc.add_paragraph(
+        "By splitting each integer shot histogram via exact multivariate-hypergeometric thinning and evaluating the "
+        "sample-size-matched 2x2 cross-split U-statistic Eq. (1), we guarantee exact zero expectation under the "
+        f"identical-distribution null at arbitrary qubit count Q. Live constant-skeleton {q27}-qubit execution on "
+        f"{fez['backend']} ({fez['provider_job_id']}), SIMULATED scaling to Q=96, and HARDWARE_ATTESTED re-scoring on "
+        f"ibm_marrakesh ({marr['provider_job_id']}) and 49-bit OSIRIS-QEC-001 ({qec['provider_job_id']}) establish "
+        "split-sample-debiased Sinkhorn divergence as a fast, bias-free stability metric for wide quantum processors."
+    )
+    doc.add_paragraph(
+        "All raw shot histograms, Qiskit QPY circuit binaries, calibration snapshots, analysis modules (debiased_ot.py "
+        "and stage_and_harvest_wp2_27q_fez.py), deterministic asset generator (generate_wp2_paper_assets.py), RFC 8785 "
+        "canonical provenance capsule (reproducibility_capsule.json), and SHA-256 manifest (SHA256SUMS.txt) are archived "
+        "in the repository companion package. We acknowledge the use of IBM Quantum services for this work; the views "
+        "expressed are those of the author and do not reflect the official policy or position of IBM."
+    )
+
+    doc.add_references(
+        [
+            "[1] G. Peyre and M. Cuturi, 'Computational Optimal Transport,' Found. Trends Mach. Learn. 11, 355 (2019).",
+            "[2] J. Feydy, T. Sejourne, F.-X. Vialard, S.-i. Amari, A. Trouve, and G. Peyre, in Proc. AISTATS, PMLR 89, 2681 (2019).",
+            "[3] J. Weed and F. Bach, 'Sharp asymptotic and finite-sample rates of convergence of empirical measures in Wasserstein distance,' Bernoulli 25, 2620 (2019).",
+            "[4] M. Cuturi, 'Sinkhorn Distances: Lightspeed Computation of Optimal Transport,' Adv. Neural Inf. Process. Syst. 26, 2292 (2013).",
+            "[5] D. P. Davis, 'Mathematical Audit and Erratum for 27-Qubit Optimal-Transport Stability Benchmarks (NB-11),' Technical Report W2_MATHEMATICAL_ERRATUM (2026).",
+            "[6] D. P. Davis, 'Stale snapshots, not hidden physics: readout faults on three IBM Heron r2 processors,' Zenodo doi:10.5281/zenodo.24407897 (2026).",
+            "[7] D. P. Davis, 'Sub-Threshold Multi-Round Repetition-Code Logical Error Scaling Across Code Distances d in {3,5,7} on ibm_fez (OSIRIS-QEC-001),' Preprint (2026).",
+        ]
+    )
+
+    return doc.to_pdf_bytes()
+
+
 def generate_all() -> Dict[str, Any]:
     fez_path = FEZ_DIR / "physical_wp2_27q_fez_results.json"
     manifest_path = FEZ_DIR / "wp2_27q_fez_staging_manifest.json"
@@ -1020,6 +1516,9 @@ def generate_all() -> Dict[str, Any]:
     fig2 = make_fig2(fez, ot_rep)
     fig2.save(PAPER_DIR / FIG2_STEM)
 
+    pdf_bytes = build_preprint_pdf(fez, manifest, cal, ot_rep, fig1, fig2)
+    (PAPER_DIR / PDF_FILENAME).write_bytes(pdf_bytes)
+
     upstream_rels = [
         "experiments/wp2_27q_fez/PRE_REGISTRATION.md",
         "experiments/wp2_27q_fez/stage_and_harvest_wp2_27q_fez.py",
@@ -1036,6 +1535,7 @@ def generate_all() -> Dict[str, Any]:
     ]
     generated_rels = [
         f"papers/wp2_27q_debiased_ot_fez/{TEX_FILENAME}",
+        f"papers/wp2_27q_debiased_ot_fez/{PDF_FILENAME}",
         "papers/wp2_27q_debiased_ot_fez/generated.tex",
         "papers/wp2_27q_debiased_ot_fez/generate_wp2_paper_assets.py",
         f"papers/wp2_27q_debiased_ot_fez/{FIG1_STEM}.svg",
