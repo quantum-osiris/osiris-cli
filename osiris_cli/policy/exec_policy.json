@@ -15,7 +15,7 @@
   "launcher_programs": ["xargs", "env"],
   "read_programs": ["ls", "cat", "head", "tail", "wc", "uniq", "cut", "jq", "rg", "grep", "pwd", "which"],
   "read_with_output_guard": {"sort": ["-o", "--output"]},
-  "verify_programs": ["pytest", "mypy"],
+  "verify_programs": ["pytest", "mypy", "sha256sum"],
   "python_verify_modules": ["pytest", "compileall"],
   "ruff_verify_subcommands": ["check"],
   "ruff_fix_prefixes": ["--fix", "--add-noqa"],
