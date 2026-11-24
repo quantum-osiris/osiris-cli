@@ -703,6 +703,7 @@ for _tau_id in ("17858632", "17858792", "17858802", "17858962", "17859207", "178
 def index_doi_lineage(
     records_path: Optional[Union[str, Path]] = None,
     output_path: Optional[Union[str, Path]] = None,
+    work_root: Optional[Union[str, Path]] = None,
 ) -> Dict[str, Any]:
     """Index Zenodo record supersession chains, errata, and SYS-024 claim standings into
     deterministic RFC 8785-canonical JSON at ``~/.osiris/evidence/doi_lineage.json`` (WK-RW-001)."""
@@ -761,11 +762,86 @@ def index_doi_lineage(
                 "title": f"Referenced in SYS-024 claims register ({rid})",
             }
 
+    # Scan workspace zenodo_receipt.json files (v6.2.0+ deposits, papers, xtop005) when work_root
+    # is supplied or when indexing the default site/workspace corpus.
+    dynamic_overrides: Dict[str, Dict[str, Any]] = {}
+    scan_cli_repo: Optional[Path] = None
+    if work_root is not None:
+        wroot = Path(work_root).expanduser().resolve()
+        scan_cli_repo = wroot if (wroot / "papers").is_dir() else (wroot / "osiris-cli")
+    elif records_path is None:
+        scan_cli_repo = (
+            DEFAULT_WORK_ROOT
+            if (DEFAULT_WORK_ROOT / "papers").is_dir()
+            else (DEFAULT_WORK_ROOT / "osiris-cli")
+        )
+    if scan_cli_repo is not None and scan_cli_repo.is_dir():
+        receipt_files: List[Path] = []
+        for sub in ("papers", "xtop005"):
+            sdir = scan_cli_repo / sub
+            if sdir.is_dir():
+                receipt_files.extend(sorted(sdir.rglob("zenodo_receipt.json")))
+        for rfile in receipt_files:
+            try:
+                rdata = json.loads(rfile.read_text(encoding="utf-8"))
+            except Exception:
+                continue
+            if not isinstance(rdata, dict):
+                continue
+            raw_doi = str(rdata.get("doi") or rdata.get("prereserved_doi") or "").strip()
+            dep_id = str(rdata.get("deposition_id") or rdata.get("id") or "").strip()
+            if not dep_id and raw_doi:
+                m_d = doi_rx.search(raw_doi)
+                if m_d:
+                    dep_id = m_d.group(1)
+            if not dep_id or not dep_id.isdigit():
+                continue
+            r_date = str(
+                rdata.get("published_date")
+                or rdata.get("publication_date")
+                or rdata.get("updated_utc")
+                or rdata.get("created")
+                or ""
+            )[:10]
+            r_title = str(rdata.get("title") or f"OSIRIS Zenodo archive ({dep_id})").strip()
+            if dep_id not in by_id or not by_id[dep_id].get("title"):
+                by_id[dep_id] = {
+                    "category": "research",
+                    "date": r_date,
+                    "phase": "verified",
+                    "title": r_title,
+                }
+            sup_prev = rdata.get("supersedes_record_id")
+            if sup_prev is not None and str(sup_prev).strip().isdigit():
+                prev_id = str(sup_prev).strip()
+                new_doi = f"10.5281/zenodo.{dep_id}"
+                prev_doi = f"10.5281/zenodo.{prev_id}"
+                dyn_new = dynamic_overrides.setdefault(dep_id, {})
+                sups = list(dyn_new.get("supersedes") or [])
+                if prev_doi not in sups:
+                    sups.append(prev_doi)
+                dyn_new["supersedes"] = sups
+                if prev_id not in _KNOWN_DOI_LINEAGE_OVERRIDES:
+                    dynamic_overrides[prev_id] = {
+                        "status": "SUPERSEDED",
+                        "superseded_by": new_doi,
+                        "supersedes": [],
+                        "warning": f"Updated by newer Zenodo archive {new_doi}.",
+                    }
+                    if prev_id not in by_id:
+                        by_id[prev_id] = {
+                            "category": "research",
+                            "date": "",
+                            "phase": "test",
+                            "title": f"Superseded Zenodo archive ({prev_id})",
+                        }
+
     indexed: Dict[str, Dict[str, Any]] = {}
     for rid in sorted(by_id):
         doi = f"10.5281/zenodo.{rid}"
         base_meta = by_id[rid]
-        override = _KNOWN_DOI_LINEAGE_OVERRIDES.get(rid, {})
+        override = dict(dynamic_overrides.get(rid, {}))
+        override.update(_KNOWN_DOI_LINEAGE_OVERRIDES.get(rid, {}))
         c_pairs = sorted(claim_by_rec_id.get(rid, []))
         matched_title = claims.match(base_meta["title"]) if base_meta["title"] else []
         for mc in matched_title:
@@ -1235,6 +1311,166 @@ def materialize_workspace_reproducibility_capsules(
             shots=30000,
             provider_job_id=None,
             raw_counts_sha256=None,
+            zenodo_doi=None,
+        )
+
+    def _v620_deposit_doi(slug: str) -> Optional[str]:
+        rec_p = cli_repo / "papers" / "zenodo_v620_deposits" / slug / "zenodo_receipt.json"
+        if not rec_p.is_file():
+            return None
+        try:
+            d = json.loads(rec_p.read_text(encoding="utf-8"))
+            val = str(d.get("doi") or d.get("prereserved_doi") or "").strip()
+            return val or None
+        except Exception:
+            return None
+
+    # 13. OSIRIS-XTOP-006-FEZ (ibm_fez live Kraus trajectory)
+    x6f_dir = cli_repo / "experiments" / "xtop006_fez"
+    if (x6f_dir / "xtop006_fez_submitted_job.json").is_file() and (
+        x6f_dir / "physical_xtop006_fez_raw_counts.json.gz"
+    ).is_file():
+        jx6f = json.loads((x6f_dir / "xtop006_fez_submitted_job.json").read_text(encoding="utf-8"))
+        mx6f = json.loads((x6f_dir / "xtop006_fez_staging_manifest.json").read_text(encoding="utf-8"))
+        _append_capsule(
+            experiment_id="OSIRIS-XTOP-006-FEZ",
+            evidence_class="HARDWARE_ATTESTED",
+            prereg_sha256=_sha256_file(x6f_dir / "PRE_REGISTRATION.md"),
+            circuit_isa_sha256=_sha256_file(x6f_dir / "xtop006_fez_staged_circuits.qpy"),
+            provider="IBM Quantum",
+            backend_id=str(jx6f["backend"]),
+            shots=int(mx6f["total_shots"]),
+            provider_job_id=str(jx6f["job_id"]),
+            raw_counts_sha256=_sha256_file(x6f_dir / "physical_xtop006_fez_raw_counts.json.gz"),
+            zenodo_doi=_v620_deposit_doi("xtop006_fez"),
+        )
+
+    # 14. OSIRIS-WP2-27Q-FEZ (ibm_fez live 27Q debiased Sinkhorn OT)
+    wp2_dir = cli_repo / "experiments" / "wp2_27q_fez"
+    if (wp2_dir / "wp2_27q_fez_submitted_job.json").is_file() and (
+        wp2_dir / "physical_wp2_27q_fez_raw_counts.json.gz"
+    ).is_file():
+        jwp2 = json.loads((wp2_dir / "wp2_27q_fez_submitted_job.json").read_text(encoding="utf-8"))
+        mwp2 = json.loads((wp2_dir / "wp2_27q_fez_staging_manifest.json").read_text(encoding="utf-8"))
+        _append_capsule(
+            experiment_id="OSIRIS-WP2-27Q-FEZ",
+            evidence_class="HARDWARE_ATTESTED",
+            prereg_sha256=_sha256_file(wp2_dir / "PRE_REGISTRATION.md"),
+            circuit_isa_sha256=_sha256_file(wp2_dir / "wp2_27q_fez_staged_circuits.qpy"),
+            provider="IBM Quantum",
+            backend_id=str(jwp2["backend"]),
+            shots=int(mwp2["total_shots"]),
+            provider_job_id=str(jwp2["job_id"]),
+            raw_counts_sha256=_sha256_file(wp2_dir / "physical_wp2_27q_fez_raw_counts.json.gz"),
+            zenodo_doi=_v620_deposit_doi("wp2_27q_ot"),
+        )
+
+    # 15. OSIRIS-XTOP-006B-FEZ (ibm_fez live 4-twirl confirmatory discriminator)
+    x6b_dir = cli_repo / "experiments" / "xtop006b_fez"
+    if (x6b_dir / "xtop006b_fez_submitted_job.json").is_file() and (
+        x6b_dir / "physical_xtop006b_fez_raw_counts.json.gz"
+    ).is_file():
+        jx6b = json.loads((x6b_dir / "xtop006b_fez_submitted_job.json").read_text(encoding="utf-8"))
+        mx6b = json.loads((x6b_dir / "xtop006b_fez_staging_manifest.json").read_text(encoding="utf-8"))
+        _append_capsule(
+            experiment_id="OSIRIS-XTOP-006B-FEZ",
+            evidence_class="HARDWARE_ATTESTED",
+            prereg_sha256=_sha256_file(x6b_dir / "PRE_REGISTRATION.md"),
+            circuit_isa_sha256=_sha256_file(x6b_dir / "xtop006b_fez_staged_circuits.qpy"),
+            provider="IBM Quantum",
+            backend_id=str(jx6b["backend"]),
+            shots=int(mx6b["total_shots"]),
+            provider_job_id=str(jx6b["job_id"]),
+            raw_counts_sha256=_sha256_file(x6b_dir / "physical_xtop006b_fez_raw_counts.json.gz"),
+            zenodo_doi=_v620_deposit_doi("xtop006_fez"),
+        )
+
+    # 16. OSIRIS-2BGA-QLDPC (Non-abelian odd-k 2BGA CSS codes + BP+OSD-CS)
+    bga_rep = cli_repo / "qldpc_nonabelian" / "artifacts" / "nonabelian_2bga_report.json"
+    bga_src = cli_repo / "qldpc_nonabelian" / "nonabelian_2bga.py"
+    if bga_rep.is_file() and bga_src.is_file():
+        _append_capsule(
+            experiment_id="OSIRIS-2BGA-QLDPC",
+            evidence_class="SIMULATED",
+            prereg_sha256=_sha256_file(bga_rep),
+            circuit_isa_sha256=_sha256_file(bga_src),
+            provider="Simulator",
+            backend_id="bp_osd_cs_helios_noise",
+            shots=14000,
+            provider_job_id=None,
+            raw_counts_sha256=_sha256_file(bga_rep),
+            zenodo_doi=_v620_deposit_doi("nonabelian_2bga_adv1"),
+        )
+
+    # 17. OSIRIS-ADV1-PREGATE (3-attack M_6 Pauli-weight-5 classical-hardness pre-gate)
+    adv1_rep = cli_repo / "adv1" / "artifacts" / "adv1_pregate_report.json"
+    adv1_src = cli_repo / "adv1" / "pregate.py"
+    if adv1_rep.is_file() and adv1_src.is_file():
+        _append_capsule(
+            experiment_id="OSIRIS-ADV1-PREGATE",
+            evidence_class="SIMULATED",
+            prereg_sha256=_sha256_file(adv1_rep),
+            circuit_isa_sha256=_sha256_file(adv1_src),
+            provider="Simulator",
+            backend_id="mps_paulipath_lightcone",
+            shots=3000,
+            provider_job_id=None,
+            raw_counts_sha256=_sha256_file(adv1_rep),
+            zenodo_doi=_v620_deposit_doi("nonabelian_2bga_adv1"),
+        )
+
+    # 18. OSIRIS-HERON-R2-UNIFIED-42 (42-job unified calibration-staleness & colored-nulls corpus)
+    hr2_dir = cli_repo / "papers" / "heron_r2_calibration_staleness_and_colored_nulls"
+    if (hr2_dir / "SHA256SUMS.txt").is_file() and (hr2_dir / "generate_unified_assets.py").is_file():
+        _append_capsule(
+            experiment_id="OSIRIS-HERON-R2-UNIFIED-42",
+            evidence_class="HARDWARE_ATTESTED",
+            prereg_sha256=_sha256_file(hr2_dir / "SHA256SUMS.txt"),
+            circuit_isa_sha256=_sha256_file(hr2_dir / "generate_unified_assets.py"),
+            provider="IBM Quantum",
+            backend_id="ibm_marrakesh,ibm_fez,ibm_kingston",
+            shots=2174976,
+            provider_job_id="dc0qjqdhdvas73bjtgr0",
+            raw_counts_sha256=_sha256_file(hr2_dir / "generated.tex"),
+            zenodo_doi=_v620_deposit_doi("heron_r2_unified"),
+        )
+
+    # 19. OSIRIS-QDECODE-HERON-59 (59-job wire-deserialization & entropy ceiling corpus)
+    qdec_dir = cli_repo / "papers" / "qdecode_heron_provenance_and_finite_shot_entropy"
+    if (qdec_dir / "HARDWARE_PROVENANCE_MANIFEST.json").is_file() and (
+        qdec_dir / "reproducibility_capsule.json"
+    ).is_file():
+        qdec_cap = json.loads((qdec_dir / "reproducibility_capsule.json").read_text(encoding="utf-8"))
+        _append_capsule(
+            experiment_id="OSIRIS-QDECODE-HERON-59",
+            evidence_class="HARDWARE_ATTESTED",
+            prereg_sha256=_sha256_file(qdec_dir / "SHA256SUMS.txt"),
+            circuit_isa_sha256=_sha256_file(cli_repo / "osiris_cli" / "qdecode.py"),
+            provider="IBM Quantum",
+            backend_id="ibm_fez,ibm_marrakesh,ibm_kingston,ibm_torino",
+            shots=int(qdec_cap["corpus_totals"]["total_shots"]),
+            provider_job_id=str(qdec_cap["key_benchmarks"]["fez_156q_100k_job_id"]),
+            raw_counts_sha256=_sha256_file(qdec_dir / "HARDWARE_PROVENANCE_MANIFEST.json"),
+            zenodo_doi=_v620_deposit_doi("qdecode_heron_59"),
+        )
+
+    # 20. OSIRIS-BT2T-001-FEZ (5Q Binary Tetrahedral |2T|=24 structured vs generic synthesis)
+    bt_dir = cli_repo / "experiments" / "bt2t_fez"
+    if (bt_dir / "bt2t_fez_submitted_job.json").is_file() and (
+        bt_dir / "physical_bt2t_fez_raw_counts.json.gz"
+    ).is_file():
+        jbt = json.loads((bt_dir / "bt2t_fez_submitted_job.json").read_text(encoding="utf-8"))
+        mbt = json.loads((bt_dir / "bt2t_fez_staging_manifest.json").read_text(encoding="utf-8"))
+        _append_capsule(
+            experiment_id="OSIRIS-BT2T-001-FEZ",
+            evidence_class="HARDWARE_ATTESTED",
+            prereg_sha256=_sha256_file(bt_dir / "PRE_REGISTRATION.md"),
+            circuit_isa_sha256=_sha256_file(bt_dir / "bt2t_fez_staged_circuits.qpy"),
+            provider="IBM Quantum",
+            backend_id=str(jbt["backend"]),
+            shots=int(mbt["total_shots"]),
+            provider_job_id=str(jbt["job_id"]),
+            raw_counts_sha256=_sha256_file(bt_dir / "physical_bt2t_fez_raw_counts.json.gz"),
             zenodo_doi=None,
         )
 
