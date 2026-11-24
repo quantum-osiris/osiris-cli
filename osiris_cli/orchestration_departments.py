@@ -1474,6 +1474,23 @@ def materialize_workspace_reproducibility_capsules(
             zenodo_doi=None,
         )
 
+    # 21. OSIRIS-ECHO-STOPGO (Card B offline placement-ranking stop/go gate)
+    echo_rep = cli_repo / "experiments" / "echo_placement" / "artifacts" / "echo_stopgo_report.json"
+    echo_src = cli_repo / "experiments" / "echo_placement" / "echo_placement_gate.py"
+    if echo_rep.is_file() and echo_src.is_file():
+        _append_capsule(
+            experiment_id="OSIRIS-ECHO-STOPGO",
+            evidence_class="SIMULATED",
+            prereg_sha256=_sha256_file(echo_rep),
+            circuit_isa_sha256=_sha256_file(echo_src),
+            provider="Simulator",
+            backend_id="heron_r2_t5_kraus_16win",
+            shots=163840,
+            provider_job_id=None,
+            raw_counts_sha256=_sha256_file(echo_rep),
+            zenodo_doi=None,
+        )
+
     out_file.parent.mkdir(parents=True, exist_ok=True)
     tmp_out = out_file.with_suffix(".jsonl.tmp")
     raw_jsonl = b"".join(jcs_bytes(cap) + b"\n" for cap in capsules)
