@@ -1,0 +1,1111 @@
+{
+  "affiliation": "Agile Defense Systems LLC",
+  "aggregate_totals": {
+    "campaigns": 7,
+    "jobs": 42,
+    "pubs": 1062,
+    "shots_per_pub": 2048,
+    "total_qpu_seconds": 673,
+    "total_shots": 2174976
+  },
+  "author": "Devin Phillip Davis",
+  "backends": [
+    {
+      "architecture": "IBM Quantum Heron r2",
+      "backend": "ibm_marrakesh",
+      "jobs": 16,
+      "num_qubits": 156,
+      "pubs": 630,
+      "qpu_seconds": 392,
+      "shots": 1290240
+    },
+    {
+      "architecture": "IBM Quantum Heron r2",
+      "backend": "ibm_fez",
+      "jobs": 13,
+      "num_qubits": 156,
+      "pubs": 216,
+      "qpu_seconds": 139,
+      "shots": 442368
+    },
+    {
+      "architecture": "IBM Quantum Heron r2",
+      "backend": "ibm_kingston",
+      "jobs": 13,
+      "num_qubits": 156,
+      "pubs": 216,
+      "qpu_seconds": 142,
+      "shots": 442368
+    }
+  ],
+  "capsule_id": "heron_r2_calibration_staleness_and_colored_nulls_v1",
+  "execution_tier": "HARDWARE_ATTESTED",
+  "rfc8785_canonical_sha256": "9631f34a6c54d7eb334b78f1d492e5acef2a163266314993a9f35eea4f4f71a5",
+  "schema": "osiris.reproducibility_capsule/1",
+  "source_json_artifacts": [
+    {
+      "path": "docs/phase3/correlated_noise_01_A3_bound_diagnostic.json",
+      "sha256": "faa07ec141e352303da2ac53e2b137925f27a3bd0292be508cca2baf6c104070"
+    },
+    {
+      "path": "docs/phase3/correlated_noise_01_A3_validation.json",
+      "sha256": "c390ce57feec10271752c33f9f5c13163d3aeb5bd1c82c36d9af9e2ecfbd7b7b"
+    },
+    {
+      "path": "docs/phase3/correlated_noise_01_job_usage.json",
+      "sha256": "f1109abdc2d9c96694b3da6c640bce2f8a36416927919013880fb1df525f1d85"
+    },
+    {
+      "path": "docs/phase3/correlated_noise_01_live_analysis.json",
+      "sha256": "22116f59ae4ef1753767b8551bf293506a67016eda6744af2b9cfafaac718688"
+    },
+    {
+      "path": "docs/phase3/correlated_noise_01_live_analysis_A3.json",
+      "sha256": "b9d4640222bffd818a095a1c2b1b34a88fe02f0f8f221f86ca05ba485dfb3d24"
+    },
+    {
+      "path": "docs/phase3/correlated_noise_01_live_prereg_lock.json",
+      "sha256": "38ebfe7f7c007633281039bca551af963e8335db54e6e6915a1e3f5be4a64fd8"
+    },
+    {
+      "path": "docs/phase3/correlated_noise_01_live_raw_counts.json",
+      "sha256": "585bb1bc1d48fe3ad2f7b18e92930442dae11ada22988d65b61972b39cc10b9d"
+    },
+    {
+      "path": "docs/phase3/tesseract_map_02_job_usage.json",
+      "sha256": "ad795c81dc9a155fdd752e4b054da8ec7f81b5048a8a74ee2f418a8dcbef3c34"
+    },
+    {
+      "path": "docs/phase3/tesseract_map_02_live_analysis.json",
+      "sha256": "0a53301c0a67889cc18ee942856f132c62ddd35a7accbcd2b9487386cc326185"
+    },
+    {
+      "path": "docs/phase3/tesseract_map_02_live_prereg_lock.json",
+      "sha256": "5f4a04c45933e046c0fff0574a426fd3a876ec5f19d808d69514374c2f931f1f"
+    },
+    {
+      "path": "docs/phase3/tesseract_map_02_live_raw_counts.json",
+      "sha256": "957c1c94e8fa9c514ec0d515fe307c21e6aa9ee68cce19c769d463e9cf132270"
+    },
+    {
+      "path": "docs/phase3/tesseract_map_02_live_sensitivity.json",
+      "sha256": "955a42eac7dad94c68900c2826d0267a9e7b1677f0dc8917f89f73e553239c10"
+    },
+    {
+      "path": "docs/phase3/tesseract_map_03_live_analysis.json",
+      "sha256": "618afbb347f63ec149378931c94ad8920183eb5cd35c2b89ddd51ec1f4b6ebca"
+    },
+    {
+      "path": "docs/phase3/tesseract_map_03_live_prereg_lock.json",
+      "sha256": "ea7e8765a9d82f4c7c5604f0d2cf06eef444f4bd78fc8f6f245b64a79c895817"
+    },
+    {
+      "path": "docs/phase3/tesseract_map_03_live_raw_counts.json",
+      "sha256": "6640da49a8fac27261592a86c881838d388948d1416fc17816b7722b329581a5"
+    },
+    {
+      "path": "docs/phase3/tesseract_map_03_prelock_calibration.json",
+      "sha256": "70cc69bc226e6022e6a9bdfdc07af6d80fa66949464ecb6747255fcd5be760ce"
+    },
+    {
+      "path": "docs/phase3/tesseract_map_03_submission_receipt.json",
+      "sha256": "2f8761e5bb41fd103cdf15c9b827b7494701a8e28e0d2624e59098dcbcc55c58"
+    },
+    {
+      "path": "docs/phase4/tesseract_map_04_ibm_fez_live_analysis.json",
+      "sha256": "47fe68e84daa4cc2478f130372170ab0c4573853431000df69f9b3ae7501136d"
+    },
+    {
+      "path": "docs/phase4/tesseract_map_04_ibm_fez_live_prereg_lock.json",
+      "sha256": "65440ecdfda7b9e9bcf1dc891ab27fd96bb4552db5d1d02e9cc04f3a2d7a02c9"
+    },
+    {
+      "path": "docs/phase4/tesseract_map_04_ibm_fez_live_raw_counts.json",
+      "sha256": "75e3d40a25bd9de0447b043c22a74594213bac638b541f5328e6d6664597c0ea"
+    },
+    {
+      "path": "docs/phase4/tesseract_map_04_ibm_fez_probe_raw_counts.json",
+      "sha256": "b05827467a1a148d180c047f2b261b9f82af63f0db44c14500285e996608f19a"
+    },
+    {
+      "path": "docs/phase4/tesseract_map_04_ibm_fez_probe_readout.json",
+      "sha256": "945ab189712732b6db8d3b5df708f2f5c60e0b3fdf85896531b21d10e2165436"
+    },
+    {
+      "path": "docs/phase4/tesseract_map_04_ibm_fez_probe_time_calibration.json",
+      "sha256": "aa0ec544abd4f37282aafbf1acc09d6625928d60a49cb74d0f2a801bd61db863"
+    },
+    {
+      "path": "docs/phase4/tesseract_map_04_ibm_kingston_live_analysis.json",
+      "sha256": "53209e5722ea49596e9fe9b12d407c95fbf2dd1437ee2925a2a722e72e7ba5ae"
+    },
+    {
+      "path": "docs/phase4/tesseract_map_04_ibm_kingston_live_prereg_lock.json",
+      "sha256": "da7cec471c7b0003f8c6e1d14491402880cee3a3e5998b5a87277e539054dfe7"
+    },
+    {
+      "path": "docs/phase4/tesseract_map_04_ibm_kingston_live_raw_counts.json",
+      "sha256": "424265ec300e81588ee489999c8d6a541b0a0039704d85664ae6d75951d97163"
+    },
+    {
+      "path": "docs/phase4/tesseract_map_04_ibm_kingston_probe_raw_counts.json",
+      "sha256": "ef3cb42e7d352a391f7cb4c025d3a236778bd55ef4e1f23c8cc30357fec19c44"
+    },
+    {
+      "path": "docs/phase4/tesseract_map_04_ibm_kingston_probe_readout.json",
+      "sha256": "e2b7f5f585aaa2ca6fbd9555e5c3d4240bc4243762ab9f435eef4026f1ca5911"
+    },
+    {
+      "path": "docs/phase4/tesseract_map_04_ibm_kingston_probe_time_calibration.json",
+      "sha256": "5908969500b1876e6e090c689bb16beb16e355be0863bdfd91965665b5dc13cb"
+    },
+    {
+      "path": "docs/phase4/tesseract_map_04_ibm_marrakesh_live_analysis.json",
+      "sha256": "ecf52d2dc4cd6b3803685a61578e621de7efe4c3601adfef1e7a607535338472"
+    },
+    {
+      "path": "docs/phase4/tesseract_map_04_ibm_marrakesh_live_prereg_lock.json",
+      "sha256": "59c6c13f4f093c98a0dee5ef8b94a6c5fa7fca403da7fd81d68fa2362ed76b7e"
+    },
+    {
+      "path": "docs/phase4/tesseract_map_04_ibm_marrakesh_live_raw_counts.json",
+      "sha256": "f38b88657a66ff3c9e0632eb7b5ac4e93094620e4e7176feb35c40a461b97a9c"
+    },
+    {
+      "path": "docs/phase4/tesseract_map_04_ibm_marrakesh_probe_raw_counts.json",
+      "sha256": "c0ec7b898f70c76bcaa7bedb03011e1bb3414312d05758c319dc6573b0568de7"
+    },
+    {
+      "path": "docs/phase4/tesseract_map_04_ibm_marrakesh_probe_readout.json",
+      "sha256": "d6f0966a740b88bb3e01f025d37e0b7dba6e4e6605c36877daa0c76925dbaa30"
+    },
+    {
+      "path": "docs/phase4/tesseract_map_04_ibm_marrakesh_probe_time_calibration.json",
+      "sha256": "0f7f034c45ab370b25b8ae88e9027854bcb5b44b177fb76d818589f68c1baa19"
+    },
+    {
+      "path": "docs/phase5/tesseract_map_05_ibm_fez_live_analysis.json",
+      "sha256": "585b7b16c9bcb07f0a7a60b68d1377fc5506ba1abf9f9a73c88716e42873eb57"
+    },
+    {
+      "path": "docs/phase5/tesseract_map_05_ibm_fez_live_prereg_lock.json",
+      "sha256": "8a8f1487d7653fe5a466c189bea0c6b9d8b1a1cc6250bd4266b205e91bb618e1"
+    },
+    {
+      "path": "docs/phase5/tesseract_map_05_ibm_fez_live_raw_counts.json",
+      "sha256": "d98d99182b55c769724650db0d0920251e0bf0940e3bef2ea8b3550a515aedfd"
+    },
+    {
+      "path": "docs/phase5/tesseract_map_05_ibm_fez_probe_raw_counts.json",
+      "sha256": "2cae6952614af8455a9fbdb484c1501d431ea2a8acefa73d2813d9e922e36359"
+    },
+    {
+      "path": "docs/phase5/tesseract_map_05_ibm_fez_probe_readout.json",
+      "sha256": "2428415ba29cf041d9fa4979dcd8e9a5110ec8eb1cc3db3cf958e32fa993b2f8"
+    },
+    {
+      "path": "docs/phase5/tesseract_map_05_ibm_fez_probe_time_calibration.json",
+      "sha256": "5c376c5028f522a7297d7bd43ffd0c5a860d61a6263bc595edf9a72aca5d06a9"
+    },
+    {
+      "path": "docs/phase5/tesseract_map_05_ibm_kingston_live_analysis.json",
+      "sha256": "56e1a056789a86236e6d1dfcacba4ffbc40e9dce83013a8fb7461ae480eadead"
+    },
+    {
+      "path": "docs/phase5/tesseract_map_05_ibm_kingston_live_prereg_lock.json",
+      "sha256": "89985bbb4e2971f8c3382b480d8f3aebe31352bba6f5cc3422f60535f198728e"
+    },
+    {
+      "path": "docs/phase5/tesseract_map_05_ibm_kingston_live_raw_counts.json",
+      "sha256": "18c61d3959373bb8848d52eec47c5574ce761eb0cf3885a6709c31b2ba8c13ec"
+    },
+    {
+      "path": "docs/phase5/tesseract_map_05_ibm_kingston_probe_raw_counts.json",
+      "sha256": "21faaed6d349eb78af0a96136425dab082ba3f47b573e37c33cb61a7f66f3519"
+    },
+    {
+      "path": "docs/phase5/tesseract_map_05_ibm_kingston_probe_readout.json",
+      "sha256": "59596e68a92ea4c3cc43aebd2d86fc23f0cd207bb4abe843b96e52206bbb0401"
+    },
+    {
+      "path": "docs/phase5/tesseract_map_05_ibm_kingston_probe_time_calibration.json",
+      "sha256": "a9d8475f8612332393f0f4a0eb2e9e438e73fd6cefc4689918305cfa92f9fe68"
+    },
+    {
+      "path": "docs/phase5/tesseract_map_05_ibm_marrakesh_live_analysis.json",
+      "sha256": "0196b950f6c1098ede94b4d325957b6b9914fdf212dd97db6be13d32ce382783"
+    },
+    {
+      "path": "docs/phase5/tesseract_map_05_ibm_marrakesh_live_prereg_lock.json",
+      "sha256": "22fe2d9b48bbf8518f1539e2dc83cfc74f243e2611ccb8fa06bd6935f3008867"
+    },
+    {
+      "path": "docs/phase5/tesseract_map_05_ibm_marrakesh_live_raw_counts.json",
+      "sha256": "1bc4bc7ffac372fc4781eb4ecd3d46b49042543f2fd178cd757ebdca33546617"
+    },
+    {
+      "path": "docs/phase5/tesseract_map_05_ibm_marrakesh_probe_raw_counts.json",
+      "sha256": "045efa2583f5af2a7e51a3dfe9d393e41e61490d88ec56afe32789f287ce5b06"
+    },
+    {
+      "path": "docs/phase5/tesseract_map_05_ibm_marrakesh_probe_readout.json",
+      "sha256": "cdd29a6517330ea4c59d432d2c10814609a8c176fb7419454867bd6c9f826e25"
+    },
+    {
+      "path": "docs/phase5/tesseract_map_05_ibm_marrakesh_probe_time_calibration.json",
+      "sha256": "a88e685a3dd3da8111f84072dab216dfad45d543c4c47682ed7f4802bba1f5d6"
+    },
+    {
+      "path": "docs/phase6/ro06_analysis.json",
+      "sha256": "cf5a43c2f34baafdf6ab3dd1bdbf60a1311f047f626ed4467be96073e1affc7e"
+    },
+    {
+      "path": "docs/phase6/ro06_ibm_fez_r00_calibration.json",
+      "sha256": "ddbfe4d6f28793c5e836b8e7c785b91f1cf4f21412af4ba420c36347f8e6d3a6"
+    },
+    {
+      "path": "docs/phase6/ro06_ibm_fez_r00_counts.json",
+      "sha256": "cacb824b7a0d92a7a60e54e0a0ccaffba5e492085771ff3c37854d237a478598"
+    },
+    {
+      "path": "docs/phase6/ro06_ibm_fez_r01_calibration.json",
+      "sha256": "137a4faafc0640237cba0c08b6e655c2aa2614142950e0286af0ace9a43f8dc6"
+    },
+    {
+      "path": "docs/phase6/ro06_ibm_fez_r01_counts.json",
+      "sha256": "89c61c1ce53167f542a0275f36e2a39911d5e2665c5b105cedc4195813931dff"
+    },
+    {
+      "path": "docs/phase6/ro06_ibm_fez_r02_calibration.json",
+      "sha256": "e3049a8b6231d80b2e211ae8b210fe20e35af70b51b9d36dd47cd48c29181520"
+    },
+    {
+      "path": "docs/phase6/ro06_ibm_fez_r02_counts.json",
+      "sha256": "c837a231c796b73c4bcb8ffd70e82760e751726e3184b449d134032e3d18d1f4"
+    },
+    {
+      "path": "docs/phase6/ro06_ibm_fez_r03_calibration.json",
+      "sha256": "17f883910e021dd53a0d03d77de7e13eb47c891b7a5bc44ba5ad92624a8dc3ab"
+    },
+    {
+      "path": "docs/phase6/ro06_ibm_fez_r03_counts.json",
+      "sha256": "cbbacc0fc807d59380f4c42c77ac1a0593794fd31575fca087b771c8b32bc7a4"
+    },
+    {
+      "path": "docs/phase6/ro06_ibm_fez_r04_calibration.json",
+      "sha256": "16575ad83155acc5e0c9b916bd5de37c8cf53288e6eef15c5910ba73b0591d48"
+    },
+    {
+      "path": "docs/phase6/ro06_ibm_fez_r04_counts.json",
+      "sha256": "25a064052cde425faf12d7cb54d7206d51e3a9ab1551af0749e8b7ced5395e6d"
+    },
+    {
+      "path": "docs/phase6/ro06_ibm_fez_r05_calibration.json",
+      "sha256": "7dc11f251874346d8a5720a8e791e9dd4e8702532ab223a75454cf24eb00ce84"
+    },
+    {
+      "path": "docs/phase6/ro06_ibm_fez_r05_counts.json",
+      "sha256": "e1d34087c40fec3f62b56af09f77d3d72d89eb7644c79499a013b41c9cca69c7"
+    },
+    {
+      "path": "docs/phase6/ro06_ibm_fez_r06_calibration.json",
+      "sha256": "467b133f50ce48e7019327b8b50031ca4a254aade160492ad3d8c5b6e81b6f54"
+    },
+    {
+      "path": "docs/phase6/ro06_ibm_fez_r06_counts.json",
+      "sha256": "ef73ee141ddbd09a5b905b56ebd57493e554cb3342becd39604393413a38f360"
+    },
+    {
+      "path": "docs/phase6/ro06_ibm_fez_r07_calibration.json",
+      "sha256": "f08987d236e0f889d3de1a1ce7575bf7d959d727b09a0533972b8a0276206c53"
+    },
+    {
+      "path": "docs/phase6/ro06_ibm_fez_r07_counts.json",
+      "sha256": "0b6149b6337e801371b59c899c1a0c163cb4d52489bbf5c12a093b3e9ecfb291"
+    },
+    {
+      "path": "docs/phase6/ro06_ibm_kingston_r00_calibration.json",
+      "sha256": "b387920515c30fb422743d8530c610ec7a8eeac513ad58b3d4ed575362bac0ed"
+    },
+    {
+      "path": "docs/phase6/ro06_ibm_kingston_r00_counts.json",
+      "sha256": "d4b5d895f06ed55e5bdfe7c43f2e7ccc2b688622c9afe21e29ecc89eb7c8c028"
+    },
+    {
+      "path": "docs/phase6/ro06_ibm_kingston_r01_calibration.json",
+      "sha256": "020f139a91fec4ce587b27ee7949ac6420e15fbdb6447f9f1142c11e3a3a6d90"
+    },
+    {
+      "path": "docs/phase6/ro06_ibm_kingston_r01_counts.json",
+      "sha256": "c1844bf0abfa6587b6adc117c04c6d7afb708f9186afda4af13d1313112e4f50"
+    },
+    {
+      "path": "docs/phase6/ro06_ibm_kingston_r02_calibration.json",
+      "sha256": "5c4d3dbe3eb7e1542b30f98f76463cd30a846a4894c5ba349d6032b75caac5d6"
+    },
+    {
+      "path": "docs/phase6/ro06_ibm_kingston_r02_counts.json",
+      "sha256": "702b0b52d23c102d690422a0ae9270033ff58db326c9f36e8dffe8a39817ace5"
+    },
+    {
+      "path": "docs/phase6/ro06_ibm_kingston_r03_calibration.json",
+      "sha256": "da8af178c98d00fa903f819566703f4d61b453bb783ea9c6ae040ef3d17e849a"
+    },
+    {
+      "path": "docs/phase6/ro06_ibm_kingston_r03_counts.json",
+      "sha256": "92ca49170e905badbaaf6e82bd6549c16eb7666289ed3b0e973d7bf7713884c3"
+    },
+    {
+      "path": "docs/phase6/ro06_ibm_kingston_r04_calibration.json",
+      "sha256": "9825bf440850e1aff285a65b7277f114d7796c648ea41697baa5c31f4d026947"
+    },
+    {
+      "path": "docs/phase6/ro06_ibm_kingston_r04_counts.json",
+      "sha256": "305801b89c0003b7ff21df7696ea6114f28640853c5b27211f78667874b213bb"
+    },
+    {
+      "path": "docs/phase6/ro06_ibm_kingston_r05_calibration.json",
+      "sha256": "37c4876f03bb53bb53f84dcc128c081e9b8ed4797b51d7ddfec7b425596a9860"
+    },
+    {
+      "path": "docs/phase6/ro06_ibm_kingston_r05_counts.json",
+      "sha256": "9a3e04a2da13badf971556a119f93cc19b952b357dcbebb2416df5a9877f0e96"
+    },
+    {
+      "path": "docs/phase6/ro06_ibm_kingston_r06_calibration.json",
+      "sha256": "15ffdbcb60ab145184bdce35d8de06bd3323e00dcdb7bb3984572378e3ae6dc3"
+    },
+    {
+      "path": "docs/phase6/ro06_ibm_kingston_r06_counts.json",
+      "sha256": "0f80ca1e9dab41beb836b6c157fa7c43b9af46a439c1299e49f28bdbd26045ec"
+    },
+    {
+      "path": "docs/phase6/ro06_ibm_kingston_r07_calibration.json",
+      "sha256": "90c664a0e66445a08ae9d3c4a48506df527a30bdeb8a3c1051ead160c642ad3e"
+    },
+    {
+      "path": "docs/phase6/ro06_ibm_kingston_r07_counts.json",
+      "sha256": "e085c45c6b6cd8310db8d47c0173c1249f6d7bd93e781d83e1cee764b7774e63"
+    },
+    {
+      "path": "docs/phase6/ro06_ibm_marrakesh_r00_calibration.json",
+      "sha256": "182c056ffcf3643950807d5cdea0d9306755ab2cfe1921ed60ea1938ddc5de58"
+    },
+    {
+      "path": "docs/phase6/ro06_ibm_marrakesh_r00_counts.json",
+      "sha256": "7ee9bb0d0bd2523565094c6e39ac362f2bf80ea8298dcd84d5ab214a36462294"
+    },
+    {
+      "path": "docs/phase6/ro06_ibm_marrakesh_r01_calibration.json",
+      "sha256": "641f59bc6e42dae5278fa018f0b14384dd66eff33e0e2924ab2a0aed63fcc59a"
+    },
+    {
+      "path": "docs/phase6/ro06_ibm_marrakesh_r01_counts.json",
+      "sha256": "f29504012ca6cd04a7cf76d4b4e6a7ee93ba6bbbaeefe595ba79084e0d453bd1"
+    },
+    {
+      "path": "docs/phase6/ro06_ibm_marrakesh_r02_calibration.json",
+      "sha256": "3edc5fb32dd123dcc3c8647f59b3224024f4755bc45c2d68d4e3c44e7f290206"
+    },
+    {
+      "path": "docs/phase6/ro06_ibm_marrakesh_r02_counts.json",
+      "sha256": "467a80686f92be1438234e0209fa4ca6fad6421edccb58aac6b4f07d8bc0b768"
+    },
+    {
+      "path": "docs/phase6/ro06_ibm_marrakesh_r03_calibration.json",
+      "sha256": "c5e34f68e9f9e67f3c39378b92916f0cbd991e61b102389704c9a2c7bcb5428a"
+    },
+    {
+      "path": "docs/phase6/ro06_ibm_marrakesh_r03_counts.json",
+      "sha256": "286c8c0a8fd68c9d7370c837c8739794f22a21ceac157c74fbdd68628974fcc2"
+    },
+    {
+      "path": "docs/phase6/ro06_ibm_marrakesh_r04_calibration.json",
+      "sha256": "d4555d43fb148732a41d1d0edce93384c4fd5cd83fa522ec70faf2cb54e375b4"
+    },
+    {
+      "path": "docs/phase6/ro06_ibm_marrakesh_r04_counts.json",
+      "sha256": "ecd541a94e1aee83dbccc81046d1dc246c231a7b317052dd77018bb6009b9977"
+    },
+    {
+      "path": "docs/phase6/ro06_ibm_marrakesh_r05_calibration.json",
+      "sha256": "d8984429af4a35273546ebc2759642a824e9d4bcad63736e8588ecacbd203f5f"
+    },
+    {
+      "path": "docs/phase6/ro06_ibm_marrakesh_r05_counts.json",
+      "sha256": "dd73d92939e1f299d12c993f25d84f68ece05307fd9e5d6089644ed50d104d5d"
+    },
+    {
+      "path": "docs/phase6/ro06_ibm_marrakesh_r06_calibration.json",
+      "sha256": "d14d214b2fafd1f9bf9969e32c712b83c90bf1516db4e40bad82db5aa2b4b4fb"
+    },
+    {
+      "path": "docs/phase6/ro06_ibm_marrakesh_r06_counts.json",
+      "sha256": "9dcf7efc95cb16223a304f8eaddaf08f942adc8d2145692c65fe938542d6d0f3"
+    },
+    {
+      "path": "docs/phase6/ro06_ibm_marrakesh_r07_calibration.json",
+      "sha256": "09f168a561c4f52c381f7522485e78a3b3ec09411720e114cb491fed1e27871d"
+    },
+    {
+      "path": "docs/phase6/ro06_ibm_marrakesh_r07_counts.json",
+      "sha256": "a4249800f2d144c815f9a94a4b502111bca294a8a92a08425b7c27eb7ef2c182"
+    },
+    {
+      "path": "docs/phase7/ro06_07_exploratory.json",
+      "sha256": "ed35c9a0a58a48c3bb8520a92edd3ff5e57d30edfd68748873f81c642e90478a"
+    },
+    {
+      "path": "docs/phase7/ro06_07_job_usage.json",
+      "sha256": "784488d464235603b12e941c240a5c162c9a5bba953e3c72dd3a902b9f4584a1"
+    },
+    {
+      "path": "docs/phase7/ro07_analysis.json",
+      "sha256": "abaa29fac94ce2381692e5563586d16d9758d2a99d933259f37d4f567b92c863"
+    },
+    {
+      "path": "docs/phase7/ro07_ibm_fez_calibration.json",
+      "sha256": "1fdba7b8715fad62aa6b3c769aba847a6c915df8dea1c4b1517eb18850b2b25d"
+    },
+    {
+      "path": "docs/phase7/ro07_ibm_fez_lock.json",
+      "sha256": "b806d4834d09963cfbbadb181af35a25bd0f88f26ea9f45e2e4d4ec40d6d7505"
+    },
+    {
+      "path": "docs/phase7/ro07_ibm_fez_raw_counts.json",
+      "sha256": "dd936dddeaa9d602a28db0a00e86ae04136a725b8cbacf744b2fa482009a99d0"
+    },
+    {
+      "path": "docs/phase7/ro07_ibm_kingston_calibration.json",
+      "sha256": "f4b6b5946ee56e041cc9f29621b7e0a3a3a2320b6e5e5dde503dee1f0ce1c2aa"
+    },
+    {
+      "path": "docs/phase7/ro07_ibm_kingston_lock.json",
+      "sha256": "1780347c9fb3ec17934dcb2728a2cf314f6e860b6223f03fda3ad4b473d365ea"
+    },
+    {
+      "path": "docs/phase7/ro07_ibm_kingston_raw_counts.json",
+      "sha256": "5b62818123123a995de4871d824d2bdddfb36258a78aaa9bffb94048ca8b801d"
+    },
+    {
+      "path": "docs/phase7/ro07_ibm_marrakesh_calibration.json",
+      "sha256": "0422f0bbb8a1b6e71200ca35c49f764d767d415f18efb2f0e0651e2892731a4e"
+    },
+    {
+      "path": "docs/phase7/ro07_ibm_marrakesh_lock.json",
+      "sha256": "c2e53f3344edc67fcf40179e88fc580e77b4878c8e7a98060a7a4b21d16bda74"
+    },
+    {
+      "path": "docs/phase7/ro07_ibm_marrakesh_raw_counts.json",
+      "sha256": "f4a22955f9f359004982c5878d8304af89859768790c50d183a52a6e75625985"
+    },
+    {
+      "path": "papers/cn01_correlated_noise_null_marrakesh/zenodo_receipt.json",
+      "sha256": "745d18367cb3830751e35f95c1fd37bcceb6f2571987dd8ebd34d770c250d6d7"
+    },
+    {
+      "path": "papers/ro06_07_readout_staleness/zenodo_receipt.json",
+      "sha256": "9660fd9e146202052c6fcccdbef1ce13daa463b3dadecc56c31d22baea9e30c4"
+    },
+    {
+      "path": "papers/ro06_prereg/zenodo_receipt.json",
+      "sha256": "a58ef463aface568201af33747b325bd0ff2219f1c956015b0259553bbfe0e29"
+    },
+    {
+      "path": "papers/ro07_prereg/zenodo_receipt.json",
+      "sha256": "3ebf730c8992a9ad084144fa7232fab7eb1e39e9b480c033d898c9ebc66b8cb0"
+    },
+    {
+      "path": "papers/tmap02_layout_sensitivity_marrakesh/zenodo_receipt.json",
+      "sha256": "f5977e7a6c6aa61b3cf04e50ef344ce5570731e14e4d283448bfb23c6a4a118e"
+    },
+    {
+      "path": "papers/tmap03_prereg/zenodo_receipt.json",
+      "sha256": "09745adb052e55a58c17f77d33fa1b54a0d7a80357dadd788cb891194c294127"
+    },
+    {
+      "path": "papers/tmap03_readout_attribution_marrakesh/zenodo_receipt.json",
+      "sha256": "032fc2f1ffc75c621c541c9529725aa35d89ecfafa2c60642f9bf7a289cc397f"
+    },
+    {
+      "path": "papers/tmap04_prereg/zenodo_receipt.json",
+      "sha256": "83caece0a829b7112ef83440188c7f641f937ab8a298d20731287ecedadc26ab"
+    },
+    {
+      "path": "papers/tmap04_probe_guided_layout/zenodo_receipt.json",
+      "sha256": "2afaa4ad8110de2b34217264172eb90ea977a7a669c39e9aae6a718f850a8a81"
+    },
+    {
+      "path": "papers/tmap05_exclusion_layout/zenodo_receipt.json",
+      "sha256": "f1b2d1d0152df6809cace1cfb3f61d325400d0213b00da96c228f0d00ce393e8"
+    },
+    {
+      "path": "papers/tmap05_prereg/zenodo_receipt.json",
+      "sha256": "f3e96591eb91e6fae3058768559e6c3cd9edddbc52a99fd602fc9af42f6fbef5"
+    }
+  ],
+  "title": "Calibration Staleness, Transient Readout Telegraphing, and Colored-Noise False Positives Across Three 156-Qubit Superconducting Quantum Processors",
+  "verified_hardware_jobs": [
+    {
+      "backend": "ibm_marrakesh",
+      "campaign": "CN-01",
+      "completed_utc": "2026-11-16T23:37:46.273514+00:00",
+      "execution_tier": "HARDWARE_ATTESTED",
+      "job_id": "dbtp67dav06s73cfbsm0",
+      "pubs": 244,
+      "qpu_seconds": 139,
+      "role": "main",
+      "shots": 499712,
+      "zenodo_doi": "10.5281/zenodo.24406435"
+    },
+    {
+      "backend": "ibm_marrakesh",
+      "campaign": "TMAP-02",
+      "completed_utc": "2026-11-16T22:23:02.756016+00:00",
+      "execution_tier": "HARDWARE_ATTESTED",
+      "job_id": "dbto408n26qs739tnrj0",
+      "pubs": 90,
+      "qpu_seconds": 53,
+      "role": "main",
+      "shots": 184320,
+      "zenodo_doi": "10.5281/zenodo.24406426"
+    },
+    {
+      "backend": "ibm_marrakesh",
+      "campaign": "TMAP-03",
+      "completed_utc": "2026-11-20T20:14:57.385430+00:00",
+      "execution_tier": "HARDWARE_ATTESTED",
+      "job_id": "dc0ajv5s2omc738915k0",
+      "pubs": 80,
+      "qpu_seconds": 47,
+      "role": "main",
+      "shots": 163840,
+      "zenodo_doi": "10.5281/zenodo.24406525"
+    },
+    {
+      "backend": "ibm_marrakesh",
+      "campaign": "TMAP-04",
+      "completed_utc": "2026-11-20T20:26:28.942106+00:00",
+      "execution_tier": "HARDWARE_ATTESTED",
+      "job_id": "dc0apq2nj2vs73ddo74g",
+      "pubs": 6,
+      "qpu_seconds": 6,
+      "role": "probe",
+      "shots": 12288,
+      "zenodo_doi": "10.5281/zenodo.24407001"
+    },
+    {
+      "backend": "ibm_marrakesh",
+      "campaign": "TMAP-04",
+      "completed_utc": "2026-11-20T20:27:32.994050+00:00",
+      "execution_tier": "HARDWARE_ATTESTED",
+      "job_id": "dc0aq0qnj2vs73ddo7ig",
+      "pubs": 60,
+      "qpu_seconds": 36,
+      "role": "main",
+      "shots": 122880,
+      "zenodo_doi": "10.5281/zenodo.24407001"
+    },
+    {
+      "backend": "ibm_fez",
+      "campaign": "TMAP-04",
+      "completed_utc": "2026-11-20T20:30:44.879682+00:00",
+      "execution_tier": "HARDWARE_ATTESTED",
+      "job_id": "dc0aqg5s2omc73891he0",
+      "pubs": 6,
+      "qpu_seconds": 5,
+      "role": "probe",
+      "shots": 12288,
+      "zenodo_doi": "10.5281/zenodo.24407001"
+    },
+    {
+      "backend": "ibm_fez",
+      "campaign": "TMAP-04",
+      "completed_utc": "2026-11-20T20:37:19.073368+00:00",
+      "execution_tier": "HARDWARE_ATTESTED",
+      "job_id": "dc0as15s2omc73891lgg",
+      "pubs": 60,
+      "qpu_seconds": 34,
+      "role": "main",
+      "shots": 122880,
+      "zenodo_doi": "10.5281/zenodo.24407001"
+    },
+    {
+      "backend": "ibm_kingston",
+      "campaign": "TMAP-04",
+      "completed_utc": "2026-11-20T20:37:40.309570+00:00",
+      "execution_tier": "HARDWARE_ATTESTED",
+      "job_id": "dc0av1eq4uuc73a2bk0g",
+      "pubs": 6,
+      "qpu_seconds": 5,
+      "role": "probe",
+      "shots": 12288,
+      "zenodo_doi": "10.5281/zenodo.24407001"
+    },
+    {
+      "backend": "ibm_kingston",
+      "campaign": "TMAP-04",
+      "completed_utc": "2026-11-20T20:40:09.448603+00:00",
+      "execution_tier": "HARDWARE_ATTESTED",
+      "job_id": "dc0av8uq4uuc73a2bkd0",
+      "pubs": 60,
+      "qpu_seconds": 35,
+      "role": "main",
+      "shots": 122880,
+      "zenodo_doi": "10.5281/zenodo.24407001"
+    },
+    {
+      "backend": "ibm_marrakesh",
+      "campaign": "TMAP-05",
+      "completed_utc": "2026-11-20T21:51:29.077611+00:00",
+      "execution_tier": "HARDWARE_ATTESTED",
+      "job_id": "dc0c1kqnj2vs73ddq040",
+      "pubs": 6,
+      "qpu_seconds": 6,
+      "role": "probe",
+      "shots": 12288,
+      "zenodo_doi": "10.5281/zenodo.24407875"
+    },
+    {
+      "backend": "ibm_marrakesh",
+      "campaign": "TMAP-05",
+      "completed_utc": "2026-11-20T21:54:50.217531+00:00",
+      "execution_tier": "HARDWARE_ATTESTED",
+      "job_id": "dc0c1t5s2omc738938eg",
+      "pubs": 60,
+      "qpu_seconds": 35,
+      "role": "main",
+      "shots": 122880,
+      "zenodo_doi": "10.5281/zenodo.24407875"
+    },
+    {
+      "backend": "ibm_fez",
+      "campaign": "TMAP-05",
+      "completed_utc": "2026-11-20T21:55:09.416151+00:00",
+      "execution_tier": "HARDWARE_ATTESTED",
+      "job_id": "dc0c3ceq4uuc73a2d62g",
+      "pubs": 6,
+      "qpu_seconds": 5,
+      "role": "probe",
+      "shots": 12288,
+      "zenodo_doi": "10.5281/zenodo.24407875"
+    },
+    {
+      "backend": "ibm_fez",
+      "campaign": "TMAP-05",
+      "completed_utc": "2026-11-20T21:56:20.775337+00:00",
+      "execution_tier": "HARDWARE_ATTESTED",
+      "job_id": "dc0c3leq4uuc73a2d6c0",
+      "pubs": 60,
+      "qpu_seconds": 34,
+      "role": "main",
+      "shots": 122880,
+      "zenodo_doi": "10.5281/zenodo.24407875"
+    },
+    {
+      "backend": "ibm_kingston",
+      "campaign": "TMAP-05",
+      "completed_utc": "2026-11-20T21:59:35.607230+00:00",
+      "execution_tier": "HARDWARE_ATTESTED",
+      "job_id": "dc0c466q4uuc73a2d790",
+      "pubs": 6,
+      "qpu_seconds": 5,
+      "role": "probe",
+      "shots": 12288,
+      "zenodo_doi": "10.5281/zenodo.24407875"
+    },
+    {
+      "backend": "ibm_kingston",
+      "campaign": "TMAP-05",
+      "completed_utc": "2026-11-20T22:23:48.152629+00:00",
+      "execution_tier": "HARDWARE_ATTESTED",
+      "job_id": "dc0c7dmq4uuc73a2dbr0",
+      "pubs": 60,
+      "qpu_seconds": 35,
+      "role": "main",
+      "shots": 122880,
+      "zenodo_doi": "10.5281/zenodo.24407875"
+    },
+    {
+      "backend": "ibm_marrakesh",
+      "campaign": "RO-06",
+      "completed_utc": "2026-11-20T22:28:25.695223+00:00",
+      "execution_tier": "HARDWARE_ATTESTED",
+      "job_id": "dc0ciulhdvas73bjaft0",
+      "pubs": 6,
+      "qpu_seconds": 6,
+      "role": "round_00",
+      "shots": 12288,
+      "zenodo_doi": "10.5281/zenodo.24420902"
+    },
+    {
+      "backend": "ibm_marrakesh",
+      "campaign": "RO-06",
+      "completed_utc": "2026-11-21T12:08:43.014242+00:00",
+      "execution_tier": "HARDWARE_ATTESTED",
+      "job_id": "dc0ojf5s2omc7389jkn0",
+      "pubs": 6,
+      "qpu_seconds": 6,
+      "role": "round_01",
+      "shots": 12288,
+      "zenodo_doi": "10.5281/zenodo.24420902"
+    },
+    {
+      "backend": "ibm_marrakesh",
+      "campaign": "RO-06",
+      "completed_utc": "2026-11-21T12:30:23.510830+00:00",
+      "execution_tier": "HARDWARE_ATTESTED",
+      "job_id": "dc0otkds2omc7389k5n0",
+      "pubs": 6,
+      "qpu_seconds": 6,
+      "role": "round_02",
+      "shots": 12288,
+      "zenodo_doi": "10.5281/zenodo.24420902"
+    },
+    {
+      "backend": "ibm_marrakesh",
+      "campaign": "RO-06",
+      "completed_utc": "2026-11-21T12:45:27.415037+00:00",
+      "execution_tier": "HARDWARE_ATTESTED",
+      "job_id": "dc0p4llhdvas73bjr6o0",
+      "pubs": 6,
+      "qpu_seconds": 6,
+      "role": "round_03",
+      "shots": 12288,
+      "zenodo_doi": "10.5281/zenodo.24420902"
+    },
+    {
+      "backend": "ibm_marrakesh",
+      "campaign": "RO-06",
+      "completed_utc": "2026-11-21T13:00:24.194300+00:00",
+      "execution_tier": "HARDWARE_ATTESTED",
+      "job_id": "dc0pbmlhdvas73bjrfh0",
+      "pubs": 6,
+      "qpu_seconds": 6,
+      "role": "round_04",
+      "shots": 12288,
+      "zenodo_doi": "10.5281/zenodo.24420902"
+    },
+    {
+      "backend": "ibm_marrakesh",
+      "campaign": "RO-06",
+      "completed_utc": "2026-11-21T13:15:26.278462+00:00",
+      "execution_tier": "HARDWARE_ATTESTED",
+      "job_id": "dc0pinlhdvas73bjro8g",
+      "pubs": 6,
+      "qpu_seconds": 6,
+      "role": "round_05",
+      "shots": 12288,
+      "zenodo_doi": "10.5281/zenodo.24420902"
+    },
+    {
+      "backend": "ibm_marrakesh",
+      "campaign": "RO-06",
+      "completed_utc": "2026-11-21T13:30:22.953356+00:00",
+      "execution_tier": "HARDWARE_ATTESTED",
+      "job_id": "dc0ppoeq4uuc73a2vcag",
+      "pubs": 6,
+      "qpu_seconds": 6,
+      "role": "round_06",
+      "shots": 12288,
+      "zenodo_doi": "10.5281/zenodo.24420902"
+    },
+    {
+      "backend": "ibm_marrakesh",
+      "campaign": "RO-06",
+      "completed_utc": "2026-11-21T13:46:27.957196+00:00",
+      "execution_tier": "HARDWARE_ATTESTED",
+      "job_id": "dc0q18thdvas73bjsdkg",
+      "pubs": 6,
+      "qpu_seconds": 6,
+      "role": "round_07",
+      "shots": 12288,
+      "zenodo_doi": "10.5281/zenodo.24420902"
+    },
+    {
+      "backend": "ibm_fez",
+      "campaign": "RO-06",
+      "completed_utc": "2026-11-20T22:28:27.866871+00:00",
+      "execution_tier": "HARDWARE_ATTESTED",
+      "job_id": "dc0civ2nj2vs73ddqkq0",
+      "pubs": 6,
+      "qpu_seconds": 5,
+      "role": "round_00",
+      "shots": 12288,
+      "zenodo_doi": "10.5281/zenodo.24420902"
+    },
+    {
+      "backend": "ibm_fez",
+      "campaign": "RO-06",
+      "completed_utc": "2026-11-21T12:08:43.623323+00:00",
+      "execution_tier": "HARDWARE_ATTESTED",
+      "job_id": "dc0ojfanj2vs73deaq7g",
+      "pubs": 6,
+      "qpu_seconds": 5,
+      "role": "round_01",
+      "shots": 12288,
+      "zenodo_doi": "10.5281/zenodo.24420902"
+    },
+    {
+      "backend": "ibm_fez",
+      "campaign": "RO-06",
+      "completed_utc": "2026-11-21T12:30:23.941791+00:00",
+      "execution_tier": "HARDWARE_ATTESTED",
+      "job_id": "dc0otkmq4uuc73a2u9n0",
+      "pubs": 6,
+      "qpu_seconds": 5,
+      "role": "round_02",
+      "shots": 12288,
+      "zenodo_doi": "10.5281/zenodo.24420902"
+    },
+    {
+      "backend": "ibm_fez",
+      "campaign": "RO-06",
+      "completed_utc": "2026-11-21T12:45:27.928492+00:00",
+      "execution_tier": "HARDWARE_ATTESTED",
+      "job_id": "dc0p4linj2vs73debm00",
+      "pubs": 6,
+      "qpu_seconds": 5,
+      "role": "round_03",
+      "shots": 12288,
+      "zenodo_doi": "10.5281/zenodo.24420902"
+    },
+    {
+      "backend": "ibm_fez",
+      "campaign": "RO-06",
+      "completed_utc": "2026-11-21T13:00:59.049668+00:00",
+      "execution_tier": "HARDWARE_ATTESTED",
+      "job_id": "dc0pbmuq4uuc73a2urg0",
+      "pubs": 6,
+      "qpu_seconds": 5,
+      "role": "round_04",
+      "shots": 12288,
+      "zenodo_doi": "10.5281/zenodo.24420902"
+    },
+    {
+      "backend": "ibm_fez",
+      "campaign": "RO-06",
+      "completed_utc": "2026-11-21T13:15:26.736287+00:00",
+      "execution_tier": "HARDWARE_ATTESTED",
+      "job_id": "dc0pinlhdvas73bjro9g",
+      "pubs": 6,
+      "qpu_seconds": 5,
+      "role": "round_05",
+      "shots": 12288,
+      "zenodo_doi": "10.5281/zenodo.24420902"
+    },
+    {
+      "backend": "ibm_fez",
+      "campaign": "RO-06",
+      "completed_utc": "2026-11-21T13:30:23.409665+00:00",
+      "execution_tier": "HARDWARE_ATTESTED",
+      "job_id": "dc0ppolhdvas73bjs0ng",
+      "pubs": 6,
+      "qpu_seconds": 5,
+      "role": "round_06",
+      "shots": 12288,
+      "zenodo_doi": "10.5281/zenodo.24420902"
+    },
+    {
+      "backend": "ibm_fez",
+      "campaign": "RO-06",
+      "completed_utc": "2026-11-21T13:48:08.544548+00:00",
+      "execution_tier": "HARDWARE_ATTESTED",
+      "job_id": "dc0q195hdvas73bjsdl0",
+      "pubs": 6,
+      "qpu_seconds": 5,
+      "role": "round_07",
+      "shots": 12288,
+      "zenodo_doi": "10.5281/zenodo.24420902"
+    },
+    {
+      "backend": "ibm_kingston",
+      "campaign": "RO-06",
+      "completed_utc": "2026-11-20T22:28:40.097036+00:00",
+      "execution_tier": "HARDWARE_ATTESTED",
+      "job_id": "dc0civanj2vs73ddqkrg",
+      "pubs": 6,
+      "qpu_seconds": 5,
+      "role": "round_00",
+      "shots": 12288,
+      "zenodo_doi": "10.5281/zenodo.24420902"
+    },
+    {
+      "backend": "ibm_kingston",
+      "campaign": "RO-06",
+      "completed_utc": "2026-11-21T12:08:44.372273+00:00",
+      "execution_tier": "HARDWARE_ATTESTED",
+      "job_id": "dc0ojfeq4uuc73a2to7g",
+      "pubs": 6,
+      "qpu_seconds": 5,
+      "role": "round_01",
+      "shots": 12288,
+      "zenodo_doi": "10.5281/zenodo.24420902"
+    },
+    {
+      "backend": "ibm_kingston",
+      "campaign": "RO-06",
+      "completed_utc": "2026-11-21T12:30:25.561651+00:00",
+      "execution_tier": "HARDWARE_ATTESTED",
+      "job_id": "dc0otkuq4uuc73a2u9o0",
+      "pubs": 6,
+      "qpu_seconds": 5,
+      "role": "round_02",
+      "shots": 12288,
+      "zenodo_doi": "10.5281/zenodo.24420902"
+    },
+    {
+      "backend": "ibm_kingston",
+      "campaign": "RO-06",
+      "completed_utc": "2026-11-21T12:45:28.442558+00:00",
+      "execution_tier": "HARDWARE_ATTESTED",
+      "job_id": "dc0p4lqnj2vs73debm0g",
+      "pubs": 6,
+      "qpu_seconds": 5,
+      "role": "round_03",
+      "shots": 12288,
+      "zenodo_doi": "10.5281/zenodo.24420902"
+    },
+    {
+      "backend": "ibm_kingston",
+      "campaign": "RO-06",
+      "completed_utc": "2026-11-21T13:00:59.468562+00:00",
+      "execution_tier": "HARDWARE_ATTESTED",
+      "job_id": "dc0pbn5hdvas73bjrfi0",
+      "pubs": 6,
+      "qpu_seconds": 5,
+      "role": "round_04",
+      "shots": 12288,
+      "zenodo_doi": "10.5281/zenodo.24420902"
+    },
+    {
+      "backend": "ibm_kingston",
+      "campaign": "RO-06",
+      "completed_utc": "2026-11-21T13:15:27.203164+00:00",
+      "execution_tier": "HARDWARE_ATTESTED",
+      "job_id": "dc0pints2omc7389l0ig",
+      "pubs": 6,
+      "qpu_seconds": 5,
+      "role": "round_05",
+      "shots": 12288,
+      "zenodo_doi": "10.5281/zenodo.24420902"
+    },
+    {
+      "backend": "ibm_kingston",
+      "campaign": "RO-06",
+      "completed_utc": "2026-11-21T13:30:24.542416+00:00",
+      "execution_tier": "HARDWARE_ATTESTED",
+      "job_id": "dc0ppothdvas73bjs0o0",
+      "pubs": 6,
+      "qpu_seconds": 5,
+      "role": "round_06",
+      "shots": 12288,
+      "zenodo_doi": "10.5281/zenodo.24420902"
+    },
+    {
+      "backend": "ibm_kingston",
+      "campaign": "RO-06",
+      "completed_utc": "2026-11-21T13:48:09.494833+00:00",
+      "execution_tier": "HARDWARE_ATTESTED",
+      "job_id": "dc0q196q4uuc73a2vpr0",
+      "pubs": 6,
+      "qpu_seconds": 5,
+      "role": "round_07",
+      "shots": 12288,
+      "zenodo_doi": "10.5281/zenodo.24420902"
+    },
+    {
+      "backend": "ibm_marrakesh",
+      "campaign": "RO-07",
+      "completed_utc": "2026-11-21T14:26:16.964925Z",
+      "execution_tier": "HARDWARE_ATTESTED",
+      "job_id": "dc0qjqdhdvas73bjtgr0",
+      "pubs": 36,
+      "qpu_seconds": 22,
+      "role": "main",
+      "shots": 73728,
+      "zenodo_doi": "10.5281/zenodo.24420902"
+    },
+    {
+      "backend": "ibm_fez",
+      "campaign": "RO-07",
+      "completed_utc": "2026-11-21T14:26:53.72858Z",
+      "execution_tier": "HARDWARE_ATTESTED",
+      "job_id": "dc0qk42nj2vs73dee020",
+      "pubs": 36,
+      "qpu_seconds": 21,
+      "role": "main",
+      "shots": 73728,
+      "zenodo_doi": "10.5281/zenodo.24420902"
+    },
+    {
+      "backend": "ibm_kingston",
+      "campaign": "RO-07",
+      "completed_utc": "2026-11-21T14:28:43.646072Z",
+      "execution_tier": "HARDWARE_ATTESTED",
+      "job_id": "dc0qkdeq4uuc73a30sf0",
+      "pubs": 36,
+      "qpu_seconds": 22,
+      "role": "main",
+      "shots": 73728,
+      "zenodo_doi": "10.5281/zenodo.24420902"
+    }
+  ],
+  "zenodo_records": [
+    {
+      "campaign": "CN-01",
+      "doi": "10.5281/zenodo.24406435",
+      "kind": "results"
+    },
+    {
+      "campaign": "TMAP-02",
+      "doi": "10.5281/zenodo.24406426",
+      "kind": "results"
+    },
+    {
+      "campaign": "TMAP-03",
+      "doi": "10.5281/zenodo.24406496",
+      "kind": "preregistration"
+    },
+    {
+      "campaign": "TMAP-03",
+      "doi": "10.5281/zenodo.24406525",
+      "kind": "results"
+    },
+    {
+      "campaign": "TMAP-04",
+      "doi": "10.5281/zenodo.24406640",
+      "kind": "preregistration"
+    },
+    {
+      "campaign": "TMAP-04",
+      "doi": "10.5281/zenodo.24407001",
+      "kind": "results"
+    },
+    {
+      "campaign": "TMAP-05",
+      "doi": "10.5281/zenodo.24407538",
+      "kind": "preregistration"
+    },
+    {
+      "campaign": "TMAP-05",
+      "doi": "10.5281/zenodo.24407875",
+      "kind": "results"
+    },
+    {
+      "campaign": "RO-06",
+      "doi": "10.5281/zenodo.24407897",
+      "kind": "preregistration"
+    },
+    {
+      "campaign": "RO-07",
+      "doi": "10.5281/zenodo.24419327",
+      "kind": "preregistration"
+    },
+    {
+      "campaign": "RO-06/RO-07",
+      "doi": "10.5281/zenodo.24420902",
+      "kind": "results"
+    }
+  ]
+}

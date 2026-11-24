@@ -1,0 +1,99 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="580" height="345" viewBox="0 0 580 345">
+<rect x="0" y="0" width="580" height="345" fill="#ffffff"/>
+<text x="290.00" y="18.00" font-family="Helvetica, Arial, sans-serif" font-size="10.1" font-weight="bold" fill="#111827" text-anchor="middle">White-Noise Null False Positives Under Local 1/f Drift vs Held-Out Coupler Gate (CN-01)</text>
+<text x="290.00" y="31.00" font-family="Helvetica, Arial, sans-serif" font-size="8.0" font-weight="normal" fill="#4b5563" text-anchor="middle">ibm_marrakesh | 10 couplers (&gt;=5 hops: 4 train, 6 held-out) | 499,712 circuit shots | Locked Delta BIC = 10,263</text>
+<rect x="50.00" y="54.00" width="230.00" height="226.00" fill="#f8fafc" stroke="#cbd5e1" stroke-width="0.90"/>
+<text x="165.00" y="48.00" font-family="Helvetica, Arial, sans-serif" font-size="8.4" font-weight="bold" fill="#111827" text-anchor="middle">(a) Non-Local Claim Rate on Local Noise</text>
+<line x1="50.00" y1="280.00" x2="280.00" y2="280.00" stroke="#94a3b8" stroke-width="0.90"/>
+<text x="45.00" y="283.00" font-family="Helvetica, Arial, sans-serif" font-size="7.2" font-weight="normal" fill="#374151" text-anchor="end">0%</text>
+<line x1="50.00" y1="227.69" x2="280.00" y2="227.69" stroke="#e2e8f0" stroke-width="0.60"/>
+<text x="45.00" y="230.69" font-family="Helvetica, Arial, sans-serif" font-size="7.2" font-weight="normal" fill="#374151" text-anchor="end">25%</text>
+<line x1="50.00" y1="175.37" x2="280.00" y2="175.37" stroke="#e2e8f0" stroke-width="0.60"/>
+<text x="45.00" y="178.37" font-family="Helvetica, Arial, sans-serif" font-size="7.2" font-weight="normal" fill="#374151" text-anchor="end">50%</text>
+<line x1="50.00" y1="123.06" x2="280.00" y2="123.06" stroke="#e2e8f0" stroke-width="0.60"/>
+<text x="45.00" y="126.06" font-family="Helvetica, Arial, sans-serif" font-size="7.2" font-weight="normal" fill="#374151" text-anchor="end">75%</text>
+<line x1="50.00" y1="70.74" x2="280.00" y2="70.74" stroke="#e2e8f0" stroke-width="0.60"/>
+<text x="45.00" y="73.74" font-family="Helvetica, Arial, sans-serif" font-size="7.2" font-weight="normal" fill="#374151" text-anchor="end">100%</text>
+<rect x="67.00" y="280.00" width="14.00" height="1.50" fill="#dc2626" stroke="#7f1d1d" stroke-width="0.70"/>
+<rect x="83.00" y="280.00" width="14.00" height="1.50" fill="#059669" stroke="#064e3b" stroke-width="0.70"/>
+<text x="74.00" y="275.00" font-family="Helvetica, Arial, sans-serif" font-size="6.9" font-weight="bold" fill="#dc2626" text-anchor="middle">0%</text>
+<text x="90.00" y="275.00" font-family="Helvetica, Arial, sans-serif" font-size="6.9" font-weight="bold" fill="#059669" text-anchor="middle">0%</text>
+<text x="82.00" y="292.00" font-family="Helvetica, Arial, sans-serif" font-size="6.9" font-weight="bold" fill="#1f2937" text-anchor="middle">White H0</text>
+<text x="82.00" y="302.00" font-family="Helvetica, Arial, sans-serif" font-size="6.3" font-weight="normal" fill="#6b7280" text-anchor="middle">dBIC~0</text>
+<rect x="121.00" y="70.74" width="14.00" height="209.26" fill="#dc2626" stroke="#7f1d1d" stroke-width="0.70"/>
+<rect x="137.00" y="280.00" width="14.00" height="1.50" fill="#059669" stroke="#064e3b" stroke-width="0.70"/>
+<text x="128.00" y="65.74" font-family="Helvetica, Arial, sans-serif" font-size="6.9" font-weight="bold" fill="#dc2626" text-anchor="middle">100%</text>
+<text x="144.00" y="275.00" font-family="Helvetica, Arial, sans-serif" font-size="6.9" font-weight="bold" fill="#059669" text-anchor="middle">0%</text>
+<text x="136.00" y="292.00" font-family="Helvetica, Arial, sans-serif" font-size="6.9" font-weight="bold" fill="#1f2937" text-anchor="middle">Local 1/f</text>
+<text x="136.00" y="302.00" font-family="Helvetica, Arial, sans-serif" font-size="6.3" font-weight="normal" fill="#6b7280" text-anchor="middle">dBIC~3,397</text>
+<rect x="175.00" y="70.74" width="14.00" height="209.26" fill="#dc2626" stroke="#7f1d1d" stroke-width="0.70"/>
+<rect x="191.00" y="280.00" width="14.00" height="1.50" fill="#059669" stroke="#064e3b" stroke-width="0.70"/>
+<text x="182.00" y="65.74" font-family="Helvetica, Arial, sans-serif" font-size="6.9" font-weight="bold" fill="#dc2626" text-anchor="middle">100%</text>
+<text x="198.00" y="275.00" font-family="Helvetica, Arial, sans-serif" font-size="6.9" font-weight="bold" fill="#059669" text-anchor="middle">0%</text>
+<text x="190.00" y="292.00" font-family="Helvetica, Arial, sans-serif" font-size="6.9" font-weight="bold" fill="#1f2937" text-anchor="middle">1/f+Detun</text>
+<text x="190.00" y="302.00" font-family="Helvetica, Arial, sans-serif" font-size="6.3" font-weight="normal" fill="#6b7280" text-anchor="middle">dBIC~17,456</text>
+<rect x="229.00" y="70.74" width="14.00" height="209.26" fill="#dc2626" stroke="#7f1d1d" stroke-width="0.70"/>
+<rect x="245.00" y="280.00" width="14.00" height="1.50" fill="#059669" stroke="#064e3b" stroke-width="0.70"/>
+<text x="236.00" y="65.74" font-family="Helvetica, Arial, sans-serif" font-size="6.9" font-weight="bold" fill="#dc2626" text-anchor="middle">100%</text>
+<text x="252.00" y="275.00" font-family="Helvetica, Arial, sans-serif" font-size="6.9" font-weight="bold" fill="#059669" text-anchor="middle">0%</text>
+<text x="244.00" y="292.00" font-family="Helvetica, Arial, sans-serif" font-size="6.9" font-weight="bold" fill="#1f2937" text-anchor="middle">Local OU</text>
+<text x="244.00" y="302.00" font-family="Helvetica, Arial, sans-serif" font-size="6.3" font-weight="normal" fill="#6b7280" text-anchor="middle">dBIC~415</text>
+<rect x="60.00" y="62.00" width="8.00" height="8.00" fill="#dc2626" stroke="#7f1d1d" stroke-width="0.60"/>
+<text x="72.00" y="69.00" font-family="Helvetica, Arial, sans-serif" font-size="6.8" font-weight="normal" fill="#1f2937" text-anchor="start">White-noise null (H3 selected)</text>
+<rect x="60.00" y="74.00" width="8.00" height="8.00" fill="#059669" stroke="#064e3b" stroke-width="0.60"/>
+<text x="72.00" y="81.00" font-family="Helvetica, Arial, sans-serif" font-size="6.8" font-weight="normal" fill="#1f2937" text-anchor="start">A-3 local 1/f + OU nulls (0% FP)</text>
+<text x="165.00" y="318.00" font-family="Helvetica, Arial, sans-serif" font-size="7.0" font-weight="normal" fill="#065f46" text-anchor="middle">400/400 synthetic local-noise runs trigger 0% non-local claims under A-3</text>
+<rect x="320.00" y="54.00" width="240.00" height="108.00" fill="#f8fafc" stroke="#cbd5e1" stroke-width="0.90"/>
+<text x="440.00" y="48.00" font-family="Helvetica, Arial, sans-serif" font-size="8.4" font-weight="bold" fill="#111827" text-anchor="middle">(b) DD16 Sublattice Stagger (10 Couplers)</text>
+<rect x="320.00" y="54.00" width="240.00" height="18.00" fill="#fee2e2"/>
+<text x="556.00" y="66.50" font-family="Helvetica, Arial, sans-serif" font-size="6.3" font-weight="normal" fill="#991b1b" text-anchor="end">Fast corr. pred. (+1.4..3 pp)</text>
+<line x1="320.00" y1="144.00" x2="560.00" y2="144.00" stroke="#e2e8f0" stroke-width="0.60"/>
+<text x="316.00" y="147.00" font-family="Helvetica, Arial, sans-serif" font-size="6.9" font-weight="normal" fill="#374151" text-anchor="end">-1</text>
+<line x1="320.00" y1="114.00" x2="560.00" y2="114.00" stroke="#94a3b8" stroke-width="0.90" stroke-dasharray="4,3"/>
+<text x="316.00" y="117.00" font-family="Helvetica, Arial, sans-serif" font-size="6.9" font-weight="normal" fill="#374151" text-anchor="end">0</text>
+<line x1="320.00" y1="84.00" x2="560.00" y2="84.00" stroke="#e2e8f0" stroke-width="0.60"/>
+<text x="316.00" y="87.00" font-family="Helvetica, Arial, sans-serif" font-size="6.9" font-weight="normal" fill="#374151" text-anchor="end">+1</text>
+<polyline points="334.00,114.00 347.25,93.78 360.50,81.48 373.75,90.57 400.25,84.84 466.50,77.52 546.00,91.29" fill="none" stroke="#2563eb" stroke-width="1.00"/>
+<polyline points="334.00,114.00 347.25,84.72 360.50,91.14 373.75,84.72 400.25,105.81 466.50,104.04 546.00,97.59" fill="none" stroke="#2563eb" stroke-width="1.00"/>
+<polyline points="334.00,114.00 347.25,113.25 360.50,111.06 373.75,97.86 400.25,111.21 466.50,123.06 546.00,100.65" fill="none" stroke="#2563eb" stroke-width="1.00"/>
+<polyline points="334.00,114.00 347.25,140.79 360.50,114.57 373.75,126.87 400.25,118.23 466.50,130.26 546.00,119.28" fill="none" stroke="#2563eb" stroke-width="1.00"/>
+<polyline points="334.00,114.00 347.25,111.36 360.50,137.43 373.75,113.55 400.25,126.75 466.50,131.73 546.00,109.32" fill="none" stroke="#d97706" stroke-width="1.00"/>
+<polyline points="334.00,114.00 347.25,103.62 360.50,86.04 373.75,96.87 400.25,94.68 466.50,89.40 546.00,79.74" fill="none" stroke="#d97706" stroke-width="1.00"/>
+<polyline points="334.00,114.00 347.25,110.34 360.50,112.68 373.75,115.17 400.25,122.37 466.50,94.08 546.00,119.13" fill="none" stroke="#d97706" stroke-width="1.00"/>
+<polyline points="334.00,114.00 347.25,118.98 360.50,96.00 373.75,109.02 400.25,131.73 466.50,97.17 546.00,106.08" fill="none" stroke="#d97706" stroke-width="1.00"/>
+<polyline points="334.00,114.00 347.25,137.58 360.50,135.69 373.75,136.86 400.25,122.64 466.50,132.00 546.00,144.03" fill="none" stroke="#d97706" stroke-width="1.00"/>
+<polyline points="334.00,114.00 347.25,114.75 360.50,100.53 373.75,131.01 400.25,107.70 466.50,123.24 546.00,111.96" fill="none" stroke="#d97706" stroke-width="1.00"/>
+<text x="334.00" y="172.00" font-family="Helvetica, Arial, sans-serif" font-size="6.5" font-weight="normal" fill="#4b5563" text-anchor="middle">0ns</text>
+<text x="373.75" y="172.00" font-family="Helvetica, Arial, sans-serif" font-size="6.5" font-weight="normal" fill="#4b5563" text-anchor="middle">48ns</text>
+<text x="466.50" y="172.00" font-family="Helvetica, Arial, sans-serif" font-size="6.5" font-weight="normal" fill="#4b5563" text-anchor="middle">160ns</text>
+<text x="546.00" y="172.00" font-family="Helvetica, Arial, sans-serif" font-size="6.5" font-weight="normal" fill="#4b5563" text-anchor="middle">256ns</text>
+<text x="328.00" y="156.00" font-family="Helvetica, Arial, sans-serif" font-size="6.5" font-weight="normal" fill="#1f2937" text-anchor="start">C_DFS = +0.43 pp (null; blue=train, amber=held-out)</text>
+<rect x="320.00" y="186.00" width="240.00" height="94.00" fill="#f8fafc" stroke="#cbd5e1" stroke-width="0.90"/>
+<text x="440.00" y="181.00" font-family="Helvetica, Arial, sans-serif" font-size="8.3" font-weight="bold" fill="#111827" text-anchor="middle">(c) Held-Out 6-Coupler RMSE Kill Gate</text>
+<line x1="320.00" y1="280.00" x2="560.00" y2="280.00" stroke="#e2e8f0" stroke-width="0.60"/>
+<text x="316.00" y="283.00" font-family="Helvetica, Arial, sans-serif" font-size="6.8" font-weight="normal" fill="#374151" text-anchor="end">0.00</text>
+<line x1="320.00" y1="240.83" x2="560.00" y2="240.83" stroke="#e2e8f0" stroke-width="0.60"/>
+<text x="316.00" y="243.83" font-family="Helvetica, Arial, sans-serif" font-size="6.8" font-weight="normal" fill="#374151" text-anchor="end">0.15</text>
+<line x1="320.00" y1="201.67" x2="560.00" y2="201.67" stroke="#e2e8f0" stroke-width="0.60"/>
+<text x="316.00" y="204.67" font-family="Helvetica, Arial, sans-serif" font-size="6.8" font-weight="normal" fill="#374151" text-anchor="end">0.30</text>
+<rect x="337.00" y="248.66" width="8.00" height="31.34" fill="#475569" stroke="#1e293b" stroke-width="0.60"/>
+<rect x="347.00" y="249.49" width="8.00" height="30.51" fill="#dc2626" stroke="#7f1d1d" stroke-width="0.60"/>
+<text x="346.00" y="291.00" font-family="Helvetica, Arial, sans-serif" font-size="6.6" font-weight="normal" fill="#374151" text-anchor="middle">HO-1</text>
+<rect x="373.00" y="237.91" width="8.00" height="42.09" fill="#475569" stroke="#1e293b" stroke-width="0.60"/>
+<rect x="383.00" y="225.04" width="8.00" height="54.96" fill="#dc2626" stroke="#7f1d1d" stroke-width="0.60"/>
+<text x="382.00" y="291.00" font-family="Helvetica, Arial, sans-serif" font-size="6.6" font-weight="normal" fill="#374151" text-anchor="middle">HO-2</text>
+<rect x="409.00" y="277.01" width="8.00" height="2.99" fill="#475569" stroke="#1e293b" stroke-width="0.60"/>
+<rect x="419.00" y="230.87" width="8.00" height="49.13" fill="#dc2626" stroke="#7f1d1d" stroke-width="0.60"/>
+<text x="418.00" y="291.00" font-family="Helvetica, Arial, sans-serif" font-size="6.6" font-weight="normal" fill="#374151" text-anchor="middle">HO-3</text>
+<rect x="445.00" y="238.10" width="8.00" height="41.90" fill="#475569" stroke="#1e293b" stroke-width="0.60"/>
+<rect x="455.00" y="222.46" width="8.00" height="57.54" fill="#dc2626" stroke="#7f1d1d" stroke-width="0.60"/>
+<text x="454.00" y="291.00" font-family="Helvetica, Arial, sans-serif" font-size="6.6" font-weight="normal" fill="#374151" text-anchor="middle">HO-4</text>
+<rect x="481.00" y="196.04" width="8.00" height="83.96" fill="#475569" stroke="#1e293b" stroke-width="0.60"/>
+<rect x="491.00" y="256.38" width="8.00" height="23.62" fill="#dc2626" stroke="#7f1d1d" stroke-width="0.60"/>
+<text x="490.00" y="291.00" font-family="Helvetica, Arial, sans-serif" font-size="6.6" font-weight="normal" fill="#374151" text-anchor="middle">HO-5</text>
+<rect x="517.00" y="278.24" width="8.00" height="1.76" fill="#475569" stroke="#1e293b" stroke-width="0.60"/>
+<rect x="527.00" y="271.27" width="8.00" height="8.73" fill="#dc2626" stroke="#7f1d1d" stroke-width="0.60"/>
+<text x="526.00" y="291.00" font-family="Helvetica, Arial, sans-serif" font-size="6.6" font-weight="normal" fill="#374151" text-anchor="middle">HO-6</text>
+<text x="440.00" y="305.00" font-family="Helvetica, Arial, sans-serif" font-size="7.0" font-weight="bold" fill="#991b1b" text-anchor="middle">Mean RMSE: H0=0.130 vs H3=0.143 (p=0.82 -&gt; H3 falsified)</text>
+<text x="440.00" y="317.00" font-family="Helvetica, Arial, sans-serif" font-size="7.0" font-weight="normal" fill="#1e3a8a" text-anchor="middle">Live A-3 verdict: independent local H0 wins (BIC = 115.05)</text>
+</svg>
