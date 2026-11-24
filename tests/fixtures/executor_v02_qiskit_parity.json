@@ -1,0 +1,46 @@
+{
+  "fixture_version": 1,
+  "wire_format": "executor_v02",
+  "schema_version": "v0.2",
+  "bit_order": "little",
+  "purpose": "qiskit ExecutorResultDecoder parity on real 32-shot 10-bit slice of ibm_kingston job d75ujda3qcgc73fs97ag",
+  "origin_job_id": "d75ujda3qcgc73fs97ag",
+  "origin_backend": "ibm_kingston",
+  "origin_shots_slice": [0, 32],
+  "data": [
+    {
+      "results": {
+        "c": {
+          "data": "AfIPPH0CBAAfgAEIGDCA/gGYv28A+u8fgAD6HwCAAPoXYAD8A8hf/w==",
+          "shape": [32, 10],
+          "dtype": "bool"
+        }
+      },
+      "metadata": {
+        "scheduler_timing": null,
+        "stretch_values": null
+      }
+    }
+  ],
+  "metadata": {
+    "chunk_timing": [
+      {
+        "start": "2026-03-31T15:35:20.696645",
+        "stop": "2026-03-31T15:35:47.528672",
+        "parts": [
+          {
+            "idx_item": 0,
+            "size": 1
+          }
+        ]
+      }
+    ]
+  },
+  "passthrough_data": {
+    "post_processor": {
+      "context": "sampler_v2",
+      "pub_shapes": [1],
+      "version": "v1"
+    }
+  }
+}

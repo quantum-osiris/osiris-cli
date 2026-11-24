@@ -8,6 +8,15 @@ bitstrings and basis labels. "XYZZ" means qubit 0 and 1 measured in Z,
 qubit 2 in Y, qubit 3 in X. Outcome bit 0 -> eigenvalue +1, bit 1 -> -1, in
 every basis (X measured via H, Y via Sdg then H, before a Z measurement).
 
+Finite-shot entropy ceilings
+----------------------------
+For an ``n``-bit register sampled ``N`` times, plug-in Shannon entropy cannot
+exceed ``min(n, log2(N))`` bits. Comparing ``H`` against ``n`` when ``N < 2**n``
+confuses finite sample size with physical entropy suppression (see claims
+``NEGENTROPY_136`` and ``ENTROPY_SUPPRESSION_Z29``). ``entropy_ceiling`` and
+``score_entropy`` enforce the finite-shot bound and flag ``SATURATED_ENTROPY``
+and ``ALL_ZERO`` / ``UNMEASURED_REGISTER`` registers prior to downstream analysis.
+
 Population is not fidelity
 --------------------------
 ghz_population() is P(0...0) + P(1...1) from computational-basis counts. It is
@@ -35,6 +44,11 @@ from typing import Iterable, Mapping
 import numpy as np
 
 Counts = Mapping[str, int]
+
+SATURATION_RATIO_THRESHOLD = 0.98
+SATURATED_ENTROPY = "SATURATED_ENTROPY"
+ALL_ZERO = "ALL_ZERO"
+UNMEASURED_REGISTER = "UNMEASURED_REGISTER"
 
 
 @dataclass(frozen=True)
@@ -88,6 +102,129 @@ def _pos(qubit: int, n: int) -> int:
     if not 0 <= qubit < n:
         raise ValueError(f"qubit {qubit} out of range for {n} bits")
     return n - 1 - qubit
+
+
+# --------------------------------------------------------------------------
+# Finite-shot Shannon entropy & circuit-distribution scoring
+# --------------------------------------------------------------------------
+
+def entropy_ceiling(num_bits: int, shots: int) -> float:
+    """Maximum observable plug-in Shannon entropy (bits) for ``num_bits`` and ``shots``."""
+    if num_bits < 0 or shots < 0:
+        raise ValueError(f"num_bits ({num_bits}) and shots ({shots}) must be non-negative")
+    if num_bits == 0 or shots <= 1:
+        return 0.0
+    return min(float(num_bits), float(math.log2(shots)))
+
+
+def shannon_entropy(counts: Counts) -> float:
+    """Plug-in Shannon entropy ``-sum p_x log2(p_x)`` in bits."""
+    total = sum(counts.values())
+    if total <= 0:
+        return 0.0
+    return float(-sum((c / total) * math.log2(c / total) for c in counts.values() if c > 0))
+
+
+def miller_madow_entropy(counts: Counts, num_bits: int | None = None) -> float:
+    """First-order Miller-Madow bias-corrected Shannon entropy (clipped at ``num_bits``)."""
+    total = sum(counts.values())
+    if total <= 0:
+        return 0.0
+    h = shannon_entropy(counts)
+    nonzero_bins = sum(1 for c in counts.values() if c > 0)
+    corrected = h + (nonzero_bins - 1) / (2.0 * total * math.log(2.0))
+    if num_bits is not None and num_bits >= 0:
+        return float(min(float(num_bits), corrected))
+    return float(corrected)
+
+
+def entropy_plug_in_stderr(counts: Counts) -> float:
+    """Delta-method plug-in standard error of ``shannon_entropy`` (in bits)."""
+    total = sum(counts.values())
+    if total <= 1:
+        return 0.0
+    probs = [c / total for c in counts.values() if c > 0]
+    h = -sum(p * math.log2(p) for p in probs)
+    second_moment = sum(p * (math.log2(p) ** 2) for p in probs)
+    var_h = max(0.0, second_moment - h * h) / total
+    return float(math.sqrt(var_h))
+
+
+def distribution_tvd(counts: Counts, reference_probs: Mapping[str, float]) -> float:
+    """Total variation distance between empirical ``counts`` and ``reference_probs``."""
+    total = _shots(counts)
+    keys = set(counts) | set(reference_probs)
+    return float(0.5 * sum(abs(counts.get(k, 0) / total - reference_probs.get(k, 0.0)) for k in keys))
+
+
+def distribution_kl(counts: Counts, reference_probs: Mapping[str, float], smoothing: float = 1e-12) -> float:
+    """KL divergence ``D_KL(P_emp || P_ref)`` in bits with floor ``smoothing`` on ``P_ref``."""
+    total = _shots(counts)
+    kl = 0.0
+    for k, c in counts.items():
+        if c <= 0:
+            continue
+        p = c / total
+        q = max(float(reference_probs.get(k, 0.0)), smoothing)
+        kl += p * math.log2(p / q)
+    return float(max(0.0, kl))
+
+
+@dataclass(frozen=True)
+class EntropyScore:
+    num_bits: int
+    shots: int
+    unique_outcomes: int
+    shannon_entropy: float
+    stderr: float
+    miller_madow_entropy: float
+    ceiling: float
+    ceiling_ratio: float
+    flags: tuple[str, ...]
+
+
+def score_entropy(
+    counts: Counts,
+    num_bits: int | None = None,
+    saturation_threshold: float = SATURATION_RATIO_THRESHOLD,
+) -> EntropyScore:
+    """Compute finite-shot-normalized Shannon entropy and register health flags."""
+    nonzero = {k: int(v) for k, v in counts.items() if v > 0}
+    if not nonzero:
+        w = int(num_bits or 0)
+        return EntropyScore(
+            num_bits=w, shots=0, unique_outcomes=0, shannon_entropy=0.0,
+            stderr=0.0, miller_madow_entropy=0.0, ceiling=0.0, ceiling_ratio=0.0,
+            flags=(UNMEASURED_REGISTER,),
+        )
+    inferred_w = _width(nonzero)
+    w = inferred_w if num_bits is None else int(num_bits)
+    if w != inferred_w:
+        raise ValueError(f"num_bits={w} does not match bitstring width {inferred_w}")
+    total = sum(nonzero.values())
+    ceil_h = entropy_ceiling(w, total)
+    h = shannon_entropy(nonzero)
+    se = entropy_plug_in_stderr(nonzero)
+    mm = miller_madow_entropy(nonzero, num_bits=w)
+    ratio = (h / ceil_h) if ceil_h > 0 else 0.0
+
+    flags: list[str] = []
+    if len(nonzero) == 1 and set(next(iter(nonzero))) == {"0"}:
+        flags.extend([ALL_ZERO, UNMEASURED_REGISTER])
+    elif ceil_h > 0 and ratio >= saturation_threshold:
+        flags.append(SATURATED_ENTROPY)
+
+    return EntropyScore(
+        num_bits=w,
+        shots=total,
+        unique_outcomes=len(nonzero),
+        shannon_entropy=h,
+        stderr=se,
+        miller_madow_entropy=mm,
+        ceiling=ceil_h,
+        ceiling_ratio=ratio,
+        flags=tuple(flags),
+    )
 
 
 # --------------------------------------------------------------------------
