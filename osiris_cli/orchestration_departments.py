@@ -546,10 +546,10 @@ def build_rfc8785_reproducibility_capsule(
 #     Department Handoff Receipts (WK-AC-001) & Capsule Materializer (WK-EM-001)
 # ---------------------------------------------------------------------------
 
-DEFAULT_SITE_RECORDS_PATH = Path(
-    "/home/osiris/osiris-assessment/work/quantumosiris-site/public/data/records.json"
+DEFAULT_SITE_RECORDS_PATH = (
+    Path.home() / "osiris-assessment" / "work" / "quantumosiris-site" / "public" / "data" / "records.json"
 )
-DEFAULT_WORK_ROOT = Path("/home/osiris/osiris-assessment/work")
+DEFAULT_WORK_ROOT = Path.home() / "osiris-assessment" / "work"
 
 _KNOWN_DOI_LINEAGE_OVERRIDES: Dict[str, Dict[str, Any]] = {
     "24031814": {

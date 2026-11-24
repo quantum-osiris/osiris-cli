@@ -1,0 +1,90 @@
+{
+  "slug": "heron_r2_unified",
+  "state": "published",
+  "deposition_id": 24486928,
+  "supersedes_record_id": null,
+  "version": "1.0.0",
+  "prereserved_doi": "10.5281/zenodo.24486928",
+  "draft_url": "https://zenodo.org/uploads/24486928",
+  "updated_utc": "2026-11-24T01:10:07+00:00",
+  "title": "Calibration Staleness, Transient Readout Telegraphing, and Colored-Noise False Positives Across Three 156-Qubit Superconducting Quantum Processors",
+  "files_count": 10,
+  "files": [
+    {
+      "archive_name": "heron_r2_calibration_staleness_and_colored_nulls.pdf",
+      "source_relpath": "papers/zenodo_v620_deposits/heron_r2_unified/heron_r2_calibration_staleness_and_colored_nulls.pdf",
+      "bytes": 78334,
+      "sha256": "8e7d0f076b3882ee9872c67aeca3099d16f98b7c91d6c4d55d546ad916f51506",
+      "zenodo_checksum": "md5:3d02cf1ea247ade7b1ee508f7084cf51"
+    },
+    {
+      "archive_name": "heron_r2_calibration_staleness_and_colored_nulls.tex",
+      "source_relpath": "papers/heron_r2_calibration_staleness_and_colored_nulls/heron_r2_calibration_staleness_and_colored_nulls.tex",
+      "bytes": 57087,
+      "sha256": "06d170f1ac1dce2f826ee164ecb838120f955e4732c2a7f9c884e64b95a95179",
+      "zenodo_checksum": "md5:08721fa51d870b476fddfda4e16791d4"
+    },
+    {
+      "archive_name": "generated.tex",
+      "source_relpath": "papers/heron_r2_calibration_staleness_and_colored_nulls/generated.tex",
+      "bytes": 13817,
+      "sha256": "1bafee2bfc55bd260ce49a4463c2bbcf119a5a2d2747fc3abebedeee0c4cb4b8",
+      "zenodo_checksum": "md5:04969f0841474e01c41e74d89f737b39"
+    },
+    {
+      "archive_name": "generate_unified_assets.py",
+      "source_relpath": "papers/heron_r2_calibration_staleness_and_colored_nulls/generate_unified_assets.py",
+      "bytes": 77145,
+      "sha256": "13511bb814affb6870050af8db1e0c052a06397b28f2f48d20e8c0f8cf149cfc",
+      "zenodo_checksum": "md5:f9692636e489f1a86d7cb38cd32d9e4d"
+    },
+    {
+      "archive_name": "fig1_tmap_sign_reversal_three_qpus.pdf",
+      "source_relpath": "papers/heron_r2_calibration_staleness_and_colored_nulls/fig1_tmap_sign_reversal_three_qpus.pdf",
+      "bytes": 9611,
+      "sha256": "65cac6337ebc82e41557478b34cc2a63ec9fb3dc006385a7f52fb41c46624503",
+      "zenodo_checksum": "md5:227aa6823d9e292f3b3a8bfde7eabd2a"
+    },
+    {
+      "archive_name": "fig2_ro06_07_staleness_persistence.pdf",
+      "source_relpath": "papers/heron_r2_calibration_staleness_and_colored_nulls/fig2_ro06_07_staleness_persistence.pdf",
+      "bytes": 31322,
+      "sha256": "8f515e7117e96ac79dad98470e82e57af9d914fe6d09da6fa91950c9130cc024",
+      "zenodo_checksum": "md5:2e95e7b77741f3dc780fa169800b02cc"
+    },
+    {
+      "archive_name": "fig3_cn01_colored_noise_heldout_gate.pdf",
+      "source_relpath": "papers/heron_r2_calibration_staleness_and_colored_nulls/fig3_cn01_colored_noise_heldout_gate.pdf",
+      "bytes": 8912,
+      "sha256": "9d1cafce06d0b28d16412a9a65ddd179c46579c546158f38a09b7bde4393609b",
+      "zenodo_checksum": "md5:35f1bdf054391ab3f53b72c8054f10d9"
+    },
+    {
+      "archive_name": "reproducibility_capsule.json",
+      "source_relpath": "papers/heron_r2_calibration_staleness_and_colored_nulls/reproducibility_capsule.json",
+      "bytes": 37883,
+      "sha256": "f90aa89d48032f47b052fc5504505b81b9367f3d563948e6fbd4426654d15950",
+      "zenodo_checksum": "md5:a301c735a63d099aac3022319202a253"
+    },
+    {
+      "archive_name": "SHA256SUMS.txt",
+      "source_relpath": "papers/heron_r2_calibration_staleness_and_colored_nulls/SHA256SUMS.txt",
+      "bytes": 1021,
+      "sha256": "375038e451baf13d17d69baa32cb4d9177a8a637b72d837da1d4f0e604a08e4c",
+      "zenodo_checksum": "md5:dfd828266421cb3c2ac810d48057f13e"
+    },
+    {
+      "archive_name": "test_heron_r2_unified_paper.py",
+      "source_relpath": "tests/test_heron_r2_unified_paper.py",
+      "bytes": 11136,
+      "sha256": "b844cd7a8e1191fcd0c27053565cbeb5f10332939f0952cedb0f542f0c5998c2",
+      "zenodo_checksum": "md5:cb244faa64f13c249982c1db57865032"
+    }
+  ],
+  "record_id": 24486928,
+  "doi": "10.5281/zenodo.24486928",
+  "conceptdoi": "10.5281/zenodo.24486927",
+  "doi_url": "https://doi.org/10.5281/zenodo.24486928",
+  "record_html": "https://zenodo.org/record/24486928",
+  "published_utc": "2026-11-24T01:12:12+00:00"
+}

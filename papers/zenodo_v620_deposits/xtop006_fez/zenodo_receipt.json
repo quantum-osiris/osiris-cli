@@ -1,0 +1,195 @@
+{
+  "slug": "xtop006_fez",
+  "state": "published",
+  "deposition_id": 24486942,
+  "supersedes_record_id": null,
+  "version": "1.0.0",
+  "prereserved_doi": "10.5281/zenodo.24486942",
+  "draft_url": "https://zenodo.org/uploads/24486942",
+  "updated_utc": "2026-11-24T01:11:19+00:00",
+  "title": "Continuous-Angle Non-Clifford Hayden-Preskill Scrambling Trajectory and Stratified Decoherence Discrimination on a 156-Qubit Superconducting Processor (OSIRIS-XTOP-006 & XTOP-006B)",
+  "files_count": 25,
+  "files": [
+    {
+      "archive_name": "xtop006_non_clifford_kraus_fez.pdf",
+      "source_relpath": "papers/zenodo_v620_deposits/xtop006_fez/xtop006_non_clifford_kraus_fez.pdf",
+      "bytes": 16914,
+      "sha256": "4fb226280bc072725e6638a1d7be1dab3f6347c62a2e37bbcaa4e7e647b035b2",
+      "zenodo_checksum": "md5:8b17d6d0fcde0a273f27d54011ab6cac"
+    },
+    {
+      "archive_name": "xtop006_non_clifford_kraus_fez.tex",
+      "source_relpath": "papers/xtop006_non_clifford_kraus_fez/xtop006_non_clifford_kraus_fez.tex",
+      "bytes": 9076,
+      "sha256": "de7439cf4196fd21e4eac3bf509fd4f7325dd2e1d2dee3c1da3f9588786c3799",
+      "zenodo_checksum": "md5:60218e0cec4c61569243c0e5c9b4d7a3"
+    },
+    {
+      "archive_name": "generated.tex",
+      "source_relpath": "papers/xtop006_non_clifford_kraus_fez/generated.tex",
+      "bytes": 3215,
+      "sha256": "446f68df6c019e889f8feb80c12f8e13a4f1ee13b77b3b88b9d7f46b3b5e8378",
+      "zenodo_checksum": "md5:5d9506646c2fa8afc3f0bc91409ef1bb"
+    },
+    {
+      "archive_name": "generate_xtop006_paper_assets.py",
+      "source_relpath": "papers/xtop006_non_clifford_kraus_fez/generate_xtop006_paper_assets.py",
+      "bytes": 16271,
+      "sha256": "5562a77edf2f170ce8bd3a3f8ca8fd04a8cb9660e6c93399f7058f32a6712db6",
+      "zenodo_checksum": "md5:51c2e24fc41fdeae56a5d62c1f4e7052"
+    },
+    {
+      "archive_name": "fig1_xtop006_fez_kraus_trajectory.svg",
+      "source_relpath": "papers/xtop006_non_clifford_kraus_fez/fig1_xtop006_fez_kraus_trajectory.svg",
+      "bytes": 4869,
+      "sha256": "304bed7ab69b60fc697acdeadb9020a82757d90f4dc5ff6a74f8c6e194253fab",
+      "zenodo_checksum": "md5:9f4401ba0a7bd5960abde54530cdbacf"
+    },
+    {
+      "archive_name": "fig2_xtop006b_fez_4twirl_discriminator.svg",
+      "source_relpath": "papers/xtop006_non_clifford_kraus_fez/fig2_xtop006b_fez_4twirl_discriminator.svg",
+      "bytes": 2586,
+      "sha256": "be47c5194d3e54066dca99343a4233045f0edceaaf166186e70339f3baea7dce",
+      "zenodo_checksum": "md5:2ddbf9fa0f4e287ce3778fef680c5c0b"
+    },
+    {
+      "archive_name": "reproducibility_capsule.json",
+      "source_relpath": "papers/xtop006_non_clifford_kraus_fez/reproducibility_capsule.json",
+      "bytes": 747,
+      "sha256": "1b33fc8a98c5fff72281f22fc0cc131bca971384fcd611acfe81c554a8b19ccc",
+      "zenodo_checksum": "md5:2dc13e5a2de5375cb793ad471b52b11d"
+    },
+    {
+      "archive_name": "SHA256SUMS.txt",
+      "source_relpath": "papers/xtop006_non_clifford_kraus_fez/SHA256SUMS.txt",
+      "bytes": 588,
+      "sha256": "1d639e31f16af51b9cd2c8696546915551372e5e0812562594290649c26eb097",
+      "zenodo_checksum": "md5:9137a0c1d239c62eb2f2be1dc432d806"
+    },
+    {
+      "archive_name": "xtop006_fez_PRE_REGISTRATION.md",
+      "source_relpath": "experiments/xtop006_fez/PRE_REGISTRATION.md",
+      "bytes": 3069,
+      "sha256": "a7eb21315731b93cd02fffe492b699ed800971a90933df896d80909efd438fe9",
+      "zenodo_checksum": "md5:815e2e48a2a470d1cc00f79f53637083"
+    },
+    {
+      "archive_name": "stage_and_harvest_xtop006_fez.py",
+      "source_relpath": "experiments/xtop006_fez/stage_and_harvest_xtop006_fez.py",
+      "bytes": 35839,
+      "sha256": "09b8bcea9d575b9271f1242e6d640c8cd95be02fd2f9ca98471356d26eec8647",
+      "zenodo_checksum": "md5:d1dfbfde0038d70800d460f410fcee07"
+    },
+    {
+      "archive_name": "xtop006_fez_staging_manifest.json",
+      "source_relpath": "experiments/xtop006_fez/xtop006_fez_staging_manifest.json",
+      "bytes": 77876,
+      "sha256": "fb2d6e4701178e885596c369a58f8d30fa477a27361c5d0f340e7f3374ce20be",
+      "zenodo_checksum": "md5:af06870be4bd791ed618565db0e0e0b9"
+    },
+    {
+      "archive_name": "xtop006_fez_staged_circuits.qpy",
+      "source_relpath": "experiments/xtop006_fez/xtop006_fez_staged_circuits.qpy",
+      "bytes": 4356636,
+      "sha256": "d22bece14a187bd2f348f25adb8dc9767b32f4e3e3427a99dbbcb3fc347f2542",
+      "zenodo_checksum": "md5:81a9c4bb912ddbc162f65ca976c898c8"
+    },
+    {
+      "archive_name": "xtop006_fez_calibration_snapshot.json",
+      "source_relpath": "experiments/xtop006_fez/xtop006_fez_calibration_snapshot.json",
+      "bytes": 1136,
+      "sha256": "46b5ddf0a1e8f1a1f47aee25cc5ae2f07a650d3f6755a2c19b767eff72f3ebce",
+      "zenodo_checksum": "md5:30c280d451519050b78e69f3e20ea7ee"
+    },
+    {
+      "archive_name": "xtop006_fez_submitted_job.json",
+      "source_relpath": "experiments/xtop006_fez/xtop006_fez_submitted_job.json",
+      "bytes": 489,
+      "sha256": "38fc606bc4490f97f0d3eab34f14b0dc2299ce1b0ae3cd3fb76c96464d33147e",
+      "zenodo_checksum": "md5:c38fc49bfe50b15dfd911211fa0dcf3a"
+    },
+    {
+      "archive_name": "physical_xtop006_fez_raw_counts.json.gz",
+      "source_relpath": "experiments/xtop006_fez/physical_xtop006_fez_raw_counts.json.gz",
+      "bytes": 4098,
+      "sha256": "1016ca5b66abcfb8714c5c8479ea05285d1b32400476e75538fa7dc5dd1c604e",
+      "zenodo_checksum": "md5:ec6ee968391f3c381a64d1c1c3de3910"
+    },
+    {
+      "archive_name": "physical_xtop006_fez_results.json",
+      "source_relpath": "experiments/xtop006_fez/physical_xtop006_fez_results.json",
+      "bytes": 6172,
+      "sha256": "2ec221c1598f27c6bcc119c92fb4e07ba3046ecacd149dab67295da9ab36fbf1",
+      "zenodo_checksum": "md5:62062a97c34cd5d9ef6430ca201c65d5"
+    },
+    {
+      "archive_name": "xtop006b_fez_PRE_REGISTRATION.md",
+      "source_relpath": "experiments/xtop006b_fez/PRE_REGISTRATION.md",
+      "bytes": 1969,
+      "sha256": "33159c4851347a4977cf4e18369e79cf62acf24d559e00628b49f76df6e7dc10",
+      "zenodo_checksum": "md5:8411cfbdc923c140f9ecbaeef68643ea"
+    },
+    {
+      "archive_name": "stage_and_harvest_xtop006b_fez.py",
+      "source_relpath": "experiments/xtop006b_fez/stage_and_harvest_xtop006b_fez.py",
+      "bytes": 17762,
+      "sha256": "79caad86430939970dfdcf028781eb9563283c64dbbf23e7216f85f7cc97eb59",
+      "zenodo_checksum": "md5:b3a163a1ec105730551d50b45b108cd3"
+    },
+    {
+      "archive_name": "xtop006b_fez_staging_manifest.json",
+      "source_relpath": "experiments/xtop006b_fez/xtop006b_fez_staging_manifest.json",
+      "bytes": 94148,
+      "sha256": "7dd75ef9c187b05e9bd7ac9052302d423d51f52185651f53890bbea2161b46d4",
+      "zenodo_checksum": "md5:26cb12caaa760d0f929b0c3b30903453"
+    },
+    {
+      "archive_name": "xtop006b_fez_staged_circuits.qpy",
+      "source_relpath": "experiments/xtop006b_fez/xtop006b_fez_staged_circuits.qpy",
+      "bytes": 5368172,
+      "sha256": "4e127f993f8040922e21222a6dd96603316ff82d6a9bda8fb2d7c0609fea7cae",
+      "zenodo_checksum": "md5:a2ba193160ab0d3a6b411f0e03a6e7eb"
+    },
+    {
+      "archive_name": "xtop006b_fez_calibration_snapshot.json",
+      "source_relpath": "experiments/xtop006b_fez/xtop006b_fez_calibration_snapshot.json",
+      "bytes": 209,
+      "sha256": "bac339291d2a6540389b0786882e8d6059d320ac05ec10bc7248f187da36b97f",
+      "zenodo_checksum": "md5:dd2b96e157daedf39b60593e35136e87"
+    },
+    {
+      "archive_name": "xtop006b_fez_submitted_job.json",
+      "source_relpath": "experiments/xtop006b_fez/xtop006b_fez_submitted_job.json",
+      "bytes": 488,
+      "sha256": "af104eb48ee996a8e0d5d556923d664f02c50677fd40b1dfaa019c97f7430a52",
+      "zenodo_checksum": "md5:01220dd6bd36361324d7365fdb2d956c"
+    },
+    {
+      "archive_name": "physical_xtop006b_fez_raw_counts.json.gz",
+      "source_relpath": "experiments/xtop006b_fez/physical_xtop006b_fez_raw_counts.json.gz",
+      "bytes": 4130,
+      "sha256": "530cecbbc38a93c1290c28d47632ede5f31726c146ade9325f8c0b413a9b4ef4",
+      "zenodo_checksum": "md5:a8df6571e688832e1e48da79c261c128"
+    },
+    {
+      "archive_name": "physical_xtop006b_fez_results.json",
+      "source_relpath": "experiments/xtop006b_fez/physical_xtop006b_fez_results.json",
+      "bytes": 2850,
+      "sha256": "5e74a32d7c1dad84a29508d13c837861e1bb21786c6bd718467c64ae69b00311",
+      "zenodo_checksum": "md5:5b87ac863b90532f35a02aef06bb51e7"
+    },
+    {
+      "archive_name": "test_xtop006_fez_paper.py",
+      "source_relpath": "tests/test_xtop006_fez_paper.py",
+      "bytes": 2728,
+      "sha256": "13e79809fb348d6f4ec2b331b3bca764cd991b529ebd40367f2e57e4a33bd16c",
+      "zenodo_checksum": "md5:2836f9f9b78678096b4a094761a14eeb"
+    }
+  ],
+  "record_id": 24486942,
+  "doi": "10.5281/zenodo.24486942",
+  "conceptdoi": "10.5281/zenodo.24486941",
+  "doi_url": "https://doi.org/10.5281/zenodo.24486942",
+  "record_html": "https://zenodo.org/record/24486942",
+  "published_utc": "2026-11-24T01:12:17+00:00"
+}

@@ -1,0 +1,118 @@
+{
+  "slug": "nonabelian_2bga_adv1",
+  "state": "published",
+  "deposition_id": 24486938,
+  "supersedes_record_id": null,
+  "version": "1.0.0",
+  "prereserved_doi": "10.5281/zenodo.24486938",
+  "draft_url": "https://zenodo.org/uploads/24486938",
+  "updated_utc": "2026-11-24T01:10:46+00:00",
+  "title": "Left-Right Rank Duality in Non-Abelian Two-Block Group-Algebra Quantum LDPC Codes and a Three-Attack Classical-Hardness Pre-Gate for Looped Non-Mirror Peaked Circuits",
+  "files_count": 14,
+  "files": [
+    {
+      "archive_name": "nonabelian_2bga_and_adv1.pdf",
+      "source_relpath": "papers/zenodo_v620_deposits/nonabelian_2bga_adv1/nonabelian_2bga_and_adv1.pdf",
+      "bytes": 51848,
+      "sha256": "c7cd7efd6305e3aed8e4c59b38dfdcab0796d2ac2709c6c6e98558b13a0bb5c6",
+      "zenodo_checksum": "md5:af7e6eb05f50f5699ab3ee000b9c5703"
+    },
+    {
+      "archive_name": "nonabelian_2bga_and_adv1.tex",
+      "source_relpath": "papers/nonabelian_2bga_and_adv1/nonabelian_2bga_and_adv1.tex",
+      "bytes": 32486,
+      "sha256": "fb5cdbfa8e12076429e0488bf04887cd18255f79d38986080e882fc662b45c3b",
+      "zenodo_checksum": "md5:f57e15f49e2699ec5d12c774084c685e"
+    },
+    {
+      "archive_name": "generated.tex",
+      "source_relpath": "papers/nonabelian_2bga_and_adv1/generated.tex",
+      "bytes": 5815,
+      "sha256": "e19c3ffa9fdea76a0e2a57f51445273f88895db80c337a1f29f1867d65ebc661",
+      "zenodo_checksum": "md5:9603cff8d1f09e843193f9959a103e7b"
+    },
+    {
+      "archive_name": "generate_2bga_adv1_assets.py",
+      "source_relpath": "papers/nonabelian_2bga_and_adv1/generate_2bga_adv1_assets.py",
+      "bytes": 35801,
+      "sha256": "2c4aa66f0879c7440c1e044cc7a57bf21a4d1b7951f411b95e217c97015a69c1",
+      "zenodo_checksum": "md5:7a6f468a4f0a43090a0103f18dc092a7"
+    },
+    {
+      "archive_name": "fig1_odd_k_nonabelian_2bga_codes_and_bposd.pdf",
+      "source_relpath": "papers/nonabelian_2bga_and_adv1/fig1_odd_k_nonabelian_2bga_codes_and_bposd.pdf",
+      "bytes": 14117,
+      "sha256": "6c31f2fc4d472c44b498445e7cfdeb66f687d08ac580579f959d790475323eed",
+      "zenodo_checksum": "md5:6a2955bd8c4d79d8835b54133f3d2ad0"
+    },
+    {
+      "archive_name": "fig2_adv1_three_attack_ablation_m6.pdf",
+      "source_relpath": "papers/nonabelian_2bga_and_adv1/fig2_adv1_three_attack_ablation_m6.pdf",
+      "bytes": 16494,
+      "sha256": "b5aca603d8f7142ecc8e13df91355f4ca9f85ce91284fd4ecf823a56b16b5816",
+      "zenodo_checksum": "md5:5ef0219a7cedeb7837c48bd2f3de332b"
+    },
+    {
+      "archive_name": "reproducibility_capsule.json",
+      "source_relpath": "papers/nonabelian_2bga_and_adv1/reproducibility_capsule.json",
+      "bytes": 2377,
+      "sha256": "2f3690f1fda83cefc7b2e1f362bfabd7ebd706a68e1e6f6f63f03e36bf60573f",
+      "zenodo_checksum": "md5:a8d42ce2f1941f321f4694162e301788"
+    },
+    {
+      "archive_name": "SHA256SUMS.txt",
+      "source_relpath": "papers/nonabelian_2bga_and_adv1/SHA256SUMS.txt",
+      "bytes": 1556,
+      "sha256": "10e7abea28bf19599a0af94f051c66ec2905d87cdbb3d7d6cb5013e2dd5d15bd",
+      "zenodo_checksum": "md5:e4cb2906573222174e0a557a89b2c6b1"
+    },
+    {
+      "archive_name": "nonabelian_2bga.py",
+      "source_relpath": "qldpc_nonabelian/nonabelian_2bga.py",
+      "bytes": 44463,
+      "sha256": "8827f5761ff47037f6444be9b0a1b3f01bf638fabac4f25e6eeefaa5e1c2353e",
+      "zenodo_checksum": "md5:040a9d0aec1bab0938efafdeaea94a08"
+    },
+    {
+      "archive_name": "nonabelian_2bga_report.json",
+      "source_relpath": "qldpc_nonabelian/artifacts/nonabelian_2bga_report.json",
+      "bytes": 25764,
+      "sha256": "bbf42da6c61662dc05c9b2aab79a7ce028f6fc1481599171db44d5510a6928ad",
+      "zenodo_checksum": "md5:680c315f0bb95a228daed3bec5dff6ea"
+    },
+    {
+      "archive_name": "looped_peaked.py",
+      "source_relpath": "adv1/looped_peaked.py",
+      "bytes": 16061,
+      "sha256": "7ea55e9df640b122fa8447b6a7b045d058e39b9163f10362a24453e1e51a7da9",
+      "zenodo_checksum": "md5:237f027766b587c1af2540611df6bbba"
+    },
+    {
+      "archive_name": "pregate.py",
+      "source_relpath": "adv1/pregate.py",
+      "bytes": 23156,
+      "sha256": "5acce4798fe3e880851d922d24cd506e6e3bec80f5c1d46dc45f8e5f58d32b2e",
+      "zenodo_checksum": "md5:931a264e66f0069084a70756f9edc5ac"
+    },
+    {
+      "archive_name": "adv1_pregate_report.json",
+      "source_relpath": "adv1/artifacts/adv1_pregate_report.json",
+      "bytes": 30098,
+      "sha256": "85c85e07b9b9d9d01ae527dac4134d5ac3f18d93aeaae2bbccbbb739b1653b13",
+      "zenodo_checksum": "md5:01e9f2296c0e9ad2aedb1f11f24a03bd"
+    },
+    {
+      "archive_name": "test_wp2_and_2bga_papers.py",
+      "source_relpath": "tests/test_wp2_and_2bga_papers.py",
+      "bytes": 17880,
+      "sha256": "efaf46efc8f58a91d49d5ef27208d29437fe77caf64f5476fe906d5546afb72c",
+      "zenodo_checksum": "md5:8ae23ea9abf5ab9acce182f0f344e1ba"
+    }
+  ],
+  "record_id": 24486938,
+  "doi": "10.5281/zenodo.24486938",
+  "conceptdoi": "10.5281/zenodo.24486937",
+  "doi_url": "https://doi.org/10.5281/zenodo.24486938",
+  "record_html": "https://zenodo.org/record/24486938",
+  "published_utc": "2026-11-24T01:12:15+00:00"
+}

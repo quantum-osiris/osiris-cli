@@ -3,9 +3,9 @@
 Resolves IBM Quantum API credentials in strict priority order without ever logging,
 printing, or serializing raw API keys or instance CRNs into public artifacts:
   1. `OSIRIS_IBM_KEY_FILE` environment override (if set and readable)
-  2. `/home/osiris/.osiris/enclave/troykey.json` (`0600` enclave primary)
-  3. `/home/osiris/troykey.json` (legacy fallback path)
-  4. `/home/osiris/.osiris/enclave/apikey.json` / `/home/osiris/apikey.json`
+  2. `~/.osiris/enclave/troykey.json` (`0600` enclave primary)
+  3. `~/troykey.json` (legacy fallback path)
+  4. `~/.osiris/enclave/apikey.json` / `~/apikey.json`
   5. `IBM_QUANTUM_TOKEN` environment variable
 """
 
@@ -17,10 +17,10 @@ import os
 from pathlib import Path
 from typing import Any, Dict, Optional, Tuple
 
-ENCLAVE_TROYKEY = Path("/home/osiris/.osiris/enclave/troykey.json")
-LEGACY_TROYKEY = Path("/home/osiris/troykey.json")
-ENCLAVE_APIKEY = Path("/home/osiris/.osiris/enclave/apikey.json")
-LEGACY_APIKEY = Path("/home/osiris/apikey.json")
+ENCLAVE_TROYKEY = Path.home() / ".osiris" / "enclave" / "troykey.json"
+LEGACY_TROYKEY = Path.home() / "troykey.json"
+ENCLAVE_APIKEY = Path.home() / ".osiris" / "enclave" / "apikey.json"
+LEGACY_APIKEY = Path.home() / "apikey.json"
 
 
 def load_ibm_token_with_provenance(explicit_path: Optional[Path] = None) -> Tuple[str, Dict[str, Any]]:

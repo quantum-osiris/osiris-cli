@@ -1,0 +1,146 @@
+{
+  "slug": "wp2_27q_ot",
+  "state": "published",
+  "deposition_id": 24486931,
+  "supersedes_record_id": null,
+  "version": "1.0.0",
+  "prereserved_doi": "10.5281/zenodo.24486931",
+  "draft_url": "https://zenodo.org/uploads/24486931",
+  "updated_utc": "2026-11-24T01:10:33+00:00",
+  "title": "Eliminating Finite-Shot Hypercube Sparsity Bias in 27-Qubit Quantum Processor Stability Benchmarks via Split-Sample-Debiased Optimal Transport (OSIRIS-WP2-27Q-FEZ)",
+  "files_count": 18,
+  "files": [
+    {
+      "archive_name": "wp2_27q_debiased_ot_fez.pdf",
+      "source_relpath": "papers/zenodo_v620_deposits/wp2_27q_ot/wp2_27q_debiased_ot_fez.pdf",
+      "bytes": 44103,
+      "sha256": "8367642680bc38ace26f3123629caa858baa3e432fac62423f199f9c5767d829",
+      "zenodo_checksum": "md5:c9050cc7499d0356a3d6f2d2dfd7f2db"
+    },
+    {
+      "archive_name": "wp2_27q_debiased_ot_fez.tex",
+      "source_relpath": "papers/wp2_27q_debiased_ot_fez/wp2_27q_debiased_ot_fez.tex",
+      "bytes": 30774,
+      "sha256": "a440f6779436487b4f7409fe52555a90ef1fef3ac33669fae99ca6f26465301c",
+      "zenodo_checksum": "md5:cf8d925b96a7e3d7af4e4e98c9b24c3a"
+    },
+    {
+      "archive_name": "generated.tex",
+      "source_relpath": "papers/wp2_27q_debiased_ot_fez/generated.tex",
+      "bytes": 7782,
+      "sha256": "4ae4910c953fd617a7009df6f496935acd3ca0fb7f2232682e316acb94ee893b",
+      "zenodo_checksum": "md5:8c4d6ce5e6ede5a82b26a529ec4c9b0b"
+    },
+    {
+      "archive_name": "generate_wp2_paper_assets.py",
+      "source_relpath": "papers/wp2_27q_debiased_ot_fez/generate_wp2_paper_assets.py",
+      "bytes": 48835,
+      "sha256": "12fbcfd53c2e3bdd86dfa87e082e6b595e51e746bc94f09f2cbb99e6b05ad042",
+      "zenodo_checksum": "md5:ad6d676e7e399475efbd3db05f08a0b0"
+    },
+    {
+      "archive_name": "fig1_27q_fez_sparsity_collapse_vs_eq7.pdf",
+      "source_relpath": "papers/wp2_27q_debiased_ot_fez/fig1_27q_fez_sparsity_collapse_vs_eq7.pdf",
+      "bytes": 11098,
+      "sha256": "751679599d2f18fb2c176b8643861d4e33008281173db0e8f3b14aa81be6ce48",
+      "zenodo_checksum": "md5:1c0309260d2eab90fe66917b00b0a4b5"
+    },
+    {
+      "archive_name": "fig2_coherent_drift_calibration_and_heron_rescoring.pdf",
+      "source_relpath": "papers/wp2_27q_debiased_ot_fez/fig2_coherent_drift_calibration_and_heron_rescoring.pdf",
+      "bytes": 6768,
+      "sha256": "acd9025aa96c5bb109c9691b61e5117c495b352769e076a7bbb73fff2b0b6415",
+      "zenodo_checksum": "md5:c5c0929bc9358bfe89ab889131ae350f"
+    },
+    {
+      "archive_name": "reproducibility_capsule.json",
+      "source_relpath": "papers/wp2_27q_debiased_ot_fez/reproducibility_capsule.json",
+      "bytes": 3622,
+      "sha256": "07aad73b583cb5d69f7d10dda82e1d442ce7009847af202841e1515a2bd2761c",
+      "zenodo_checksum": "md5:de6b89b7500772991a1206555bf37edd"
+    },
+    {
+      "archive_name": "SHA256SUMS.txt",
+      "source_relpath": "papers/wp2_27q_debiased_ot_fez/SHA256SUMS.txt",
+      "bytes": 2569,
+      "sha256": "afcebb5e057b76f8bbf545b2f1b252032cff70d01888f9fc3c6c0c86c2b10b99",
+      "zenodo_checksum": "md5:a233bff8fcb18e81a1e92b440727f988"
+    },
+    {
+      "archive_name": "debiased_ot.py",
+      "source_relpath": "experiments/wp2_debiased_sinkhorn/debiased_ot.py",
+      "bytes": 44104,
+      "sha256": "aea0b9c5313df3c8cf835c61e97d47cea01d9ed886f724a4ca12c5fe331f3214",
+      "zenodo_checksum": "md5:2d70c77d19f6e3afa37dc2fe5b056140"
+    },
+    {
+      "archive_name": "wp2_debiased_ot_report.json",
+      "source_relpath": "experiments/wp2_debiased_sinkhorn/artifacts/wp2_debiased_ot_report.json",
+      "bytes": 66377,
+      "sha256": "83a64c01188276d20c315aef4f78f2f0a0662990c51c50d5a8e54906d235226c",
+      "zenodo_checksum": "md5:5ba292c7f498103ccdac4d8257e592a1"
+    },
+    {
+      "archive_name": "PRE_REGISTRATION.md",
+      "source_relpath": "experiments/wp2_27q_fez/PRE_REGISTRATION.md",
+      "bytes": 2559,
+      "sha256": "56a44572c8176a9e7c8f2b25ff3bf5a06438a4796ac37eda8f853b36a57d5165",
+      "zenodo_checksum": "md5:23918956ccd166fb5240e28d7574de5f"
+    },
+    {
+      "archive_name": "stage_and_harvest_wp2_27q_fez.py",
+      "source_relpath": "experiments/wp2_27q_fez/stage_and_harvest_wp2_27q_fez.py",
+      "bytes": 29643,
+      "sha256": "99125bb296d639eba120633bc8066b2ba2b22c2a2322ea5112512eb9cd32be17",
+      "zenodo_checksum": "md5:c5f283b88510e1155de1eb366b12692c"
+    },
+    {
+      "archive_name": "wp2_27q_fez_staging_manifest.json",
+      "source_relpath": "experiments/wp2_27q_fez/wp2_27q_fez_staging_manifest.json",
+      "bytes": 14011,
+      "sha256": "1fbab5208198ce3722f9f032ecb38d028a0b9fe30c7f75203a13178044b98793",
+      "zenodo_checksum": "md5:bac2ea641d537f8a4b140917dc458f26"
+    },
+    {
+      "archive_name": "wp2_27q_fez_staged_circuits.qpy",
+      "source_relpath": "experiments/wp2_27q_fez/wp2_27q_fez_staged_circuits.qpy",
+      "bytes": 2371692,
+      "sha256": "566406e47e55f37067ce29ae072a67e95db931ec307bf46fb7a3faa17bbcbe02",
+      "zenodo_checksum": "md5:4c075b1e0015d78b7f1bfb53bd8e103d"
+    },
+    {
+      "archive_name": "wp2_27q_fez_calibration_snapshot.json",
+      "source_relpath": "experiments/wp2_27q_fez/wp2_27q_fez_calibration_snapshot.json",
+      "bytes": 499,
+      "sha256": "21c1afebd35268dcc267e5c6c4aae03d04d9b0edafff67595c50b06dabc2edfe",
+      "zenodo_checksum": "md5:8a0f69734a4713f391d3586d07470702"
+    },
+    {
+      "archive_name": "wp2_27q_fez_submitted_job.json",
+      "source_relpath": "experiments/wp2_27q_fez/wp2_27q_fez_submitted_job.json",
+      "bytes": 488,
+      "sha256": "51e0260401ef987adda9305bd1c45bee7de859aab1c6a70fdc8f13eb0eb23a9c",
+      "zenodo_checksum": "md5:3c556b40c3c8a351b94fc2991a985016"
+    },
+    {
+      "archive_name": "physical_wp2_27q_fez_raw_counts.json.gz",
+      "source_relpath": "experiments/wp2_27q_fez/physical_wp2_27q_fez_raw_counts.json.gz",
+      "bytes": 368803,
+      "sha256": "2b150d5b016e5821a0b30d934760c8b816251d17bd53c2990e87e0447b4be412",
+      "zenodo_checksum": "md5:23b058e4875425e37af02f2084b95ff4"
+    },
+    {
+      "archive_name": "physical_wp2_27q_fez_results.json",
+      "source_relpath": "experiments/wp2_27q_fez/physical_wp2_27q_fez_results.json",
+      "bytes": 12528,
+      "sha256": "ac6a677eed4363d3abdb093fa05d1f029a9e81772eee1ff593e04b2108fa2a19",
+      "zenodo_checksum": "md5:36ea226dde9e90ecae8b95ba6557b09b"
+    }
+  ],
+  "record_id": 24486931,
+  "doi": "10.5281/zenodo.24486931",
+  "conceptdoi": "10.5281/zenodo.24486930",
+  "doi_url": "https://doi.org/10.5281/zenodo.24486931",
+  "record_html": "https://zenodo.org/record/24486931",
+  "published_utc": "2026-11-24T01:12:13+00:00"
+}

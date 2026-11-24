@@ -1,0 +1,111 @@
+{
+  "slug": "qdecode_heron_59",
+  "state": "published",
+  "deposition_id": 24486962,
+  "supersedes_record_id": null,
+  "version": "1.0.0",
+  "prereserved_doi": "10.5281/zenodo.24486962",
+  "draft_url": "https://zenodo.org/uploads/24486962",
+  "updated_utc": "2026-11-24T01:12:10+00:00",
+  "title": "Reference-Verified Wire Deserialization, Little-Endian Bit-Order Disambiguation, and Finite-Shot Entropy Saturation Across a 59-Job (2-156 Qubit) Superconducting Quantum Corpus",
+  "files_count": 13,
+  "files": [
+    {
+      "archive_name": "qdecode_heron_provenance_and_finite_shot_entropy.pdf",
+      "source_relpath": "papers/qdecode_heron_provenance_and_finite_shot_entropy/qdecode_heron_provenance_and_finite_shot_entropy.pdf",
+      "bytes": 49927,
+      "sha256": "9da80db145aabf90f7591e3ff3ce2f4bd8ba0801bc38b2c8cf4298d626086fde",
+      "zenodo_checksum": "md5:7637102f15da5e7d1ac40fd42ddfa00c"
+    },
+    {
+      "archive_name": "qdecode_heron_provenance_and_finite_shot_entropy.tex",
+      "source_relpath": "papers/qdecode_heron_provenance_and_finite_shot_entropy/qdecode_heron_provenance_and_finite_shot_entropy.tex",
+      "bytes": 21161,
+      "sha256": "6374bf6573d556554003ad5a9356c2800bf8b7e1506cc51097c3d60804cf270d",
+      "zenodo_checksum": "md5:307835ca6b12764a7f41f24ba69ed847"
+    },
+    {
+      "archive_name": "generated.tex",
+      "source_relpath": "papers/qdecode_heron_provenance_and_finite_shot_entropy/generated.tex",
+      "bytes": 5855,
+      "sha256": "80b6c3acb7bffc46682f8fd6d10e63c2c84a4d0ed375f93c0865c26deb5d7f48",
+      "zenodo_checksum": "md5:ae27077ddb3b871edd1908688f7911d8"
+    },
+    {
+      "archive_name": "generate_qdecode_paper_assets.py",
+      "source_relpath": "papers/qdecode_heron_provenance_and_finite_shot_entropy/generate_qdecode_paper_assets.py",
+      "bytes": 47907,
+      "sha256": "e9c8f54728d1b72f1a5ef7d82a701c488c74f38dfdbb8c3cbf7b1ad3865856f7",
+      "zenodo_checksum": "md5:b72ca357a8757243413126fa43823b36"
+    },
+    {
+      "archive_name": "fig1_wire_deserialization_tvd_and_bit_order.pdf",
+      "source_relpath": "papers/qdecode_heron_provenance_and_finite_shot_entropy/fig1_wire_deserialization_tvd_and_bit_order.pdf",
+      "bytes": 7186,
+      "sha256": "8164fb96bf3fb85737e2b7644606d4c6acccd0adc714007ac1c2731a86015c2a",
+      "zenodo_checksum": "md5:52672e53322f2caf8e77f72f4e585bdf"
+    },
+    {
+      "archive_name": "fig2_heron_59job_finite_shot_entropy_ceiling.pdf",
+      "source_relpath": "papers/qdecode_heron_provenance_and_finite_shot_entropy/fig2_heron_59job_finite_shot_entropy_ceiling.pdf",
+      "bytes": 27113,
+      "sha256": "9486f939c273d18f37d0d160e947892d168ddfe2371fdf3eef45a2784fb90575",
+      "zenodo_checksum": "md5:172d7bceb670e0d85f19c0b918f0271c"
+    },
+    {
+      "archive_name": "HARDWARE_PROVENANCE_MANIFEST.json",
+      "source_relpath": "papers/qdecode_heron_provenance_and_finite_shot_entropy/HARDWARE_PROVENANCE_MANIFEST.json",
+      "bytes": 384768,
+      "sha256": "5b541cb3889a4b517dbacb01fe3ae0be441ac826e9707758d4859f6ce52d4c1d",
+      "zenodo_checksum": "md5:b6f1fdc6bec4abca9a3e1c879998184f"
+    },
+    {
+      "archive_name": "reproducibility_capsule.json",
+      "source_relpath": "papers/qdecode_heron_provenance_and_finite_shot_entropy/reproducibility_capsule.json",
+      "bytes": 17180,
+      "sha256": "ec85c47e7b18b904eadb9305081da70d1bdba420480a975705db160a123a109c",
+      "zenodo_checksum": "md5:2eb3635bbe25608d4b4d20888a25e7f8"
+    },
+    {
+      "archive_name": "SHA256SUMS.txt",
+      "source_relpath": "papers/qdecode_heron_provenance_and_finite_shot_entropy/SHA256SUMS.txt",
+      "bytes": 1070,
+      "sha256": "a2a5263247b8c4708cdeb6b8fae13221243c63f2fe5651a5a9fbe70239e0f720",
+      "zenodo_checksum": "md5:9beac28abb58fa6d4e86298eae70d8bd"
+    },
+    {
+      "archive_name": "qdecode.py",
+      "source_relpath": "osiris_cli/qdecode.py",
+      "bytes": 32993,
+      "sha256": "b56f7d0cdfdebf77d4edad2cdeaed136b5a4632f469bbfad84ebd5a6e353c84a",
+      "zenodo_checksum": "md5:9d646937b457f7eea04e3a59db8a8f78"
+    },
+    {
+      "archive_name": "qscore.py",
+      "source_relpath": "osiris_cli/qscore.py",
+      "bytes": 14756,
+      "sha256": "1fa8b28c3f4de5cbde549ec662e9703f5c84141f5b2f5e48500a80884c61a572",
+      "zenodo_checksum": "md5:4ee7e35dd92c2190ada3e1ad4630e026"
+    },
+    {
+      "archive_name": "test_qdecode_qscore.py",
+      "source_relpath": "tests/test_qdecode_qscore.py",
+      "bytes": 22688,
+      "sha256": "99081e9500ed82aef5c573f4e2d2138ffe95e0da56c6673101e825f68708ee41",
+      "zenodo_checksum": "md5:12eb537713461038c02e4444fe77ece5"
+    },
+    {
+      "archive_name": "test_qdecode_heron_paper.py",
+      "source_relpath": "tests/test_qdecode_heron_paper.py",
+      "bytes": 9285,
+      "sha256": "eb391696d01e456b7dfa8b669f93d0acb15b4a4cd6d5240705b3db9e386be509",
+      "zenodo_checksum": "md5:df5e400686d7d0d81a174905d316f499"
+    }
+  ],
+  "record_id": 24486962,
+  "doi": "10.5281/zenodo.24486962",
+  "conceptdoi": "10.5281/zenodo.24486961",
+  "doi_url": "https://doi.org/10.5281/zenodo.24486962",
+  "record_html": "https://zenodo.org/record/24486962",
+  "published_utc": "2026-11-24T01:12:21+00:00"
+}

@@ -1,0 +1,135 @@
+%PDF-1.4
+%‚„œ”
+1 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>
+endobj
+2 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica-Bold >>
+endobj
+3 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Courier >>
+endobj
+4 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Times-Roman >>
+endobj
+5 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Times-Bold >>
+endobj
+6 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Times-Italic >>
+endobj
+7 0 obj
+<< /Type /Pages /Kids [9 0 R] /Count 1 >>
+endobj
+8 0 obj
+<< /Length 6115 >>
+stream
+1 1 1 rg
+0 0 540.00 270.00 re f
+BT /F2 9.6 Tf 0.067 0.094 0.153 rg 23.23 252.00 Td (Wire-Format Deserialization Errors Eliminated by Reference-Verified Decoding \(59 Hardware Jobs\)) Tj ET
+BT /F2 8.4 Tf 0.067 0.094 0.153 rg 31.80 237.00 Td (\(a\) PrimitiveResult .npy Header Shift \(575 Slices\)) Tj ET
+1.00 w 0.976 0.980 0.984 rg 0.216 0.255 0.318 RG 46.00 50.00 212.00 178.00 re B
+q [] 0 d 0.70 w 0.898 0.906 0.922 RG 46.00 50.00 m 258.00 50.00 l S Q
+BT /F3 6.8 Tf 0.067 0.094 0.153 rg 37.92 47.50 Td (0) Tj ET
+q [] 0 d 0.70 w 0.898 0.906 0.922 RG 46.00 92.27 m 258.00 92.27 l S Q
+BT /F3 6.8 Tf 0.067 0.094 0.153 rg 33.84 89.77 Td (50) Tj ET
+q [] 0 d 0.70 w 0.898 0.906 0.922 RG 46.00 134.54 m 258.00 134.54 l S Q
+BT /F3 6.8 Tf 0.067 0.094 0.153 rg 29.76 132.04 Td (100) Tj ET
+q [] 0 d 0.70 w 0.898 0.906 0.922 RG 46.00 176.80 m 258.00 176.80 l S Q
+BT /F3 6.8 Tf 0.067 0.094 0.153 rg 29.76 174.30 Td (150) Tj ET
+q [] 0 d 0.70 w 0.898 0.906 0.922 RG 46.00 219.07 m 258.00 219.07 l S Q
+BT /F3 6.8 Tf 0.067 0.094 0.153 rg 29.76 216.57 Td (200) Tj ET
+0.60 w 0.145 0.388 0.922 rg 0.118 0.227 0.541 RG 47.20 50.00 13.91 9.30 re B
+0.60 w 0.145 0.388 0.922 rg 0.118 0.227 0.541 RG 63.51 50.00 13.91 10.14 re B
+0.60 w 0.145 0.388 0.922 rg 0.118 0.227 0.541 RG 79.82 50.00 13.91 31.28 re B
+0.60 w 0.145 0.388 0.922 rg 0.118 0.227 0.541 RG 96.12 50.00 13.91 4.23 re B
+0.60 w 0.145 0.388 0.922 rg 0.118 0.227 0.541 RG 112.43 50.00 13.91 13.53 re B
+0.60 w 0.145 0.388 0.922 rg 0.118 0.227 0.541 RG 128.74 50.00 13.91 70.17 re B
+0.60 w 0.145 0.388 0.922 rg 0.118 0.227 0.541 RG 145.05 50.00 13.91 158.93 re B
+0.60 w 0.145 0.388 0.922 rg 0.118 0.227 0.541 RG 161.35 50.00 13.91 124.27 re B
+0.60 w 0.145 0.388 0.922 rg 0.118 0.227 0.541 RG 177.66 50.00 13.91 46.50 re B
+0.60 w 0.145 0.388 0.922 rg 0.118 0.227 0.541 RG 193.97 50.00 13.91 0.85 re B
+0.60 w 0.145 0.388 0.922 rg 0.118 0.227 0.541 RG 210.28 50.00 13.91 5.92 re B
+0.60 w 0.145 0.388 0.922 rg 0.118 0.227 0.541 RG 226.58 50.00 13.91 10.14 re B
+0.60 w 0.145 0.388 0.922 rg 0.118 0.227 0.541 RG 242.89 50.00 13.91 0.85 re B
+q [5 3] 0 d 1.20 w 0.863 0.149 0.149 RG 154.29 228.00 m 154.29 50.00 l S Q
+BT /F2 6.8 Tf 0.863 0.149 0.149 rg 157.29 216.00 Td (Median TVD = 0.0664) Tj ET
+BT /F2 6.6 Tf 0.016 0.471 0.341 rg 52.00 203.00 Td (qdecode v1.1 vs RuntimeDecoder: TVD = 0.0000) Tj ET
+BT /F3 6.8 Tf 0.067 0.094 0.153 rg 37.84 39.00 Td (0.00) Tj ET
+BT /F3 6.8 Tf 0.067 0.094 0.153 rg 103.07 39.00 Td (0.04) Tj ET
+BT /F3 6.8 Tf 0.067 0.094 0.153 rg 168.30 39.00 Td (0.08) Tj ET
+BT /F3 6.8 Tf 0.067 0.094 0.153 rg 233.53 39.00 Td (0.12) Tj ET
+BT /F1 7.4 Tf 0.067 0.094 0.153 rg 68.75 27.00 Td (Legacy np.frombuffer Total Variation Distance) Tj ET
+BT /F2 8.4 Tf 0.067 0.094 0.153 rg 301.93 237.00 Td (\(b\) Executor v0.2 Bit-Order Reversal \(8 Jobs\)) Tj ET
+1.00 w 0.976 0.980 0.984 rg 0.216 0.255 0.318 RG 300.00 50.00 222.00 178.00 re B
+q [] 0 d 0.70 w 0.898 0.906 0.922 RG 300.00 50.00 m 522.00 50.00 l S Q
+BT /F3 6.8 Tf 0.067 0.094 0.153 rg 279.68 47.50 Td (0.00) Tj ET
+q [] 0 d 0.70 w 0.898 0.906 0.922 RG 300.00 94.50 m 522.00 94.50 l S Q
+BT /F3 6.8 Tf 0.067 0.094 0.153 rg 279.68 92.00 Td (0.25) Tj ET
+q [] 0 d 0.70 w 0.898 0.906 0.922 RG 300.00 139.00 m 522.00 139.00 l S Q
+BT /F3 6.8 Tf 0.067 0.094 0.153 rg 279.68 136.50 Td (0.50) Tj ET
+q [] 0 d 0.70 w 0.898 0.906 0.922 RG 300.00 183.50 m 522.00 183.50 l S Q
+BT /F3 6.8 Tf 0.067 0.094 0.153 rg 279.68 181.00 Td (0.75) Tj ET
+q [] 0 d 0.70 w 0.898 0.906 0.922 RG 300.00 228.00 m 522.00 228.00 l S Q
+BT /F3 6.8 Tf 0.067 0.094 0.153 rg 279.68 225.50 Td (1.00) Tj ET
+0.70 w 0.851 0.467 0.024 rg 0.471 0.208 0.059 RG 305.38 50.00 17.00 4.11 re B
+BT /F3 6.1 Tf 0.573 0.251 0.055 rg 306.56 58.11 Td (0.02) Tj ET
+BT /F3 6.6 Tf 0.067 0.094 0.153 rg 309.92 40.00 Td (4Q) Tj ET
+BT /F1 5.9 Tf 0.294 0.333 0.388 rg 307.98 31.00 Td (marr) Tj ET
+0.70 w 0.851 0.467 0.024 rg 0.471 0.208 0.059 RG 333.12 50.00 17.00 92.20 re B
+BT /F3 6.1 Tf 0.573 0.251 0.055 rg 334.31 146.20 Td (0.52) Tj ET
+BT /F3 6.6 Tf 0.067 0.094 0.153 rg 337.67 40.00 Td (4Q) Tj ET
+BT /F1 5.9 Tf 0.294 0.333 0.388 rg 335.73 31.00 Td (tori) Tj ET
+0.70 w 0.851 0.467 0.024 rg 0.471 0.208 0.059 RG 360.88 50.00 17.00 58.57 re B
+BT /F3 6.1 Tf 0.573 0.251 0.055 rg 362.06 112.57 Td (0.33) Tj ET
+BT /F3 6.6 Tf 0.067 0.094 0.153 rg 365.42 40.00 Td (2Q) Tj ET
+BT /F1 5.9 Tf 0.294 0.333 0.388 rg 363.48 31.00 Td (marr) Tj ET
+0.70 w 0.851 0.467 0.024 rg 0.471 0.208 0.059 RG 388.62 50.00 17.00 57.22 re B
+BT /F3 6.1 Tf 0.573 0.251 0.055 rg 389.81 111.22 Td (0.32) Tj ET
+BT /F3 6.6 Tf 0.067 0.094 0.153 rg 393.17 40.00 Td (2Q) Tj ET
+BT /F1 5.9 Tf 0.294 0.333 0.388 rg 392.70 31.00 Td (fez) Tj ET
+0.70 w 0.851 0.467 0.024 rg 0.471 0.208 0.059 RG 416.38 50.00 17.00 57.25 re B
+BT /F3 6.1 Tf 0.573 0.251 0.055 rg 417.56 111.25 Td (0.32) Tj ET
+BT /F3 6.6 Tf 0.067 0.094 0.153 rg 420.92 40.00 Td (2Q) Tj ET
+BT /F1 5.9 Tf 0.294 0.333 0.388 rg 418.98 31.00 Td (king) Tj ET
+0.70 w 0.851 0.467 0.024 rg 0.471 0.208 0.059 RG 444.12 50.00 17.00 67.61 re B
+BT /F3 6.1 Tf 0.573 0.251 0.055 rg 445.31 121.61 Td (0.38) Tj ET
+BT /F3 6.6 Tf 0.067 0.094 0.153 rg 446.69 40.00 Td (10Q) Tj ET
+BT /F1 5.9 Tf 0.294 0.333 0.388 rg 446.73 31.00 Td (king) Tj ET
+0.70 w 0.851 0.467 0.024 rg 0.471 0.208 0.059 RG 471.88 50.00 17.00 133.15 re B
+BT /F3 6.1 Tf 0.573 0.251 0.055 rg 473.06 187.15 Td (0.75) Tj ET
+BT /F3 6.6 Tf 0.067 0.094 0.153 rg 474.44 40.00 Td (40Q) Tj ET
+BT /F1 5.9 Tf 0.294 0.333 0.388 rg 474.48 31.00 Td (king) Tj ET
+0.70 w 0.851 0.467 0.024 rg 0.471 0.208 0.059 RG 499.62 50.00 17.00 177.99 re B
+BT /F3 6.1 Tf 0.573 0.251 0.055 rg 500.81 231.99 Td (1.00) Tj ET
+BT /F3 6.6 Tf 0.067 0.094 0.153 rg 500.20 40.00 Td (156Q) Tj ET
+BT /F1 5.9 Tf 0.294 0.333 0.388 rg 503.70 31.00 Td (fez) Tj ET
+BT /F2 6.7 Tf 0.573 0.251 0.055 rg 306.00 215.00 Td (Unreversed unpackbits TVD \(up to 1.0000\)) Tj ET
+BT /F2 6.6 Tf 0.016 0.471 0.341 rg 306.00 203.00 Td (With matrix[..., ::-1]: TVD = 0.0000 \(8/8 jobs\)) Tj ET
+BT /F1 7.3 Tf 0.216 0.255 0.318 rg 52.83 12.00 Td (Dual-path parity verified bit-for-bit across all 59 jobs \(51 PrimitiveResult + 8 Executor v0.2; 583 register slices\).) Tj ET
+endstream
+endobj
+9 0 obj
+<< /Type /Page /Parent 7 0 R /MediaBox [0 0 540.00 270.00] /Resources << /Font << /F1 1 0 R /F2 2 0 R /F3 3 0 R /F4 4 0 R /F5 5 0 R /F6 6 0 R >> >> /Contents 8 0 R >>
+endobj
+10 0 obj
+<< /Type /Catalog /Pages 7 0 R >>
+endobj
+xref
+0 11
+0000000000 65535 f 
+0000000015 00000 n 
+0000000085 00000 n 
+0000000160 00000 n 
+0000000228 00000 n 
+0000000300 00000 n 
+0000000371 00000 n 
+0000000444 00000 n 
+0000000501 00000 n 
+0000006667 00000 n 
+0000006849 00000 n 
+trailer
+<< /Size 11 /Root 10 0 R >>
+startxref
+6899
+%%EOF

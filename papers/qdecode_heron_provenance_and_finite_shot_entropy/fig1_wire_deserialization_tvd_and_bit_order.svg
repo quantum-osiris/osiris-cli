@@ -1,0 +1,84 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="540" height="270" viewBox="0 0 540 270">
+<rect x="0" y="0" width="540" height="270" fill="#ffffff"/>
+<text x="270.00" y="18.00" font-family="Helvetica, Arial, sans-serif" font-size="9.6" font-weight="bold" fill="#111827" text-anchor="middle">Wire-Format Deserialization Errors Eliminated by Reference-Verified Decoding (59 Hardware Jobs)</text>
+<text x="152.00" y="33.00" font-family="Helvetica, Arial, sans-serif" font-size="8.4" font-weight="bold" fill="#111827" text-anchor="middle">(a) PrimitiveResult .npy Header Shift (575 Slices)</text>
+<rect x="46.00" y="42.00" width="212.00" height="178.00" fill="#f9fafb" stroke="#374151" stroke-width="1.00"/>
+<line x1="46.00" y1="220.00" x2="258.00" y2="220.00" stroke="#e5e7eb" stroke-width="0.70"/>
+<text x="42.00" y="222.50" font-family="monospace" font-size="6.8" font-weight="normal" fill="#111827" text-anchor="end">0</text>
+<line x1="46.00" y1="177.73" x2="258.00" y2="177.73" stroke="#e5e7eb" stroke-width="0.70"/>
+<text x="42.00" y="180.23" font-family="monospace" font-size="6.8" font-weight="normal" fill="#111827" text-anchor="end">50</text>
+<line x1="46.00" y1="135.46" x2="258.00" y2="135.46" stroke="#e5e7eb" stroke-width="0.70"/>
+<text x="42.00" y="137.96" font-family="monospace" font-size="6.8" font-weight="normal" fill="#111827" text-anchor="end">100</text>
+<line x1="46.00" y1="93.20" x2="258.00" y2="93.20" stroke="#e5e7eb" stroke-width="0.70"/>
+<text x="42.00" y="95.70" font-family="monospace" font-size="6.8" font-weight="normal" fill="#111827" text-anchor="end">150</text>
+<line x1="46.00" y1="50.93" x2="258.00" y2="50.93" stroke="#e5e7eb" stroke-width="0.70"/>
+<text x="42.00" y="53.43" font-family="monospace" font-size="6.8" font-weight="normal" fill="#111827" text-anchor="end">200</text>
+<rect x="47.20" y="210.70" width="13.91" height="9.30" fill="#2563eb" stroke="#1e3a8a" stroke-width="0.60"/>
+<rect x="63.51" y="209.86" width="13.91" height="10.14" fill="#2563eb" stroke="#1e3a8a" stroke-width="0.60"/>
+<rect x="79.82" y="188.72" width="13.91" height="31.28" fill="#2563eb" stroke="#1e3a8a" stroke-width="0.60"/>
+<rect x="96.12" y="215.77" width="13.91" height="4.23" fill="#2563eb" stroke="#1e3a8a" stroke-width="0.60"/>
+<rect x="112.43" y="206.47" width="13.91" height="13.53" fill="#2563eb" stroke="#1e3a8a" stroke-width="0.60"/>
+<rect x="128.74" y="149.83" width="13.91" height="70.17" fill="#2563eb" stroke="#1e3a8a" stroke-width="0.60"/>
+<rect x="145.05" y="61.07" width="13.91" height="158.93" fill="#2563eb" stroke="#1e3a8a" stroke-width="0.60"/>
+<rect x="161.35" y="95.73" width="13.91" height="124.27" fill="#2563eb" stroke="#1e3a8a" stroke-width="0.60"/>
+<rect x="177.66" y="173.50" width="13.91" height="46.50" fill="#2563eb" stroke="#1e3a8a" stroke-width="0.60"/>
+<rect x="193.97" y="219.15" width="13.91" height="0.85" fill="#2563eb" stroke="#1e3a8a" stroke-width="0.60"/>
+<rect x="210.28" y="214.08" width="13.91" height="5.92" fill="#2563eb" stroke="#1e3a8a" stroke-width="0.60"/>
+<rect x="226.58" y="209.86" width="13.91" height="10.14" fill="#2563eb" stroke="#1e3a8a" stroke-width="0.60"/>
+<rect x="242.89" y="219.15" width="13.91" height="0.85" fill="#2563eb" stroke="#1e3a8a" stroke-width="0.60"/>
+<line x1="154.29" y1="42.00" x2="154.29" y2="220.00" stroke="#dc2626" stroke-width="1.20" stroke-dasharray="5,3"/>
+<text x="157.29" y="54.00" font-family="Helvetica, Arial, sans-serif" font-size="6.8" font-weight="bold" fill="#dc2626" text-anchor="start">Median TVD = 0.0664</text>
+<text x="52.00" y="67.00" font-family="Helvetica, Arial, sans-serif" font-size="6.6" font-weight="bold" fill="#047857" text-anchor="start">qdecode v1.1 vs RuntimeDecoder: TVD = 0.0000</text>
+<text x="46.00" y="231.00" font-family="monospace" font-size="6.8" font-weight="normal" fill="#111827" text-anchor="middle">0.00</text>
+<text x="111.23" y="231.00" font-family="monospace" font-size="6.8" font-weight="normal" fill="#111827" text-anchor="middle">0.04</text>
+<text x="176.46" y="231.00" font-family="monospace" font-size="6.8" font-weight="normal" fill="#111827" text-anchor="middle">0.08</text>
+<text x="241.69" y="231.00" font-family="monospace" font-size="6.8" font-weight="normal" fill="#111827" text-anchor="middle">0.12</text>
+<text x="152.00" y="243.00" font-family="Helvetica, Arial, sans-serif" font-size="7.4" font-weight="normal" fill="#111827" text-anchor="middle">Legacy np.frombuffer Total Variation Distance</text>
+<text x="411.00" y="33.00" font-family="Helvetica, Arial, sans-serif" font-size="8.4" font-weight="bold" fill="#111827" text-anchor="middle">(b) Executor v0.2 Bit-Order Reversal (8 Jobs)</text>
+<rect x="300.00" y="42.00" width="222.00" height="178.00" fill="#f9fafb" stroke="#374151" stroke-width="1.00"/>
+<line x1="300.00" y1="220.00" x2="522.00" y2="220.00" stroke="#e5e7eb" stroke-width="0.70"/>
+<text x="296.00" y="222.50" font-family="monospace" font-size="6.8" font-weight="normal" fill="#111827" text-anchor="end">0.00</text>
+<line x1="300.00" y1="175.50" x2="522.00" y2="175.50" stroke="#e5e7eb" stroke-width="0.70"/>
+<text x="296.00" y="178.00" font-family="monospace" font-size="6.8" font-weight="normal" fill="#111827" text-anchor="end">0.25</text>
+<line x1="300.00" y1="131.00" x2="522.00" y2="131.00" stroke="#e5e7eb" stroke-width="0.70"/>
+<text x="296.00" y="133.50" font-family="monospace" font-size="6.8" font-weight="normal" fill="#111827" text-anchor="end">0.50</text>
+<line x1="300.00" y1="86.50" x2="522.00" y2="86.50" stroke="#e5e7eb" stroke-width="0.70"/>
+<text x="296.00" y="89.00" font-family="monospace" font-size="6.8" font-weight="normal" fill="#111827" text-anchor="end">0.75</text>
+<line x1="300.00" y1="42.00" x2="522.00" y2="42.00" stroke="#e5e7eb" stroke-width="0.70"/>
+<text x="296.00" y="44.50" font-family="monospace" font-size="6.8" font-weight="normal" fill="#111827" text-anchor="end">1.00</text>
+<rect x="305.38" y="215.89" width="17.00" height="4.11" fill="#d97706" stroke="#78350f" stroke-width="0.70"/>
+<text x="313.88" y="211.89" font-family="monospace" font-size="6.1" font-weight="bold" fill="#92400e" text-anchor="middle">0.02</text>
+<text x="313.88" y="230.00" font-family="monospace" font-size="6.6" font-weight="bold" fill="#111827" text-anchor="middle">4Q</text>
+<text x="313.88" y="239.00" font-family="Helvetica, Arial, sans-serif" font-size="5.9" font-weight="normal" fill="#4b5563" text-anchor="middle">marr</text>
+<rect x="333.12" y="127.80" width="17.00" height="92.20" fill="#d97706" stroke="#78350f" stroke-width="0.70"/>
+<text x="341.62" y="123.80" font-family="monospace" font-size="6.1" font-weight="bold" fill="#92400e" text-anchor="middle">0.52</text>
+<text x="341.62" y="230.00" font-family="monospace" font-size="6.6" font-weight="bold" fill="#111827" text-anchor="middle">4Q</text>
+<text x="341.62" y="239.00" font-family="Helvetica, Arial, sans-serif" font-size="5.9" font-weight="normal" fill="#4b5563" text-anchor="middle">tori</text>
+<rect x="360.88" y="161.43" width="17.00" height="58.57" fill="#d97706" stroke="#78350f" stroke-width="0.70"/>
+<text x="369.38" y="157.43" font-family="monospace" font-size="6.1" font-weight="bold" fill="#92400e" text-anchor="middle">0.33</text>
+<text x="369.38" y="230.00" font-family="monospace" font-size="6.6" font-weight="bold" fill="#111827" text-anchor="middle">2Q</text>
+<text x="369.38" y="239.00" font-family="Helvetica, Arial, sans-serif" font-size="5.9" font-weight="normal" fill="#4b5563" text-anchor="middle">marr</text>
+<rect x="388.62" y="162.78" width="17.00" height="57.22" fill="#d97706" stroke="#78350f" stroke-width="0.70"/>
+<text x="397.12" y="158.78" font-family="monospace" font-size="6.1" font-weight="bold" fill="#92400e" text-anchor="middle">0.32</text>
+<text x="397.12" y="230.00" font-family="monospace" font-size="6.6" font-weight="bold" fill="#111827" text-anchor="middle">2Q</text>
+<text x="397.12" y="239.00" font-family="Helvetica, Arial, sans-serif" font-size="5.9" font-weight="normal" fill="#4b5563" text-anchor="middle">fez</text>
+<rect x="416.38" y="162.75" width="17.00" height="57.25" fill="#d97706" stroke="#78350f" stroke-width="0.70"/>
+<text x="424.88" y="158.75" font-family="monospace" font-size="6.1" font-weight="bold" fill="#92400e" text-anchor="middle">0.32</text>
+<text x="424.88" y="230.00" font-family="monospace" font-size="6.6" font-weight="bold" fill="#111827" text-anchor="middle">2Q</text>
+<text x="424.88" y="239.00" font-family="Helvetica, Arial, sans-serif" font-size="5.9" font-weight="normal" fill="#4b5563" text-anchor="middle">king</text>
+<rect x="444.12" y="152.39" width="17.00" height="67.61" fill="#d97706" stroke="#78350f" stroke-width="0.70"/>
+<text x="452.62" y="148.39" font-family="monospace" font-size="6.1" font-weight="bold" fill="#92400e" text-anchor="middle">0.38</text>
+<text x="452.62" y="230.00" font-family="monospace" font-size="6.6" font-weight="bold" fill="#111827" text-anchor="middle">10Q</text>
+<text x="452.62" y="239.00" font-family="Helvetica, Arial, sans-serif" font-size="5.9" font-weight="normal" fill="#4b5563" text-anchor="middle">king</text>
+<rect x="471.88" y="86.85" width="17.00" height="133.15" fill="#d97706" stroke="#78350f" stroke-width="0.70"/>
+<text x="480.38" y="82.85" font-family="monospace" font-size="6.1" font-weight="bold" fill="#92400e" text-anchor="middle">0.75</text>
+<text x="480.38" y="230.00" font-family="monospace" font-size="6.6" font-weight="bold" fill="#111827" text-anchor="middle">40Q</text>
+<text x="480.38" y="239.00" font-family="Helvetica, Arial, sans-serif" font-size="5.9" font-weight="normal" fill="#4b5563" text-anchor="middle">king</text>
+<rect x="499.62" y="42.01" width="17.00" height="177.99" fill="#d97706" stroke="#78350f" stroke-width="0.70"/>
+<text x="508.12" y="38.01" font-family="monospace" font-size="6.1" font-weight="bold" fill="#92400e" text-anchor="middle">1.00</text>
+<text x="508.12" y="230.00" font-family="monospace" font-size="6.6" font-weight="bold" fill="#111827" text-anchor="middle">156Q</text>
+<text x="508.12" y="239.00" font-family="Helvetica, Arial, sans-serif" font-size="5.9" font-weight="normal" fill="#4b5563" text-anchor="middle">fez</text>
+<text x="306.00" y="55.00" font-family="Helvetica, Arial, sans-serif" font-size="6.7" font-weight="bold" fill="#92400e" text-anchor="start">Unreversed unpackbits TVD (up to 1.0000)</text>
+<text x="306.00" y="67.00" font-family="Helvetica, Arial, sans-serif" font-size="6.6" font-weight="bold" fill="#047857" text-anchor="start">With matrix[..., ::-1]: TVD = 0.0000 (8/8 jobs)</text>
+<text x="270.00" y="258.00" font-family="Helvetica, Arial, sans-serif" font-size="7.3" font-weight="normal" fill="#374151" text-anchor="middle">Dual-path parity verified bit-for-bit across all 59 jobs (51 PrimitiveResult + 8 Executor v0.2; 583 register slices).</text>
+</svg>

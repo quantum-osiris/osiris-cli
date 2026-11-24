@@ -1,0 +1,209 @@
+{
+  "slug": "hp004_v2_1",
+  "state": "published",
+  "deposition_id": 24486953,
+  "supersedes_record_id": 24287505,
+  "version": "2.1.0",
+  "prereserved_doi": "10.5281/zenodo.24486953",
+  "draft_url": "https://zenodo.org/uploads/24486953",
+  "updated_utc": "2026-11-24T01:11:57+00:00",
+  "title": "Dual-Processor Certification of Schmidt Number >= 3 and >1-Ebit Entanglement of Formation in Hayden-Preskill Recovery via Layout-Locked Nine-Basis Stabilizer Tomography on Heavy-Hex Superconducting Processors (OSIRIS-HP-004 & HP-004B, v2.1)",
+  "files_count": 27,
+  "files": [
+    {
+      "archive_name": "hp004_joint_stabilizer_heron_r2_v2_1.pdf",
+      "source_relpath": "papers/hp004_joint_stabilizer_heron_r2_v2_1/hp004_joint_stabilizer_heron_r2_v2_1.pdf",
+      "bytes": 40925,
+      "sha256": "766f75216c6ee73ce1b69ca7a56311ad643289e785da34c716b19e9e7fd08593",
+      "zenodo_checksum": "md5:65c6e16e688595507ae14bc15bbc17c7"
+    },
+    {
+      "archive_name": "hp004_joint_stabilizer_heron_r2_v2_1.tex",
+      "source_relpath": "papers/hp004_joint_stabilizer_heron_r2_v2_1/hp004_joint_stabilizer_heron_r2_v2_1.tex",
+      "bytes": 18060,
+      "sha256": "ee128ff3a824a5d61dc4a5b49ea684e6a6b8285b8be00811ddec8a1d672c29aa",
+      "zenodo_checksum": "md5:294e3c593239f7561a0bd59eea60f7ce"
+    },
+    {
+      "archive_name": "generate_paper_assets_v2_1.py",
+      "source_relpath": "papers/hp004_joint_stabilizer_heron_r2_v2_1/generate_paper_assets_v2_1.py",
+      "bytes": 18665,
+      "sha256": "a35b608b88968f85cdd1837c11ee78fe4585a6b8ab26d4bb2e58b5912d52777a",
+      "zenodo_checksum": "md5:02162bfb05404ee06fc34c6bf54dea08"
+    },
+    {
+      "archive_name": "fig1_dyadic_capacity_ladder.pdf",
+      "source_relpath": "papers/hp004_joint_stabilizer_heron_r2_v2_1/fig1_dyadic_capacity_ladder.pdf",
+      "bytes": 6253,
+      "sha256": "c386b6cc64aa0ca6fa880b9b0fdf25ea5e5da23824c74b9478fd9bcdf3b9eef1",
+      "zenodo_checksum": "md5:a021793c0a460d10d5bf9045bd47b1b6"
+    },
+    {
+      "archive_name": "fig2_block_stability_and_marginals.pdf",
+      "source_relpath": "papers/hp004_joint_stabilizer_heron_r2_v2_1/fig2_block_stability_and_marginals.pdf",
+      "bytes": 13033,
+      "sha256": "9fd27f571f9b80cede32155c109b15be2a28c587f6f740be135cf2a16380da0a",
+      "zenodo_checksum": "md5:a1f99af64e35eb5688f45e7fc27e66b8"
+    },
+    {
+      "archive_name": "fig3_marrakesh_tree_light_cone.pdf",
+      "source_relpath": "papers/hp004_joint_stabilizer_heron_r2_v2_1/fig3_marrakesh_tree_light_cone.pdf",
+      "bytes": 5787,
+      "sha256": "3a49e652274b4458bca2f1f8323a9776f3f66123285e063279890bced4b0747a",
+      "zenodo_checksum": "md5:e718009416ae8cbc33a12e78c0339853"
+    },
+    {
+      "archive_name": "fig4_fez_tree_light_cone.pdf",
+      "source_relpath": "papers/hp004_joint_stabilizer_heron_r2_v2_1/fig4_fez_tree_light_cone.pdf",
+      "bytes": 5773,
+      "sha256": "867c98f8612fd7e0b23272eb60fb407f36b2841a08269ea1ef76243950c5e930",
+      "zenodo_checksum": "md5:8338b62dd7b7c442bc8190a7ad5e2b32"
+    },
+    {
+      "archive_name": "SHA256SUMS_v2_1.txt",
+      "source_relpath": "papers/hp004_joint_stabilizer_heron_r2_v2_1/SHA256SUMS_v2_1.txt",
+      "bytes": 709,
+      "sha256": "ec42816fc44d4926b974c3519c9110edb36da59e3a8303704c4ed50a10534564",
+      "zenodo_checksum": "md5:3eea71b1f3df8e2df062ac219c36aadf"
+    },
+    {
+      "archive_name": "hp004_marrakesh_PRE_REGISTRATION.md",
+      "source_relpath": "experiments/hp004/PRE_REGISTRATION.md",
+      "bytes": 3361,
+      "sha256": "8c0fab5400bee525ef81517a0e57e3a8818701cb65de4a63b41cefc2335acae5",
+      "zenodo_checksum": "md5:de1d17cc25520fc8589243d92d88fb5a"
+    },
+    {
+      "archive_name": "hp004_marrakesh_RESULT.md",
+      "source_relpath": "experiments/hp004/RESULT.md",
+      "bytes": 4758,
+      "sha256": "5ee40d3a02561a0f6d7869d6e1ccf17a47e61894ccfa2edca1ed8daba79a7269",
+      "zenodo_checksum": "md5:b1959b00eccad5f71c077e258fcf3b5b"
+    },
+    {
+      "archive_name": "hp004_joint_stabilizer.py",
+      "source_relpath": "experiments/hp004/hp004_joint_stabilizer.py",
+      "bytes": 20072,
+      "sha256": "fd70fd8b1e79e3265ccc6b6609062c5264d1d9b61b45c53396bd179b1784c665",
+      "zenodo_checksum": "md5:9972680157b6d4915a4e7d1bbef9cdad"
+    },
+    {
+      "archive_name": "execute_and_harvest_hp004.py",
+      "source_relpath": "experiments/hp004/execute_and_harvest_hp004.py",
+      "bytes": 22310,
+      "sha256": "eb28ca477d8cb3c99cc61756b858df9a8d66533cf1eaf116495b14b4e58740c6",
+      "zenodo_checksum": "md5:7efc1e49083b04b2939ce92335a5ec92"
+    },
+    {
+      "archive_name": "hp004_staged_circuits.qpy",
+      "source_relpath": "experiments/hp004/hp004_staged_circuits.qpy",
+      "bytes": 3410432,
+      "sha256": "c3daaa48d89a74cec39932c310365b3eb23660ac4922219586543f8fe473d02c",
+      "zenodo_checksum": "md5:107b96570d6a07ca6d2863216f06ecf4"
+    },
+    {
+      "archive_name": "hp004_staging_manifest.json",
+      "source_relpath": "experiments/hp004/hp004_staging_manifest.json",
+      "bytes": 59097,
+      "sha256": "60bc6b8d3943a9222bb526717733cef96481f4b4820543165f4606f77b6aae68",
+      "zenodo_checksum": "md5:a04a0b0a3fdc81c223297b94f0b7b6d7"
+    },
+    {
+      "archive_name": "hp004_calibration_snapshot.json",
+      "source_relpath": "experiments/hp004/hp004_calibration_snapshot.json",
+      "bytes": 3420,
+      "sha256": "18c89095e9d458463e5e55eff03f24610932b4a757575a7431d0ff42e9dfd54b",
+      "zenodo_checksum": "md5:8c04a93858de4d57fe5f042d44bf4f07"
+    },
+    {
+      "archive_name": "hp004_submitted_job.json",
+      "source_relpath": "experiments/hp004/hp004_submitted_job.json",
+      "bytes": 413,
+      "sha256": "e50bcf958e349693faa01521ddcfa3feba1c0b1ce91dc695febd452b0c26d034",
+      "zenodo_checksum": "md5:c543686d2ecc48b3be836fd5dffade2e"
+    },
+    {
+      "archive_name": "physical_hp004_results.json",
+      "source_relpath": "experiments/hp004/physical_hp004_results.json",
+      "bytes": 177530,
+      "sha256": "84be3fd57e9c9422028dcdc5559fd170c2de382ba44d095f05cebbf874d70079",
+      "zenodo_checksum": "md5:58cdef6f06da2ded6c99120857e4a1ef"
+    },
+    {
+      "archive_name": "hp004b_fez_PRE_REGISTRATION.md",
+      "source_relpath": "experiments/hp004b_fez/PRE_REGISTRATION.md",
+      "bytes": 2017,
+      "sha256": "cce378e0a341171bb559170cffd89aa11fb0429cfebf8a16a0424307f519b0b8",
+      "zenodo_checksum": "md5:f85d57e91b26adf35ab33fe36d87fbc8"
+    },
+    {
+      "archive_name": "hp004b_fez_RESULT.md",
+      "source_relpath": "experiments/hp004b_fez/RESULT.md",
+      "bytes": 5557,
+      "sha256": "5904ba0f36c2718b23af0d97d46c951927867a6e50bd11308556ee2e7f42545e",
+      "zenodo_checksum": "md5:ccdf841a44ccbe02c3869842fe53097a"
+    },
+    {
+      "archive_name": "stage_and_harvest_hp004b_fez.py",
+      "source_relpath": "experiments/hp004b_fez/stage_and_harvest_hp004b_fez.py",
+      "bytes": 26896,
+      "sha256": "a0cfe54f87a6059c5e7e577c765af331b12ff49cf742fe0f1c53e8b7c6c0bffb",
+      "zenodo_checksum": "md5:7df24fb46bbec342195795844cb3b1a1"
+    },
+    {
+      "archive_name": "hp004b_fez_staged_circuits.qpy",
+      "source_relpath": "experiments/hp004b_fez/hp004b_fez_staged_circuits.qpy",
+      "bytes": 3410432,
+      "sha256": "6d7e5a6d17a002b5551eba35fb99b29661044477a9f6b91fb9dc51376a3025d9",
+      "zenodo_checksum": "md5:ffb286cf572288e1790dabc3b981b7a0"
+    },
+    {
+      "archive_name": "hp004b_fez_staging_manifest.json",
+      "source_relpath": "experiments/hp004b_fez/hp004b_fez_staging_manifest.json",
+      "bytes": 60466,
+      "sha256": "e4c94585de354c3e23253ea7f96daf4698a01a19f09d25174e24f88acaf3c26f",
+      "zenodo_checksum": "md5:82df654f6b9902618aff934358b0fee1"
+    },
+    {
+      "archive_name": "hp004b_fez_calibration_snapshot.json",
+      "source_relpath": "experiments/hp004b_fez/hp004b_fez_calibration_snapshot.json",
+      "bytes": 3401,
+      "sha256": "c3e7d9eb2eeaa931f4c58e96188ddceab69a563bad2094a577166addaba957fc",
+      "zenodo_checksum": "md5:d1d3ef06e5b856f8aad1518573c70977"
+    },
+    {
+      "archive_name": "hp004b_fez_submitted_job.json",
+      "source_relpath": "experiments/hp004b_fez/hp004b_fez_submitted_job.json",
+      "bytes": 485,
+      "sha256": "11b50a755eb7bc39171019978c70bc73e4398516254c66877543205d372afc85",
+      "zenodo_checksum": "md5:6a1eeadaa93fcbc8d5bebe7a5eb88a5f"
+    },
+    {
+      "archive_name": "physical_hp004b_fez_results.json",
+      "source_relpath": "experiments/hp004b_fez/physical_hp004b_fez_results.json",
+      "bytes": 178616,
+      "sha256": "02e73a4687290470dc575c7f1878cfc895b76243de76bb36fbf083f0a63d5fda",
+      "zenodo_checksum": "md5:6fcba3038dda851c600a93e4c3fb1437"
+    },
+    {
+      "archive_name": "test_hp004_hardware_artifact.py",
+      "source_relpath": "tests/test_hp004_hardware_artifact.py",
+      "bytes": 3919,
+      "sha256": "7d9b050f9e64581bd458da46c2f35b8763ee9663df172c9584932934ade06122",
+      "zenodo_checksum": "md5:162a1bcd8c0208e66c1e2e357117e50d"
+    },
+    {
+      "archive_name": "test_hp004b_fez_hardware_artifact.py",
+      "source_relpath": "tests/test_hp004b_fez_hardware_artifact.py",
+      "bytes": 4793,
+      "sha256": "5621bbcd0dee18ab294a182e95da25b2b28c94b1ba6a92deba29ea531771726e",
+      "zenodo_checksum": "md5:4c81258c5b34e8b6d7e9e3d288e1aff8"
+    }
+  ],
+  "record_id": 24486953,
+  "doi": "10.5281/zenodo.24486953",
+  "conceptdoi": "10.5281/zenodo.24285576",
+  "doi_url": "https://doi.org/10.5281/zenodo.24486953",
+  "record_html": "https://zenodo.org/record/24486953",
+  "published_utc": "2026-11-24T01:12:19+00:00"
+}

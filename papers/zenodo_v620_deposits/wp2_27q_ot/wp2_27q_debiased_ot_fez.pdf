@@ -1,0 +1,409 @@
+%PDF-1.4
+%‚„œ”
+1 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>
+endobj
+2 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica-Bold >>
+endobj
+3 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Courier >>
+endobj
+4 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Times-Roman >>
+endobj
+5 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Times-Bold >>
+endobj
+6 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Times-Italic >>
+endobj
+7 0 obj
+<< /Type /Pages /Kids [9 0 R 11 0 R 13 0 R 15 0 R 17 0 R 19 0 R] /Count 6 >>
+endobj
+8 0 obj
+<< /Length 7602 >>
+stream
+1 1 1 rg 0 0 612 792 re f
+BT /F5 13.0 Tf 0.07 0.09 0.15 rg 50.00 742.00 Td (Eliminating Finite-Shot Hypercube Sparsity Bias in 27-Qubit Quantum) Tj ET
+BT /F5 13.0 Tf 0.07 0.09 0.15 rg 50.00 725.40 Td (Processor Stability Benchmarks via Split-Sample-Debiased Optimal Transport) Tj ET
+BT /F3 7.8 Tf 0.22 0.25 0.32 rg 50.00 704.80 Td (Devin Phillip Davis  |  Agile Defense Systems LLC  |  November 23, 2026) Tj ET
+BT /F3 7.4 Tf 0.28 0.32 0.38 rg 50.00 693.60 Td (OSIRIS v6.2.0 Reproducibility Archive  |  Source: papers/wp2_27q_debiased_ot_fez/wp2_27q_debiased_ot_fez.tex) Tj ET
+0.7 w 0.60 0.60 0.60 RG 50 678.60 m 562 678.60 l S
+BT /F5 9.8 Tf 0.07 0.09 0.15 rg 50.00 666.60 Td (ABSTRACT) Tj ET
+BT /F4 9.1 Tf 0.07 0.09 0.15 rg 54.00 653.60 Td (Quantifying temporal and cross-block output stability on wide noisy intermediate-scale quantum) Tj ET
+BT /F4 9.1 Tf 0.07 0.09 0.15 rg 54.00 641.60 Td (processors requires comparing finite-shot bitstring histograms over an exponentially large) Tj ET
+BT /F4 9.1 Tf 0.07 0.09 0.15 rg 54.00 629.60 Td (discrete hypercube \\0,1\\^Q. Two distinct mathematical and statistical failure modes invalidate) Tj ET
+BT /F4 9.1 Tf 0.07 0.09 0.15 rg 54.00 617.60 Td (naive transport-based stability scores: first, replacing the Kantorovich minimum-cost coupling) Tj ET
+BT /F4 9.1 Tf 0.07 0.09 0.15 rg 54.00 605.60 Td (with an independent marginal-product expectation violates self-distance identity and assigns a) Tj ET
+BT /F4 9.1 Tf 0.07 0.09 0.15 rg 54.00 593.60 Td (nonzero self-cost sqrt\(1/4 + 1/\(4Q\)\) = 0.50918 to a uniform Q=27 register; second, even exact) Tj ET
+BT /F4 9.1 Tf 0.07 0.09 0.15 rg 54.00 581.60 Td (plug-in Kantorovich linear programming suffers from the Weed-Bach minimax finite-sample sparsity) Tj ET
+BT /F4 9.1 Tf 0.07 0.09 0.15 rg 54.00 569.60 Td (bias O\(S^-1/Q\), causing two noiseless draws from the same high-entropy circuit to appear) Tj ET
+BT /F4 9.1 Tf 0.07 0.09 0.15 rg 54.00 557.60 Td (artificially unstable. Here we formulate sample-size-matched split-sample-debiased Kantorovich) Tj ET
+BT /F4 9.1 Tf 0.07 0.09 0.15 rg 54.00 545.60 Td (and entropic Sinkhorn \(eps=0.05\) estimators constructed via exact multivariate-hypergeometric) Tj ET
+BT /F4 9.1 Tf 0.07 0.09 0.15 rg 54.00 533.60 Td (histogram halving, whose expectation under the identical-distribution null is identically zero) Tj ET
+BT /F4 9.1 Tf 0.07 0.09 0.15 rg 54.00 521.60 Td (for every circuit distribution and shot count S. We validate this framework prospectively on the) Tj ET
+BT /F4 9.1 Tf 0.07 0.09 0.15 rg 54.00 509.60 Td (IBM Heron r2 superconducting processor ibm_fez \(protocol OSIRIS-WP2-27Q-FEZ, job) Tj ET
+BT /F4 9.1 Tf 0.07 0.09 0.15 rg 54.00 497.60 Td (dc1tqvinj2vs73dfrts0, 48 instruction-set-architecture circuits, 98,304 raw shots, 28 s QPU time\)) Tj ET
+BT /F4 9.1 Tf 0.07 0.09 0.15 rg 54.00 485.60 Td (using a constant-skeleton 27-qubit heavy-hex tree \(52 native CZ and 378 SX gates per circuit,) Tj ET
+BT /F4 9.1 Tf 0.07 0.09 0.15 rg 54.00 473.60 Td (zero routing SWAPs\). Across theta in \\2.118, 2.618, 3.118\\ rad, defective marginal-product and) Tj ET
+BT /F4 9.1 Tf 0.07 0.09 0.15 rg 54.00 461.60 Td (raw plug-in estimators inflate strongly with output entropy, whereas matched split-sample) Tj ET
+BT /F4 9.1 Tf 0.07 0.09 0.15 rg 54.00 449.60 Td (Sinkhorn collapses inter-block A/A drift to |widehatS_eps,matched| <= 0.000076 < 0.005 across) Tj ET
+BT /F4 9.1 Tf 0.07 0.09 0.15 rg 54.00 437.60 Td (all conditions \(H1 supported\), reveals no golden-ratio stability advantage at theta^* = phi^2) Tj ET
+BT /F4 9.1 Tf 0.07 0.09 0.15 rg 54.00 425.60 Td (2.618 rad \(H2 supported\), and detects controlled coherent perturbations Delta theta in \\0.20,) Tj ET
+BT /F4 9.1 Tf 0.07 0.09 0.15 rg 54.00 413.60 Td (0.45\\ rad monotonically at 13.76sigma \(H3 supported\). Multi-width simulations up to Q=96) Tj ET
+BT /F4 9.1 Tf 0.07 0.09 0.15 rg 54.00 401.60 Td (\(Uniform\(\\0,1\\^96\), where raw plug-in transport suffers a +855.48sigma false-drift artifact) Tj ET
+BT /F4 9.1 Tf 0.07 0.09 0.15 rg 54.00 389.60 Td (while matched split-sample Sinkhorn yields z=-0.34sigma\) and hardware re-scoring of archived) Tj ET
+BT /F4 9.1 Tf 0.07 0.09 0.15 rg 54.00 377.60 Td (ibm_marrakesh dynamical decoupling \(job dau0q3qhcrkc73durtgg, 10,240 shots\) and 49-bit) Tj ET
+BT /F4 9.1 Tf 0.07 0.09 0.15 rg 54.00 365.60 Td (OSIRIS-QEC-001 multi-round syndrome trajectories on ibm_fez \(job dbtl2vb2kf8s73c9a0d0, 393,216) Tj ET
+BT /F4 9.1 Tf 0.07 0.09 0.15 rg 54.00 353.60 Td (shots\) confirm that split-sample optimal transport cleanly separates genuine hardware) Tj ET
+BT /F4 9.1 Tf 0.07 0.09 0.15 rg 54.00 341.60 Td (decoherence from finite-shot hypercube sparsity.) Tj ET
+0.5 w 0.75 0.75 0.75 RG 50 321.60 m 562 321.60 l S
+BT /F5 10.2 Tf 0.07 0.09 0.15 rg 50.00 306.60 Td (1. INTRODUCTION AND THE WEED-BACH O\(S^-1/Q\) TRAP) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 292.80 Td (Evaluating whether a multi-qubit quantum processor executes a target circuit family reproducibly) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 280.60 Td (across time blocks, dynamical decoupling schedules, or syndrome extraction cycles requires a) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 268.40 Td (two-sample statistical discrepancy functional on discrete bitstring distributions over \\0,1\\^Q.) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 256.20 Td (Unlike low-qubit tomography or single-qubit marginal averages, optimal transport on normalized) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 244.00 Td (Hamming ground distance d_H\(x,y\)/Q is sensitive to correlated multi-qubit shifts without) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 231.80 Td (requiring an exponential classical reference statevector) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 219.60 Td ([peyre2019computational,feydy2019interpolating]. However, deploying empirical Wasserstein or) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 207.40 Td (entropic transport directly on wide quantum registers introduces severe statistical artifacts) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 195.20 Td (whenever finite-shot sampling sparsity is not explicitly removed.) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 179.50 Td (In our prior audit of an exploratory 27-qubit robustness study \(NB-11\), we identified two) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 167.30 Td (compounding failure modes that produced an apparent stability ordering across preparation angles) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 155.10 Td (theta in \\2.118, 2.618, 3.118\\ rad without genuine quantum interference [davis2026erratum].) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 142.90 Td (First, the legacy Eq. \(7\) score substituted the independent product coupling p\(x\)q\(y\) in place) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 130.70 Td (of the infimum over joint couplings Pi\(p,q\):) Tj ET
+BT /F3 6.8 Tf 0.10 0.14 0.22 rg 52.00 115.00 Td (C_Eq.7\(p,q\) = sum_x,y in \\0,1\\^Q <= ft\(\(d_H\(x,y\)\)/\(Q\)\)^2 p\(x\) q\(y\).) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 105.40 Td (Because independent draws from a non-degenerate distribution p do not coincide, Eq.) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 93.20 Td (\(eq:defective_eq7\) fails the metric axiom C\(p,p\)=0; for p = Uniform\(\\0,1\\^Q\), Binomial\(Q, 1/2\)) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 81.00 Td (moments give C_Eq.7\(p,p\) = \(1\)/\(4\) + \(1\)/\(4Q\), yielding sqrtC_Eq.7 = 0.50918 at Q=27 even for) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 68.80 Td (identical noiseless states.) Tj ET
+BT /F3 8.0 Tf 0.40 0.42 0.46 rg 292.00 28.00 Td (- 1 -) Tj ET
+endstream
+endobj
+9 0 obj
+<< /Type /Page /Parent 7 0 R /MediaBox [0 0 612.00 792.00] /Resources << /Font << /F1 1 0 R /F2 2 0 R /F3 3 0 R /F4 4 0 R /F5 5 0 R /F6 6 0 R >> >> /Contents 8 0 R >>
+endobj
+10 0 obj
+<< /Length 7924 >>
+stream
+1 1 1 rg 0 0 612 792 re f
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 742.00 Td (Second, and far more fundamentally for wide quantum benchmarks, replacing Eq. \(eq:defective_eq7\)) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 729.80 Td (with the exact Kantorovich linear program \(LP\) still fails to vanish on finite-shot samples from) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 717.60 Td (high-entropy circuits. By the minimax theory of Weed and Bach [weed2019sharp], two independent) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 705.40 Td (S-shot empirical histograms hatp_X, hatq_Y Multinomial\(S, P\)/S drawn from the same distribution) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 693.20 Td (P on a Q-dimensional hypercube exhibit a positive expected plug-in Wasserstein bias artifact) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 681.00 Td (scaling at the curse-of-dimensionality rate O\(S^-1/Q\) \(or O\(S^-2/Q\) for squared ground cost\)) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 668.80 Td (whenever S << 2^Q. On a Q=27 register \(2^27 > 10^8 basis states\), two 2,048-shot draws near the) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 656.60 Td (equatorial regime share almost no bitstrings and must route probability mass across) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 644.40 Td (nearest-neighbor Hamming distances of several bits purely due to multinomial support sparsity.) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 632.20 Td (Any raw plug-in Wasserstein metric therefore conflates Shannon output entropy with hardware) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 620.00 Td (decoherence, penalizing scrambling or high-entropy states as false instability artifacts.) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 604.30 Td (In this work, we eliminate both the self-distance defect and the Weed-Bach O\(S^-1/Q\) sparsity) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 592.10 Td (artifact by introducing exact multivariate-hypergeometric shot-splitting estimators for both) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 579.90 Td (Kantorovich LP and entropic Sinkhorn optimal transport. We then report a prospectively) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 567.70 Td (preregistered constant-skeleton 27-qubit hardware experiment on ibm_fez \(OSIRIS-WP2-27Q-FEZ, job) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 555.50 Td (dc1tqvinj2vs73dfrts0\) alongside multi-width SIMULATED benchmarks up to Q=96 and) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 543.30 Td (HARDWARE_ATTESTED re-scoring of archived ibm_marrakesh and 49-bit OSIRIS-QEC-001 Heron r2) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 531.10 Td (datasets.) Tj ET
+BT /F5 10.2 Tf 0.07 0.09 0.15 rg 50.00 510.40 Td (2. SPLIT-SAMPLE-DEBIASED KANTOROVICH AND SINKHORN ESTIMATORS) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 496.60 Td (Let X, Y in Z_ >= 0^\\0,1\\^Q denote integer bitstring count histograms collected from two) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 484.40 Td (independent S-shot executions with underlying distributions P and Q_out, and let c\(x,y\) =) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 472.20 Td (\(d_H\(x,y\)/Q\)^2 in [0,1] denote the normalized squared Hamming ground cost. Exact squared) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 460.00 Td (Kantorovich transport on empirical histograms hatp_X = X/S and hatq_Y = Y/S solves the) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 447.80 Td (sparse-support linear program) Tj ET
+BT /F3 6.8 Tf 0.10 0.14 0.22 rg 52.00 432.10 Td (T_0\(hatp_X, hatq_Y\) = min_gamma in Pi\(hatp_X, hatq_Y\) sum_x in supp\(X\) sum_y in supp\(Y\) c\(x,y\) gamma\(x,y\),) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 422.50 Td (while entropic optimal transport [cuturi2013sinkhorn,feydy2019interpolating] at regularization) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 410.30 Td (eps > 0 solves the strictly convex problem) Tj ET
+BT /F3 6.8 Tf 0.10 0.14 0.22 rg 52.00 394.60 Td (OT_eps\(hatp_X, hatq_Y\) = min_gamma in Pi\(hatp_X, hatq_Y\) <= ft\\ < gamma, c > + eps KL\(gamma || hatp_X \(x\) hatq_Y\) \\,) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 385.00 Td (evaluated to machine precision in O\(|supp\(X\)| |supp\(Y\)|\) operations via log-domain stabilized) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 372.80 Td (dual Sinkhorn-Knopp iterations \(eps = 0.05 throughout this study\).) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 357.10 Td (Because both T_0\(hatp_X, hatq_Y\) and OT_eps\(hatp_X, hatq_Y\) have strictly positive finite-shot) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 344.90 Td (expectation under the null P = Q_out, we partition each integer S-shot histogram X without) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 332.70 Td (replacement into two disjoint half-histograms \(X^\(1\), X^\(2\)\) of size m = lfloor S/2 rfloor by) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 320.50 Td (drawing a random permutation of the S individual shot events \(equivalently, sampling a) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 308.30 Td (multivariate hypergeometric split in O\(|supp\(X\)|\) time and memory\). Conditioned on S = 2m,) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 296.10 Td (multinomial thinning implies that X^\(1\) and X^\(2\) are independent and identically distributed) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 283.90 Td (draws from Multinomial\(m, P\), and \(Y^\(1\), Y^\(2\)\) are independent draws from Multinomial\(m,) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 271.70 Td (Q_out\).) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 256.00 Td (Standard split-sample Sinkhorn divergence subtracts the within-sample self-potentials at) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 243.80 Td (half-sample size m from the full-sample cross-potential:) Tj ET
+BT /F3 6.8 Tf 0.10 0.14 0.22 rg 52.00 228.10 Td (widehatS_eps\(X, Y\) = OT_eps\(hatp_X, hatq_Y\) - \(1\)/\(2\)OT_eps\(hatp_X^\(1\), hatp_X^\(2\)\) - \(1\)/\(2\)OT_eps\(hatq_Y^\(1\),) Tj ET
+BT /F3 6.8 Tf 0.10 0.14 0.22 rg 52.00 218.50 Td (hatq_Y^\(2\)\).) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 208.90 Td (Crucially, however, on ultra-sparse hypercubes \(S << 2^Q\) the expected empirical transport cost) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 196.70 Td (depends on sample size \(S versus m = S/2\), leaving a residual second-order finite-shot offset in) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 184.50 Td (Eq. \(eq:standard_debiased_sinkhorn\). To guarantee exact finite-sample unbiasedness at arbitrary) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 172.30 Td (width Q, we define the sample-size-matched two-by-two cross-split U-statistic estimator for any) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 160.10 Td (base transport functional F in T_0, OT_eps\\:) Tj ET
+BT /F3 6.8 Tf 0.10 0.14 0.22 rg 52.00 144.40 Td (widehatD_F,matched\(X, Y\) &= \(1\)/\(4\)sum_a=1^2sum_b=1^2 F <= ft\(hatp_X^\(a\), hatq_Y^\(b\)\) nonumber) Tj ET
+BT /F3 6.8 Tf 0.10 0.14 0.22 rg 52.00 134.80 Td (& - \(1\)/\(2\)F <= ft\(hatp_X^\(1\), hatp_X^\(2\)\) - \(1\)/\(2\)F <= ft\(hatq_Y^\(1\), hatq_Y^\(2\)\).) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 125.20 Td (Under the identical-distribution null P = Q_out, all six empirical pairs \(hatp_X^\(a\),) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 113.00 Td (hatq_Y^\(b\)\), \(hatp_X^\(1\), hatp_X^\(2\)\), and \(hatq_Y^\(1\), hatq_Y^\(2\)\) have the exact same joint) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 100.80 Td (law Multinomial\(m, P\) \(x\) Multinomial\(m, P\). By linearity of expectation,) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 88.60 Td (E[widehatD_F,matched\(X, Y\)] = 0 holds identically for every P, Q, and even S >= 2, leaving no) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 76.40 Td (residual Wasserstein sparsity bias. We denote the resulting matched estimators by) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 64.20 Td (widehatW_2,matched^2 == widehatD_T_0,matched and widehatS_eps,matched ==) Tj ET
+BT /F3 8.0 Tf 0.40 0.42 0.46 rg 292.00 28.00 Td (- 2 -) Tj ET
+endstream
+endobj
+11 0 obj
+<< /Type /Page /Parent 7 0 R /MediaBox [0 0 612.00 792.00] /Resources << /Font << /F1 1 0 R /F2 2 0 R /F3 3 0 R /F4 4 0 R /F5 5 0 R /F6 6 0 R >> >> /Contents 10 0 R >>
+endobj
+12 0 obj
+<< /Length 8115 >>
+stream
+1 1 1 rg 0 0 612 792 re f
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 742.00 Td (widehatD_OT_eps,matched.) Tj ET
+BT /F6 8.6 Tf 0.18 0.22 0.28 rg 52.00 721.30 Td ([Companion Vector Figure: fig1_27q_fez_sparsity_collapse_vs_eq7.pdf]) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 702.90 Td (Before hardware execution, we verified Eq. \(eq:matched_ustats\) in SIMULATED noiseless and) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 690.70 Td (depolarizing sweeps \(provider_job_id: null, S=512 shots per replicate\) across 27-qubit) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 678.50 Td (NB-11_27Q_repaired, 50-qubit WP2a_H2_1_50Q, 96-qubit WP2b_Helios_1_96Q, and an extreme) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 666.30 Td (Uniform\(\\0,1\\^96\) stress test over 2^96 basis states \(Table tab:sim_and_drift and Fig.) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 654.10 Td (fig:fez_sparsity_collapseb\). Under noiseless A/A sampling on Uniform\(\\0,1\\^96\), raw plug-in) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 641.90 Td (Wasserstein LP suffers a catastrophic finite-shot bias artifact of 0.12482 \(z = +855.48sigma) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 629.70 Td (false drift\), whereas matched split-sample LP \(+0.000187\) and matched Sinkhorn \(-0.000018, z =) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 617.50 Td (-0.34sigma\) remain statistically indistinguishable from zero. Across all noiseless 27Q, 50Q, and) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 605.30 Td (96Q cells, |widehatS_eps,matched| <= 0.000075 and |widehatW_2,matched^2| <= 0.000402 fall well) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 593.10 Td (below the 0.002 unbiasedness gate, while injecting depolarizing drift eps_depol = 0.05 is) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 580.90 Td (detected at >= 14.10sigma across every register width.) Tj ET
+BT /F5 10.2 Tf 0.07 0.09 0.15 rg 50.00 560.20 Td (3. CONSTANT-SKELETON 27-QUBIT IBM_FEZ EXPERIMENT AND RESOLUTION OF NB-11) Tj ET
+BT /F6 8.6 Tf 0.18 0.22 0.28 rg 52.00 541.40 Td (TABLE: Live HARDWARE_ATTESTED inter-block A/A stability across theta in \\2.118, 2.618, 3.118\\ rad) Tj ET
+BT /F6 8.6 Tf 0.18 0.22 0.28 rg 52.00 530.00 Td (on the 27-qubit heavy-hex tree of ibm_fez \(protocol OSIRIS-WP2-27Q-FEZ, job dc1tqvinj2vs73dfrts0,) Tj ET
+BT /F6 8.6 Tf 0.18 0.22 0.28 rg 52.00 518.60 Td (8,192 pooled shots per \(arm,theta\) cell across four randomized blocks, exact 52 CZ and 378 SX) Tj ET
+BT /F6 8.6 Tf 0.18 0.22 0.28 rg 52.00 507.20 Td (gates in every circuit\).) Tj ET
+0.5 w 0.65 0.68 0.72 RG 50 493.80 m 562 493.80 l S
+BT /F3 6.8 Tf 0.10 0.14 0.22 rg 52.00 487.80 Td (lcrrrrrrr@ Circuit Arm | theta \(rad\) | Unique / 8,192 | H_emp \(bits\) | widehatW_2,Eq.7 | widehatW_2,raw | OT_eps |) Tj ET
+BT /F3 6.8 Tf 0.10 0.14 0.22 rg 52.00 478.20 Td (widehatW_2,matched^2 | widehatS_eps,matched) Tj ET
+BT /F3 6.8 Tf 0.10 0.14 0.22 rg 52.00 468.60 Td (Arm A \(NB11_REPAIRED\) | 2.118 | 7,432 | 12.78 | 0.3266 | 0.1241 | 0.0895 | +0.000512 | +0.000010) Tj ET
+BT /F3 6.8 Tf 0.10 0.14 0.22 rg 52.00 459.00 Td (Arm A \(NB11_REPAIRED\) | 2.618 | 8,131 | 12.98 | 0.4106 | 0.1725 | 0.1340 | -0.000001 | -0.000019) Tj ET
+BT /F3 6.8 Tf 0.10 0.14 0.22 rg 52.00 449.40 Td (Arm A \(NB11_REPAIRED\) | 3.118 | 8,187 | 13.00 | 0.4483 | 0.1904 | 0.1540 | +0.000365 | +0.000001) Tj ET
+BT /F3 6.8 Tf 0.10 0.14 0.22 rg 52.00 439.80 Td (Arm B \(BRICKWALL\) | 2.118 | 8,176 | 13.00 | 0.4571 | 0.1877 | 0.1563 | -0.000249 | +0.000051) Tj ET
+BT /F3 6.8 Tf 0.10 0.14 0.22 rg 52.00 430.20 Td (Arm B \(BRICKWALL\) | 2.618 | 8,185 | 13.00 | 0.4786 | 0.2037 | 0.1698 | +0.000570 | -0.000076) Tj ET
+BT /F3 6.8 Tf 0.10 0.14 0.22 rg 52.00 420.60 Td (Arm B \(BRICKWALL\) | 3.118 | 8,191 | 13.00 | 0.4856 | 0.2118 | 0.1751 | -0.000878 | -0.000066) Tj ET
+0.5 w 0.65 0.68 0.72 RG 50 411.00 m 562 411.00 l S
+BT /F6 8.6 Tf 0.18 0.22 0.28 rg 52.00 395.00 Td (TABLE: Multi-width SIMULATED \(S=512 shots/replicate, provider_job_id: null\) hypercube benchmarks) Tj ET
+BT /F6 8.6 Tf 0.18 0.22 0.28 rg 52.00 383.60 Td (across Q in \\27, 50, 96\\ alongside live HARDWARE_ATTESTED controlled coherent-drift calibration on) Tj ET
+BT /F6 8.6 Tf 0.18 0.22 0.28 rg 52.00 372.20 Td (27-qubit ibm_fez Arm B \(job dc1tqvinj2vs73dfrts0, perturbations Delta theta in \\0, 0.20, 0.45\\ rad) Tj ET
+BT /F6 8.6 Tf 0.18 0.22 0.28 rg 52.00 360.80 Td (around theta^* = 2.618 rad\).) Tj ET
+0.5 w 0.65 0.68 0.72 RG 50 347.40 m 562 347.40 l S
+BT /F3 6.8 Tf 0.10 0.14 0.22 rg 52.00 341.40 Td (lrrrrrr@ Benchmark Regime / Condition | Q | H \(bits\) | Raw LP Cost | widehatW_2,matched^2 | widehatS_eps,matched |) Tj ET
+BT /F3 6.8 Tf 0.10 0.14 0.22 rg 52.00 331.80 Td (z-Score) Tj ET
+BT /F3 6.8 Tf 0.10 0.14 0.22 rg 52.00 322.20 Td (SIM 27Q NB-11 \(theta=2.618, eps=0.00\) | 27 | 21.90 | 0.03369 | +0.000154 | -0.000043 | -0.76) Tj ET
+BT /F3 6.8 Tf 0.10 0.14 0.22 rg 52.00 312.60 Td (SIM 27Q NB-11 \(theta=3.118, eps=0.00\) | 27 | 26.99 | 0.05287 | +0.000086 | +0.000014 | +0.17) Tj ET
+BT /F3 6.8 Tf 0.10 0.14 0.22 rg 52.00 303.00 Td (SIM 27Q NB-11 \(theta=2.618, eps=0.05\) | 27 | 21.90 | 0.04654 | +0.006140 | +0.006305 | +31.98) Tj ET
+BT /F3 6.8 Tf 0.10 0.14 0.22 rg 52.00 293.40 Td (SIM 50Q H2-1 \(theta=3.118, eps=0.00\) | 50 | 49.98 | 0.08929 | +0.000402 | +0.000019 | +0.23) Tj ET
+BT /F3 6.8 Tf 0.10 0.14 0.22 rg 52.00 283.80 Td (SIM 50Q H2-1 \(theta=2.618, eps=0.05\) | 50 | 40.56 | 0.08124 | +0.008101 | +0.008676 | +43.00) Tj ET
+BT /F3 6.8 Tf 0.10 0.14 0.22 rg 52.00 274.20 Td (SIM 96Q Helios-1 \(theta=3.118, eps=0.00\) | 96 | 95.96 | 0.12469 | -0.000046 | +0.000016 | +0.33) Tj ET
+BT /F3 6.8 Tf 0.10 0.14 0.22 rg 52.00 264.60 Td (SIM 96Q Helios-1 \(theta=2.618, eps=0.05\) | 96 | 77.88 | 0.11358 | +0.006453 | +0.006287 | +73.64) Tj ET
+BT /F3 6.8 Tf 0.10 0.14 0.22 rg 52.00 255.00 Td (SIM Unif\(\\0,1\\^96\) null | 96 | 96.00 | 0.12482 | +0.000187 | -0.000018 | -0.34) Tj ET
+BT /F3 6.8 Tf 0.10 0.14 0.22 rg 52.00 245.40 Td (HW ibm_fez Arm B A/A \(Delta theta=0\) | 27 | 13.00 | - | - | +0.000005 | +0.24) Tj ET
+BT /F3 6.8 Tf 0.10 0.14 0.22 rg 52.00 235.80 Td (HW ibm_fez Arm B \(Delta theta=0.20\) | 27 | - | - | - | +0.000972 | +11.71) Tj ET
+BT /F3 6.8 Tf 0.10 0.14 0.22 rg 52.00 226.20 Td (HW ibm_fez Arm B \(Delta theta=0.45\) | 27 | - | - | - | +0.003444 | +13.76) Tj ET
+0.5 w 0.65 0.68 0.72 RG 50 216.60 m 562 216.60 l S
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 205.60 Td (Because raw count archives for the six December 2025 ibm_fez jobs cited in Ref.) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 193.40 Td ([davis2026erratum] are absent from local storage \(NOT_PRESENT_ON_DISK_QUARANTINED\), zero) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 181.20 Td (historical counts were guessed or reconstructed. Instead, to resolve NB-11 cleanly without) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 169.00 Td (transpiler-depth confounds, we designed and prospectively preregistered protocol) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 156.80 Td (OSIRIS-WP2-27Q-FEZ on the 156-qubit IBM Heron r2 processor ibm_fez.) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 141.10 Td (We pinned a connected 27-transmon heavy-hex tree \\114, 115, 99, 95, 94, 93, 79, 92, 91, 90, 98,) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 128.90 Td (111, 110, 109, 118, 112, 108, 89, 88, 78, 69, 68, 70, 71, 58, 73, 74\\ spanning 26 native CZ) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 116.70 Td (couplers with maximum degree three and zero routing SWAPs. By KHonig's theorem for bipartite) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 104.50 Td (trees, the 26 edges decompose into three edge-disjoint matchings of sizes 10, 10, and 6. Every) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 92.30 Td (work circuit executes two complete three-color matching sweeps - giving an invariant skeleton of) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 80.10 Td (exactly 52 native CZ gates - interleaved with universal two-SX SU\(2\) single-qubit slots totaling) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 67.90 Td (an invariant 378 SX gates across every angle theta and circuit arm. Two constant-skeleton arms) Tj ET
+BT /F3 8.0 Tf 0.40 0.42 0.46 rg 292.00 28.00 Td (- 3 -) Tj ET
+endstream
+endobj
+13 0 obj
+<< /Type /Page /Parent 7 0 R /MediaBox [0 0 612.00 792.00] /Resources << /Font << /F1 1 0 R /F2 2 0 R /F3 3 0 R /F4 4 0 R /F5 5 0 R /F6 6 0 R >> >> /Contents 12 0 R >>
+endobj
+14 0 obj
+<< /Length 7830 >>
+stream
+1 1 1 rg 0 0 612 792 re f
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 742.00 Td (were interleaved across 4 randomized blocks of 12 circuits each \(48 circuits x 2,048 shots =) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 729.80 Td (98,304 total shots, resilience_level=0, job dc1tqvinj2vs73dfrts0\):) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 714.10 Td (* Arm A \(NB11_REPAIRED_27Q\): Repairs the omitted Layer-0 Hadamard of NB-11 by preparing) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 701.90 Td (R_Y\(theta\)H|0>^ \(x\) 27 followed by golden-phase R_Z rotations and basis-permuting Hadamards on) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 689.70 Td (odd tree sites, probing theta in \\2.118, 2.618, 3.118\\ rad plus an intra-block duplicate A/A) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 677.50 Td (sentinel at theta^* = 2.618 rad.) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 661.80 Td (* Arm B \(ENTANGLED_BRICKWALL_27Q\): Applies non-commuting R_X / R_Y / R_Z rotations between all) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 649.60 Td (six CZ matching layers so quantum phases genuinely interfere rather than commuting through) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 637.40 Td (readout, evaluating theta in \\2.118, 2.618, 3.118\\ rad, an intra-block A/A sentinel at theta^*,) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 625.20 Td (and two controlled coherent drift perturbations theta^* + 0.20 and theta^* + 0.45 rad.) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 609.50 Td (Each block also included all-|0> and all-|1> 27-qubit readout sentinels [davis2026ro06],) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 597.30 Td (confirming mean in-job readout error 1.14% \(maximum 4.13%, versus pre-submission calibration) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 585.10 Td (mean 0.93% and maximum 1.86%\) with 0 hidden readout faults above 10%.) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 569.40 Td (Table tab:fez_sweep and Fig. fig:fez_sparsity_collapsea report the live 27-qubit results across) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 557.20 Td (all 98,304 shots, adjudicating all three preregistered hypotheses:) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 541.50 Td (* Elimination of Weed-Bach Sparsity Bias \(H1 supported\): In Arm A, as theta advances across) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 529.30 Td (2.118 -> 2.618 -> 3.118 rad, unique bitstrings per 8,192-shot pool grow across 7,432 -> 8,131 ->) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 517.10 Td (8,187 \(H_emp = 12.78 -> 12.98 -> 13.00 bits\). Consequently, defective Eq. \(eq:defective_eq7\)) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 504.90 Td (inflates across 0.3266 -> 0.4106 -> 0.4483 \(driving the legacy stability score widehatR_Eq.7 = 1) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 492.70 Td (- widehatW_2,Eq.7 down across 0.6734 -> 0.5894 -> 0.5517\), and raw plug-in Wasserstein LP) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 480.50 Td (exhibits a spurious inflation artifact across 0.1241 -> 0.1725 -> 0.1904 \(widehatR_raw dropping) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 468.30 Td (across 0.8759 -> 0.8275 -> 0.8096\) purely from hypercube sparsity, not gate instability. In Arm) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 456.10 Td (B, defective Eq. \(eq:defective_eq7\) similarly inflates across 0.4571 -> 0.4786 -> 0.4856 and raw) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 443.90 Td (LP across 0.1877 -> 0.2037 -> 0.2118. Applying matched split-sample Sinkhorn collapses) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 431.70 Td (inter-block A/A drift across all six \(arm,theta\) conditions to |widehatS_eps,matched| <=) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 419.50 Td (0.000076, nearly two orders of magnitude below the preregistered 0.005 ceiling.) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 403.80 Td (* Falsification of Golden-Ratio theta^* = phi^2 Specialness \(H2 supported\): Once hypercube) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 391.60 Td (sparsity bias is removed, Arm A exhibits widehatS_eps,matched = +0.000010, -0.000019, and) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 379.40 Td (+0.000001 \(and matched LP widehatW_2,matched^2 = +0.000512, -0.000001, +0.000365\) at theta =) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 367.20 Td (2.118, 2.618, and 3.118 rad, respectively; Arm B yields +0.000051, -0.000076, and -0.000066.) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 355.00 Td (Every point is consistent with the zero-drift null, confirming that theta^* 2.618 rad confers no) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 342.80 Td (special hardware stability advantage and that the apparent NB-11 gradient was entirely a) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 330.60 Td (finite-shot entropy artifact.) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 314.90 Td (* Monotonic Coherent-Drift Calibration \(H3 supported\): Debiasing does not sacrifice sensitivity) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 302.70 Td (to real physical drift \(Table tab:sim_and_drift and Fig. fig:drift_and_herona\). Comparing Arm B) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 290.50 Td (baseline theta^* against intra-block A/A duplicates and coherent angle shifts Delta theta in) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 278.30 Td (\\0.20, 0.45\\ rad yields widehatS_eps,matched\(0\) = +0.000005 +/- 0.000021,) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 266.10 Td (widehatS_eps,matched\(0.20\) = +0.000972 +/- 0.000083, and widehatS_eps,matched\(0.45\) = +0.003444) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 253.90 Td (+/- 0.000249, establishing strict monotonicity and a 13.76sigma detection above the A/A null) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 241.70 Td (\(surpassing the preregistered 10sigma threshold\).) Tj ET
+BT /F6 8.6 Tf 0.18 0.22 0.28 rg 52.00 221.00 Td ([Companion Vector Figure: fig2_coherent_drift_calibration_and_heron_rescoring.pdf]) Tj ET
+BT /F5 10.2 Tf 0.07 0.09 0.15 rg 50.00 197.60 Td (4. MULTI-PROCESSOR RE-SCORING ON IBM_MARRAKESH AND 49-BIT OSIRIS-QEC-001) Tj ET
+BT /F6 8.6 Tf 0.18 0.22 0.28 rg 52.00 178.80 Td (TABLE: HARDWARE_ATTESTED re-scoring of archived IBM Heron r2 datasets: 8-qubit staggered dynamical) Tj ET
+BT /F6 8.6 Tf 0.18 0.22 0.28 rg 52.00 167.40 Td (decoupling on ibm_marrakesh \(job dau0q3qhcrkc73durtgg, 20 circuits, 10,240 shots\) and multi-round) Tj ET
+BT /F6 8.6 Tf 0.18 0.22 0.28 rg 52.00 156.00 Td (distance-7 repetition-code syndrome extraction OSIRIS-QEC-001 on ibm_fez \(job) Tj ET
+BT /F6 8.6 Tf 0.18 0.22 0.28 rg 52.00 144.60 Td (dbtl2vb2kf8s73c9a0d0, 192 circuits, 393,216 shots\).) Tj ET
+0.5 w 0.65 0.68 0.72 RG 50 131.20 m 562 131.20 l S
+BT /F3 6.8 Tf 0.10 0.14 0.22 rg 52.00 125.20 Td (lrrrrrr@ Hardware Dataset \\ | Comparison Pair | Bits Q | Shots / Arm | C_Eq.7 | Raw LP Cost | widehatW_2,matched^2 |) Tj ET
+BT /F3 6.8 Tf 0.10 0.14 0.22 rg 52.00 115.60 Td (widehatS_eps,matched) Tj ET
+BT /F3 6.8 Tf 0.10 0.14 0.22 rg 52.00 106.00 Td (ibm_marrakesh 32 us xy8_stag A/A | 8 | 512 | 0.05416 | 0.00314 | +0.000244 | -0.000087) Tj ET
+BT /F3 6.8 Tf 0.10 0.14 0.22 rg 52.00 96.40 Td (ibm_marrakesh 32 us none A/A | 8 | 512 | 0.23341 | 0.00726 | +0.000854 | +0.000407) Tj ET
+BT /F3 6.8 Tf 0.10 0.14 0.22 rg 52.00 86.80 Td (ibm_marrakesh 16 us xy8_stag vs xy4x2_stag | 8 | 1,024 | 0.03179 | 0.00162 | +0.000168 | +0.000042) Tj ET
+BT /F3 6.8 Tf 0.10 0.14 0.22 rg 52.00 77.20 Td (ibm_marrakesh 16 us xy8_stag vs none | 8 | 1,024 | 0.16634 | 0.09227 | +0.089020 | +0.085312) Tj ET
+BT /F3 6.8 Tf 0.10 0.14 0.22 rg 52.00 67.60 Td (ibm_marrakesh 32 us xy8_stag vs xy4x2 | 8 | 1,024 | 0.08202 | 0.00899 | +0.005829 | +0.003733) Tj ET
+BT /F3 6.8 Tf 0.10 0.14 0.22 rg 52.00 58.00 Td (ibm_marrakesh 32 us xy8_stag vs none | 8 | 1,024 | 0.21026 | 0.10100 | +0.096466 | +0.073644) Tj ET
+BT /F3 8.0 Tf 0.40 0.42 0.46 rg 292.00 28.00 Td (- 4 -) Tj ET
+endstream
+endobj
+15 0 obj
+<< /Type /Page /Parent 7 0 R /MediaBox [0 0 612.00 792.00] /Resources << /Font << /F1 1 0 R /F2 2 0 R /F3 3 0 R /F4 4 0 R /F5 5 0 R /F6 6 0 R >> >> /Contents 14 0 R >>
+endobj
+16 0 obj
+<< /Length 7714 >>
+stream
+1 1 1 rg 0 0 612 792 re f
+BT /F3 6.8 Tf 0.10 0.14 0.22 rg 52.00 742.00 Td (ibm_fez QEC-001 Z-sector d=7,R=7 A/A | 49 | 2,048 | 0.01226 | 0.00062 | -0.000082 | -0.000006) Tj ET
+BT /F3 6.8 Tf 0.10 0.14 0.22 rg 52.00 732.40 Td (ibm_fez QEC-001 X-sector d=7,R=7 A/A | 49 | 2,048 | 0.11616 | 0.01189 | +0.000575 | +0.000210) Tj ET
+BT /F3 6.8 Tf 0.10 0.14 0.22 rg 52.00 722.80 Td (ibm_fez QEC-001 Z vs X \(q_107 T_2 hotspot\) | 49 | 2,048 | 0.07450 | 0.04702 | +0.039993 | +0.017553) Tj ET
+BT /F3 6.8 Tf 0.10 0.14 0.22 rg 52.00 713.20 Td (ibm_fez QEC-001 Z-data R=1 -> 7 marginal | 7 | 2,048 | - | 0.00041 | -0.000339 | -0.000005) Tj ET
+BT /F3 6.8 Tf 0.10 0.14 0.22 rg 52.00 703.60 Td (ibm_fez QEC-001 X-data R=1 -> 7 marginal | 7 | 2,048 | - | 0.04487 | +0.042291 | +0.023161) Tj ET
+0.5 w 0.65 0.68 0.72 RG 50 694.00 m 562 694.00 l S
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 683.00 Td (To verify cross-processor generality across distinct register widths and physical noise) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 670.80 Td (mechanisms, we applied our split-sample estimators directly to two archived HARDWARE_ATTESTED) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 658.60 Td (IBM Heron r2 shot ledgers on disk \(Table tab:heron_rescore and Fig. fig:drift_and_heronb\).) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 642.90 Td (First, on the 8-qubit ibm_marrakesh spectator-ZZ dynamical decoupling dataset \(job) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 630.70 Td (dau0q3qhcrkc73durtgg, 20 circuits, 10,240 shots across idle windows T in \\16, 32\\ us\), defective) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 618.50 Td (Eq. \(eq:defective_eq7\) assigns spurious inter-replicate A/A costs up to 0.2334 on unprotected) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 606.30 Td (none replicates, whereas split-sample Sinkhorn suppresses all ten inter-replicate A/A pairs) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 594.10 Td (across xy8_stag, xy4x2_stag, xy4x2, cpmg8, none\\ to |widehatS_eps| <= 0.000407. Simultaneously,) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 581.90 Td (genuine physical contrasts are sharply resolved: comparing bipartite staggered sequences) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 569.70 Td (xy8_stag versus xy4x2_stag yields null discrepancy \(+0.000042 at 16 us and -0.000046 at 32 us\),) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 557.50 Td (proving both staggered schedules prepare statistically indistinguishable protected output) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 545.30 Td (states, whereas xy8_stag versus unprotected none yields widehatS_eps,matched = 0.08531 \(16 us\)) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 533.10 Td (and 0.07364 \(32 us\), and xy8_stag versus un-staggered xy4x2 at 32 us isolates residual ZZ) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 520.90 Td (crosstalk at 0.00373.) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 505.20 Td (Second, on the 192-circuit OSIRIS-QEC-001 repetition-code dataset on ibm_fez \(job) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 493.00 Td (dbtl2vb2kf8s73c9a0d0, 393,216 shots\) [davis2026qec001], a d=7, R=7 trajectory concatenates 6 x 7) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 480.80 Td (= 42 mid-circuit ancilla syndrome bits with 7 terminal data bits into a Q=49-bit space-time) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 468.60 Td (register \(2^49 hypercube states\). In the phase-flip \(X_j X_j+1\) sector - where data qubit q_107) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 456.40 Td (exhibited a live T_2 coherence hotspot that raised syndrome entropy - defective Eq.) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 444.20 Td (\(eq:defective_eq7\) reports a massive false inter-block A/A cost of 0.11616 \(raw Wasserstein LP) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 432.00 Td (artifact 0.01189 from 49-bit support sparsity\), whereas matched split-sample Sinkhorn collapses) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 419.80 Td (inter-block A/A drift to +0.000210 in the X-sector and -0.000006 \(against 0.01226 under Eq.) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 407.60 Td (\(eq:defective_eq7\)\) in the bit-flip \(Z_j Z_j+1\) sector. Across the real physical contrast) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 395.40 Td (between Z-sector and X-sector 49-bit trajectories at d=7, R=7, matched split-sample transport) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 383.20 Td (cleanly isolates the q_107 T_2 hotspot at widehatS_eps,matched = 0.01755 \(widehatW_2,matched^2 =) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 371.00 Td (0.03999\). Likewise, on the 7-bit terminal data-qubit marginal relative to R=1, bit-flip drift at) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 358.80 Td (R=7 remains null \(-0.000005\) while phase-flip drift grows monotonically across syndrome cycles) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 346.60 Td (\(R=3: 0.00359; R=5: 0.01310; R=7: 0.02316\).) Tj ET
+BT /F5 10.2 Tf 0.07 0.09 0.15 rg 50.00 325.90 Td (5. CONCLUSION AND DATA AVAILABILITY) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 312.10 Td (Finite-shot optimal-transport benchmarks on wide quantum processors face an unavoidable) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 299.90 Td (hypercube sparsity barrier whenever un-debiased empirical estimators or marginal-product) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 287.70 Td (surrogates are used: high-entropy circuits exhibit a large apparent Wasserstein drift artifact) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 275.50 Td (under the noiseless null with no hardware decoherence. By splitting each integer shot histogram) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 263.30 Td (via exact multivariate-hypergeometric thinning and evaluating the sample-size-matched two-by-two) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 251.10 Td (cross-split U-statistic Eq. \(eq:matched_ustats\), we guarantee exact zero expectation under the) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 238.90 Td (identical-distribution null at arbitrary qubit count Q. Live constant-skeleton 27-qubit) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 226.70 Td (execution on ibm_fez \(dc1tqvinj2vs73dfrts0\), SIMULATED scaling to Q=96, and HARDWARE_ATTESTED) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 214.50 Td (re-scoring on ibm_marrakesh \(dau0q3qhcrkc73durtgg\) and 49-bit OSIRIS-QEC-001) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 202.30 Td (\(dbtl2vb2kf8s73c9a0d0\) establish split-sample-debiased Sinkhorn divergence as a fast, bias-free) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 190.10 Td (stability metric for next-generation superconducting and trapped-ion benchmarks.) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 174.40 Td (All raw shot histograms, Qiskit QPY circuit binaries, calibration snapshots, analysis modules) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 162.20 Td (\(debiased_ot.py and stage_and_harvest_wp2_27q_fez.py\), deterministic table/figure generator) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 150.00 Td (\(generate_wp2_paper_assets.py\), RFC 8785 canonical provenance capsule) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 137.80 Td (\(reproducibility_capsule.json\), and SHA-256 manifest \(SHA256SUMS.txt\) are archived in the) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 125.60 Td (repository companion package.) Tj ET
+BT /F5 10.2 Tf 0.07 0.09 0.15 rg 50.00 104.90 Td (ACKNOWLEDGEMENTS) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 91.10 Td (We acknowledge the use of IBM Quantum services for this work; the views expressed are those of) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 78.90 Td (the author and do not reflect the official policy or position of IBM or the IBM Quantum team.) Tj ET
+BT /F3 8.0 Tf 0.40 0.42 0.46 rg 292.00 28.00 Td (- 5 -) Tj ET
+endstream
+endobj
+17 0 obj
+<< /Type /Page /Parent 7 0 R /MediaBox [0 0 612.00 792.00] /Resources << /Font << /F1 1 0 R /F2 2 0 R /F3 3 0 R /F4 4 0 R /F5 5 0 R /F6 6 0 R >> >> /Contents 16 0 R >>
+endobj
+18 0 obj
+<< /Length 2431 >>
+stream
+1 1 1 rg 0 0 612 792 re f
+BT /F5 10.2 Tf 0.07 0.09 0.15 rg 50.00 742.00 Td (REFERENCES) Tj ET
+BT /F6 8.6 Tf 0.18 0.22 0.28 rg 52.00 728.20 Td ([peyre2019computational] G. Peyr\\'e and M. Cuturi, "Computational Optimal Transport," Found.\\) Tj ET
+BT /F6 8.6 Tf 0.18 0.22 0.28 rg 52.00 716.80 Td (Trends Mach.\\ Learn.\\ 11, 355 \(2019\), doi:10.1561/2200000073.) Tj ET
+BT /F6 8.6 Tf 0.18 0.22 0.28 rg 52.00 703.40 Td ([feydy2019interpolating] J. Feydy, T. S\\'ejourn\\'e, F.-X. Vialard, S.-i. Amari, A. Trouv\\'e, and) Tj ET
+BT /F6 8.6 Tf 0.18 0.22 0.28 rg 52.00 692.00 Td (G. Peyr\\'e, "Interpolating between Optimal Transport and MMD using Sinkhorn Divergences," in) Tj ET
+BT /F6 8.6 Tf 0.18 0.22 0.28 rg 52.00 680.60 Td (Proc.\\ AISTATS, PMLR 89, 2681 \(2019\).) Tj ET
+BT /F6 8.6 Tf 0.18 0.22 0.28 rg 52.00 667.20 Td ([weed2019sharp] J. Weed and F. Bach, "Sharp asymptotic and finite-sample rates of convergence of) Tj ET
+BT /F6 8.6 Tf 0.18 0.22 0.28 rg 52.00 655.80 Td (empirical measures in Wasserstein distance," Bernoulli 25, 2620 \(2019\), doi:10.3150/18-BEJ1065.) Tj ET
+BT /F6 8.6 Tf 0.18 0.22 0.28 rg 52.00 642.40 Td ([cuturi2013sinkhorn] M. Cuturi, "Sinkhorn Distances: Lightspeed Computation of Optimal Transport,") Tj ET
+BT /F6 8.6 Tf 0.18 0.22 0.28 rg 52.00 631.00 Td (in Adv.\\ Neural Inf.\\ Process.\\ Syst.\\ 26, 2292 \(2013\).) Tj ET
+BT /F6 8.6 Tf 0.18 0.22 0.28 rg 52.00 617.60 Td ([davis2026erratum] D. P. Davis, "Mathematical Audit and Erratum for 27-Qubit Optimal-Transport) Tj ET
+BT /F6 8.6 Tf 0.18 0.22 0.28 rg 52.00 606.20 Td (Stability Benchmarks \(NB-11\)," Agile Defense Systems Technical Report W2_MATHEMATICAL_ERRATUM) Tj ET
+BT /F6 8.6 Tf 0.18 0.22 0.28 rg 52.00 594.80 Td (\(2026\).) Tj ET
+BT /F6 8.6 Tf 0.18 0.22 0.28 rg 52.00 581.40 Td ([davis2026ro06] D. P. Davis, "Stale snapshots, not hidden physics: readout faults on three IBM) Tj ET
+BT /F6 8.6 Tf 0.18 0.22 0.28 rg 52.00 570.00 Td (Heron r2 processors," Zenodo, doi:10.5281/zenodo.24407897 \(2026\).) Tj ET
+BT /F6 8.6 Tf 0.18 0.22 0.28 rg 52.00 556.60 Td ([davis2026qec001] D. P. Davis, "Sub-Threshold Multi-Round Repetition-Code Logical Error Scaling) Tj ET
+BT /F6 8.6 Tf 0.18 0.22 0.28 rg 52.00 545.20 Td (Across Code Distances d in \\3,5,7\\ on ibm_fez \(OSIRIS-QEC-001\)," Agile Defense Systems Preprint) Tj ET
+BT /F6 8.6 Tf 0.18 0.22 0.28 rg 52.00 533.80 Td (\(2026\).) Tj ET
+BT /F3 8.0 Tf 0.40 0.42 0.46 rg 292.00 28.00 Td (- 6 -) Tj ET
+endstream
+endobj
+19 0 obj
+<< /Type /Page /Parent 7 0 R /MediaBox [0 0 612.00 792.00] /Resources << /Font << /F1 1 0 R /F2 2 0 R /F3 3 0 R /F4 4 0 R /F5 5 0 R /F6 6 0 R >> >> /Contents 18 0 R >>
+endobj
+20 0 obj
+<< /Type /Catalog /Pages 7 0 R >>
+endobj
+xref
+0 21
+0000000000 65535 f 
+0000000015 00000 n 
+0000000085 00000 n 
+0000000160 00000 n 
+0000000228 00000 n 
+0000000300 00000 n 
+0000000371 00000 n 
+0000000444 00000 n 
+0000000536 00000 n 
+0000008189 00000 n 
+0000008371 00000 n 
+0000016347 00000 n 
+0000016531 00000 n 
+0000024698 00000 n 
+0000024882 00000 n 
+0000032764 00000 n 
+0000032948 00000 n 
+0000040714 00000 n 
+0000040898 00000 n 
+0000043381 00000 n 
+0000043565 00000 n 
+trailer
+<< /Size 21 /Root 20 0 R >>
+startxref
+43615
+%%EOF

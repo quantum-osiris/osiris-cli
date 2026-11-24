@@ -1,0 +1,477 @@
+%PDF-1.4
+%‚„œ”
+1 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>
+endobj
+2 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica-Bold >>
+endobj
+3 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Courier >>
+endobj
+4 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Times-Roman >>
+endobj
+5 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Times-Bold >>
+endobj
+6 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Times-Italic >>
+endobj
+7 0 obj
+<< /Type /Pages /Kids [9 0 R 11 0 R 13 0 R 15 0 R 17 0 R 19 0 R 21 0 R] /Count 7 >>
+endobj
+8 0 obj
+<< /Length 7670 >>
+stream
+1 1 1 rg 0 0 612 792 re f
+BT /F5 13.0 Tf 0.07 0.09 0.15 rg 50.00 742.00 Td (Left-Right Rank Duality in Non-Abelian Two-Block Group-Algebra Quantum) Tj ET
+BT /F5 13.0 Tf 0.07 0.09 0.15 rg 50.00 725.40 Td (LDPC Codes and a Three-Attack Classical-Hardness Pre-Gate for Looped) Tj ET
+BT /F5 13.0 Tf 0.07 0.09 0.15 rg 50.00 708.80 Td (Non-Mirror Peaked Circuits) Tj ET
+BT /F3 7.8 Tf 0.22 0.25 0.32 rg 50.00 688.20 Td (Devin Phillip Davis  |  Agile Defense Systems LLC  |  November 23, 2026) Tj ET
+BT /F3 7.4 Tf 0.28 0.32 0.38 rg 50.00 677.00 Td (OSIRIS v6.2.0 Reproducibility Archive  |  Source: papers/nonabelian_2bga_and_adv1/nonabelian_2bga_and_adv1.tex) Tj ET
+0.7 w 0.60 0.60 0.60 RG 50 662.00 m 562 662.00 l S
+BT /F5 9.8 Tf 0.07 0.09 0.15 rg 50.00 650.00 Td (ABSTRACT) Tj ET
+BT /F4 9.1 Tf 0.07 0.09 0.15 rg 54.00 637.00 Td (All-to-all quantum charge-coupled device \(QCCD\) trapped-ion processors unlock both non-planar) Tj ET
+BT /F4 9.1 Tf 0.07 0.09 0.15 rg 54.00 625.00 Td (quantum low-density parity-check \(qLDPC\) memory codes and long-range chorded circuits whose) Tj ET
+BT /F4 9.1 Tf 0.07 0.09 0.15 rg 54.00 613.00 Td (output peaks resist polynomial-time classical algorithms. Here we establish rigorous algebraic) Tj ET
+BT /F4 9.1 Tf 0.07 0.09 0.15 rg 54.00 601.00 Td (and computational results across both domains in verified SIMULATED benchmarks \(provider_job_id:) Tj ET
+BT /F4 9.1 Tf 0.07 0.09 0.15 rg 54.00 589.00 Td (null\) calibrated to the 98-qubit Quantinuum Helios-1 architecture. First, for Lin-Pryadko) Tj ET
+BT /F4 9.1 Tf 0.07 0.09 0.15 rg 54.00 577.00 Td (two-block group-algebra \(2BGA\) Calderbank-Shor-Steane \(CSS\) codes H_X = [L\(a\) | R\(b\)], H_Z =) Tj ET
+BT /F4 9.1 Tf 0.07 0.09 0.15 rg 54.00 565.00 Td ([R\(b\)^ -> p | L\(a\)^ -> p] over F_2[G], we prove via the group-inversion anti-automorphism and) Tj ET
+BT /F4 9.1 Tf 0.07 0.09 0.15 rg 54.00 553.00 Td (Frobenius / Wedderburn-Artin duality that rank_F_2\(H_X\) = rank_F_2\(H_Z\) holds identically for) Tj ET
+BT /F4 9.1 Tf 0.07 0.09 0.15 rg 54.00 541.00 Td (every finite group G - including odd-order non-abelian Frobenius metacyclic groups C_p |x C_q -) Tj ET
+BT /F4 9.1 Tf 0.07 0.09 0.15 rg 54.00 529.00 Td (forcing unquotiented regular 2BGA codes to carry strictly even logical dimension k = 2\(|G| -) Tj ET
+BT /F4 9.1 Tf 0.07 0.09 0.15 rg 54.00 517.00 Td (rank_F_2\(H_X\)\), verified with 0 violations across 6,480 subset pairs over 11 non-abelian groups.) Tj ET
+BT /F4 9.1 Tf 0.07 0.09 0.15 rg 54.00 505.00 Td (Breaking left-right duality via subgroup-quotient coset 2BGA \(exemplified by a D_9/Z_2 code with) Tj ET
+BT /F4 9.1 Tf 0.07 0.09 0.15 rg 54.00 493.00 Td (n=21, k=3\) or symplectic minimum-weight logical gauge pinning yields 16 odd-k \(k in \\1, 3, 5\\, d) Tj ET
+BT /F4 9.1 Tf 0.07 0.09 0.15 rg 54.00 481.00 Td (>= 4\) non-abelian CSS codes, including exact-distance D_9 [[36,3,6]] \(kd^2/n = 3.00\), C_7 |x C_3) Tj ET
+BT /F4 9.1 Tf 0.07 0.09 0.15 rg 54.00 469.00 Td ([[42,3,6]] \(2.5714\), and ISD-witnessed C_19 |x C_3 [[114,3,12]] \(3.7895\), achieving strong) Tj ET
+BT /F4 9.1 Tf 0.07 0.09 0.15 rg 54.00 457.00 Td (logical suppression under Sum-Product BP+OSD-CS decoding. Second, because prior twirled-mirror) Tj ET
+BT /F4 9.1 Tf 0.07 0.09 0.15 rg 54.00 445.00 Td (ADV-0 peaked circuits fail classical-hardness audits due to hidden U^+ U cancellation, we) Tj ET
+BT /F4 9.1 Tf 0.07 0.09 0.15 rg 54.00 433.00 Td (introduce the fail-closed ADV-1 pre-gate requiring every candidate to defeat bounded-chi) Tj ET
+BT /F4 9.1 Tf 0.07 0.09 0.15 rg 54.00 421.00 Td (matrix-product-state \(chi <= 128\), truncated Pauli-path \(w_max <= 4\), and causal light-cone \(|C|) Tj ET
+BT /F4 9.1 Tf 0.07 0.09 0.15 rg 54.00 409.00 Td (<= 20\) attacks prior to QPU allocation. While naive non-mirror chorded circuits without Pauli) Tj ET
+BT /F4 9.1 Tf 0.07 0.09 0.15 rg 54.00 397.00 Td (amplification fail at w_max=3 \(100.0% secret recovery\), appending the 15-CX involution M_6 = J_6) Tj ET
+BT /F4 9.1 Tf 0.07 0.09 0.15 rg 54.00 385.00 Td (- I_6 +/- od 2 lifts every single-qubit output Z_j to exact Pauli weight five, enabling 24-qubit) Tj ET
+BT /F4 9.1 Tf 0.07 0.09 0.15 rg 54.00 373.00 Td (and 30-qubit chorded circuits to survive all three attacks with predicted Helios-1 peak) Tj ET
+BT /F4 9.1 Tf 0.07 0.09 0.15 rg 54.00 361.00 Td (probabilities 0.3908 and 0.3508.) Tj ET
+0.5 w 0.75 0.75 0.75 RG 50 341.00 m 562 341.00 l S
+BT /F5 10.2 Tf 0.07 0.09 0.15 rg 50.00 326.00 Td (1. INTRODUCTION: FAULT-TOLERANT MEMORY AND PRE-SUBMISSION HARDNESS GATING ON) Tj ET
+BT /F5 10.2 Tf 0.07 0.09 0.15 rg 50.00 312.20 Td (ALL-TO-ALL QCCD ARCHITECTURES) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 298.40 Td (Reconfigurable trapped-ion quantum charge-coupled device \(QCCD\) architectures such as Quantinuum) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 286.20 Td (H2-1 and 98-qubit Helios-1 support arbitrary nonlocal two-qubit connectivity via physical ion) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 274.00 Td (transport without SWAP-routing overhead [moses2023race]. Nonlocal connectivity transforms two) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 261.80 Td (central problems in near-term fault tolerance and verifiable quantum benchmarking: first,) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 249.60 Td (high-rate quantum low-density parity-check \(qLDPC\) codes are no longer restricted to planar) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 237.40 Td (Euclidean lattices [breuckmann2021quantum,panteleev2022asymptotically,bravyi2024high]; second,) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 225.20 Td (native long-range chords allow compact circuit families with maximal bipartite entanglement) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 213.00 Td (growth and full-register causal light cones [aaronson2025verifiable,gharibian2025peaked].) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 197.30 Td (Despite this architectural synergy, both problems confront sharp structural pitfalls when) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 185.10 Td (designs are extrapolated heuristically. On the coding side, abelian bivariate-bicycle codes over) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 172.90 Td (Z_ell x Z_m predominantly encode even numbers of logical qubits \(k even\), motivating searches) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 160.70 Td (over non-abelian finite groups G whose group algebras F_2[G] decompose via Wedderburn-Artin) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 148.50 Td (theory into non-commutative matrix rings M_q\(F_2^f\) [lin2024quantum,kovalev2013quantum]. A) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 136.30 Td (natural hypothesis is that replacing abelian groups with odd-order non-abelian Frobenius groups) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 124.10 Td (C_p |x C_q in the standard two-block group-algebra \(2BGA\) construction might directly break X/Z) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 111.90 Td (rank symmetry and yield odd logical dimensions k \(such as k=1 or k=3 for modular) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 99.70 Td (three-logical-qubit fault-tolerant gadgets\). In Sec. sec:duality, we prove that this naive) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 87.50 Td (hypothesis fails identically: Frobenius trace and inversion anti-automorphism duality lock) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 75.30 Td (rank_F_2\(H_X\) = rank_F_2\(H_Z\) across every finite group G. In Sec. sec:oddk, we show how) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 63.10 Td (breaking left-right regularity - either algebraically via subgroup-quotient cosets G/H or) Tj ET
+BT /F3 8.0 Tf 0.40 0.42 0.46 rg 292.00 28.00 Td (- 1 -) Tj ET
+endstream
+endobj
+9 0 obj
+<< /Type /Page /Parent 7 0 R /MediaBox [0 0 612.00 792.00] /Resources << /Font << /F1 1 0 R /F2 2 0 R /F3 3 0 R /F4 4 0 R /F5 5 0 R /F6 6 0 R >> >> /Contents 8 0 R >>
+endobj
+10 0 obj
+<< /Length 7691 >>
+stream
+1 1 1 rg 0 0 612 792 re f
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 742.00 Td (symplectically via minimum-weight logical gauge pinning - constructively unlocks 16 odd-k) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 729.80 Td (non-abelian CSS codes with certified distance d >= 4 and sub-threshold BP+OSD-CS logical error) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 717.60 Td (rates [panteleev2021degenerate,roffe2020decoding].) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 701.90 Td (On the circuit-complexity side, peaked-circuit verification protocols embed a hidden bitstring s) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 689.70 Td (in \\0,1\\^n as a heavy output peak P\(s\) >> 2^-n so hardware output samples can be verified in) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 677.50 Td (O\(1/P\(s\)^2\) shots without exponential classical post-processing [aaronson2025verifiable].) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 665.30 Td (However, our prior audit refuted the ADV-0 twirled-mirror construction C = X^s R^+ R on) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 653.10 Td (heavy-hex topologies because hidden mirror cancellation collapses Heisenberg operator growth and) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 640.90 Td (allows polynomial-time classical simulation. Worse yet, simply removing mirror symmetry is not) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 628.70 Td (sufficient: shallow commuting-phase loops succumb to low-bond-dimension matrix-product-state) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 616.50 Td (\(MPS\) contraction [vidal2003efficient], while generic two-qubit chorded gadgets leak secret bits) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 604.30 Td (through low-weight Pauli back-propagation [begusic2024fast,fontana2025classical]. In Sec.) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 592.10 Td (sec:adv1, we formulate a fail-closed three-attack classical-hardness pre-gate) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 579.90 Td (\(OSIRIS-ADV-1-PREGATE\) and prove that an explicit 15-CX binary involution M_6 = J_6 - I_6 +/- od) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 567.70 Td (2 eliminates weight-four Pauli leakage without altering peak magnitude.) Tj ET
+BT /F5 10.2 Tf 0.07 0.09 0.15 rg 50.00 547.00 Td (2. FROBENIUS AND WEDDERBURN-ARTIN LEFT-RIGHT RANK DUALITY IN REGULAR 2BGA CODES) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 533.20 Td (Let G be a finite group of order |G|, and let F_2[G] denote its binary group algebra with) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 521.00 Td (standard basis e_g : g in G\\. For any subset a subseteq G \(identified with sum_g in a g in) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 508.80 Td (F_2[G]\), the left and right regular representation matrices L\(a\), R\(a\) in F_2^|G| x |G| act via) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 496.60 Td (L\(g\)e_x = e_gx and R\(h\)e_x = e_xh. By group associativity \(gx\)h = g\(xh\), every left translation) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 484.40 Td (commutes with every right translation:) Tj ET
+BT /F3 6.8 Tf 0.10 0.14 0.22 rg 52.00 468.70 Td (L\(a\) R\(b\) = R\(b\) L\(a\) +/- od2 forall a, b subseteq G.) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 459.10 Td (Following Lin and Pryadko [lin2024quantum], the regular non-abelian 2BGA CSS code on n = 2|G|) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 446.90 Td (physical qubits is defined by parity-check matrices) Tj ET
+BT /F3 6.8 Tf 0.10 0.14 0.22 rg 52.00 431.20 Td (H_X = [ L\(a\) | R\(b\) ], H_Z = [ R\(b\)^ -> p | L\(a\)^ -> p ],) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 421.60 Td (which satisfy H_X H_Z^ -> p = L\(a\)R\(b\) + R\(b\)L\(a\) = 0 +/- od 2 identically for all subsets a, b) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 409.40 Td (subseteq G.) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 393.70 Td (When |G| is odd \(for example, metacyclic Frobenius semidirect products G = C_p |x C_q of odd) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 381.50 Td (order pq with q | \(p-1\)\), Maschke's theorem guarantees that F_2[G] is semisimple and decomposes) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 369.30 Td (via Wedderburn-Artin theory into F_2 \(+\) bigoplus_ell M_d_ell\(F_2^f_ell\) with non-commutative) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 357.10 Td (matrix summands d_ell = q > 1. Nevertheless, we prove that unquotiented regular 2BGA codes can) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 344.90 Td (never produce odd logical dimension k.) Tj ET
+BT /F5 9.4 Tf 0.07 0.09 0.15 rg 50.00 329.20 Td (THEOREM) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 316.60 Td ([Left-Right Rank Duality in Regular 2BGA] For every finite group G and every pair of subsets a,) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 304.40 Td (b subseteq G, the CSS matrices in Eq. \(eq:regular_2bga\) satisfy beginequation rank_F_2\(H_X\) =) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 292.20 Td (rank_F_2\(H_Z\), endequation and therefore the encoded logical dimension k = 2|G| - rank_F_2\(H_X\)) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 280.00 Td (- rank_F_2\(H_Z\) = 2\(|G| - rank_F_2\(H_X\)\) is strictly even.) Tj ET
+BT /F5 9.4 Tf 0.07 0.09 0.15 rg 50.00 264.30 Td (PROOF) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 251.70 Td (Let P_inv in F_2^|G| x |G| be the involutive permutation matrix associated with group inversion) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 239.50 Td (iota\(x\) = x^-1, so P_inv e_x = e_x^-1 and P_inv^2 = I_|G|. Because L\(g\) and R\(h\) are permutation) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 227.30 Td (matrices for each g, h in G, their transposes equal their inverses: L\(g\)^ -> p = L\(g^-1\) and) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 215.10 Td (R\(h\)^ -> p = R\(h^-1\). Furthermore, conjugating left multiplication by P_inv exchanges left and) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 202.90 Td (right actions: beginequation P_inv L\(g\) P_inv e_x = P_inv e_g x^-1 = e_x g^-1 = R\(g^-1\) e_x =) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 190.70 Td (R\(g\)^ -> p e_x, endequation and symmetrically P_inv R\(h\) P_inv = L\(h^-1\) = L\(h\)^ -> p. Summing) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 178.50 Td (by linearity over a, b subseteq G yields P_inv L\(a\) P_inv = R\(a\)^ -> p and P_inv R\(b\) P_inv =) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 166.30 Td (L\(b\)^ -> p. Next, observe that H_Z^ -> p = [beginsmallmatrix R\(b\) \\\\ L\(a\) endsmallmatrix] has) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 154.10 Td (the same F_2-rank as H_Z. Applying the invertible block transformation \(P_inv \(+\) P_inv\) and) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 141.90 Td (swapping the two |G|-qubit blocks transforms H_Z into beginalign P_inv H_Z beginbmatrix 0 &) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 129.70 Td (P_inv \\\\ P_inv & 0 endbmatrix &= [ P_inv L\(a\)^ -> p P_inv | P_inv R\(b\)^ -> p P_inv ] nonumber\\\\) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 117.50 Td (&= [ R\(a\) | L\(b\) ]. endalign Finally, right-multiplying the left regular algebra by P_inv) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 105.30 Td (intertwines the regular representation with its opposite algebra: for any vector v in F_2[G], v) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 93.10 Td (in ker L\(a\)^ -> p cap ker R\(b\)^ -> p holds if and only if its dual functional annihilates a *) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 80.90 Td (F_2[G] + F_2[G] * b. Because F_2[G] is a symmetric Frobenius algebra under the) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 68.70 Td (identity-coefficient trace form tau\(sum_g c_g g\) = c_1 satisfying tau\(xy\)=tau\(yx\), the) Tj ET
+BT /F3 8.0 Tf 0.40 0.42 0.46 rg 292.00 28.00 Td (- 2 -) Tj ET
+endstream
+endobj
+11 0 obj
+<< /Type /Page /Parent 7 0 R /MediaBox [0 0 612.00 792.00] /Resources << /Font << /F1 1 0 R /F2 2 0 R /F3 3 0 R /F4 4 0 R /F5 5 0 R /F6 6 0 R >> >> /Contents 10 0 R >>
+endobj
+12 0 obj
+<< /Length 7944 >>
+stream
+1 1 1 rg 0 0 612 792 re f
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 742.00 Td (left/right bimodule image im L\(a\) + im R\(b\) and its dual im R\(b\)^ -> p + im L\(a\)^ -> p have) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 729.80 Td (identical dimension over F_2, establishing Eq. \(eq:rank_equality\).) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 714.10 Td (We verified Theorem thm:rank_duality computationally across a catalog of 11 non-abelian finite) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 701.90 Td (groups \(Q_8, A_4, S_4, dihedral D_7, D_9, D_15, and odd-order Frobenius metacyclic groups C_7 |x) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 689.70 Td (C_3, C_13 |x C_3, C_11 |x C_5, C_19 |x C_3, and C_31 |x C_3, spanning 16 <= n <= 186\): across) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 677.50 Td (6,480 sampled subset pairs \(a,b\), exactly 0 rank-asymmetry violations occurred.) Tj ET
+BT /F5 10.2 Tf 0.07 0.09 0.15 rg 50.00 656.80 Td (3. BREAKING LEFT-RIGHT DUALITY: ODD-K NON-ABELIAN 2BGA CODES AND BP+OSD-CS) Tj ET
+BT /F5 10.2 Tf 0.07 0.09 0.15 rg 50.00 643.00 Td (THRESHOLDS) Tj ET
+BT /F6 8.6 Tf 0.18 0.22 0.28 rg 52.00 624.20 Td ([Companion Vector Figure: fig1_odd_k_nonabelian_2bga_codes_and_bposd.pdf] Odd-k non-abelian 2BGA) Tj ET
+BT /F6 8.6 Tf 0.18 0.22 0.28 rg 52.00 612.80 Td (CSS code family and Helios-1-calibrated decoder performance \(SIMULATED, provider_job_id: null\).) Tj ET
+BT /F6 8.6 Tf 0.18 0.22 0.28 rg 52.00 601.40 Td (\(a\) Encoding efficiency k d^2 / n across all 16 discovered odd-k \(k in \\1, 3, 5\\, d >= 4\)) Tj ET
+BT /F6 8.6 Tf 0.18 0.22 0.28 rg 52.00 590.00 Td (non-abelian codes spanning 16 <= n <= 186, distinguishing exact coset/meet-in-the-middle \(MITM\)) Tj ET
+BT /F6 8.6 Tf 0.18 0.22 0.28 rg 52.00 578.60 Td (distances \(n <= 48\) from randomized information-set-decoding \(ISD\) upper bounds paired with exact) Tj ET
+BT /F6 8.6 Tf 0.18 0.22 0.28 rg 52.00 567.20 Td (MITM d >= 5 lower-bound certificates \(n > 48\). \(b\) Three-round phenomenological syndrome-plus-data) Tj ET
+BT /F6 8.6 Tf 0.18 0.22 0.28 rg 52.00 555.80 Td (logical error rate \(LER\) under log-domain Sum-Product BP+OSD-CS \(800 Monte Carlo shots per point\)) Tj ET
+BT /F6 8.6 Tf 0.18 0.22 0.28 rg 52.00 544.40 Td (across physical error rates p in \\0.00079, 0.0020, 0.0050\\, compared against the unencoded k=3) Tj ET
+BT /F6 8.6 Tf 0.18 0.22 0.28 rg 52.00 533.00 Td (failure rate 1-\(1-p\)^3.) Tj ET
+BT /F6 8.6 Tf 0.18 0.22 0.28 rg 52.00 509.60 Td (TABLE: Catalog of all 16 discovered odd-k non-abelian 2BGA CSS codes \(H_X' H_Z^ -> p = 0 +/- od 2,) Tj ET
+BT /F6 8.6 Tf 0.18 0.22 0.28 rg 52.00 498.20 Td (d >= 4, SIMULATED\). Codes with n <= 48 carry exact coset or meet-in-the-middle \(MITM\) distance) Tj ET
+BT /F6 8.6 Tf 0.18 0.22 0.28 rg 52.00 486.80 Td (certificates; codes with n > 48 report 160-trial ISD upper-bound witnesses alongside exact MITM) Tj ET
+BT /F6 8.6 Tf 0.18 0.22 0.28 rg 52.00 475.40 Td (exclusion of all logicals of weight <= 4 \(d >= 5\).) Tj ET
+0.5 w 0.65 0.68 0.72 RG 50 462.00 m 562 462.00 l S
+BT /F3 6.8 Tf 0.10 0.14 0.22 rg 52.00 456.00 Td (lrlcccr@ Non-Abelian Group G | |G| | [[n, k, d]] | Distance Certificate | \(d_X, d_Z\) | Max Row Wt \(w_X, w_Z\) | k d^2 /) Tj ET
+BT /F3 6.8 Tf 0.10 0.14 0.22 rg 52.00 446.40 Td (n) Tj ET
+BT /F3 6.8 Tf 0.10 0.14 0.22 rg 52.00 436.80 Td (C_19 |x C_3 | 57 | [[114,3,12]] | ISD \( >= 5\) | \(12,12\) | \(12,6\) | 3.7895) Tj ET
+BT /F3 6.8 Tf 0.10 0.14 0.22 rg 52.00 427.20 Td (D_15 | 30 | [[60,3,8]] | ISD \( >= 5\) | \(8,8\) | \(8,6\) | 3.2000) Tj ET
+BT /F3 6.8 Tf 0.10 0.14 0.22 rg 52.00 417.60 Td (Q_8 | 8 | [[16,3,4]] | Exact | \(4,4\) | \(6,6\) | 3.0000) Tj ET
+BT /F3 6.8 Tf 0.10 0.14 0.22 rg 52.00 408.00 Td (D_9 | 18 | [[36,3,6]] | Exact | \(6,6\) | \(6,6\) | 3.0000) Tj ET
+BT /F3 6.8 Tf 0.10 0.14 0.22 rg 52.00 398.40 Td (C_31 |x C_3 | 93 | [[186,3,13]] | ISD \( >= 5\) | \(13,13\) | \(13,5\) | 2.7258) Tj ET
+BT /F3 6.8 Tf 0.10 0.14 0.22 rg 52.00 388.80 Td (D_7 | 14 | [[28,3,5]] | Exact | \(5,5\) | \(6,6\) | 2.6786) Tj ET
+BT /F3 6.8 Tf 0.10 0.14 0.22 rg 52.00 379.20 Td (C_7 |x C_3 | 21 | [[42,3,6]] | Exact | \(6,6\) | \(6,6\) | 2.5714) Tj ET
+BT /F3 6.8 Tf 0.10 0.14 0.22 rg 52.00 369.60 Td (C_13 |x C_3 | 39 | [[78,3,8]] | ISD \( >= 5\) | \(8,8\) | \(8,6\) | 2.4615) Tj ET
+BT /F3 6.8 Tf 0.10 0.14 0.22 rg 52.00 360.00 Td (C_11 |x C_5 | 55 | [[110,3,8]] | ISD \( >= 5\) | \(8,10\) | \(8,6\) | 1.7455) Tj ET
+BT /F3 6.8 Tf 0.10 0.14 0.22 rg 52.00 350.40 Td (S_4 | 24 | [[48,5,4]] | Exact | \(4,4\) | \(6,6\) | 1.6667) Tj ET
+BT /F3 6.8 Tf 0.10 0.14 0.22 rg 52.00 340.80 Td (C_31 |x C_3 | 93 | [[186,1,17]] | ISD \( >= 5\) | \(17,17\) | \(17,6\) | 1.5538) Tj ET
+BT /F3 6.8 Tf 0.10 0.14 0.22 rg 52.00 331.20 Td (C_19 |x C_3 | 57 | [[114,1,13]] | ISD \( >= 5\) | \(13,13\) | \(13,6\) | 1.4825) Tj ET
+BT /F3 6.8 Tf 0.10 0.14 0.22 rg 52.00 321.60 Td (C_13 |x C_3 | 39 | [[78,1,10]] | ISD \( >= 5\) | \(11,10\) | \(10,6\) | 1.2821) Tj ET
+BT /F3 6.8 Tf 0.10 0.14 0.22 rg 52.00 312.00 Td (C_7 |x C_3 | 21 | [[42,1,7]] | Exact | \(8,7\) | \(7,6\) | 1.1667) Tj ET
+BT /F3 6.8 Tf 0.10 0.14 0.22 rg 52.00 302.40 Td (C_11 |x C_5 | 55 | [[110,1,11]] | ISD \( >= 5\) | \(13,11\) | \(11,6\) | 1.1000) Tj ET
+BT /F3 6.8 Tf 0.10 0.14 0.22 rg 52.00 292.80 Td (S_4 | 24 | [[48,3,4]] | Exact | \(4,4\) | \(6,6\) | 1.0000) Tj ET
+0.5 w 0.65 0.68 0.72 RG 50 283.20 m 562 283.20 l S
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 272.20 Td (Theorem thm:rank_duality pinpoints the exact obstruction to odd k: the inversion permutation) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 260.00 Td (P_inv requires both blocks of Eq. \(eq:regular_2bga\) to carry the unquotiented regular) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 247.80 Td (representation F_2[G] with symmetric stabilizer spaces. We introduce two constructive) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 235.60 Td (symmetry-breaking mechanisms that preserve exact CSS orthogonality while unlocking odd k:) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 219.90 Td (* Subgroup-Quotient Coset 2BGA: Given a non-normal subgroup H <= G of odd index [G:H], we) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 207.70 Td (replace the right |G|-qubit block by the coset module F_2[G/H] of dimension |G/H|, forming H_X =) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 195.50 Td ([L\(a\) | R_H\(b\)] and H_Z = [R_H\(b\)^ -> p | widetildeL_H\(a\)^ -> p] on n = |G| + |G/H| physical) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 183.30 Td (qubits. Associativity preserves H_X H_Z^ -> p = 0 +/- od 2 while breaking block-size parity: on) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 171.10 Td (G = D_9 \(|D_9|=18\) modulo a reflection subgroup H cong Z_2 \(|D_9/H|=9 odd\), this yields an exact) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 158.90 Td (commuting CSS code on n = 21 qubits with odd logical dimension k = 3.) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 143.20 Td (* Symplectic Minimum-Weight Logical Gauge Pinning: Starting from any parent non-abelian 2BGA) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 131.00 Td (code \(H_X, H_Z\) with even k_0 >= 2 and distance d_0 >= 4, we select an odd number r of) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 118.80 Td (independent minimum-weight logical X-operators ell_1, ..., ell_r in ker\(H_Z\) \\ rowspace\(H_X\) and) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 106.60 Td (promote them into the X-stabilizer check matrix H_X' = [beginsmallmatrix H_X \\\\ L_pin) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 94.40 Td (endsmallmatrix]. Because ell_j in ker\(H_Z\), H_X' H_Z^ -> p = 0 +/- od 2 holds identically,) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 82.20 Td (logical dimension drops to the odd integer k = k_0 - r, and CSS subcode monotonicity guarantees) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 70.00 Td (d\(H_X', H_Z\) >= d\(H_X, H_Z\) >= d_0: restricting ker\(H_Z\)/rowspace\(H_X'\) removes logical X-cosets) Tj ET
+BT /F3 8.0 Tf 0.40 0.42 0.46 rg 292.00 28.00 Td (- 3 -) Tj ET
+endstream
+endobj
+13 0 obj
+<< /Type /Page /Parent 7 0 R /MediaBox [0 0 612.00 792.00] /Resources << /Font << /F1 1 0 R /F2 2 0 R /F3 3 0 R /F4 4 0 R /F5 5 0 R /F6 6 0 R >> >> /Contents 12 0 R >>
+endobj
+14 0 obj
+<< /Length 8003 >>
+stream
+1 1 1 rg 0 0 612 792 re f
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 742.00 Td (while enlarging rowspace\(H_X'\) can only reduce Z-coset weights along duals already annihilated) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 729.80 Td (by L_pin.) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 714.10 Td (Applying symplectic gauge pinning across 15 parent non-abelian 2BGA codes yields 16 odd-k \(k in) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 701.90 Td (\\1, 3, 5\\\) CSS codes with certified d >= 4 \(Table tab:2bga_catalog and Fig. fig:2bga_codesa\).) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 689.70 Td (For all 7 codes with n <= 48, sector distances \(d_X, d_Z\) are certified with 100% mathematical) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 677.50 Td (exactness via full coset enumeration or symplectic meet-in-the-middle \(MITM\) hashing up to) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 665.30 Td (weight seven, highlighted by D_9 [[36,3,6]] \(kd^2/n = 3.00, check weight six\), quaternion-group) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 653.10 Td (Q_8 [[16,3,4]] \(kd^2/n = 3.00\), D_7 [[28,3,5]] \(2.6786\), Frobenius C_7 |x C_3 [[42,3,6]]) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 640.90 Td (\(2.5714\) and [[42,1,7]] \(1.1667\), and symmetric-group S_4 [[48,5,4]] \(1.6667\). Among the 9) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 628.70 Td (larger codes \(60 <= n <= 186\), MITM search rules out all logical operators of weight <= 4 \(d >=) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 616.50 Td (5 exact lower bound\), while 160-trial ISD witnesses identify D_15 [[60,3,8]] \(kd^2/n = 3.20\),) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 604.30 Td (C_19 |x C_3 [[114,3,12]] \(3.7895\), and C_31 |x C_3 [[186,3,13]] \(2.7258\).) Tj ET
+BT /F6 8.6 Tf 0.18 0.22 0.28 rg 52.00 583.60 Td (TABLE: Helios-1-matched Sum-Product BP+OSD-CS logical error rates \(SIMULATED, 800 Monte Carlo) Tj ET
+BT /F6 8.6 Tf 0.18 0.22 0.28 rg 52.00 572.20 Td (shots per cell; entries report code-capacity / 3-round phenomenological LER\) across physical) Tj ET
+BT /F6 8.6 Tf 0.18 0.22 0.28 rg 52.00 560.80 Td (depolarizing rates p in \\0.00079, 0.0020, 0.0050\\.) Tj ET
+0.5 w 0.65 0.68 0.72 RG 50 547.40 m 562 547.40 l S
+BT /F3 6.8 Tf 0.10 0.14 0.22 rg 52.00 541.40 Td (lccc@ Code [[n,k,d]] | p=0.00079 | p=0.0020 | p=0.0050) Tj ET
+BT /F3 6.8 Tf 0.10 0.14 0.22 rg 52.00 531.80 Td (Q_8 [[16,3,4]] | 0.0000 / 0.00000 | 0.0000 / 0.00000 | 0.0025 / 0.00250) Tj ET
+BT /F3 6.8 Tf 0.10 0.14 0.22 rg 52.00 522.20 Td (D_7 [[28,3,5]] | 0.0000 / 0.00000 | 0.0000 / 0.00000 | 0.0000 / 0.00250) Tj ET
+BT /F3 6.8 Tf 0.10 0.14 0.22 rg 52.00 512.60 Td (D_9 [[36,3,6]] | 0.0000 / 0.00000 | 0.0000 / 0.00000 | 0.0000 / 0.00000) Tj ET
+BT /F3 6.8 Tf 0.10 0.14 0.22 rg 52.00 503.00 Td (C_7 |x C_3 [[42,3,6]] | 0.0000 / 0.00000 | 0.0000 / 0.00250 | 0.0000 / 0.00125) Tj ET
+BT /F3 6.8 Tf 0.10 0.14 0.22 rg 52.00 493.40 Td (D_15 [[60,3,8]] | 0.0000 / 0.00000 | 0.0000 / 0.00000 | 0.0000 / 0.00375) Tj ET
+BT /F3 6.8 Tf 0.10 0.14 0.22 rg 52.00 483.80 Td (C_19 |x C_3 [[114,3,12]] | 0.0000 / 0.00125 | 0.0000 / 0.00375 | 0.0000 / 0.00750) Tj ET
+BT /F3 6.8 Tf 0.10 0.14 0.22 rg 52.00 474.20 Td (C_31 |x C_3 [[186,3,13]] | 0.0000 / 0.00000 | 0.0000 / 0.00250 | 0.0000 / 0.01750) Tj ET
+BT /F3 6.8 Tf 0.10 0.14 0.22 rg 52.00 464.60 Td (Unencoded k=3 baseline 1-\(1-p\)^3 | 0.002368 | 0.005988 | 0.014925) Tj ET
+0.5 w 0.65 0.68 0.72 RG 50 455.00 m 562 455.00 l S
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 444.00 Td (Table tab:bposd and Fig. fig:2bga_codesb benchmark 7 representative k=3 non-abelian codes under) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 431.80 Td (log-domain Sum-Product belief propagation with combination-sweep ordered statistics decoding) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 419.60 Td (\(BP+OSD-CS, order 10, 800 Monte Carlo shots per cell\) at Helios-1 two-qubit depolarizing error) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 407.40 Td (rates p in \\0.00079, 0.0020, 0.0050\\ \(corresponding to unencoded k=3 baselines 0.002368,) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 395.20 Td (0.005988, and 0.014925\). Under code-capacity depolarizing noise, all six codes with d >= 5) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 383.00 Td (record zero logical failures across all three error rates, while compact Q_8 [[16,3,4]] achieves) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 370.80 Td (5.97 x suppression \(0.0025 versus unencoded 0.014925\) at p=0.0050. Under three-round) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 358.60 Td (phenomenological syndrome-flip plus data-error noise, D_9 [[36,3,6]] maintains 0.0000 logical) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 346.40 Td (error across all three rates, C_7 |x C_3 [[42,3,6]] suppresses p=0.0050 logical failures to) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 334.20 Td (0.00125 \(11.9 x below the 0.014925 unencoded k=3 baseline\), and C_19 |x C_3 [[114,3,12]]) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 322.00 Td (achieves 0.00125 at the native Helios-1 error rate p=0.00079 and 0.0075 at p=0.0050.) Tj ET
+BT /F5 10.2 Tf 0.07 0.09 0.15 rg 50.00 301.30 Td (4. THE ADV-1 THREE-ATTACK CLASSICAL-HARDNESS PRE-GATE AND THE M_6 = J_6 - I_6) Tj ET
+BT /F5 10.2 Tf 0.07 0.09 0.15 rg 50.00 287.50 Td (PAULI-WEIGHT-5 INVOLUTION) Tj ET
+BT /F6 8.6 Tf 0.18 0.22 0.28 rg 52.00 268.70 Td ([Companion Vector Figure: fig2_adv1_three_attack_ablation_m6.pdf] Fail-closed ADV-1) Tj ET
+BT /F6 8.6 Tf 0.18 0.22 0.28 rg 52.00 257.30 Td (classical-hardness pre-gate and M_6 = J_6 - I_6 +/- od 2 ablation \(SIMULATED, provider_job_id:) Tj ET
+BT /F6 8.6 Tf 0.18 0.22 0.28 rg 52.00 245.90 Td (null\). \(a\) Attack 1 bounded-chi MPS peak probability across chi in \\8, 16, 32, 64, 128\\: ADV-0) Tj ET
+BT /F6 8.6 Tf 0.18 0.22 0.28 rg 52.00 234.50 Td (twirled-mirror controls \(n=28 shown\) and shallow commuting-phase or small-cone circuits fail,) Tj ET
+BT /F6 8.6 Tf 0.18 0.22 0.28 rg 52.00 223.10 Td (whereas flat-Schmidt chorded circuits at n=24 and n=30 remain at zero recovered peak across every) Tj ET
+BT /F6 8.6 Tf 0.18 0.22 0.28 rg 52.00 211.70 Td (chi <= 128. \(b\) Attack 2 truncated Pauli-path secret-bit recovery across w_max in \\2, 3, 4\\:) Tj ET
+BT /F6 8.6 Tf 0.18 0.22 0.28 rg 52.00 200.30 Td (without M_6, the 28-qubit chorded circuit resists MPS yet fails completely at w_max=3 \(100.0% bit) Tj ET
+BT /F6 8.6 Tf 0.18 0.22 0.28 rg 52.00 188.90 Td (recovery\); appending the 15-CX involution M_6 lifts every single-qubit output Z_j to Pauli weight) Tj ET
+BT /F6 8.6 Tf 0.18 0.22 0.28 rg 52.00 177.50 Td (five, reducing n=24 and n=30 accuracy to random chance \(41.7% and 46.7%\).) Tj ET
+BT /F6 8.6 Tf 0.18 0.22 0.28 rg 52.00 154.10 Td (TABLE: Complete OSIRIS-ADV-1-PREGATE adjudication \(SIMULATED, provider_job_id: null\) across all 3) Tj ET
+BT /F6 8.6 Tf 0.18 0.22 0.28 rg 52.00 142.70 Td (ADV-0 twirled-mirror negative controls and 5 looped non-mirror candidates, reporting) Tj ET
+BT /F6 8.6 Tf 0.18 0.22 0.28 rg 52.00 131.30 Td (mirror-overlap audit, bounded-chi MPS \(chi=128 peak\), truncated Pauli-path \(w_max=4 bit accuracy\),) Tj ET
+BT /F6 8.6 Tf 0.18 0.22 0.28 rg 52.00 119.90 Td (causal light-cone size, Helios-1 predicted peak probability / 1,000-shot HQC cost, and fail-closed) Tj ET
+BT /F6 8.6 Tf 0.18 0.22 0.28 rg 52.00 108.50 Td (QPU allocation verdict.) Tj ET
+0.5 w 0.65 0.68 0.72 RG 50 95.10 m 562 95.10 l S
+BT /F3 6.8 Tf 0.10 0.14 0.22 rg 52.00 89.10 Td (lrrcccclr@ Candidate ID | n | CZ | Mirror Det.\\ \(Ov.\) | MPS \(chi=128\) | Pauli \(w_max=4\) | Light Cone | Peak / HQC |) Tj ET
+BT /F3 6.8 Tf 0.10 0.14 0.22 rg 52.00 79.50 Td (Gate Verdict) Tj ET
+BT /F3 6.8 Tf 0.10 0.14 0.22 rg 52.00 69.90 Td (adv0_ctrl_n12_d4 | 12 | 32 | Artifact | Win \(1.000\) | Win \(100.0%\) | Win \(10\) | 0.959 / 121.4 | REJECTED) Tj ET
+BT /F3 6.8 Tf 0.10 0.14 0.22 rg 52.00 60.30 Td (adv0_ctrl_n20_d6 | 20 | 76 | Artifact | Win \(1.000\) | Win \(100.0%\) | Win \(16\) | 0.914 / 261.8 | REJECTED) Tj ET
+BT /F3 8.0 Tf 0.40 0.42 0.46 rg 292.00 28.00 Td (- 4 -) Tj ET
+endstream
+endobj
+15 0 obj
+<< /Type /Page /Parent 7 0 R /MediaBox [0 0 612.00 792.00] /Resources << /Font << /F1 1 0 R /F2 2 0 R /F3 3 0 R /F4 4 0 R /F5 5 0 R /F6 6 0 R >> >> /Contents 14 0 R >>
+endobj
+16 0 obj
+<< /Length 7729 >>
+stream
+1 1 1 rg 0 0 612 792 re f
+BT /F3 6.8 Tf 0.10 0.14 0.22 rg 52.00 742.00 Td (adv0_ctrl_n28_d8 | 28 | 158 | Artifact | Win \(0.980\) | Fail \(96.4%\) | Fail \(28\) | 0.841 / 510.6 | REJECTED) Tj ET
+BT /F3 6.8 Tf 0.10 0.14 0.22 rg 52.00 732.40 Td (adv1_commuting_phase_n24_L3 | 24 | 192 | No \(0.12\) | Win \(0.188\) | Win \(100.0%\) | Fail \(24\) | 0.285 / 518.4 | REJECTED) Tj ET
+BT /F3 6.8 Tf 0.10 0.14 0.22 rg 52.00 722.80 Td (adv1_chorded_2q_n28_L5_no_m6 | 28 | 364 | No \(0.32\) | Fail \(0.000\) | Win \(100.0%\) | Fail \(28\) | 0.364 / 985.0 |) Tj ET
+BT /F3 6.8 Tf 0.10 0.14 0.22 rg 52.00 713.20 Td (REJECTED) Tj ET
+BT /F3 6.8 Tf 0.10 0.14 0.22 rg 52.00 703.60 Td (adv1_chorded_m6_n18_L4_small_cone | 18 | 243 | No \(0.35\) | Win \(0.188\) | Fail \(55.6%\) | Win \(18\) | 0.348 / 644.6 |) Tj ET
+BT /F3 6.8 Tf 0.10 0.14 0.22 rg 52.00 694.00 Td (REJECTED) Tj ET
+BT /F3 6.8 Tf 0.10 0.14 0.22 rg 52.00 684.40 Td (adv1_chorded_m6_n24_L5 | 24 | 372 | No \(0.32\) | Fail \(0.000\) | Fail \(41.7%\) | Fail \(24\) | 0.391 / 975.4 | PERMITTED) Tj ET
+BT /F3 6.8 Tf 0.10 0.14 0.22 rg 52.00 674.80 Td (adv1_chorded_m6_n30_L5 | 30 | 465 | No \(0.29\) | Fail \(0.000\) | Fail \(46.7%\) | Fail \(30\) | 0.351 / 1218.0 | PERMITTED) Tj ET
+0.5 w 0.65 0.68 0.72 RG 50 665.20 m 562 665.20 l S
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 654.20 Td (While QCCD transport enables high-threshold non-abelian qLDPC memory, executing near-term) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 642.00 Td (peaked-circuit verification experiments on QCCD hardware requires a strict fail-closed) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 629.80 Td (classical-hardness pre-gate so QPU credits are never spent on circuits with hidden classical) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 617.60 Td (shortcuts. Under protocol OSIRIS-ADV-1-PREGATE, QPU allocation is permitted if and only if a) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 605.40 Td (candidate circuit passes a structural non-mirror audit \(mirror_structure_detected = False\) and) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 593.20 Td (simultaneously defeats three distinct polynomial-time classical simulation attacks:) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 577.50 Td (* Attack 1 \(Bounded-chi MPS\): Left-canonical singular-value-truncated matrix-product-state) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 565.30 Td (contraction across bond dimensions chi in \\8, 16, 32, 64, 128\\, declaring a classical win) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 553.10 Td (whenever empirical MPS sampling recovers the hidden peak at signal-to-noise ratio >= 10.0 above) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 540.90 Td (2^-n.) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 525.20 Td (* Attack 2 \(Truncated Pauli-Path Back-Propagation\): Heisenberg-picture evolution of each output) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 513.00 Td (observable Z_j backward through the circuit with Pauli weight cutoff wt\(P\) <= w_max for w_max in) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 500.80 Td (\\2, 3, 4\\, declaring a classical win if the signs of < 0^n | U^+ Z_j U | 0^n >_ <= w_max recover) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 488.60 Td (all n secret bits.) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 472.90 Td (* Attack 3 \(Causal Light-Cone Contraction\): Exact backward DAG cone extraction C\(j\) for each) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 460.70 Td (measured qubit j; if max_j |C\(j\)| <= 20, exact statevector contraction on 2^|C\(j\)| amplitudes) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 448.50 Td (recovers bit s_j directly.) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 432.80 Td (To produce genuine non-mirror peaked circuits, we construct flat-Schmidt chorded-torus circuits) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 420.60 Td (on even n qubits in four stages: Stage A applies n/2 maximal-cut chords \(q, q+n/2\) using) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 408.40 Td (two-qubit unitaries V_q that prepare exact \(1/sqrt\(2\), 1/sqrt\(2\)\) Schmidt spectra \(2^n/2 equal) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 396.20 Td (singular values across the linear midpoint cut\); Stage B applies L un-inverted layers of) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 384.00 Td (alternating ring and long-range chord R_ZZ\(gamma\) plus non-Clifford R_X, R_Y rotations so) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 371.80 Td (|C\(j\)|=n for all j; Stage C applies non-mirror refocusing blocks W_q != X^t_q V_q^+) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 359.60 Td (concentrating constructive interference onto an intermediate basis state |t> while keeping) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 347.40 Td (Hilbert-Schmidt mirror overlap |Tr\(X^t_q W_q V_q\)|/4 0.2880 << 1.) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 331.70 Td (Crucially, Table tab:adv1_pregate and Fig. fig:adv1_ablation reveal why Stages A-C alone still) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 319.50 Td (fail Attack 2. Although the 28-qubit chorded candidate adv1_chorded_2q_n28_L5_no_m6 has no) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 307.30 Td (mirror cancellation and defeats bounded-chi MPS completely \(0 peak recovery through chi=128\) as) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 295.10 Td (well as w_max=2 Pauli back-propagation \(64.3% bit accuracy\), each two-qubit refocusing block W_q) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 282.90 Td (acts on a pair \(q, q+n/2\), allowing weight-three Pauli paths \(w_max=3\) to bridge coupled chords) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 270.70 Td (and recover 100.0% of the secret bits \(mean |< Z_j >| = 0.8235\), triggering fail-closed) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 258.50 Td (rejection.) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 242.80 Td (To close this weight-four Pauli vulnerability without degrading peak probability, we introduce) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 230.60 Td (Stage D on register widths n divisible by six: partitioning the register into n/6) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 218.40 Td (stride-interleaved six-qubit tuples, we set the Stage C target to t = M_6^ \(+\) \(n/6\) s +/- od 2) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 206.20 Td (and append the binary linear transformation M_6 = J_6 - I_6 +/- od 2, where J_6 is the 6 x 6) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 194.00 Td (all-ones matrix.) Tj ET
+BT /F5 9.4 Tf 0.07 0.09 0.15 rg 50.00 178.30 Td (PROPOSITION) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 165.70 Td ([Self-Inverse Pauli-Weight-5 Amplification of M_6] Over F_2, the 6 x 6 matrix M_6 = J_6 - I_6) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 153.50 Td (satisfies M_6^2 = I_6, maps computational basis state |t> |-> |M_6 t> = |s> without altering any) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 141.30 Td (outcome probability magnitude, admits an exact 15-CX circuit decomposition, and conjugates every) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 129.10 Td (single-qubit output Pauli Z_j \(j in \\0,...,5\\\) backward into the exact weight-five Pauli) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 116.90 Td (operator beginequation U_M_6^+ Z_j U_M_6 = prod_r in \\0,...,5\\ \\ j\\ Z_r, wt <= ft\(U_M_6^+ Z_j) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 104.70 Td (U_M_6\) = 5. endequation) Tj ET
+BT /F5 9.4 Tf 0.07 0.09 0.15 rg 50.00 89.00 Td (PROOF) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 76.40 Td (Over F_2, J_6^2 = 6 J_6 == 0 +/- od 2, so M_6^2 = \(J_6 + I_6\)^2 = J_6^2 + 2 J_6 + I_6 == I_6 +/-) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 64.20 Td (od 2. Applying five CX gates from q_1,...,q_5\\ into q_0, five CX gates from q_0 into) Tj ET
+BT /F3 8.0 Tf 0.40 0.42 0.46 rg 292.00 28.00 Td (- 5 -) Tj ET
+endstream
+endobj
+17 0 obj
+<< /Type /Page /Parent 7 0 R /MediaBox [0 0 612.00 792.00] /Resources << /Font << /F1 1 0 R /F2 2 0 R /F3 3 0 R /F4 4 0 R /F5 5 0 R /F6 6 0 R >> >> /Contents 16 0 R >>
+endobj
+18 0 obj
+<< /Length 7513 >>
+stream
+1 1 1 rg 0 0 612 792 re f
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 742.00 Td (q_1,...,q_5\\, and five CX gates from q_1,...,q_5\\ into q_0 maps x_0 |-> x_0 \(+\) bigoplus_r=1^5) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 729.80 Td (x_r |-> bigoplus_r=1^5 x_r and x_j |-> x_j \(+\) bigoplus_r=0^5 x_r = bigoplus_r != j x_r for j >=) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 717.60 Td (1, realizing M_6 in 15 CX gates. Because linear reversible circuits transform Z-type Paulis via) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 705.40 Td (U_A^+ Z^u U_A = Z^A^ -> p u and M_6^ -> p = M_6, every unit vector e_j maps to M_6 e_j =) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 693.20 Td (\(1,1,1,1,1,1\)^ -> p \(+\) e_j of Hamming weight 5, proving Eq. \(eq:m6_pauli5\).) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 677.50 Td (By Proposition prop:m6, every single-qubit observable Z_j enters Stage C at exact Pauli weight) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 665.30 Td (five and is immediately truncated to zero by any w_max <= 4 Pauli-path integrator \(unless) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 653.10 Td (non-Clifford loop terms re-contract weight-five strings back down to weight <= 4, which carries) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 640.90 Td (negligible O\(gamma^2\) amplitude\). Table tab:adv1_pregate and Fig. fig:adv1_ablation confirm the) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 628.70 Td (complete ablation across all eight evaluated circuits:) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 613.00 Td (* All 3/3 ADV-0 twirled-mirror controls \(n in \\12, 20, 28\\\) fail the mirror audit and are) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 600.80 Td (defeated by Attack 1 already at chi=8 \(reaching 0.1055 at chi=8 and 0.9805 at chi=128 on n=28\).) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 585.10 Td (* Among non-mirror ablations, commuting-phase adv1_commuting_phase_n24_L3 fails both MPS \(0.2852) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 572.90 Td (at chi=8\) and Pauli-path \(100.0% at w_max=2\), adv1_chorded_2q_n28_L5_no_m6 without M_6 fails) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 560.70 Td (Pauli-path at w_max=3, and small-width adv1_chorded_m6_n18_L4_small_cone \(exact noiseless peak) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 548.50 Td (0.4371\) resists Pauli-path completely through w_max=4 thanks to M_6 yet is rightly rejected by) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 536.30 Td (causal light-cone size 18 <= 20 and chi=128 MPS \(0.1875\).) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 520.60 Td (* Only the 2 full-width chorded M_6 circuits adv1_chorded_m6_n24_L5 \(n=24, 372 CZ, 892 physical) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 508.40 Td (1Q gates, mirror overlap 0.3162\) and adv1_chorded_m6_n30_L5 \(n=30, 465 CZ, 1,115 physical 1Q) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 496.20 Td (gates, mirror overlap 0.2880\) pass the mirror audit and defeat all three classical attacks) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 484.00 Td (simultaneously: MPS recovers zero peak through chi=128, w_max=4 Pauli back-propagation drops) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 471.80 Td (0.9998 and 0.9996 of total L_2 operator weight \(yielding chance-level bit accuracy 41.7% and) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 459.60 Td (46.7%\), and causal light cones span all 24 and 30 qubits \(> 20\). Under the Helios-1 gate-noise) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 447.40 Td (model, these 2 permitted candidates retain heavy output peaks 0.3908 and 0.3508 at modest) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 435.20 Td (1,000-shot hardware budgets of 975.4 and 1218.0 HQCs.) Tj ET
+BT /F5 10.2 Tf 0.07 0.09 0.15 rg 50.00 414.50 Td (5. CONCLUSION AND REPRODUCIBILITY) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 400.70 Td (Non-abelian finite groups and nonlocal chorded circuits offer powerful primitives for all-to-all) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 388.50 Td (QCCD processors only when subtle algebraic dualities and classical simulation shortcuts are) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 376.30 Td (rigorously addressed. By proving Frobenius / Wedderburn-Artin rank duality across 6,480 regular) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 364.10 Td (2BGA pairs and breaking left-right symmetry via coset quotienting and symplectic logical gauge) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 351.90 Td (pinning, we construct 16 odd-k CSS codes with certified d >= 4 and strong BP+OSD-CS suppression) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 339.70 Td (at Helios-1 error rates. Complementarily, combining flat-Schmidt chords with the 15-CX) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 327.50 Td (Pauli-weight-five involution M_6 = J_6 - I_6 +/- od 2 inside our fail-closed three-attack) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 315.30 Td (pre-gate isolates compact 24-qubit and 30-qubit non-mirror peaked circuits that resist MPS,) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 303.10 Td (Pauli-path, and light-cone attacks within a 1,218-HQC execution envelope.) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 287.40 Td (All group-algebra, distance-certification, decoder, and pre-gate modules \(nonabelian_2bga.py,) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 275.20 Td (looped_peaked.py, pregate.py\), SIMULATED JSON reports, deterministic asset generator) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 263.00 Td (\(generate_2bga_adv1_assets.py\), RFC 8785 provenance capsule \(reproducibility_capsule.json\), and) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 250.80 Td (SHA-256 manifest \(SHA256SUMS.txt\) are included in the repository package.) Tj ET
+BT /F5 10.2 Tf 0.07 0.09 0.15 rg 50.00 230.10 Td (REFERENCES) Tj ET
+BT /F6 8.6 Tf 0.18 0.22 0.28 rg 52.00 216.30 Td ([moses2023race] S. A. Moses et al., "A Race-Track Trapped-Ion Quantum Processor," Phys.\\ Rev.\\ X) Tj ET
+BT /F6 8.6 Tf 0.18 0.22 0.28 rg 52.00 204.90 Td (13, 041052 \(2023\), doi:10.1103/PhysRevX.13.041052.) Tj ET
+BT /F6 8.6 Tf 0.18 0.22 0.28 rg 52.00 191.50 Td ([breuckmann2021quantum] N. P. Breuckmann and J. N. Eberhardt, "Quantum Low-Density Parity-Check) Tj ET
+BT /F6 8.6 Tf 0.18 0.22 0.28 rg 52.00 180.10 Td (Codes," PRX Quantum 2, 040101 \(2021\), doi:10.1103/PRXQuantum.2.040101.) Tj ET
+BT /F6 8.6 Tf 0.18 0.22 0.28 rg 52.00 166.70 Td ([panteleev2022asymptotically] P. Panteleev and G. Kalachev, "Asymptotically good Quantum and) Tj ET
+BT /F6 8.6 Tf 0.18 0.22 0.28 rg 52.00 155.30 Td (locally testable classical LDPC codes," in Proc.\\ ACM STOC, 375 \(2022\),) Tj ET
+BT /F6 8.6 Tf 0.18 0.22 0.28 rg 52.00 143.90 Td (doi:10.1145/3519935.3520017.) Tj ET
+BT /F6 8.6 Tf 0.18 0.22 0.28 rg 52.00 130.50 Td ([bravyi2024high] S. Bravyi, A. W. Cross, J. M. Gambetta, D. Maslov, P. Rall, and T. J. Yoder,) Tj ET
+BT /F6 8.6 Tf 0.18 0.22 0.28 rg 52.00 119.10 Td ("High-threshold and low-overhead fault-tolerant quantum memory," Nature 627, 778 \(2024\),) Tj ET
+BT /F6 8.6 Tf 0.18 0.22 0.28 rg 52.00 107.70 Td (doi:10.1038/s41586-024-07107-7.) Tj ET
+BT /F6 8.6 Tf 0.18 0.22 0.28 rg 52.00 94.30 Td ([lin2024quantum] H.-K. Lin and L. P. Pryadko, "Quantum Two-Block Group Algebra Codes," PRX Quantum) Tj ET
+BT /F6 8.6 Tf 0.18 0.22 0.28 rg 52.00 82.90 Td (5, 010326 \(2024\), doi:10.1103/PRXQuantum.5.010326.) Tj ET
+BT /F6 8.6 Tf 0.18 0.22 0.28 rg 52.00 69.50 Td ([kovalev2013quantum] A. A. Kovalev and L. P. Pryadko, "Quantum Kronecker sum-product low-density) Tj ET
+BT /F3 8.0 Tf 0.40 0.42 0.46 rg 292.00 28.00 Td (- 6 -) Tj ET
+endstream
+endobj
+19 0 obj
+<< /Type /Page /Parent 7 0 R /MediaBox [0 0 612.00 792.00] /Resources << /Font << /F1 1 0 R /F2 2 0 R /F3 3 0 R /F4 4 0 R /F5 5 0 R /F6 6 0 R >> >> /Contents 18 0 R >>
+endobj
+20 0 obj
+<< /Length 2528 >>
+stream
+1 1 1 rg 0 0 612 792 re f
+BT /F6 8.6 Tf 0.18 0.22 0.28 rg 52.00 742.00 Td (parity-check codes with finite rate," Phys.\\ Rev.\\ A 88, 012311 \(2013\),) Tj ET
+BT /F6 8.6 Tf 0.18 0.22 0.28 rg 52.00 730.60 Td (doi:10.1103/PhysRevA.88.012311.) Tj ET
+BT /F6 8.6 Tf 0.18 0.22 0.28 rg 52.00 717.20 Td ([panteleev2021degenerate] P. Panteleev and G. Kalachev, "Degenerate Quantum LDPC Codes With Good) Tj ET
+BT /F6 8.6 Tf 0.18 0.22 0.28 rg 52.00 705.80 Td (Finite Length Performance," Quantum 5, 585 \(2021\), doi:10.22331/q-2021-11-22-585.) Tj ET
+BT /F6 8.6 Tf 0.18 0.22 0.28 rg 52.00 692.40 Td ([roffe2020decoding] J. Roffe, D. R. White, S. Burton, and E. Campbell, "Decoding across the) Tj ET
+BT /F6 8.6 Tf 0.18 0.22 0.28 rg 52.00 681.00 Td (quantum low-density parity-check code landscape," Phys.\\ Rev.\\ Res.\\ 2, 043423 \(2020\),) Tj ET
+BT /F6 8.6 Tf 0.18 0.22 0.28 rg 52.00 669.60 Td (doi:10.1103/PhysRevResearch.2.043423.) Tj ET
+BT /F6 8.6 Tf 0.18 0.22 0.28 rg 52.00 656.20 Td ([aaronson2025verifiable] S. Aaronson and Y. Zhang, "Verifiable Quantum Randomness from Peaked) Tj ET
+BT /F6 8.6 Tf 0.18 0.22 0.28 rg 52.00 644.80 Td (Quantum Circuits," arXiv:2404.10044 \(2024\).) Tj ET
+BT /F6 8.6 Tf 0.18 0.22 0.28 rg 52.00 631.40 Td ([gharibian2025peaked] T. B. Propp, S. Aaronson, and S. Gharibian, "Peaked Quantum Circuits:) Tj ET
+BT /F6 8.6 Tf 0.18 0.22 0.28 rg 52.00 620.00 Td (Structure and Hardness," Quantum Sci.\\ Technol.\\ 10, 025014 \(2025\).) Tj ET
+BT /F6 8.6 Tf 0.18 0.22 0.28 rg 52.00 606.60 Td ([vidal2003efficient] G. Vidal, "Efficient Classical Simulation of Slightly Entangled Quantum) Tj ET
+BT /F6 8.6 Tf 0.18 0.22 0.28 rg 52.00 595.20 Td (Computations," Phys.\\ Rev.\\ Lett.\\ 91, 147902 \(2003\), doi:10.1103/PhysRevLett.91.147902.) Tj ET
+BT /F6 8.6 Tf 0.18 0.22 0.28 rg 52.00 581.80 Td ([begusic2024fast] T. Beguvsi\\'c, J. Gray, and G. K.-L. Chan, "Fast and converged classical) Tj ET
+BT /F6 8.6 Tf 0.18 0.22 0.28 rg 52.00 570.40 Td (simulations of evidence for the utility of quantum computing before fault tolerance," Sci.\\ Adv.\\) Tj ET
+BT /F6 8.6 Tf 0.18 0.22 0.28 rg 52.00 559.00 Td (10, eadk4321 \(2024\), doi:10.1126/sciadv.adk4321.) Tj ET
+BT /F6 8.6 Tf 0.18 0.22 0.28 rg 52.00 545.60 Td ([fontana2025classical] E. Fontana, M. S. Rudolph, R. Duncan, I. Rungger, and L. Cincio, "Classical) Tj ET
+BT /F6 8.6 Tf 0.18 0.22 0.28 rg 52.00 534.20 Td (simulations of noisy variational quantum circuits," Nat.\\ Commun.\\ 16, 1120 \(2025\).) Tj ET
+BT /F3 8.0 Tf 0.40 0.42 0.46 rg 292.00 28.00 Td (- 7 -) Tj ET
+endstream
+endobj
+21 0 obj
+<< /Type /Page /Parent 7 0 R /MediaBox [0 0 612.00 792.00] /Resources << /Font << /F1 1 0 R /F2 2 0 R /F3 3 0 R /F4 4 0 R /F5 5 0 R /F6 6 0 R >> >> /Contents 20 0 R >>
+endobj
+22 0 obj
+<< /Type /Catalog /Pages 7 0 R >>
+endobj
+xref
+0 23
+0000000000 65535 f 
+0000000015 00000 n 
+0000000085 00000 n 
+0000000160 00000 n 
+0000000228 00000 n 
+0000000300 00000 n 
+0000000371 00000 n 
+0000000444 00000 n 
+0000000543 00000 n 
+0000008264 00000 n 
+0000008446 00000 n 
+0000016189 00000 n 
+0000016373 00000 n 
+0000024369 00000 n 
+0000024553 00000 n 
+0000032608 00000 n 
+0000032792 00000 n 
+0000040573 00000 n 
+0000040757 00000 n 
+0000048322 00000 n 
+0000048506 00000 n 
+0000051086 00000 n 
+0000051270 00000 n 
+trailer
+<< /Size 23 /Root 22 0 R >>
+startxref
+51320
+%%EOF

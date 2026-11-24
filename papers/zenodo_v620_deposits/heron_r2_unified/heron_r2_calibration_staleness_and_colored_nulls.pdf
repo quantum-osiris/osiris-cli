@@ -1,0 +1,699 @@
+%PDF-1.4
+%‚„œ”
+1 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>
+endobj
+2 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica-Bold >>
+endobj
+3 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Courier >>
+endobj
+4 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Times-Roman >>
+endobj
+5 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Times-Bold >>
+endobj
+6 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Times-Italic >>
+endobj
+7 0 obj
+<< /Type /Pages /Kids [9 0 R 11 0 R 13 0 R 15 0 R 17 0 R 19 0 R 21 0 R 23 0 R 25 0 R 27 0 R] /Count 10 >>
+endobj
+8 0 obj
+<< /Length 7748 >>
+stream
+1 1 1 rg 0 0 612 792 re f
+BT /F5 13.0 Tf 0.07 0.09 0.15 rg 50.00 742.00 Td (Calibration Staleness, Transient Readout Telegraphing, and Colored-Noise) Tj ET
+BT /F5 13.0 Tf 0.07 0.09 0.15 rg 50.00 725.40 Td (False Positives Across Three 156-Qubit Superconducting Quantum Processors) Tj ET
+BT /F3 7.8 Tf 0.22 0.25 0.32 rg 50.00 704.80 Td (Devin Phillip Davis  |  Agile Defense Systems LLC  |  November 22, 2026) Tj ET
+BT /F3 7.4 Tf 0.28 0.32 0.38 rg 50.00 693.60 Td (OSIRIS v6.2.0 Reproducibility Archive  |  Source: papers/heron_r2_calibration_staleness_and_colored_nulls/heron_r2_calibration_staleness_and_colored_nulls.tex) Tj ET
+0.7 w 0.60 0.60 0.60 RG 50 678.60 m 562 678.60 l S
+BT /F5 9.8 Tf 0.07 0.09 0.15 rg 50.00 666.60 Td (ABSTRACT) Tj ET
+BT /F4 9.1 Tf 0.07 0.09 0.15 rg 54.00 653.60 Td (Benchmarking layout compilation, error mitigation, and bath-correlation hypotheses on) Tj ET
+BT /F4 9.1 Tf 0.07 0.09 0.15 rg 54.00 641.60 Td (utility-scale superconducting quantum processors routinely relies on two implicit stationarity) Tj ET
+BT /F4 9.1 Tf 0.07 0.09 0.15 rg 54.00 629.60 Td (assumptions: that provider-published device calibration snapshots accurately rank physical) Tj ET
+BT /F4 9.1 Tf 0.07 0.09 0.15 rg 54.00 617.60 Td (qubits during job execution, and that independent Markovian \(white-noise\) models form an) Tj ET
+BT /F4 9.1 Tf 0.07 0.09 0.15 rg 54.00 605.60 Td (adequate statistical null for diagnosing non-local or non-Markovian error channels. Here we) Tj ET
+BT /F4 9.1 Tf 0.07 0.09 0.15 rg 54.00 593.60 Td (synthesize 7 preregistered hardware campaigns \(42 IBM Quantum jobs, 1,062 primitive unified) Tj ET
+BT /F4 9.1 Tf 0.07 0.09 0.15 rg 54.00 581.60 Td (blocs at 2,048 shots each, 2,174,976 physical circuit shots, and 673 s of charged QPU execution\)) Tj ET
+BT /F4 9.1 Tf 0.07 0.09 0.15 rg 54.00 569.60 Td (across all 3 156-qubit Heron r2 heavy-hex processors \(ibm_marrakesh, ibm_fez, and ibm_kingston\).) Tj ET
+BT /F4 9.1 Tf 0.07 0.09 0.15 rg 54.00 557.60 Td (First, in 40-qubit compilation benchmarks at a fixed 39-CZ gate count and depth 66) Tj ET
+BT /F4 9.1 Tf 0.07 0.09 0.15 rg 54.00 545.60 Td (\(TMAP-02-TMAP-05, 14 jobs, 1,159,168 shots\), moving from a calibration-ranked best path to a) Tj ET
+BT /F4 9.1 Tf 0.07 0.09 0.15 rg 54.00 533.60 Td (median path initially shifted classical fidelity F_cl by +10.54 pp, yet replaying the identical) Tj ET
+BT /F4 9.1 Tf 0.07 0.09 0.15 rg 54.00 521.60 Td (physical qubits 4 days later reversed the contrast to -4.29 pp \(p_Holm=6.4 x 10^-6\) due to an) Tj ET
+BT /F4 9.1 Tf 0.07 0.09 0.15 rg 54.00 509.60 Td (unflagged readout fault on q46 \(35.0% measured assignment error vs 1.1% published\). Testing a) Tj ET
+BT /F4 9.1 Tf 0.07 0.09 0.15 rg 54.00 497.60 Td (pre-job all-qubit readout probe across all 3 processors and repeating the identical protocol) Tj ET
+BT /F4 9.1 Tf 0.07 0.09 0.15 rg 54.00 485.60 Td (82-85 minutes later flipped the sign of the probe-versus-calibration contrast on every processor) Tj ET
+BT /F4 9.1 Tf 0.07 0.09 0.15 rg 54.00 473.60 Td (\(+25.02 -> -3.00 pp on ibm_marrakesh, -3.60 -> +6.90 pp on ibm_fez, and -0.25 -> +7.81 pp on) Tj ET
+BT /F4 9.1 Tf 0.07 0.09 0.15 rg 54.00 461.60 Td (ibm_kingston\), while tensored readout mitigation restored calibration-path superiority on all 3) Tj ET
+BT /F4 9.1 Tf 0.07 0.09 0.15 rg 54.00 449.60 Td (devices \(-10.1, -19.6, and -9.2 pp\). Second, full-chip longitudinal readout monitoring and) Tj ET
+BT /F4 9.1 Tf 0.07 0.09 0.15 rg 54.00 437.60 Td (context-isolation experiments \(RO-06 and RO-07, 27 jobs, 516,096 shots\) show that hidden faults) Tj ET
+BT /F4 9.1 Tf 0.07 0.09 0.15 rg 54.00 425.60 Td (\(>15% actual vs <3% listed\) are transient \(6 of 6 recovered below 5%\), persist across 15-minute) Tj ET
+BT /F4 9.1 Tf 0.07 0.09 0.15 rg 54.00 413.60 Td (intervals at 87.4% versus 0.63% onset \(Fisher odds ratio 1,095, p=1.7 x 10^-122\), and exhibit <=) Tj ET
+BT /F4 9.1 Tf 0.07 0.09 0.15 rg 54.00 401.60 Td (1.16 pp simultaneous-readout multiplexing shift \(|D_nbr| <= 1.61 pp state-flip shift\), tracing) Tj ET
+BT /F4 9.1 Tf 0.07 0.09 0.15 rg 54.00 389.60 Td (layout reversals to calibration snapshots static for up to 16.0 h rather than measurement) Tj ET
+BT /F4 9.1 Tf 0.07 0.09 0.15 rg 54.00 377.60 Td (crosstalk. Third, multiplexed dynamical-decoupling spectroscopy across 10 couplers separated by) Tj ET
+BT /F4 9.1 Tf 0.07 0.09 0.15 rg 54.00 365.60 Td (>= 5 heavy-hex hops \(CN-01, 499,712 circuit shots, 4,997,120 coupler-shots\) yielded null) Tj ET
+BT /F4 9.1 Tf 0.07 0.09 0.15 rg 54.00 353.60 Td (mechanistic contrasts \(C_DFS=+0.43 pp, p_Holm=0.47\), yet white-noise-only generalized least) Tj ET
+BT /F4 9.1 Tf 0.07 0.09 0.15 rg 54.00 341.60 Td (squares falsely selected a non-local Ornstein-Uhlenbeck bath by Delta BIC=10,263 before failing) Tj ET
+BT /F4 9.1 Tf 0.07 0.09 0.15 rg 54.00 329.60 Td (its preregistered 6-coupler held-out gate \(p=0.82\); a 550-replicate synthetic audit proves) Tj ET
+BT /F4 9.1 Tf 0.07 0.09 0.15 rg 54.00 317.60 Td (white-noise nulls misclassify 100% of purely local 1/f dephasing, whereas local colored-noise) Tj ET
+BT /F4 9.1 Tf 0.07 0.09 0.15 rg 54.00 305.60 Td (nulls reduce false non-local claims to 0% and select independent local noise \(BIC=115.05\). We) Tj ET
+BT /F4 9.1 Tf 0.07 0.09 0.15 rg 54.00 293.60 Td (distill four operational governance rules for reproducible quantum hardware benchmarking.) Tj ET
+0.5 w 0.75 0.75 0.75 RG 50 273.60 m 562 273.60 l S
+BT /F5 10.2 Tf 0.07 0.09 0.15 rg 50.00 258.60 Td (1. INTRODUCTION) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 244.80 Td (As superconducting quantum processors scale past one hundred physical transmons, spatial) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 232.60 Td (heterogeneity and temporal parameter drift become primary determinants of circuit performance) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 220.40 Td ([klimov2018,burnett2019,proctor2020,thorbeck2023]. Contemporary compilation pipelines,) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 208.20 Td (noise-aware routing heuristics [nation2023], and noise-model simulators ingest) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 196.00 Td (provider-published calibration tables--per-qubit relaxation times \(T_1, T_2\), single-qubit and) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 183.80 Td (two-qubit gate error rates, and single-qubit readout assignment errors--under the assumption that) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 171.60 Td (those figures remain representative over the hours separating routine calibration sweeps. In) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 159.40 Td (parallel, experimental claims of non-Markovian bath memory, spectator crosstalk, or spatially) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 147.20 Td (correlated dephasing frequently evaluate multi-parameter correlated-noise hypotheses against a) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 135.00 Td (baseline Markovian \(white-noise\) null [pazsilva2017,sung2021,tripathi2022] without testing) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 122.80 Td (spatial generalization on held-out hardware regions.) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 107.10 Td (When either stationarity assumption fails, statistically decisive in-sample effects can arise) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 94.90 Td (from unmodeled drift rather than persistent physical mechanisms. Two failure modes are) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 82.70 Td (particularly acute on sparsely connected heavy-hex lattices [chamberland2020]:) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 67.00 Td (* Calibration staleness under telegraphing readout faults. Superconducting transmon readout) Tj ET
+BT /F3 8.0 Tf 0.40 0.42 0.46 rg 292.00 28.00 Td (- 1 -) Tj ET
+endstream
+endobj
+9 0 obj
+<< /Type /Page /Parent 7 0 R /MediaBox [0 0 612.00 792.00] /Resources << /Font << /F1 1 0 R /F2 2 0 R /F3 3 0 R /F4 4 0 R /F5 5 0 R /F6 6 0 R >> >> /Contents 8 0 R >>
+endobj
+10 0 obj
+<< /Length 7959 >>
+stream
+1 1 1 rg 0 0 612 792 re f
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 742.00 Td (chains coupled to Josephson parametric amplifiers and two-level-system \(TLS\) defects undergo) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 729.80 Td (intermittent, telegraph-like excursions in state-assignment error on timescales of tens of) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 717.60 Td (minutes to hours [klimov2018,thorbeck2023,chen2023]. If backend calibration snapshots refresh) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 705.40 Td (only every several to more than fifteen hours, any layout selector that weights published) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 693.20 Td (readout errors inherits stale rankings, while single-job compiler comparisons capture transient) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 681.00 Td (snapshots that can invert within ninety minutes.) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 665.30 Td (* Colored-noise misspecification under white-noise nulls. Every flux- or charge-sensitive) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 653.10 Td (superconducting transmon exhibits low-frequency 1/f^alpha and telegraph dephasing whose) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 640.90 Td (filter-function overlap differs sharply across free-induction Ramsey, Hahn echo, and multi-pulse) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 628.70 Td (dynamical decoupling \(DD\) sequences [cywinski2008,bylander2011]. When an in-sample information) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 616.50 Td (criterion such as the Bayesian information criterion \(BIC\) pits a multi-parameter spatially) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 604.30 Td (correlated Ornstein-Uhlenbeck \(OU\) bath against a purely white-noise local null, local colored) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 592.10 Td (dephasing alone inflates Delta BIC by thousands of units--producing systematic false positives) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 579.90 Td (unless gated by local colored-noise nulls and spatially held-out couplers.) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 564.20 Td (In this paper, we unify and synthesize 7 preregistered hardware campaigns \(TMAP-02, TMAP-03,) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 552.00 Td (TMAP-04, TMAP-05, RO-06, RO-07, and CN-01\) originally deposited as 6 rapid archival letters) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 539.80 Td ([davis_tmap02,davis_cn01,davis_tmap03,davis_tmap04,davis_tmap05,davis_ro0607] with 5 prospective) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 527.60 Td (Zenodo preregistrations [prereg_tmap03,prereg_tmap04,prereg_tmap05,prereg_ro06,prereg_ro07].) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 515.40 Td (Executed across 3 156-qubit IBM Quantum Heron r2 processors \(ibm_marrakesh, ibm_fez, and) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 503.20 Td (ibm_kingston\), the unified dataset comprises 42 hardware jobs, 1,062 primitive unified blocs) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 491.00 Td (\(PUBs\), 2,174,976 physical circuit shots, and 673 s of QPU charge time \(Table) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 478.80 Td (tab:campaign_registry\). Treating these 7 studies as a single longitudinal architecture audit) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 466.60 Td (reveals a coherent physical picture: large compilation ranking reversals on Heron r2 processors) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 454.40 Td (stem from transient single-qubit readout telegraphing invisible to infrequent calibration) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 442.20 Td (snapshots \(not from simultaneous-measurement crosstalk\), and apparent in-sample signatures of) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 430.00 Td (non-local bath memory across distant couplers collapse once local 1/f dephasing nulls and) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 417.80 Td (held-out spatial validation gates are enforced.) Tj ET
+BT /F5 10.2 Tf 0.07 0.09 0.15 rg 50.00 397.10 Td (2. EXPERIMENTAL REGISTRY AND PREREGISTERED GOVERNANCE) Tj ET
+BT /F6 8.6 Tf 0.18 0.22 0.28 rg 52.00 378.30 Td (TABLE: Unified registry of 7 preregistered hardware campaigns executed across 3 156-qubit IBM) Tj ET
+BT /F6 8.6 Tf 0.18 0.22 0.28 rg 52.00 366.90 Td (Heron r2 superconducting processors \(ibm_marrakesh: 16 jobs, 1,290,240 shots, 392 s; ibm_fez: 13) Tj ET
+BT /F6 8.6 Tf 0.18 0.22 0.28 rg 52.00 355.50 Td (jobs, 442,368 shots, 139 s; ibm_kingston: 13 jobs, 442,368 shots, 142 s\). Every PUB executed 2,048) Tj ET
+BT /F6 8.6 Tf 0.18 0.22 0.28 rg 52.00 344.10 Td (hardware shots with resilience_level=0 raw bitstring archival. Zenodo identifiers denote suffix) Tj ET
+BT /F6 8.6 Tf 0.18 0.22 0.28 rg 52.00 332.70 Td (numeric records under 10.5281/zenodo.<id>.) Tj ET
+0.5 w 0.65 0.68 0.72 RG 50 319.30 m 562 319.30 l S
+BT /F3 6.8 Tf 0.10 0.14 0.22 rg 52.00 313.30 Td (Campaign | Execution UTC | Processors | Jobs | PUBs | Circuit shots | QPU \(s\) | Preregistration | Data record) Tj ET
+BT /F3 6.8 Tf 0.10 0.14 0.22 rg 52.00 303.70 Td (TMAP-02 | 2026-11-16 | marrakesh | 1 | 90 | 184,320 | 53 | - | 24406426) Tj ET
+BT /F3 6.8 Tf 0.10 0.14 0.22 rg 52.00 294.10 Td (CN-01 | 2026-11-16 | marrakesh | 1 | 244 | 499,712 | 139 | - | 24406435) Tj ET
+BT /F3 6.8 Tf 0.10 0.14 0.22 rg 52.00 284.50 Td (TMAP-03 | 2026-11-20 | marrakesh | 1 | 80 | 163,840 | 47 | 24406496 | 24406525) Tj ET
+BT /F3 6.8 Tf 0.10 0.14 0.22 rg 52.00 274.90 Td (TMAP-04 | 2026-11-20 | All 3 QPUs | 6 | 198 | 405,504 | 121 | 24406640 | 24407001) Tj ET
+BT /F3 6.8 Tf 0.10 0.14 0.22 rg 52.00 265.30 Td (TMAP-05 | 2026-11-20 | All 3 QPUs | 6 | 198 | 405,504 | 120 | 24407538 | 24407875) Tj ET
+BT /F3 6.8 Tf 0.10 0.14 0.22 rg 52.00 255.70 Td (RO-06 | 2026-11-20..21 | All 3 QPUs | 24 | 144 | 294,912 | 128 | 24407897 | 24420902) Tj ET
+BT /F3 6.8 Tf 0.10 0.14 0.22 rg 52.00 246.10 Td (RO-07 | 2026-11-21 | All 3 QPUs | 3 | 108 | 221,184 | 65 | 24419327 | 24420902) Tj ET
+BT /F3 6.8 Tf 0.10 0.14 0.22 rg 52.00 236.50 Td (Total | Nov 16-21 | 3 Heron r2 | 42 | textbf1,062 | textbf2,174,976 | 673 | 5 DOIs | 6 DOIs) Tj ET
+0.5 w 0.65 0.68 0.72 RG 50 226.90 m 562 226.90 l S
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 215.90 Td (All 42 hardware jobs were executed through qiskit-ibm-runtime SamplerV2 with hardware) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 203.70 Td (measurement mitigation disabled \(resilience_level=0\) so that raw shot bitstrings were preserved) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 191.50 Td (without opaque post-processing. Across all campaigns, four methodological safeguards governed) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 179.30 Td (execution and inference:) Tj ET
+BT /F5 9.4 Tf 0.07 0.09 0.15 rg 50.00 163.60 Td (Cryptographic pre-submission locking.) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 151.00 Td (Prior to submitting jobs to the quantum hardware queue, compiled Qiskit Quantum Program \(.qpy\)) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 138.80 Td (binaries, physical qubit layouts, primary endpoints, family-wise significance thresholds) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 126.60 Td (\(alpha=0.05\), and kill criteria were SHA-256 hashed into immutable lock manifests. For) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 114.40 Td (TMAP-03-TMAP-05, RO-06, and RO-07, lock manifests were deposited on Zenodo prior to job creation) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 102.20 Td (\(Table tab:campaign_registry\); for TMAP-02 and CN-01, lock hashes \(5f4a04c45933e046... and) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 90.00 Td (38ebfe7f7c007633...\) were committed to git version control before hardware submission.) Tj ET
+BT /F5 9.4 Tf 0.07 0.09 0.15 rg 50.00 74.30 Td (Interleaved block randomization as the unit of replication.) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 61.70 Td (Because transmon coherence, drive gain, and readout thresholds drift within and across jobs) Tj ET
+BT /F3 8.0 Tf 0.40 0.42 0.46 rg 292.00 28.00 Td (- 2 -) Tj ET
+endstream
+endobj
+11 0 obj
+<< /Type /Page /Parent 7 0 R /MediaBox [0 0 612.00 792.00] /Resources << /Font << /F1 1 0 R /F2 2 0 R /F3 3 0 R /F4 4 0 R /F5 5 0 R /F6 6 0 R >> >> /Contents 10 0 R >>
+endobj
+12 0 obj
+<< /Length 7685 >>
+stream
+1 1 1 rg 0 0 612 792 re f
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 742.00 Td ([proctor2020], individual shots are never treated as independent statistical replicates. Circuit) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 729.80 Td (arms and union all-|0> / all-|1> readout-calibration circuits were randomly permuted within) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 717.60 Td (interleaved execution blocks \(10 blocks in TMAP-02-TMAP-05, 5 blocks in CN-01, and 6 interleaved) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 705.40 Td (repeats in RO-07\). Primary contrasts are evaluated via two-sided paired t-tests across block) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 693.20 Td (means with Holm-Bonferroni family-wise error control at alpha=0.05, corroborated by exact) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 681.00 Td (two-sided Wilcoxon signed-rank tests.) Tj ET
+BT /F5 9.4 Tf 0.07 0.09 0.15 rg 50.00 665.30 Td (Embedded A/A drift sentinels.) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 652.70 Td (To bound within-job temporal drift and transpiler-schedule artifacts directly on hardware,) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 640.50 Td (experiments embedded physical A/A negative controls. In TMAP-02, arms C5 and C4 executed) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 628.30 Td (identical 39-CZ chains on identical physical qubits differing solely by zero-duration virtual-Z) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 616.10 Td (frame updates, yielding a paired difference of -0.24 pp \(95% CI [-0.88, +0.41], p_Holm=0.43\). In) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 603.90 Td (CN-01, duplicated zero-stagger Phi^+ circuits embedded in every block established an empirical) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 591.70 Td (root-mean-square \(RMS\) A/A drift floor of 1.15 pp across coupler Bell fidelities.) Tj ET
+BT /F5 9.4 Tf 0.07 0.09 0.15 rg 50.00 576.00 Td (Held-out spatial generalization and verbatim provenance.) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 563.40 Td (In CN-01, 10 couplers separated by at least 5 lattice hops were partitioned before analysis into) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 551.20 Td (4 training couplers and 6 spatially disjoint held-out couplers measured simultaneously inside) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 539.00 Td (every PUB, with an explicit preregistered kill rule falsifying any non-local hypothesis that) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 526.80 Td (failed to improve held-out root-mean-square error \(RMSE\) over the local baseline. Finally, to) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 514.60 Td (eliminate transcription errors, every empirical metric, job count, shot total, confidence) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 502.40 Td (interval, and p-value in this manuscript is programmatically extracted from the 125 archived) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 490.20 Td (JSON artifacts and bound into an RFC 8785 canonical reproducibility capsule \(SHA-256 prefix) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 478.00 Td (9631f34a6c54d7eb...\).) Tj ET
+BT /F5 10.2 Tf 0.07 0.09 0.15 rg 50.00 457.30 Td (3. ROUTING VERSUS HIDDEN READOUT FAULTS AND THE NINETY-MINUTE THREE-PROCESSOR SIGN) Tj ET
+BT /F5 10.2 Tf 0.07 0.09 0.15 rg 50.00 443.50 Td (FLIP \(TMAP-02-TMAP-05\)) Tj ET
+BT /F6 8.6 Tf 0.18 0.22 0.28 rg 52.00 424.70 Td ([Companion Vector Figure: fig1_tmap_sign_reversal_three_qpus.pdf] Layout ranking reversals across) Tj ET
+BT /F6 8.6 Tf 0.18 0.22 0.28 rg 52.00 413.30 Td (four days and eighty-five minutes on 3 156-qubit Heron r2 processors \(14 jobs, 1,159,168 shots\).) Tj ET
+BT /F6 8.6 Tf 0.18 0.22 0.28 rg 52.00 401.90 Td (\(a\) On ibm_marrakesh, the 39-CZ 40-qubit chain contrast between the calibration-ranked best path) Tj ET
+BT /F6 8.6 Tf 0.18 0.22 0.28 rg 52.00 390.50 Td (and median path reversed from +10.54 pp in TMAP-02 to -4.29 pp 4 days later in TMAP-03 as q46) Tj ET
+BT /F6 8.6 Tf 0.18 0.22 0.28 rg 52.00 379.10 Td (developed a 35.0% assignment fault invisible to IBM's 1.1% snapshot; tensored readout mitigation) Tj ET
+BT /F6 8.6 Tf 0.18 0.22 0.28 rg 52.00 367.70 Td (restored a +17.03 pp best-path lead, while the virtual-Z A/A control remained null \(-0.24 pp\). \(b\)) Tj ET
+BT /F6 8.6 Tf 0.18 0.22 0.28 rg 52.00 356.30 Td (Across ibm_marrakesh, ibm_fez, and ibm_kingston, repeating the identical probe-ranked minus) Tj ET
+BT /F6 8.6 Tf 0.18 0.22 0.28 rg 52.00 344.90 Td (calibration-ranked contrast 82-85 minutes apart \(TMAP-04 L1 open circles to TMAP-05 M4 filled) Tj ET
+BT /F6 8.6 Tf 0.18 0.22 0.28 rg 52.00 333.50 Td (circles\) reversed sign on all 3 processors, whereas readout-mitigated contrast L4 \(amber squares\)) Tj ET
+BT /F6 8.6 Tf 0.18 0.22 0.28 rg 52.00 322.10 Td (favored the calibration-ranked path on every device.) Tj ET
+0.5 w 0.65 0.68 0.72 RG 50 298.70 m 562 298.70 l S
+BT /F3 6.8 Tf 0.10 0.14 0.22 rg 52.00 292.70 Td (Processor | Delta t_probe | TMAP-04 L1: Probe-Cal | TMAP-04 L4 \(mit.\) | TMAP-05 M4: Probe-Cal | TMAP-05 M1: Excl-Cal |) Tj ET
+BT /F3 6.8 Tf 0.10 0.14 0.22 rg 52.00 283.10 Td (TMAP-05 M2: Excl-Probe) Tj ET
+BT /F3 6.8 Tf 0.10 0.14 0.22 rg 52.00 273.50 Td (ibm_marrakesh | 85 m | +25.02 [+24.16, +25.89] | -10.1 | -3.00 [-4.34, -1.67] | -0.29 | +2.71) Tj ET
+BT /F3 6.8 Tf 0.10 0.14 0.22 rg 52.00 263.90 Td (ibm_fez | 84 m | -3.60 [-4.37, -2.83] | -19.6 | +6.90 [+5.62, +8.18] | +2.26 | -4.64) Tj ET
+BT /F3 6.8 Tf 0.10 0.14 0.22 rg 52.00 254.30 Td (ibm_kingston | 82 m | -0.25 [-1.62, +1.13] | -9.2 | +7.81 [+6.58, +9.03] | +4.65 | -3.16) Tj ET
+0.5 w 0.65 0.68 0.72 RG 50 244.70 m 562 244.70 l S
+BT /F5 9.4 Tf 0.07 0.09 0.15 rg 50.00 228.70 Td (3.1 Disentangling SWAP Routing from Qubit Selection \(TMAP-02\)) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 216.10 Td (To isolate compilation and layout sensitivities on heavy-hex hardware without confounding) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 203.90 Td (circuit depth and physical qubit assignment, TMAP-02 examined a 40-qubit benchmark circuit) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 191.70 Td (initialized from two seed transmons rotated by theta=51.7^ deg. In its noiseless unitary) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 179.50 Td (specification, the circuit concentrates output probability exclusively onto four 40-bit strings,) Tj ET
+BT /F3 6.8 Tf 0.10 0.14 0.22 rg 52.00 163.80 Td (S_4 = \\0^40, 1^40, \(10\)^20, \(01\)^20\\,) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 154.20 Td (with ideal probabilities \\\(1\)/\(2\)cos^2theta, \(1\)/\(2\)cos^2theta, \(1\)/\(2\)sin^2theta,) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 142.00 Td (\(1\)/\(2\)sin^2theta\\, where each hub drives degree-20 CNOT fan-out in the star representation or) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 129.80 Td (an algebraically equivalent degree-2 nearest-neighbor CNOT cascade in the chain representation.) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 117.60 Td (Because heavy-hex vertices have maximum degree 3, the star circuit requires extensive SABRE SWAP) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 105.40 Td (routing \(163 CZ gates unpinned in arm C1; 79 CZ at optimization level 3 and 147 CZ at level 1) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 93.20 Td (when pinned to a contiguous path in C2 and C3\), whereas the chain embeds SWAP-free onto any) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 81.00 Td (simple 40-qubit path in exactly 39 CZ gates and depth 66 \(arms C4-C7\). Primary performance is) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 68.80 Td (quantified by the classical Bhattacharyya fidelity F_cl = sum_x in S_4 sqrtp_obs\(x\) p_ideal\(x\).) Tj ET
+BT /F3 8.0 Tf 0.40 0.42 0.46 rg 292.00 28.00 Td (- 3 -) Tj ET
+endstream
+endobj
+13 0 obj
+<< /Type /Page /Parent 7 0 R /MediaBox [0 0 612.00 792.00] /Resources << /Font << /F1 1 0 R /F2 2 0 R /F3 3 0 R /F4 4 0 R /F5 5 0 R /F6 6 0 R >> >> /Contents 12 0 R >>
+endobj
+14 0 obj
+<< /Length 7483 >>
+stream
+1 1 1 rg 0 0 612 792 re f
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 742.00 Td (Scoring 400 candidate simple paths on ibm_marrakesh's lock-time calibration snapshot \(job) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 729.80 Td (dbto408n26qs739tnrj0, 90 PUBs, 184,320 shots, 53 s QPU\), TMAP-02 established four baseline) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 717.60 Td (results \(p_Holm <= 6.6 x 10^-9 across all non-control contrasts; exact Wilcoxon p_Holm = 0.010\):) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 701.90 Td (* Eliminating SWAP routing via the star-to-chain rewrite on the identical 40 transmons increased) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 689.70 Td (F_cl by +14.27 pp at optimization level 3 \(79 -> 39 CZ\) and +12.47 pp at level 1 \(147 -> 39 CZ\),) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 677.50 Td (lifting raw fidelity from 0.016 \(unpinned star C1\) to 0.215 \(chain C5\).) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 661.80 Td (* Holding gate count \(39 CZ\), circuit depth \(66\), and transpiler level fixed, shifting the chain) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 649.60 Td (from the calibration-ranked best path \(C5, F_cl=0.215\) to the median path \(C6, F_cl=0.110\)) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 637.40 Td (degraded fidelity by +10.54 pp \(95% CI [+9.95, +11.12]\)--nearly halving circuit fidelity through) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 625.20 Td (physical qubit selection alone [Fig. fig:tmap\(a\)].) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 609.50 Td (* The greedy calibration-scored best path outperformed Qiskit's stock level-3 layout pass \(C7,) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 597.30 Td (F_cl=0.158\) by +5.70 pp, inverting pre-run FakeMarrakesh noise-model simulations that had) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 585.10 Td (predicted C7 above C5 and overestimated structured-arm fidelities by roughly a factor of two.) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 569.40 Td (* Union |0>^ \(x\) 96 / |1>^ \(x\) 96 readout calibration embedded inside every block \(mean error) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 557.20 Td (2.47%\) uncovered severe undisclosed assignment faults on the losing layouts: q42 \(22.3%\) and q41) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 545.00 Td (\(12.1%\) lay on C6 and C7 while IBM's calibration snapshot reported 1.0% and 1.3%.) Tj ET
+BT /F5 9.4 Tf 0.07 0.09 0.15 rg 50.00 524.30 Td (3.2 Four-Day Sign Reversal from a Hidden Readout Excursion \(TMAP-03\)) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 511.70 Td (To test whether the +10.54 pp best-versus-median path advantage represented a durable device) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 499.50 Td (property and to separate readout error from gate error, TMAP-03 \(preregistration) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 487.30 Td (10.5281/zenodo.24406496; job dc0ajv5s2omc738915k0, 80 PUBs, 163,840 shots, 47 s QPU\) replayed) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 475.10 Td (TMAP-02's exact frozen physical layouts 4 days later on ibm_marrakesh alongside a 2 x 2) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 462.90 Td (structure-by-path star comparison and tensored 2 x 2 per-qubit readout mitigation over all 81) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 450.70 Td (active qubits.) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 435.00 Td (Rather than replicating, the primary path contrast K1 inverted sign across all 10 blocks to) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 422.80 Td (-4.29 pp \(95% CI [-5.24, -3.33], p_Holm=6.4 x 10^-6\), as raw fidelity on the frozen "best" path) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 410.60 Td (dropped from 0.215 to 0.101 while the median path rose from 0.110 to 0.144 [Fig. fig:tmap\(a\)].) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 398.40 Td (Simultaneously, TMAP-02's losing stock layout \(A3\) and the day-of-execution stock layout \(A4\)) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 386.20 Td (beat the frozen best path by |-5.26| pp and |-1.75| pp, respectively, and the routed star) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 374.00 Td (exhibited a significant structure-by-path interaction \(K3=-5.64 pp, p_Holm=1.0 x 10^-6; star gap) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 361.80 Td (+1.35 pp\).) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 346.10 Td (In-job union readout calibration pinpointed the physical cause: q46, situated on the best path) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 333.90 Td (\(and listed at 1.3% in TMAP-02\), suffered a massive asymmetric readout excursion with) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 321.70 Td (p\(1|0\)=54.4% and p\(0|1\)=15.5% \(symmetric mean error e_RO=35.0%\), whereas IBM's execution-time) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 309.50 Td (calibration snapshot continued to report q46 at 1.1%. Because IBM's snapshot remained blind to) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 297.30 Td (this fault, Qiskit's stock level-3 layout \(A4\) also routed through q46. Applying tensored) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 285.10 Td (inverse-assignment readout mitigation shifted the best-minus-median contrast by +21.3 pp) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 272.90 Td (\(p_Holm=1.8 x 10^-6\), restoring a +17.03 pp lead for the best path \(F_cl,mit=0.651 vs 0.481\) and) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 260.70 Td (demonstrating that underlying CZ and coherence quality on the best path remained intact while) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 248.50 Td (single-qubit readout telegraphed.) Tj ET
+BT /F5 9.4 Tf 0.07 0.09 0.15 rg 50.00 227.80 Td (3.3 Three-Processor Pre-Job Probes and the Ninety-Minute Sign Flip \(TMAP-04 and TMAP-05\)) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 215.20 Td (TMAP-03 motivated an immediate operational hypothesis: if stale readout entries corrupt layout) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 203.00 Td (selection, preceding each hardware benchmark with a rapid all-qubit |0>^ \(x\) 156 / |1>^ \(x\) 156) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 190.80 Td (readout probe \(6 PUBs, 3 repeats per basis state, 5-6 s QPU\) and substituting e_probe\(q\) into) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 178.60 Td (the greedy path cost) Tj ET
+BT /F3 6.8 Tf 0.10 0.14 0.22 rg 52.00 162.90 Td (C\(P\) = -sum_e in P ln\(1 - e_CZ\(e\)\) - sum_q in P ln\(1 - e_RO\(q\)\)) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 153.30 Td (should rescue path selection across processors. TMAP-04 \(preregistration) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 141.10 Td (10.5281/zenodo.24406640; 121 s QPU across ibm_marrakesh, ibm_fez, and ibm_kingston\) tested this) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 128.90 Td (rule directly, requiring a statistically significant gain \(L1>0, p_Holm<0.05\) on at least two of) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 116.70 Td (3 processors.) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 101.00 Td (As shown in Table tab:tmap_sign_reversal, probe-guided ranking succeeded on only 1 of 3) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 88.80 Td (processors:) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 73.10 Td (* On ibm_marrakesh, q46 remained degraded at 34.4% probe error \(1.1% listed\); avoiding it raised) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 60.90 Td (F_cl from 0.063 to 0.313 \(L1=+25.02 pp, 95% CI [+24.16, +25.89], p_Holm=6.8 x 10^-13\).) Tj ET
+BT /F3 8.0 Tf 0.40 0.42 0.46 rg 292.00 28.00 Td (- 4 -) Tj ET
+endstream
+endobj
+15 0 obj
+<< /Type /Page /Parent 7 0 R /MediaBox [0 0 612.00 792.00] /Resources << /Font << /F1 1 0 R /F2 2 0 R /F3 3 0 R /F4 4 0 R /F5 5 0 R /F6 6 0 R >> >> /Contents 14 0 R >>
+endobj
+16 0 obj
+<< /Length 7459 >>
+stream
+1 1 1 rg 0 0 612 792 re f
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 742.00 Td (* On ibm_fez, where readout errors were mild and largely reflected in IBM's snapshot, probe) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 729.80 Td (ranking lost to calibration ranking by L1=-3.60 pp \(95% CI [-4.37, -2.83], p_Holm=4.6 x 10^-6\).) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 714.10 Td (* On ibm_kingston, although the calibration path traversed q107 at 19.8% probe error \(1.0%) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 701.90 Td (listed\), probe and calibration paths tied \(L1=-0.25 pp, 95% CI [-1.62, +1.13], p_Holm=1.00\).) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 686.20 Td (Crucially, after tensored readout mitigation \(contrast L4\), the calibration-ranked path) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 674.00 Td (outperformed the probe-ranked path on all 3 processors: -10.1 pp on ibm_marrakesh, -19.6 pp on) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 661.80 Td (ibm_fez, and -9.2 pp on ibm_kingston [amber squares in Fig. fig:tmap\(b\)]. Because Eq.) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 649.60 Td (\(eq:path_cost\) weights one terminal readout error identically to a single CZ gate while a) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 637.40 Td (40-qubit chain executes 39 CZ layers and cumulative idle delays, chasing small probe readout) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 625.20 Td (differences diverts the path onto inferior couplers and shorter-T_2 transmons.) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 609.50 Td (To test whether surgically excluding only severely faulty transmons \(e_probe > 15%\) while) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 597.30 Td (preserving IBM's calibration ranking resolves this trade-off, we preregistered TMAP-05) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 585.10 Td (\(10.5281/zenodo.24407538; 120 s QPU\) and executed it 82-85 minutes after TMAP-04 across all 3) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 572.90 Td (processors. Fault exclusion beat plain calibration ranking wherever the calibration path) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 560.70 Td (intersected an excluded qubit \(M1=+2.26 pp removing q11 at 22.8% on ibm_fez; M1=+4.65 pp) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 548.50 Td (removing q107 at 19.1% on ibm_kingston\), while yielding a null -0.29 pp on ibm_marrakesh \(where) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 536.30 Td (no excluded qubit lay on C1\) and trailing full probe ranking on two devices \(M2=-4.64 and -3.16) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 524.10 Td (pp; Qiskit stock level 3 reached 0.300 on ibm_fez\).) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 508.40 Td (The decisive discovery of TMAP-05, however, emerged from contrast M4, which reran TMAP-04's) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 496.20 Td (exact probe-versus-calibration comparison 82-85 minutes later using identical code [Fig.) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 484.00 Td (fig:tmap\(b\) and Table tab:tmap_sign_reversal]:) Tj ET
+BT /F3 6.8 Tf 0.10 0.14 0.22 rg 52.00 468.30 Td (ibm_marrakesh: & +25.02 pp -> -3.00 pp \(p_Holm=0.002\), nonumber) Tj ET
+BT /F3 6.8 Tf 0.10 0.14 0.22 rg 52.00 458.70 Td (ibm_fez: & -3.60 pp -> +6.90 pp \(p_Holm=1.4 x 10^-6\), nonumber) Tj ET
+BT /F3 6.8 Tf 0.10 0.14 0.22 rg 52.00 449.10 Td (ibm_kingston: & -0.25 pp -> +7.81 pp \(p_Holm=6.3 x 10^-7\).) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 439.50 Td (Every single processor reversed sign within ninety minutes. On ibm_marrakesh, q46 spontaneously) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 427.30 Td (recovered from 34.4% probe error at 20:26 UTC to 0.6% at 21:51 UTC; once q46 healed, the) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 415.10 Td (calibration path no longer suffered a readout penalty and its superior gate fidelity dominated.) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 402.90 Td (Conversely, fresh readout excursions emerged on ibm_fez and ibm_kingston, flipping probe) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 390.70 Td (selection into a decisive win. Consequently, any single-epoch hardware comparison of) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 378.50 Td (qubit-selection heuristics on Heron r2 processors measures the transient defect state of that) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 366.30 Td (hour rather than a time-invariant algorithmic advantage.) Tj ET
+BT /F5 10.2 Tf 0.07 0.09 0.15 rg 50.00 345.60 Td (4. FULL-CHIP READOUT TIME SERIES: STALE SNAPSHOTS, NOT CROSSTALK \(RO-06 AND RO-07\)) Tj ET
+BT /F6 8.6 Tf 0.18 0.22 0.28 rg 52.00 326.80 Td ([Companion Vector Figure: fig2_ro06_07_staleness_persistence.pdf]) Tj ET
+BT /F6 8.6 Tf 0.18 0.22 0.28 rg 52.00 303.40 Td (TABLE: Summary of full-chip readout drift \(RO-06, 24 jobs across 8 rounds\) and) Tj ET
+BT /F6 8.6 Tf 0.18 0.22 0.28 rg 52.00 292.00 Td (simultaneous-readout context tests \(RO-07, 3 jobs, 6 interleaved repeats per condition\). "Update) Tj ET
+BT /F6 8.6 Tf 0.18 0.22 0.28 rg 52.00 280.60 Td (cadence" lists the number of qubits \(out of 156\) whose IBM-published readout_error changed across) Tj ET
+BT /F6 8.6 Tf 0.18 0.22 0.28 rg 52.00 269.20 Td (consecutive intervals \(r_0 -> r_1 spanning 13.7 h, r_1 -> ... -> r_7 spaced by 15 min, and r_7 ->) Tj ET
+BT /F6 8.6 Tf 0.18 0.22 0.28 rg 52.00 257.80 Td (RO-07 spanning 39 min\).) Tj ET
+0.5 w 0.65 0.68 0.72 RG 50 244.40 m 562 244.40 l S
+BT /F3 6.8 Tf 0.10 0.14 0.22 rg 52.00 238.40 Td (Processor | Hidden faults \(r_0... r_7\) | Mean / round | Median rho | IBM snapshot updates \(8 intervals\) | Max |D_mux|) Tj ET
+BT /F3 6.8 Tf 0.10 0.14 0.22 rg 52.00 228.80 Td (\(pp\) | Max |D_nbr| \(pp\)) Tj ET
+BT /F3 6.8 Tf 0.10 0.14 0.22 rg 52.00 219.20 Td (ibm_marrakesh | 0 0 0 0 0 0 1 3 | 0.500 | 0.71 | 155 0 0 0 0 0 0 0 | 1.16 | 1.36) Tj ET
+BT /F3 6.8 Tf 0.10 0.14 0.22 rg 52.00 209.60 Td (ibm_fez | 0 1 0 0 0 0 0 0 | 0.125 | 0.83 | 153 0 0 0 0 0 0 153 | 0.43 | 0.99) Tj ET
+BT /F3 6.8 Tf 0.10 0.14 0.22 rg 52.00 200.00 Td (ibm_kingston | 1 0 0 0 0 0 0 0 | 0.125 | 0.71 | 0 0 0 0 0 0 0 0 | 0.81 | 1.61) Tj ET
+0.5 w 0.65 0.68 0.72 RG 50 190.40 m 562 190.40 l S
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 179.40 Td (Two competing physical mechanisms could explain the large discrepancies between in-job readout) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 167.20 Td (error e_probe and IBM's published e_IBM observed in TMAP-02-TMAP-05: \(i\) measurement-context) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 155.00 Td (dependence, wherein simultaneous multiplexed readout of 40-156 resonators or complementary) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 142.80 Td (neighbor excitations induces readout crosstalk absent from isolated single-qubit calibration, or) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 130.60 Td (\(ii\) calibration snapshot staleness, wherein transmon readout error telegraphs on hour) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 118.40 Td (timescales between infrequent backend calibration updates. We preregistered RO-06) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 106.20 Td (\(10.5281/zenodo.24407897\) and RO-07 \(10.5281/zenodo.24419327\) to resolve both mechanisms across) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 94.00 Td (all 156 qubits of ibm_marrakesh, ibm_fez, and ibm_kingston \(27 jobs, 516,096 shots, 193 s QPU;) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 81.80 Td (Table tab:ro_staleness\).) Tj ET
+BT /F3 8.0 Tf 0.40 0.42 0.46 rg 292.00 28.00 Td (- 5 -) Tj ET
+endstream
+endobj
+17 0 obj
+<< /Type /Page /Parent 7 0 R /MediaBox [0 0 612.00 792.00] /Resources << /Font << /F1 1 0 R /F2 2 0 R /F3 3 0 R /F4 4 0 R /F5 5 0 R /F6 6 0 R >> >> /Contents 16 0 R >>
+endobj
+18 0 obj
+<< /Length 7519 >>
+stream
+1 1 1 rg 0 0 612 792 re f
+BT /F5 9.4 Tf 0.07 0.09 0.15 rg 50.00 742.00 Td (4.1 Prevalence, Intermittency, and Fifteen-Minute Persistence \(RO-06\)) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 729.40 Td (In RO-06, each of 8 rounds submitted synchronized full-chip |0>^ \(x\) 156 and |1>^ \(x\) 156 probe) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 717.20 Td (jobs \(3 repeats per state, 2,048 shots\) to all 3 processors while recording each backend's live) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 705.00 Td (calibration snapshot. Following client sleep after round 0 \(13.7 h overnight interval\), rounds) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 692.80 Td (1-7 sampled continuously every 15 min over 1.63 h. Defining a hidden fault prospectively as) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 680.60 Td (e_probe\(q\) > 15% concurrent with e_IBM\(q\) < 3%, and recovery as e_probe\(q\) < 5%, the four) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 668.40 Td (preregistered hypotheses yielded:) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 652.70 Td (* Rarity \(H1 not supported\): Hidden faults averaged 0.125-0.500 qubits per processor-round) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 640.50 Td (\(Table tab:ro_staleness\), appearing in fewer than half of rounds on every device. Chronically) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 628.30 Td (degraded readout channels exist on each chip, but most are accurately flagged by IBM's) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 616.10 Td (calibration \(median probe-versus-IBM Spearman rank correlation rho = 0.71, 0.83, and 0.71 on) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 603.90 Td (ibm_marrakesh, ibm_fez, and ibm_kingston\).) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 588.20 Td (* Complete intermittency \(H2 supported\): Every single one \(6 of 6\) of the transmons that crossed) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 576.00 Td (the hidden-fault threshold in at least one round recovered below 5% in another round [Fig.) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 563.80 Td (fig:ro\(a\)]. Additional rapid recoveries occurred during the 39-minute window between RO-06 round) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 551.60 Td (7 and RO-07, where 5 of 9 targeted discrepancy qubits healed below 5% \(including ibm_marrakesh) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 539.40 Td (q111 dropping from 31.7% to 2.0%\).) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 523.70 Td (* Tens-of-minutes persistence \(H3 supported\): Pooling consecutive round transitions across all 3) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 511.50 Td (x 156 device-qubits yielded transition counts \(ok -> ok, ok -> fault, fault -> ok, fault ->) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 499.30 Td (fault\) = \(3,169, 20, 11, 76\). A transmon faulty \(>15%\) in round r remained faulty in round r+1) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 487.10 Td (with probability 87.4, compared to 0.63 for a healthy qubit \(Fisher exact odds ratio OR=1,095,) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 474.90 Td (p=1.7 x 10^-122\). Restricting strictly to the 15-minute pairs r_1 -> ... -> r_7 strengthened) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 462.70 Td (persistence to 88.0% versus 0.51% \(OR=1,424, p=5.4 x 10^-109\). Within-round repeat spread had a) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 450.50 Td (median range of 0.59 pp versus 1.67 pp between rounds on flagged qubits, confirming genuine) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 438.30 Td (physical state transitions rather than binomial shot noise.) Tj ET
+BT /F5 9.4 Tf 0.07 0.09 0.15 rg 50.00 417.60 Td (4.2 Eliminating Simultaneous-Readout Crosstalk \(RO-07\) and Measuring Snapshot Cadence) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 405.00 Td (RO-07 directly tested whether full-chip simultaneous measurement inflates e_probe relative to) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 392.80 Td (isolated single-qubit readout. Using a deterministic rule applied to RO-06 round 7, 19 mutually) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 380.60 Td (uncoupled transmons across the 3 processors \(9 DISAGREE qubits with largest e_probe - e_IBM,) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 368.40 Td (plus AGREE high-error and clean CONTROL qubits\) were measured across 6 interleaved repeats of) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 356.20 Td (three contexts: isolated readout of only the selected subset \(ISO\), simultaneous readout of all) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 344.00 Td (156 qubits prepared identically \(ALL\), and simultaneous readout with all non-target qubits) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 331.80 Td (inverted into the complementary state 1-b \(FLIP\).) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 316.10 Td (Both context-crosstalk hypotheses failed decisively [Fig. fig:ro\(b\) and Table tab:ro_staleness].) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 303.90 Td (Across all 19 tested qubits on all 3 processors, the multiplexing shift |D_mux| = |e\(ALL\) -) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 291.70 Td (e\(ISO\)| never exceeded 1.16 pp, the neighbor state-flip shift |D_nbr| = |e\(FLIP\) - e\(ALL\)| never) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 279.50 Td (exceeded 1.61 pp, and clean control qubits varied by at most 0.33 pp--nearly an order of) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 267.30 Td (magnitude below the preregistered 5.0 pp threshold required to explain 15%-54.4% hidden faults.) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 251.60 Td (Inspecting the discrete update cadence of IBM's calibration snapshots across all nine timestamps) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 239.40 Td (\(RO-06 rounds 0-7 plus RO-07\) resolved the discrepancy completely \(Table tab:ro_staleness\).) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 227.20 Td (During the continuous 1.63 h daytime window of 15-minute sampling, zero qubits updated on any of) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 215.00 Td (the 3 processors; on ibm_kingston, zero of 156 readout error entries changed across the entire) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 202.80 Td (16.0 h span. Moreover, when ibm_fez's calibration table refreshed between round 7 and RO-07) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 190.60 Td (\(updating 153 of 156 qubits\), Spearman rank agreement between IBM's newly published readout) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 178.40 Td (errors and our immediately preceding round 6 and round 7 full-chip probes jumped to rho = 0.953) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 166.20 Td (and 0.952 \(median absolute gap 0.12 pp\), compared with rho = 0.813 \(gap 0.21 pp\) for the stale) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 154.00 Td (snapshot they replaced. Thus, provider readout calibrations and full-chip user probes measure) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 141.80 Td (the same physical quantity; hidden faults arise because transmon readout telegraphs on hour) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 129.60 Td (timescales inside multi-hour calibration blind spots.) Tj ET
+BT /F5 10.2 Tf 0.07 0.09 0.15 rg 50.00 108.90 Td (5. SPATIALLY SEPARATED COUPLERS AND WHY WHITE-NOISE NULLS MISCLASSIFY LOCAL 1/F) Tj ET
+BT /F5 10.2 Tf 0.07 0.09 0.15 rg 50.00 95.10 Td (DRIFT \(CN-01\)) Tj ET
+BT /F6 8.6 Tf 0.18 0.22 0.28 rg 52.00 76.30 Td ([Companion Vector Figure: fig3_cn01_colored_noise_heldout_gate.pdf]) Tj ET
+BT /F3 8.0 Tf 0.40 0.42 0.46 rg 292.00 28.00 Td (- 6 -) Tj ET
+endstream
+endobj
+19 0 obj
+<< /Type /Page /Parent 7 0 R /MediaBox [0 0 612.00 792.00] /Resources << /Font << /F1 1 0 R /F2 2 0 R /F3 3 0 R /F4 4 0 R /F5 5 0 R /F6 6 0 R >> >> /Contents 18 0 R >>
+endobj
+20 0 obj
+<< /Length 8347 >>
+stream
+1 1 1 rg 0 0 612 792 re f
+BT /F6 8.6 Tf 0.18 0.22 0.28 rg 52.00 742.00 Td (TABLE: Summary of CN-01 across 10 couplers \( >= 5 heavy-hex hops apart; 4 training, 6 held-out\) on) Tj ET
+BT /F6 8.6 Tf 0.18 0.22 0.28 rg 52.00 730.60 Td (ibm_marrakesh. Top: mechanistic contrasts across all 10 couplers \(df=9, Holm-adjusted\). Middle:) Tj ET
+BT /F6 8.6 Tf 0.18 0.22 0.28 rg 52.00 719.20 Td (training-cohort GLS selection comparing the locked 23-condition white-noise-null specification) Tj ET
+BT /F6 8.6 Tf 0.18 0.22 0.28 rg 52.00 707.80 Td (against the 19-condition A-3 colored-null specification. Bottom: 550-replicate synthetic) Tj ET
+BT /F6 8.6 Tf 0.18 0.22 0.28 rg 52.00 696.40 Td (validation rates prior to hardware analysis.) Tj ET
+0.5 w 0.65 0.68 0.72 RG 50 683.00 m 562 683.00 l S
+BT /F3 6.8 Tf 0.10 0.14 0.22 rg 52.00 677.00 Td (ulticolumn7l\(a\) Hardware mechanistic contrasts across 10 couplers \(df=9, Holm-corrected\)) Tj ET
+BT /F3 6.8 Tf 0.10 0.14 0.22 rg 52.00 667.40 Td (Contrast | ulticolumn3lPhysical observable | Mean \(pp\) | 95% CI \(pp\) | Holm p) Tj ET
+BT /F3 6.8 Tf 0.10 0.14 0.22 rg 52.00 657.80 Td (C_DFS | ulticolumn3lPhi^+ vs Psi^+ stagger asymmetry \(0 -> 256 ns\) | +0.43 | [-0.13, +1.00] | 0.47) Tj ET
+BT /F3 6.8 Tf 0.10 0.14 0.22 rg 52.00 648.20 Td (C_spec | ulticolumn3lSpectator in |+> minus |0> | -0.20 | [-0.50, +0.11] | 0.53) Tj ET
+BT /F3 6.8 Tf 0.10 0.14 0.22 rg 52.00 638.60 Td (C_stag | ulticolumn3lPhi^+\(256 ns\)-Phi^+\(0 ns\) | +0.20 | [-0.22, +0.62] | 0.61) Tj ET
+BT /F3 6.8 Tf 0.10 0.14 0.22 rg 52.00 629.00 Td (C_mem | ulticolumn3lDD32 minus Hahn echo at 16.384 us | -0.14 | [-2.25, +1.97] | 0.89) Tj ET
+BT /F3 6.8 Tf 0.10 0.14 0.22 rg 52.00 619.40 Td (ulticolumn7ltextbf\(b\) Training-cohort GLS fits \(4 couplers; held-out RMSE H_0=0.130 vs H_3=0.143, t_5=-0.24, p=0.82\)) Tj ET
+BT /F3 6.8 Tf 0.10 0.14 0.22 rg 52.00 609.80 Td (Noise hypothesis | Scope | k | chi^2_lock | BIC_lock | chi^2_A3 | BIC_A3) Tj ET
+BT /F3 6.8 Tf 0.10 0.14 0.22 rg 52.00 600.20 Td (Local white \(H_0\) | local | 5 | 10,420.9 | 10,436.6 | 100.3 | 115.05) Tj ET
+BT /F3 6.8 Tf 0.10 0.14 0.22 rg 52.00 590.60 Td (Local 1/f + white \(H_0,1/f\) | local | 6 | - | - | 825.6 | 843.22) Tj ET
+BT /F3 6.8 Tf 0.10 0.14 0.22 rg 52.00 581.00 Td (Local OU bath \(H_3,loc\) | local | 7 | - | - | 825.4 | 845.97) Tj ET
+BT /F3 6.8 Tf 0.10 0.14 0.22 rg 52.00 571.40 Td (Static spectator ZZ \(H_1\) | non-local | 6 | 2,482.6 | 2,501.4 | 97.6 | 115.27) Tj ET
+BT /F3 6.8 Tf 0.10 0.14 0.22 rg 52.00 561.80 Td (Correlated Markov \(H_2\) | non-local | 7 | 10,361.5 | 10,383.4 | 95.2 | 115.83) Tj ET
+BT /F3 6.8 Tf 0.10 0.14 0.22 rg 52.00 552.20 Td (Correlated OU bath \(H_3\) | non-local | 8 | 148.6 | 173.7 | 825.4 | 848.92) Tj ET
+BT /F3 6.8 Tf 0.10 0.14 0.22 rg 52.00 542.60 Td (Pulse collision | apparatus | 6 | 10,402.6 | 10,421.4 | 100.3 | 118.00) Tj ET
+BT /F3 6.8 Tf 0.10 0.14 0.22 rg 52.00 533.00 Td (ulticolumn7l\(c\) Pre-execution synthetic validation \(550 replicates across seven ground-truth baths\)) Tj ET
+BT /F3 6.8 Tf 0.10 0.14 0.22 rg 52.00 523.40 Td (Synthetic ground truth | Replicates | Med.\\ Delta BIC_lock | Lock H_3 sel. | Lock Stage-2 | A-3 non-local | A-3 corr.\\) Tj ET
+BT /F3 6.8 Tf 0.10 0.14 0.22 rg 52.00 513.80 Td (deph.) Tj ET
+BT /F3 6.8 Tf 0.10 0.14 0.22 rg 52.00 504.20 Td (Local white \(H_0\) | 100 | 0 | 0% | 0% | 0% | 0%) Tj ET
+BT /F3 6.8 Tf 0.10 0.14 0.22 rg 52.00 494.60 Td (Local 1/f dephasing | 100 | 3,397 | 100% | 100% | 0% | 0%) Tj ET
+BT /F3 6.8 Tf 0.10 0.14 0.22 rg 52.00 485.00 Td (Local 1/f + Ramsey detuning | 100 | 17,456 | 100% | 99% | 0% | 0%) Tj ET
+BT /F3 6.8 Tf 0.10 0.14 0.22 rg 52.00 475.40 Td (Local Ornstein-Uhlenbeck | 100 | 415 | 100% | 95% | 0% | 0%) Tj ET
+BT /F3 6.8 Tf 0.10 0.14 0.22 rg 52.00 465.80 Td (Spatially correlated Markov \(H_2\) | 50 | 462 | 0% | 0% | 56% | 56%) Tj ET
+BT /F3 6.8 Tf 0.10 0.14 0.22 rg 52.00 456.20 Td (Correlated OU bath, fast \(H_3\) | 50 | 1,289 | 100% | 100% | 44% | 44%) Tj ET
+BT /F3 6.8 Tf 0.10 0.14 0.22 rg 52.00 446.60 Td (Correlated OU bath, slow \(H_3\) | 50 | 582 | 100% | 96% | 0% | 0%) Tj ET
+0.5 w 0.65 0.68 0.72 RG 50 437.00 m 562 437.00 l S
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 426.00 Td (Whereas Sections sec:tmap and sec:ro establish how temporal drift in single-qubit readout) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 413.80 Td (corrupts spatial compilation rankings, CN-01 \(10.5281/zenodo.24406435; job dbtp67dav06s73cfbsm0,) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 401.60 Td (244 PUBs, 499,712 circuit shots, 4,997,120 multiplexed coupler-shots, 139 s QPU on) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 389.40 Td (ibm_marrakesh\) addresses the complementary inference hazard: how ordinary local low-frequency) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 377.20 Td (dephasing masquerades as spatially correlated non-Markovian memory when benchmarked against a) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 365.00 Td (white-noise null.) Tj ET
+BT /F5 9.4 Tf 0.07 0.09 0.15 rg 50.00 344.30 Td (5.1 Sublattice Toggling-Frame Spectroscopy Across Ten Distant Couplers) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 331.70 Td (Ten two-qubit couplers at pairwise graph distance >= 5 heavy-hex hops were measured) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 319.50 Td (simultaneously inside every circuit across three Pauli tomography bases. Under N-pulse periodic) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 307.30 Td (dynamical decoupling over total window T = 8.192 us \(N=16 slot width tau_slot = 512 ns\),) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 295.10 Td (shifting the pi-pulse train on one heavy-hex sublattice relative to its partner by temporal) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 282.90 Td (stagger Delta in [0, 256] ns continuously tunes their toggling-frame sign overlap) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 270.70 Td ([pazsilva2017,tripathi2022]:) Tj ET
+BT /F3 6.8 Tf 0.10 0.14 0.22 rg 52.00 255.00 Td (alpha_uv\(Delta \) = 1 - frac2Delta tau_slot.) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 245.40 Td (For Markovian or fast-correlating cross-dephasing gamma_uv shared across a coupler's two) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 233.20 Td (transmons \(u, v\), the Bell-state coherence decay rates split oppositely between the correlated) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 221.00 Td (\(Phi^ +/- \) and anti-correlated \(Psi^ +/- \) parity subspaces:) Tj ET
+BT /F3 6.8 Tf 0.10 0.14 0.22 rg 52.00 205.30 Td (Gamma_Phi^ +/- \(Delta \) = gamma_u + gamma_v + 2alpha_uv\(Delta \)gamma_uv, Gamma_Psi^ +/- \(Delta \) = gamma_u + gamma_v -) Tj ET
+BT /F3 6.8 Tf 0.10 0.14 0.22 rg 52.00 195.70 Td (2alpha_uv\(Delta \)gamma_uv.) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 186.10 Td (Increasing Delta from 0 to 256 ns drives alpha_uv from +1 to 0, enhancing Phi^+ Bell fidelity) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 173.90 Td (while symmetrically depressing Psi^+ fidelity \(C_DFS > 0\). Purely local dephasing \(gamma_uv=0\)) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 161.70 Td (affects both subspaces identically; static spectator ZZ coupling appears only when an adjacent) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 149.50 Td (spectator is prepared in |+> \(C_spec > 0\); and finite-duration drive-envelope collisions produce) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 137.30 Td (a sharp step completed by Delta = 48 ns \(S_48 >= 0.75\).) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 121.60 Td (On live hardware, all four preregistered mechanistic contrasts across the 10 couplers were) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 109.40 Td (statistically indistinguishable from zero [Table tab:cn01_heldout_nulls\(a\) and Fig.) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 97.20 Td (fig:cn01\(b\)]: C_DFS = +0.43 pp \(95% CI [-0.13, +1.00], p_Holm=0.47\), C_spec = -0.20 pp) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 85.00 Td (\(p_Holm=0.53\), C_stag = +0.20 pp \(p_Holm=0.61\), and pulse-number memory contrast C_mem = -0.14) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 72.80 Td (pp \(p_Holm=0.89\), with step fraction S_48 = 0.62 and A/A sentinel RMS drift 1.15 pp. Fast) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 60.60 Td (spatially correlated dephasing on timescales shorter than the 512 ns DD slot is bounded below) Tj ET
+BT /F3 8.0 Tf 0.40 0.42 0.46 rg 292.00 28.00 Td (- 7 -) Tj ET
+endstream
+endobj
+21 0 obj
+<< /Type /Page /Parent 7 0 R /MediaBox [0 0 612.00 792.00] /Resources << /Font << /F1 1 0 R /F2 2 0 R /F3 3 0 R /F4 4 0 R /F5 5 0 R /F6 6 0 R >> >> /Contents 20 0 R >>
+endobj
+22 0 obj
+<< /Length 7628 >>
+stream
+1 1 1 rg 0 0 612 792 re f
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 742.00 Td (1.0 pp.) Tj ET
+BT /F5 9.4 Tf 0.07 0.09 0.15 rg 50.00 721.30 Td (5.2 In-Sample Delta BIC Inflation Versus Held-Out Spatial Falsification) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 708.70 Td (Despite all mechanistic signatures being null, fitting the originally locked 23-condition) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 696.50 Td (generalized least-squares \(GLS\) hierarchy on the 4 training couplers selected the 8-parameter) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 684.30 Td (non-local Ornstein-Uhlenbeck bath hypothesis \(H_3\) over the local white-noise null \(H_0\) by an) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 672.10 Td (overwhelming Delta BIC = 10,263 \(BIC_H_3 = 173.7 vs BIC_H_0 = 10,437, well above the Delta BIC) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 659.90 Td (>= 8 selection gate\). Without out-of-sample protection, such an information-criterion gap would) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 647.70 Td (routinely be misreported as strong evidence for non-Markovian correlated bath memory.) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 632.00 Td (Here, the preregistered spatial kill criterion intervened decisively [Fig. fig:cn01\(c\)]: when) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 619.80 Td (evaluated on the 6 spatially disjoint held-out couplers measured in the exact same shots, H_3) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 607.60 Td (yielded a worse prediction error \(RMSE_H_3 = 0.143\) than the parameter-free white-noise baseline) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 595.40 Td (\(RMSE_H_0 = 0.130; paired t_5 = -0.24, two-sided p = 0.82\), falsifying the transferable memory) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 583.20 Td (claim and halting Stage-2 replication.) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 567.50 Td (To understand why in-sample white-noise GLS produced Delta BIC = 10,263 on a null dataset, 550) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 555.30 Td (synthetic datasets were generated in the locked bit layout using empirical T_1, readout error,) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 543.10 Td (and block drift [Table tab:cn01_heldout_nulls\(c\) and Fig. fig:cn01\(a\)]. Whenever the synthetic) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 530.90 Td (ground truth contained purely independent local 1/f dephasing, local 1/f with small Ramsey frame) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 518.70 Td (detuning, or local OU noise, the white-noise-null specification falsely selected non-local H_3) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 506.50 Td (in 100% of replicates with median Delta BIC of 3,397, 17,456, and 415, respectively--and even) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 494.30 Td (bypassed the held-out gate in 95%-100% of replicates because H_0 and H_3 were calibrated from) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 482.10 Td (mismatched free-induction versus echo baselines. On hardware, single-quadrature Ramsey fidelity) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 469.90 Td (decayed to 0.723 at 16.384 us compared with 0.896 under Hahn echo and 0.917 under 32-pulse) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 457.70 Td (DD--ordinary local low-frequency dephasing and frame detuning that H_0 cannot absorb.) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 442.00 Td (Incorporating local colored-noise nulls \(H_0,1/f and local uncorrelated OU H_3,loc\), removing) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 429.80 Td (single-quadrature Ramsey arms from the multi-model fit \(19 conditions\), calibrating all) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 417.60 Td (hypotheses from a common echo-DD32 reference, and hash-seeding the training split \(amendment) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 405.40 Td (A-3, SHA-256 7fb094d7a3474965..., recorded locally prior to job submission and reported) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 393.20 Td (alongside the locked pipeline for full transparency\) eliminated non-local false positives across) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 381.00 Td (all 400 synthetic local-noise replicates \(0% false-claim rate; 44%-56% power on fast correlated) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 368.80 Td (truths\). Applied to the live CN-01 counts, A-3 selected independent local H_0 \(BIC = 115.05,) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 356.60 Td (beating H_1 at 115.27 by 0.22 BIC units; refitting with an unconstrained white-noise floor above) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 344.40 Td (40 kHz collapsed H_0,1/f, H_3,loc, and H_3 identically onto H_0 at 57.2 kHz\), bringing in-sample) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 332.20 Td (selection into full agreement with both the mechanistic contrasts and the held-out spatial gate.) Tj ET
+BT /F5 10.2 Tf 0.07 0.09 0.15 rg 50.00 311.50 Td (6. DESIGN RULES FOR REPRODUCIBLE NISQ BENCHMARKING) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 297.70 Td (Synthesizing all 42 hardware jobs across ibm_marrakesh, ibm_fez, and ibm_kingston yields four) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 285.50 Td (actionable experimental design rules for superconducting processor benchmarking, compiler) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 273.30 Td (evaluation, and noise spectroscopy:) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 257.60 Td (* Mandatory Interleaved Block Randomization and Embedded A/A Sentinels. Because transmon readout) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 245.40 Td (and coherent gain drift measurably over minutes, circuit arms must never be submitted) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 233.20 Td (sequentially or analyzed with shot-level binomial error bars. Interleaving randomized blocks) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 221.00 Td (with identical-circuit A/A sentinels empirically anchors the within-job drift floor \(-0.24 pp) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 208.80 Td (virtual-Z A/A contrast in TMAP-02; 1.15 pp RMS sentinel floor in CN-01\) and turns block means) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 196.60 Td (into valid paired replicates.) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 180.90 Td (* Pre-Job Surgical Readout Screening Rather Than Blind Calibration or Probe Re-Weighting.) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 168.70 Td (Provider readout calibrations on 156-qubit Heron r2 processors are accurate immediately after) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 156.50 Td (refresh \(rho 0.952\) yet remain static for up to 16.0 h while individual qubits telegraph above) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 144.30 Td (15%-54.4% for tens of minutes \(87.4% 15-minute persistence\). Replacing published readout weights) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 132.10 Td (globally with a pre-job probe degrades gate and coherence selection once readout is mitigated) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 119.90 Td (\(TMAP-04 L4 negative on all 3 QPUs\). Instead, practitioners should run a rapid 6-PUB all-qubit) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 107.70 Td (|0>/|1> probe immediately before execution, mask out only transmons exceeding a gross fault) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 95.50 Td (ceiling \(e_probe > 15%\), and embed two union |0>/|1> circuits per block to audit in-job) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 83.30 Td (stability.) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 67.60 Td (* Multi-Epoch Replication Across Calibration Windows for Compiler Claims. Because) Tj ET
+BT /F3 8.0 Tf 0.40 0.42 0.46 rg 292.00 28.00 Td (- 8 -) Tj ET
+endstream
+endobj
+23 0 obj
+<< /Type /Page /Parent 7 0 R /MediaBox [0 0 612.00 792.00] /Resources << /Font << /F1 1 0 R /F2 2 0 R /F3 3 0 R /F4 4 0 R /F5 5 0 R /F6 6 0 R >> >> /Contents 22 0 R >>
+endobj
+24 0 obj
+<< /Length 6749 >>
+stream
+1 1 1 rg 0 0 612 792 re f
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 742.00 Td (probe-versus-calibration rankings inverted sign across all 3 processors within 82-85 minutes) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 729.80 Td (\(TMAP-04 -> TMAP-05\) and across 4 days \(TMAP-02 -> TMAP-03\), single-job layout or routing) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 717.60 Td (benchmarks characterize a transient defect realization rather than an intrinsic compiler) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 705.40 Td (advantage. Algorithmic routing claims require replication across separated hours and calibration) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 693.20 Td (epochs.) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 677.50 Td (* Local Colored-Noise Nulls Paired with Spatially Held-Out Generalization Gates. In) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 665.30 Td (bath-correlation or non-Markovian spectroscopy, white-noise-only nulls guarantee spurious) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 653.10 Td (in-sample discovery \(Delta BIC reaching 415-17,456\) whenever ordinary local 1/f or telegraph) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 640.90 Td (dephasing is present. Preregistrations must include local 1/f and local Ornstein-Uhlenbeck) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 628.70 Td (nulls, calibrate competing hypotheses on matched pulse-echo baselines rather than) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 616.50 Td (phase-sensitive Ramsey decays, verify a 0% false-positive rate on synthetic local-colored-noise) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 604.30 Td (simulations prior to hardware spend, and enforce out-of-sample RMSE improvement on spatially) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 592.10 Td (disjoint couplers measured simultaneously in the same shots.) Tj ET
+BT /F5 10.2 Tf 0.07 0.09 0.15 rg 50.00 571.40 Td (7. DATA AND CODE AVAILABILITY) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 557.60 Td (All raw SamplerV2 bitstring count histograms \(1,062 PUBs, 2,174,976 circuit shots across 42) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 545.40 Td (verified hardware jobs\), compiled .qpy circuit binaries, pre-submission SHA-256 lock manifests,) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 533.20 Td (submission receipts, backend calibration snapshots, and analysis scripts are permanently) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 521.00 Td (archived across 6 Zenodo data records and 5 prospective Zenodo preregistrations:) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 505.30 Td (* TMAP-02: Data and code at 10.5281/zenodo.24406426 [davis_tmap02].) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 489.60 Td (* TMAP-03: Preregistration at 10.5281/zenodo.24406496 [prereg_tmap03]; data and code at) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 477.40 Td (10.5281/zenodo.24406525 [davis_tmap03].) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 461.70 Td (* TMAP-04: Preregistration at 10.5281/zenodo.24406640 [prereg_tmap04]; data and code at) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 449.50 Td (10.5281/zenodo.24407001 [davis_tmap04].) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 433.80 Td (* TMAP-05: Preregistration at 10.5281/zenodo.24407538 [prereg_tmap05]; data and code at) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 421.60 Td (10.5281/zenodo.24407875 [davis_tmap05].) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 405.90 Td (* RO-06 and RO-07: Preregistrations at 10.5281/zenodo.24407897 [prereg_ro06] and) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 393.70 Td (10.5281/zenodo.24419327 [prereg_ro07]; combined longitudinal and context data at) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 381.50 Td (10.5281/zenodo.24420902 [davis_ro0607].) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 365.80 Td (* CN-01: Stage-1 data, A-3 validation suite, and diagnostic records at 10.5281/zenodo.24406435) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 353.60 Td ([davis_cn01].) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 337.90 Td (Accompanying this unified manuscript in papers/heron_r2_calibration_staleness_and_colored_nulls/) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 325.70 Td (are generate_unified_assets.py, generated.tex, the vector figures, SHA256SUMS.txt, and) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 313.50 Td (reproducibility_capsule.json \(schema: "osiris.reproducibility_capsule/1", RFC 8785 canonical) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 301.30 Td (SHA-256 prefix 9631f34a6c54d7eb..., binding all 42 IBM Quantum job_ids and 125 source JSON) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 289.10 Td (SHA-256 digests\).) Tj ET
+BT /F5 9.4 Tf 0.07 0.09 0.15 rg 50.00 273.40 Td (ACKNOWLEDGMENTS) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 260.80 Td (We acknowledge the use of IBM Quantum services for this work; the views expressed are those of) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 248.60 Td (the author and do not reflect the official policy or position of IBM or the IBM Quantum team.) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 236.40 Td (Experiment-automation software, deterministic asset generation, and manuscript preparation were) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 224.20 Td (carried out with the assistance of AI coding tools under the author's direction, cryptographic) Tj ET
+BT /F4 9.3 Tf 0.07 0.09 0.15 rg 50.00 212.00 Td (pre-submission locking, and verification.) Tj ET
+BT /F5 10.2 Tf 0.07 0.09 0.15 rg 50.00 191.30 Td (REFERENCES) Tj ET
+BT /F6 8.6 Tf 0.18 0.22 0.28 rg 52.00 177.50 Td ([klimov2018] P. V. Klimov et al., Fluctuations of energy-relaxation times in superconducting) Tj ET
+BT /F6 8.6 Tf 0.18 0.22 0.28 rg 52.00 166.10 Td (qubits, Phys.\\ Rev.\\ Lett.\\ 121, 090502 \(2018\).) Tj ET
+BT /F6 8.6 Tf 0.18 0.22 0.28 rg 52.00 152.70 Td ([burnett2019] J. J. Burnett et al., Decoherence benchmarking of superconducting qubits, npj) Tj ET
+BT /F6 8.6 Tf 0.18 0.22 0.28 rg 52.00 141.30 Td (Quantum Inf.\\ 5, 54 \(2019\).) Tj ET
+BT /F6 8.6 Tf 0.18 0.22 0.28 rg 52.00 127.90 Td ([proctor2020] T. Proctor, M. Revelle, E. Nielsen, K. Rudinger, D. Lobser, P. Maunz, R.) Tj ET
+BT /F6 8.6 Tf 0.18 0.22 0.28 rg 52.00 116.50 Td (Blume-Kohout, and K. Young, Detecting and tracking drift in quantum information processors, Nat.\\) Tj ET
+BT /F6 8.6 Tf 0.18 0.22 0.28 rg 52.00 105.10 Td (Commun.\\ 11, 5396 \(2020\).) Tj ET
+BT /F6 8.6 Tf 0.18 0.22 0.28 rg 52.00 91.70 Td ([thorbeck2023] T. Thorbeck, A. Eddins, I. Lauer, D. T. McClure, and M. Carroll, Two-level-system) Tj ET
+BT /F6 8.6 Tf 0.18 0.22 0.28 rg 52.00 80.30 Td (dynamics in a superconducting qubit due to background ionizing radiation, PRX Quantum 4, 020356) Tj ET
+BT /F6 8.6 Tf 0.18 0.22 0.28 rg 52.00 68.90 Td (\(2023\).) Tj ET
+BT /F3 8.0 Tf 0.40 0.42 0.46 rg 292.00 28.00 Td (- 9 -) Tj ET
+endstream
+endobj
+25 0 obj
+<< /Type /Page /Parent 7 0 R /MediaBox [0 0 612.00 792.00] /Resources << /Font << /F1 1 0 R /F2 2 0 R /F3 3 0 R /F4 4 0 R /F5 5 0 R /F6 6 0 R >> >> /Contents 24 0 R >>
+endobj
+26 0 obj
+<< /Length 6137 >>
+stream
+1 1 1 rg 0 0 612 792 re f
+BT /F6 8.6 Tf 0.18 0.22 0.28 rg 52.00 742.00 Td ([nation2023] P. D. Nation and M. Treinish, Suppressing quantum circuit errors due to system) Tj ET
+BT /F6 8.6 Tf 0.18 0.22 0.28 rg 52.00 730.60 Td (variability, PRX Quantum 4, 010327 \(2023\).) Tj ET
+BT /F6 8.6 Tf 0.18 0.22 0.28 rg 52.00 717.20 Td ([pazsilva2017] G. A. Paz-Silva, L. M. Norris, and L. Viola, Multiqubit spectroscopy of Gaussian) Tj ET
+BT /F6 8.6 Tf 0.18 0.22 0.28 rg 52.00 705.80 Td (quantum noise, Phys.\\ Rev.\\ A 95, 022121 \(2017\).) Tj ET
+BT /F6 8.6 Tf 0.18 0.22 0.28 rg 52.00 692.40 Td ([sung2021] Y. Sung et al., Multi-level quantum noise spectroscopy, Nat.\\ Commun.\\ 12, 967 \(2021\).) Tj ET
+BT /F6 8.6 Tf 0.18 0.22 0.28 rg 52.00 679.00 Td ([tripathi2022] V. Tripathi, H. Chen, M. Khezri, K.-W. Yip, E. M. Levenson-Falk, and D. A. Lidar,) Tj ET
+BT /F6 8.6 Tf 0.18 0.22 0.28 rg 52.00 667.60 Td (Suppression of crosstalk in superconducting qubits using dynamical decoupling, Phys.\\ Rev.\\) Tj ET
+BT /F6 8.6 Tf 0.18 0.22 0.28 rg 52.00 656.20 Td (Applied 18, 024068 \(2022\).) Tj ET
+BT /F6 8.6 Tf 0.18 0.22 0.28 rg 52.00 642.80 Td ([chamberland2020] C. Chamberland, G. Zhu, T. J. Yoder, J. B. Hertzberg, and A. W. Cross,) Tj ET
+BT /F6 8.6 Tf 0.18 0.22 0.28 rg 52.00 631.40 Td (Topological and subsystem codes on low-degree graphs with flag qubits, Phys.\\ Rev.\\ X 10, 011022) Tj ET
+BT /F6 8.6 Tf 0.18 0.22 0.28 rg 52.00 620.00 Td (\(2020\).) Tj ET
+BT /F6 8.6 Tf 0.18 0.22 0.28 rg 52.00 606.60 Td ([chen2023] E. H. Chen et al., Detector tomography on IBM quantum computers and mitigation of an) Tj ET
+BT /F6 8.6 Tf 0.18 0.22 0.28 rg 52.00 595.20 Td (imperfect measurement, Phys.\\ Rev.\\ A 107, 032602 \(2023\).) Tj ET
+BT /F6 8.6 Tf 0.18 0.22 0.28 rg 52.00 581.80 Td ([cywinski2008] L. Cywi\\'nski, R. M. Lutchyn, C. P. Nave, and S. Das Sarma, How to enhance) Tj ET
+BT /F6 8.6 Tf 0.18 0.22 0.28 rg 52.00 570.40 Td (dephasing time in superconducting qubits, Phys.\\ Rev.\\ B 77, 174509 \(2008\).) Tj ET
+BT /F6 8.6 Tf 0.18 0.22 0.28 rg 52.00 557.00 Td ([bylander2011] J. Bylander et al., Noise spectroscopy through dynamical decoupling with a) Tj ET
+BT /F6 8.6 Tf 0.18 0.22 0.28 rg 52.00 545.60 Td (superconducting flux qubit, Nat.\\ Phys.\\ 7, 565 \(2011\).) Tj ET
+BT /F6 8.6 Tf 0.18 0.22 0.28 rg 52.00 532.20 Td ([davis_tmap02] D. P. Davis, Same gate count, half the fidelity: a preregistered decomposition of) Tj ET
+BT /F6 8.6 Tf 0.18 0.22 0.28 rg 52.00 520.80 Td (layout, routing and optimisation-level effects on a 40-qubit circuit on ibm_marrakesh, Zenodo) Tj ET
+BT /F6 8.6 Tf 0.18 0.22 0.28 rg 52.00 509.40 Td (\(2026\), doi:10.5281/zenodo.24406426.) Tj ET
+BT /F6 8.6 Tf 0.18 0.22 0.28 rg 52.00 496.00 Td ([davis_cn01] D. P. Davis, No evidence of spatially correlated or non-Markovian dephasing across) Tj ET
+BT /F6 8.6 Tf 0.18 0.22 0.28 rg 52.00 484.60 Td (ten couplers of ibm_marrakesh - and why a white-noise null is not enough to look for it, Zenodo) Tj ET
+BT /F6 8.6 Tf 0.18 0.22 0.28 rg 52.00 473.20 Td (\(2026\), doi:10.5281/zenodo.24406435.) Tj ET
+BT /F6 8.6 Tf 0.18 0.22 0.28 rg 52.00 459.80 Td ([prereg_tmap03] D. P. Davis, Preregistration: layout replication and readout attribution on) Tj ET
+BT /F6 8.6 Tf 0.18 0.22 0.28 rg 52.00 448.40 Td (ibm_marrakesh \(TMAP-03\), Zenodo \(2026\), doi:10.5281/zenodo.24406496.) Tj ET
+BT /F6 8.6 Tf 0.18 0.22 0.28 rg 52.00 435.00 Td ([davis_tmap03] D. P. Davis, Four days later, the best qubits were the worst: a preregistered) Tj ET
+BT /F6 8.6 Tf 0.18 0.22 0.28 rg 52.00 423.60 Td (replication on ibm_marrakesh in which readout faults invisible to the published calibration) Tj ET
+BT /F6 8.6 Tf 0.18 0.22 0.28 rg 52.00 412.20 Td (reversed a 10 pp layout effect, Zenodo \(2026\), doi:10.5281/zenodo.24406525.) Tj ET
+BT /F6 8.6 Tf 0.18 0.22 0.28 rg 52.00 398.80 Td ([prereg_tmap04] D. P. Davis, Preregistration: three-processor probe-guided qubit selection) Tj ET
+BT /F6 8.6 Tf 0.18 0.22 0.28 rg 52.00 387.40 Td (\(TMAP-04\), Zenodo \(2026\), doi:10.5281/zenodo.24406640.) Tj ET
+BT /F6 8.6 Tf 0.18 0.22 0.28 rg 52.00 374.00 Td ([davis_tmap04] D. P. Davis, A per-job readout probe rescues qubit selection on one IBM Heron r2) Tj ET
+BT /F6 8.6 Tf 0.18 0.22 0.28 rg 52.00 362.60 Td (processor and hurts it on another: a preregistered three-device test, Zenodo \(2026\),) Tj ET
+BT /F6 8.6 Tf 0.18 0.22 0.28 rg 52.00 351.20 Td (doi:10.5281/zenodo.24407001.) Tj ET
+BT /F6 8.6 Tf 0.18 0.22 0.28 rg 52.00 337.80 Td ([prereg_tmap05] D. P. Davis, Preregistration: probe-threshold fault exclusion across three Heron) Tj ET
+BT /F6 8.6 Tf 0.18 0.22 0.28 rg 52.00 326.40 Td (r2 processors \(TMAP-05\), Zenodo \(2026\), doi:10.5281/zenodo.24407538.) Tj ET
+BT /F6 8.6 Tf 0.18 0.22 0.28 rg 52.00 313.00 Td ([davis_tmap05] D. P. Davis, Qubit-selection rules for IBM Heron r2 do not hold their ranking for) Tj ET
+BT /F6 8.6 Tf 0.18 0.22 0.28 rg 52.00 301.60 Td (ninety minutes: a preregistered exclusion test and an unplanned sign flip on three processors,) Tj ET
+BT /F6 8.6 Tf 0.18 0.22 0.28 rg 52.00 290.20 Td (Zenodo \(2026\), doi:10.5281/zenodo.24407875.) Tj ET
+BT /F6 8.6 Tf 0.18 0.22 0.28 rg 52.00 276.80 Td ([prereg_ro06] D. P. Davis, Preregistration: full-chip longitudinal readout fault persistence) Tj ET
+BT /F6 8.6 Tf 0.18 0.22 0.28 rg 52.00 265.40 Td (across three Heron r2 processors \(RO-06\), Zenodo \(2026\), doi:10.5281/zenodo.24407897.) Tj ET
+BT /F6 8.6 Tf 0.18 0.22 0.28 rg 52.00 252.00 Td ([prereg_ro07] D. P. Davis, Preregistration: isolated versus simultaneous full-chip readout context) Tj ET
+BT /F6 8.6 Tf 0.18 0.22 0.28 rg 52.00 240.60 Td (test \(RO-07\), Zenodo \(2026\), doi:10.5281/zenodo.24419327.) Tj ET
+BT /F6 8.6 Tf 0.18 0.22 0.28 rg 52.00 227.20 Td ([davis_ro0607] D. P. Davis, Stale snapshots, not hidden physics: readout faults on three IBM Heron) Tj ET
+BT /F6 8.6 Tf 0.18 0.22 0.28 rg 52.00 215.80 Td (r2 processors are rare, persist for tens of minutes, and do not depend on measurement context,) Tj ET
+BT /F6 8.6 Tf 0.18 0.22 0.28 rg 52.00 204.40 Td (Zenodo \(2026\), doi:10.5281/zenodo.24420902.) Tj ET
+BT /F3 8.0 Tf 0.40 0.42 0.46 rg 292.00 28.00 Td (- 10 -) Tj ET
+endstream
+endobj
+27 0 obj
+<< /Type /Page /Parent 7 0 R /MediaBox [0 0 612.00 792.00] /Resources << /Font << /F1 1 0 R /F2 2 0 R /F3 3 0 R /F4 4 0 R /F5 5 0 R /F6 6 0 R >> >> /Contents 26 0 R >>
+endobj
+28 0 obj
+<< /Type /Catalog /Pages 7 0 R >>
+endobj
+xref
+0 29
+0000000000 65535 f 
+0000000015 00000 n 
+0000000085 00000 n 
+0000000160 00000 n 
+0000000228 00000 n 
+0000000300 00000 n 
+0000000371 00000 n 
+0000000444 00000 n 
+0000000565 00000 n 
+0000008364 00000 n 
+0000008546 00000 n 
+0000016557 00000 n 
+0000016741 00000 n 
+0000024478 00000 n 
+0000024662 00000 n 
+0000032197 00000 n 
+0000032381 00000 n 
+0000039892 00000 n 
+0000040076 00000 n 
+0000047647 00000 n 
+0000047831 00000 n 
+0000056230 00000 n 
+0000056414 00000 n 
+0000064094 00000 n 
+0000064278 00000 n 
+0000071079 00000 n 
+0000071263 00000 n 
+0000077452 00000 n 
+0000077636 00000 n 
+trailer
+<< /Size 29 /Root 28 0 R >>
+startxref
+77686
+%%EOF
