@@ -1,0 +1,60 @@
+{
+  "affiliation": "Agile Defense Systems LLC",
+  "author": "Devin Phillip Davis",
+  "cards_covered": [
+    "Card B: OSIRIS-ECHO",
+    "Card C: OSIRIS-QEC"
+  ],
+  "execution_tier": "SIMULATED",
+  "gate_verdicts": {
+    "card_b_echo_stopgo": "PASS_OFFLINE_STOPGO_GATE",
+    "card_c_fez_drifted_spam_surface_d3": "STOP_NO_CROSSING_AT_TESTED_ROUNDS",
+    "card_c_fez_published_rep3": "PASS_CROSSING_OBSERVED",
+    "card_c_fez_published_surface_d3": "PASS_CROSSING_OBSERVED",
+    "card_c_h2_1_published_surface_d3": "PASS_CROSSING_OBSERVED",
+    "card_c_qutrit_leakage_lru": "PASS_QUTRIT_LEAKAGE_GAP_CLOSED_WITH_LRU"
+  },
+  "hardware_execution_authorized": false,
+  "key_metrics_formatted": {
+    "calibration_composite_spearman": "0.387121",
+    "calibration_top1_regret": "0.090983",
+    "delta_echo_minus_cal_spearman": "0.546180",
+    "echo_composite_spearman": "0.933302",
+    "echo_top1_regret": "0.004274",
+    "fez_rep3_1p2e3_ancilla_lru_eps_L_slope": "0.00115941",
+    "fez_rep3_1p2e3_full_lru_eps_L_slope": "0.00095482",
+    "fez_rep3_1p2e3_no_lru_eps_L_slope": "0.00189610",
+    "fez_rep3_zero_leak_eps_L_slope": "0.00069143",
+    "h2_1_rep3_5e5_full_lru_eps_L_slope": "0.00001769",
+    "h2_1_rep3_5e5_no_lru_eps_L_slope": "0.00004988"
+  },
+  "paper_id": "OSIRIS-ECHO-QEC-CARD-BC-2026",
+  "provider_job_id": null,
+  "qpu_seconds": 0,
+  "rfc8785_canonical_sha256": "08ea0021109153d4ebcf2c172dd58fe9ab713781ad3172ff68885fe338c4e24e",
+  "schema": "osiris.reproducibility_capsule/1",
+  "seed": 20261124,
+  "source_artifacts": {
+    "experiments/echo_placement/artifacts/echo_stopgo_report.json": "7cab344a6934958bd781a3b3686c860dec0d35bf0816750ab24b0053bb6ba4e0",
+    "experiments/echo_placement/echo_placement_gate.py": "d40bdcd9b7d48191472aaeba810be547a57bcebd7effcf995d3bf44703ee3ab8",
+    "experiments/qec_card_c/artifacts/card_c_qec_crossing_report.json": "8527279fe95e3547329a7ead876ab553ee3a13af24086107280654d0cab303a0",
+    "experiments/qec_card_c/artifacts/card_c_qutrit_leakage_lru_report.json": "bb403f430c2f5a8faf88a3e2d04814ea85dc837cb86328468d655bb47b4cba45",
+    "experiments/qec_card_c/qec_crossing_gate.py": "59f791b6f041ccecf3e8f5245062dba93988241f4bccbe0ed3245ad840924ff8",
+    "experiments/qec_card_c/qec_leakage_lru.py": "80844f508fb67e0a84eef2c3162525c888f1a95451998191c663ff5e5f2e38ce"
+  },
+  "unit_of_inference": {
+    "card_b_calibration_windows_M": 16,
+    "card_b_candidate_placements_K": 10,
+    "card_b_mechanism_inferred": "none",
+    "card_c_code_distance": 3,
+    "card_c_rounds_evaluated": [
+      1,
+      2,
+      3,
+      5,
+      7,
+      9
+    ],
+    "card_c_scope": "single_distance_d3_crossing_and_5qutrit_243state_lru_ablation"
+  }
+}
