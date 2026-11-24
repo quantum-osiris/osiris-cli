@@ -1,0 +1,2967 @@
+{
+  "cells": {
+    "FEZ_DRIFTED_SPAM__pleak_0.00000__ANCILLA_LRU_ONLY": {
+      "architecture": "ANCILLA_LRU_ONLY",
+      "crossing_vs_card_c_baselines": {
+        "beats_arm2_at_any_tested_round": true,
+        "crosses_below_both_sustained": true,
+        "r_cross_vs_arm1_unencoded": 1,
+        "r_cross_vs_arm2_no_correction": 1,
+        "r_cross_vs_both_first": 1,
+        "r_cross_vs_both_sustained": 1,
+        "verdict": "PASS_CROSSING_OBSERVED"
+      },
+      "delta_eps_L_r9_vs_zero_leak": 6.38e-06,
+      "delta_eps_L_slope_vs_zero_leak": 4.52e-06,
+      "exact_qutrit_branch_crosschecks": {
+        "1": {
+          "abs_diff": 9.705e-05,
+          "exact_qutrit_branch_p_fail": 0.00705113,
+          "trajectory_mc_p_fail": 0.00714818
+        },
+        "2": {
+          "abs_diff": 3.016e-05,
+          "exact_qutrit_branch_p_fail": 0.00770252,
+          "trajectory_mc_p_fail": 0.00773269
+        },
+        "3": {
+          "abs_diff": 3.385e-05,
+          "exact_qutrit_branch_p_fail": 0.00876772,
+          "trajectory_mc_p_fail": 0.00880158
+        }
+      },
+      "fit": {
+        "epsilon_L_at_max_round": 0.00156622,
+        "epsilon_L_at_max_round_ci95": [
+          0.00141584,
+          0.00171215
+        ],
+        "epsilon_L_slope_ci95": [
+          0.00070367,
+          0.00105857
+        ],
+        "epsilon_L_slope_fit": 0.00087718,
+        "per_round_epsilon_L": {
+          "1": 0.00714818,
+          "2": 0.00388141,
+          "3": 0.00295124,
+          "5": 0.00210532,
+          "7": 0.00176254,
+          "9": 0.00156622
+        }
+      },
+      "leakage_diagnostics": {
+        "ancilla_streak_ge2_fraction_at_max_round": 0.0,
+        "mean_ancilla_qutrit_p2_by_round": {
+          "1": 0.0,
+          "2": 0.0,
+          "3": 0.0,
+          "5": 0.0,
+          "7": 0.0,
+          "9": 0.0
+        },
+        "mean_data_qutrit_p2_by_round": {
+          "1": 0.0,
+          "2": 0.0,
+          "3": 0.0,
+          "5": 0.0,
+          "7": 0.0,
+          "9": 0.0
+        }
+      },
+      "lru_parameters": {
+        "dt_lru_us": 0.12,
+        "lru_infidelity": 0.0005,
+        "p_leak_2q": 0.0,
+        "p_lru_1q": 0.0003,
+        "p_ro_2_as_1": 0.92,
+        "p_seep_reset": 0.002857142857142857,
+        "p_seep_round": 0.015714285714285712
+      },
+      "n_shots_per_round": 30000,
+      "p_fail_by_round": {
+        "1": 0.0071482,
+        "2": 0.0077327,
+        "3": 0.0088016,
+        "5": 0.0104383,
+        "7": 0.012208,
+        "9": 0.0139206
+      },
+      "rounds_evaluated": [
+        1,
+        2,
+        3,
+        5,
+        7,
+        9
+      ],
+      "target_profile_id": "FEZ_DRIFTED_SPAM"
+    },
+    "FEZ_DRIFTED_SPAM__pleak_0.00000__FULL_DATA_AND_ANCILLA_LRU": {
+      "architecture": "FULL_DATA_AND_ANCILLA_LRU",
+      "crossing_vs_card_c_baselines": {
+        "beats_arm2_at_any_tested_round": true,
+        "crosses_below_both_sustained": true,
+        "r_cross_vs_arm1_unencoded": 1,
+        "r_cross_vs_arm2_no_correction": 1,
+        "r_cross_vs_both_first": 1,
+        "r_cross_vs_both_sustained": 1,
+        "verdict": "PASS_CROSSING_OBSERVED"
+      },
+      "delta_eps_L_r9_vs_zero_leak": 0.00011915,
+      "delta_eps_L_slope_vs_zero_leak": 0.00011156,
+      "exact_qutrit_branch_crosschecks": {
+        "1": {
+          "abs_diff": 9.81e-05,
+          "exact_qutrit_branch_p_fail": 0.00720747,
+          "trajectory_mc_p_fail": 0.00730557
+        },
+        "2": {
+          "abs_diff": 3.364e-05,
+          "exact_qutrit_branch_p_fail": 0.00803212,
+          "trajectory_mc_p_fail": 0.00806576
+        },
+        "3": {
+          "abs_diff": 2.12e-05,
+          "exact_qutrit_branch_p_fail": 0.00919875,
+          "trajectory_mc_p_fail": 0.00921994
+        }
+      },
+      "fit": {
+        "epsilon_L_at_max_round": 0.00167899,
+        "epsilon_L_at_max_round_ci95": [
+          0.00152201,
+          0.0018379
+        ],
+        "epsilon_L_slope_ci95": [
+          0.0008155,
+          0.00116789
+        ],
+        "epsilon_L_slope_fit": 0.00098422,
+        "per_round_epsilon_L": {
+          "1": 0.00730557,
+          "2": 0.00404928,
+          "3": 0.0030924,
+          "5": 0.0022175,
+          "7": 0.001892,
+          "9": 0.00167899
+        }
+      },
+      "leakage_diagnostics": {
+        "ancilla_streak_ge2_fraction_at_max_round": 0.0,
+        "mean_ancilla_qutrit_p2_by_round": {
+          "1": 0.0,
+          "2": 0.0,
+          "3": 0.0,
+          "5": 0.0,
+          "7": 0.0,
+          "9": 0.0
+        },
+        "mean_data_qutrit_p2_by_round": {
+          "1": 0.0,
+          "2": 0.0,
+          "3": 0.0,
+          "5": 0.0,
+          "7": 0.0,
+          "9": 0.0
+        }
+      },
+      "lru_parameters": {
+        "dt_lru_us": 0.12,
+        "lru_infidelity": 0.0005,
+        "p_leak_2q": 0.0,
+        "p_lru_1q": 0.0003,
+        "p_ro_2_as_1": 0.92,
+        "p_seep_reset": 0.002857142857142857,
+        "p_seep_round": 0.015714285714285712
+      },
+      "n_shots_per_round": 30000,
+      "p_fail_by_round": {
+        "1": 0.0073056,
+        "2": 0.0080658,
+        "3": 0.0092199,
+        "5": 0.0109896,
+        "7": 0.0130946,
+        "9": 0.0149095
+      },
+      "rounds_evaluated": [
+        1,
+        2,
+        3,
+        5,
+        7,
+        9
+      ],
+      "target_profile_id": "FEZ_DRIFTED_SPAM"
+    },
+    "FEZ_DRIFTED_SPAM__pleak_0.00000__NO_LRU": {
+      "architecture": "NO_LRU",
+      "crossing_vs_card_c_baselines": {
+        "beats_arm2_at_any_tested_round": true,
+        "crosses_below_both_sustained": true,
+        "r_cross_vs_arm1_unencoded": 1,
+        "r_cross_vs_arm2_no_correction": 1,
+        "r_cross_vs_both_first": 1,
+        "r_cross_vs_both_sustained": 1,
+        "verdict": "PASS_CROSSING_OBSERVED"
+      },
+      "delta_eps_L_r9_vs_zero_leak": 0.0,
+      "delta_eps_L_slope_vs_zero_leak": 0.0,
+      "exact_qutrit_branch_crosschecks": {
+        "1": {
+          "abs_diff": 9.538e-05,
+          "exact_qutrit_branch_p_fail": 0.00705113,
+          "trajectory_mc_p_fail": 0.00714652
+        },
+        "2": {
+          "abs_diff": 2.903e-05,
+          "exact_qutrit_branch_p_fail": 0.0076922,
+          "trajectory_mc_p_fail": 0.00772123
+        },
+        "3": {
+          "abs_diff": 5.154e-05,
+          "exact_qutrit_branch_p_fail": 0.00875114,
+          "trajectory_mc_p_fail": 0.00880267
+        }
+      },
+      "fit": {
+        "epsilon_L_at_max_round": 0.00155984,
+        "epsilon_L_at_max_round_ci95": [
+          0.00141205,
+          0.00170844
+        ],
+        "epsilon_L_slope_ci95": [
+          0.0007072,
+          0.00104739
+        ],
+        "epsilon_L_slope_fit": 0.00087266,
+        "per_round_epsilon_L": {
+          "1": 0.00714652,
+          "2": 0.00387563,
+          "3": 0.00295161,
+          "5": 0.00210115,
+          "7": 0.00176373,
+          "9": 0.00155984
+        }
+      },
+      "leakage_diagnostics": {
+        "ancilla_streak_ge2_fraction_at_max_round": 0.0,
+        "mean_ancilla_qutrit_p2_by_round": {
+          "1": 0.0,
+          "2": 0.0,
+          "3": 0.0,
+          "5": 0.0,
+          "7": 0.0,
+          "9": 0.0
+        },
+        "mean_data_qutrit_p2_by_round": {
+          "1": 0.0,
+          "2": 0.0,
+          "3": 0.0,
+          "5": 0.0,
+          "7": 0.0,
+          "9": 0.0
+        }
+      },
+      "lru_parameters": {
+        "dt_lru_us": 0.12,
+        "lru_infidelity": 0.0005,
+        "p_leak_2q": 0.0,
+        "p_lru_1q": 0.0003,
+        "p_ro_2_as_1": 0.92,
+        "p_seep_reset": 0.002857142857142857,
+        "p_seep_round": 0.015714285714285712
+      },
+      "n_shots_per_round": 30000,
+      "p_fail_by_round": {
+        "1": 0.0071465,
+        "2": 0.0077212,
+        "3": 0.0088027,
+        "5": 0.0104178,
+        "7": 0.0122162,
+        "9": 0.0138646
+      },
+      "rounds_evaluated": [
+        1,
+        2,
+        3,
+        5,
+        7,
+        9
+      ],
+      "target_profile_id": "FEZ_DRIFTED_SPAM"
+    },
+    "FEZ_DRIFTED_SPAM__pleak_0.00050__ANCILLA_LRU_ONLY": {
+      "architecture": "ANCILLA_LRU_ONLY",
+      "crossing_vs_card_c_baselines": {
+        "beats_arm2_at_any_tested_round": true,
+        "crosses_below_both_sustained": true,
+        "r_cross_vs_arm1_unencoded": 1,
+        "r_cross_vs_arm2_no_correction": 1,
+        "r_cross_vs_both_first": 1,
+        "r_cross_vs_both_sustained": 1,
+        "verdict": "PASS_CROSSING_OBSERVED"
+      },
+      "delta_eps_L_r9_vs_zero_leak": 0.00017622,
+      "delta_eps_L_slope_vs_zero_leak": 0.00017654,
+      "exact_qutrit_branch_crosschecks": {
+        "1": {
+          "abs_diff": 7.915e-05,
+          "exact_qutrit_branch_p_fail": 0.00715004,
+          "trajectory_mc_p_fail": 0.00722919
+        },
+        "2": {
+          "abs_diff": 1.256e-05,
+          "exact_qutrit_branch_p_fail": 0.00796086,
+          "trajectory_mc_p_fail": 0.00797342
+        }
+      },
+      "fit": {
+        "epsilon_L_at_max_round": 0.00173606,
+        "epsilon_L_at_max_round_ci95": [
+          0.00157146,
+          0.00189133
+        ],
+        "epsilon_L_slope_ci95": [
+          0.00086436,
+          0.00123327
+        ],
+        "epsilon_L_slope_fit": 0.0010492,
+        "per_round_epsilon_L": {
+          "1": 0.00722919,
+          "2": 0.00400273,
+          "3": 0.00309991,
+          "5": 0.00224733,
+          "7": 0.0019049,
+          "9": 0.00173606
+        }
+      },
+      "leakage_diagnostics": {
+        "ancilla_streak_ge2_fraction_at_max_round": 0.0,
+        "mean_ancilla_qutrit_p2_by_round": {
+          "1": 0.00063333,
+          "2": 0.000525,
+          "3": 0.00042778,
+          "5": 0.00045,
+          "7": 0.00048571,
+          "9": 0.00048148
+        },
+        "mean_data_qutrit_p2_by_round": {
+          "1": 0.0003308,
+          "2": 0.00065056,
+          "3": 0.00097029,
+          "5": 0.00160502,
+          "7": 0.00220622,
+          "9": 0.00266988
+        }
+      },
+      "lru_parameters": {
+        "dt_lru_us": 0.12,
+        "lru_infidelity": 0.0005,
+        "p_leak_2q": 0.0005,
+        "p_lru_1q": 0.0003,
+        "p_ro_2_as_1": 0.92,
+        "p_seep_reset": 0.002857142857142857,
+        "p_seep_round": 0.015714285714285712
+      },
+      "n_shots_per_round": 30000,
+      "p_fail_by_round": {
+        "1": 0.0072292,
+        "2": 0.0079734,
+        "3": 0.0092422,
+        "5": 0.0111361,
+        "7": 0.0131829,
+        "9": 0.0154093
+      },
+      "rounds_evaluated": [
+        1,
+        2,
+        3,
+        5,
+        7,
+        9
+      ],
+      "target_profile_id": "FEZ_DRIFTED_SPAM"
+    },
+    "FEZ_DRIFTED_SPAM__pleak_0.00050__FULL_DATA_AND_ANCILLA_LRU": {
+      "architecture": "FULL_DATA_AND_ANCILLA_LRU",
+      "crossing_vs_card_c_baselines": {
+        "beats_arm2_at_any_tested_round": true,
+        "crosses_below_both_sustained": true,
+        "r_cross_vs_arm1_unencoded": 1,
+        "r_cross_vs_arm2_no_correction": 1,
+        "r_cross_vs_both_first": 1,
+        "r_cross_vs_both_sustained": 1,
+        "verdict": "PASS_CROSSING_OBSERVED"
+      },
+      "delta_eps_L_r9_vs_zero_leak": 0.00020039,
+      "delta_eps_L_slope_vs_zero_leak": 0.0001911,
+      "exact_qutrit_branch_crosschecks": {
+        "1": {
+          "abs_diff": 7.949e-05,
+          "exact_qutrit_branch_p_fail": 0.00726823,
+          "trajectory_mc_p_fail": 0.00734772
+        },
+        "2": {
+          "abs_diff": 1.2e-05,
+          "exact_qutrit_branch_p_fail": 0.00816711,
+          "trajectory_mc_p_fail": 0.00815511
+        }
+      },
+      "fit": {
+        "epsilon_L_at_max_round": 0.00176023,
+        "epsilon_L_at_max_round_ci95": [
+          0.00160936,
+          0.00191424
+        ],
+        "epsilon_L_slope_ci95": [
+          0.00089156,
+          0.0012444
+        ],
+        "epsilon_L_slope_fit": 0.00106376,
+        "per_round_epsilon_L": {
+          "1": 0.00734772,
+          "2": 0.00409432,
+          "3": 0.00316478,
+          "5": 0.00227991,
+          "7": 0.00195076,
+          "9": 0.00176023
+        }
+      },
+      "leakage_diagnostics": {
+        "ancilla_streak_ge2_fraction_at_max_round": 0.0,
+        "mean_ancilla_qutrit_p2_by_round": {
+          "1": 0.00063333,
+          "2": 0.000525,
+          "3": 0.00042778,
+          "5": 0.00045,
+          "7": 0.00048571,
+          "9": 0.00048148
+        },
+        "mean_data_qutrit_p2_by_round": {
+          "1": 1.7e-07,
+          "2": 1.6e-07,
+          "3": 1.7e-07,
+          "5": 1.6e-07,
+          "7": 1.6e-07,
+          "9": 1.6e-07
+        }
+      },
+      "lru_parameters": {
+        "dt_lru_us": 0.12,
+        "lru_infidelity": 0.0005,
+        "p_leak_2q": 0.0005,
+        "p_lru_1q": 0.0003,
+        "p_ro_2_as_1": 0.92,
+        "p_seep_reset": 0.002857142857142857,
+        "p_seep_round": 0.015714285714285712
+      },
+      "n_shots_per_round": 30000,
+      "p_fail_by_round": {
+        "1": 0.0073477,
+        "2": 0.0081551,
+        "3": 0.0094344,
+        "5": 0.0112961,
+        "7": 0.0134965,
+        "9": 0.0156208
+      },
+      "rounds_evaluated": [
+        1,
+        2,
+        3,
+        5,
+        7,
+        9
+      ],
+      "target_profile_id": "FEZ_DRIFTED_SPAM"
+    },
+    "FEZ_DRIFTED_SPAM__pleak_0.00050__NO_LRU": {
+      "architecture": "NO_LRU",
+      "crossing_vs_card_c_baselines": {
+        "beats_arm2_at_any_tested_round": true,
+        "crosses_below_both_sustained": true,
+        "r_cross_vs_arm1_unencoded": 1,
+        "r_cross_vs_arm2_no_correction": 1,
+        "r_cross_vs_both_first": 1,
+        "r_cross_vs_both_sustained": 1,
+        "verdict": "PASS_CROSSING_OBSERVED"
+      },
+      "delta_eps_L_r9_vs_zero_leak": 0.00038547,
+      "delta_eps_L_slope_vs_zero_leak": 0.00042134,
+      "exact_qutrit_branch_crosschecks": {
+        "1": {
+          "abs_diff": 7.921e-05,
+          "exact_qutrit_branch_p_fail": 0.00715004,
+          "trajectory_mc_p_fail": 0.00722925
+        },
+        "2": {
+          "abs_diff": 1.027e-05,
+          "exact_qutrit_branch_p_fail": 0.00808534,
+          "trajectory_mc_p_fail": 0.00807507
+        }
+      },
+      "fit": {
+        "epsilon_L_at_max_round": 0.00194531,
+        "epsilon_L_at_max_round_ci95": [
+          0.00177309,
+          0.00212081
+        ],
+        "epsilon_L_slope_ci95": [
+          0.00110148,
+          0.00148331
+        ],
+        "epsilon_L_slope_fit": 0.001294,
+        "per_round_epsilon_L": {
+          "1": 0.00722925,
+          "2": 0.00405397,
+          "3": 0.00320231,
+          "5": 0.00240529,
+          "7": 0.00210268,
+          "9": 0.00194531
+        }
+      },
+      "leakage_diagnostics": {
+        "ancilla_streak_ge2_fraction_at_max_round": 0.0077,
+        "mean_ancilla_qutrit_p2_by_round": {
+          "1": 0.00063333,
+          "2": 0.00071667,
+          "3": 0.00086667,
+          "5": 0.00136,
+          "7": 0.00198571,
+          "9": 0.00231852
+        },
+        "mean_data_qutrit_p2_by_round": {
+          "1": 0.00033088,
+          "2": 0.00065068,
+          "3": 0.00097087,
+          "5": 0.00160652,
+          "7": 0.00221539,
+          "9": 0.00263658
+        }
+      },
+      "lru_parameters": {
+        "dt_lru_us": 0.12,
+        "lru_infidelity": 0.0005,
+        "p_leak_2q": 0.0005,
+        "p_lru_1q": 0.0003,
+        "p_ro_2_as_1": 0.92,
+        "p_seep_reset": 0.002857142857142857,
+        "p_seep_round": 0.015714285714285712
+      },
+      "n_shots_per_round": 30000,
+      "p_fail_by_round": {
+        "1": 0.0072292,
+        "2": 0.0080751,
+        "3": 0.0095455,
+        "5": 0.0119113,
+        "7": 0.0145344,
+        "9": 0.0172378
+      },
+      "rounds_evaluated": [
+        1,
+        2,
+        3,
+        5,
+        7,
+        9
+      ],
+      "target_profile_id": "FEZ_DRIFTED_SPAM"
+    },
+    "FEZ_DRIFTED_SPAM__pleak_0.00120__ANCILLA_LRU_ONLY": {
+      "architecture": "ANCILLA_LRU_ONLY",
+      "crossing_vs_card_c_baselines": {
+        "beats_arm2_at_any_tested_round": true,
+        "crosses_below_both_sustained": true,
+        "r_cross_vs_arm1_unencoded": 1,
+        "r_cross_vs_arm2_no_correction": 1,
+        "r_cross_vs_both_first": 1,
+        "r_cross_vs_both_sustained": 1,
+        "verdict": "PASS_CROSSING_OBSERVED"
+      },
+      "delta_eps_L_r9_vs_zero_leak": 0.00038886,
+      "delta_eps_L_slope_vs_zero_leak": 0.00040706,
+      "exact_qutrit_branch_crosschecks": {
+        "1": {
+          "abs_diff": 5.56e-05,
+          "exact_qutrit_branch_p_fail": 0.00728917,
+          "trajectory_mc_p_fail": 0.00734477
+        },
+        "2": {
+          "abs_diff": 2.8e-07,
+          "exact_qutrit_branch_p_fail": 0.00832506,
+          "trajectory_mc_p_fail": 0.00832534
+        }
+      },
+      "fit": {
+        "epsilon_L_at_max_round": 0.0019487,
+        "epsilon_L_at_max_round_ci95": [
+          0.00178062,
+          0.00211708
+        ],
+        "epsilon_L_slope_ci95": [
+          0.00109897,
+          0.00147338
+        ],
+        "epsilon_L_slope_fit": 0.00127972,
+        "per_round_epsilon_L": {
+          "1": 0.00734477,
+          "2": 0.00418014,
+          "3": 0.00333259,
+          "5": 0.00246255,
+          "7": 0.00214109,
+          "9": 0.0019487
+        }
+      },
+      "leakage_diagnostics": {
+        "ancilla_streak_ge2_fraction_at_max_round": 3.33e-05,
+        "mean_ancilla_qutrit_p2_by_round": {
+          "1": 0.00131667,
+          "2": 0.00121667,
+          "3": 0.00115,
+          "5": 0.00104667,
+          "7": 0.00112857,
+          "9": 0.00118704
+        },
+        "mean_data_qutrit_p2_by_round": {
+          "1": 0.00079238,
+          "2": 0.00155735,
+          "3": 0.00233078,
+          "5": 0.00382859,
+          "7": 0.00536152,
+          "9": 0.00630304
+        }
+      },
+      "lru_parameters": {
+        "dt_lru_us": 0.12,
+        "lru_infidelity": 0.0005,
+        "p_leak_2q": 0.0012,
+        "p_lru_1q": 0.0003,
+        "p_ro_2_as_1": 0.92,
+        "p_seep_reset": 0.002857142857142857,
+        "p_seep_round": 0.015714285714285712
+      },
+      "n_shots_per_round": 30000,
+      "p_fail_by_round": {
+        "1": 0.0073448,
+        "2": 0.0083253,
+        "3": 0.0099313,
+        "5": 0.0121921,
+        "7": 0.0147964,
+        "9": 0.0172674
+      },
+      "rounds_evaluated": [
+        1,
+        2,
+        3,
+        5,
+        7,
+        9
+      ],
+      "target_profile_id": "FEZ_DRIFTED_SPAM"
+    },
+    "FEZ_DRIFTED_SPAM__pleak_0.00120__FULL_DATA_AND_ANCILLA_LRU": {
+      "architecture": "FULL_DATA_AND_ANCILLA_LRU",
+      "crossing_vs_card_c_baselines": {
+        "beats_arm2_at_any_tested_round": true,
+        "crosses_below_both_sustained": true,
+        "r_cross_vs_arm1_unencoded": 1,
+        "r_cross_vs_arm2_no_correction": 1,
+        "r_cross_vs_both_first": 1,
+        "r_cross_vs_both_sustained": 1,
+        "verdict": "PASS_CROSSING_OBSERVED"
+      },
+      "delta_eps_L_r9_vs_zero_leak": 0.00025578,
+      "delta_eps_L_slope_vs_zero_leak": 0.00024789,
+      "exact_qutrit_branch_crosschecks": {
+        "1": {
+          "abs_diff": 5.532e-05,
+          "exact_qutrit_branch_p_fail": 0.00735359,
+          "trajectory_mc_p_fail": 0.00740892
+        },
+        "2": {
+          "abs_diff": 1.25e-05,
+          "exact_qutrit_branch_p_fail": 0.00835748,
+          "trajectory_mc_p_fail": 0.00834498
+        }
+      },
+      "fit": {
+        "epsilon_L_at_max_round": 0.00181562,
+        "epsilon_L_at_max_round_ci95": [
+          0.00165128,
+          0.00198684
+        ],
+        "epsilon_L_slope_ci95": [
+          0.00093632,
+          0.00130282
+        ],
+        "epsilon_L_slope_fit": 0.00112055,
+        "per_round_epsilon_L": {
+          "1": 0.00740892,
+          "2": 0.00419005,
+          "3": 0.00328003,
+          "5": 0.00236645,
+          "7": 0.00203367,
+          "9": 0.00181562
+        }
+      },
+      "leakage_diagnostics": {
+        "ancilla_streak_ge2_fraction_at_max_round": 3.33e-05,
+        "mean_ancilla_qutrit_p2_by_round": {
+          "1": 0.00131667,
+          "2": 0.00121667,
+          "3": 0.00115,
+          "5": 0.00105,
+          "7": 0.00113095,
+          "9": 0.00119259
+        },
+        "mean_data_qutrit_p2_by_round": {
+          "1": 4e-07,
+          "2": 3.9e-07,
+          "3": 4e-07,
+          "5": 3.9e-07,
+          "7": 3.9e-07,
+          "9": 3.9e-07
+        }
+      },
+      "lru_parameters": {
+        "dt_lru_us": 0.12,
+        "lru_infidelity": 0.0005,
+        "p_leak_2q": 0.0012,
+        "p_lru_1q": 0.0003,
+        "p_ro_2_as_1": 0.92,
+        "p_seep_reset": 0.002857142857142857,
+        "p_seep_round": 0.015714285714285712
+      },
+      "n_shots_per_round": 30000,
+      "p_fail_by_round": {
+        "1": 0.0074089,
+        "2": 0.008345,
+        "3": 0.0097757,
+        "5": 0.0117208,
+        "7": 0.0140632,
+        "9": 0.0161053
+      },
+      "rounds_evaluated": [
+        1,
+        2,
+        3,
+        5,
+        7,
+        9
+      ],
+      "target_profile_id": "FEZ_DRIFTED_SPAM"
+    },
+    "FEZ_DRIFTED_SPAM__pleak_0.00120__NO_LRU": {
+      "architecture": "NO_LRU",
+      "crossing_vs_card_c_baselines": {
+        "beats_arm2_at_any_tested_round": true,
+        "crosses_below_both_sustained": true,
+        "r_cross_vs_arm1_unencoded": 1,
+        "r_cross_vs_arm2_no_correction": 1,
+        "r_cross_vs_both_first": 1,
+        "r_cross_vs_both_sustained": 1,
+        "verdict": "PASS_CROSSING_OBSERVED"
+      },
+      "delta_eps_L_r9_vs_zero_leak": 0.00093982,
+      "delta_eps_L_slope_vs_zero_leak": 0.00105456,
+      "exact_qutrit_branch_crosschecks": {
+        "1": {
+          "abs_diff": 5.736e-05,
+          "exact_qutrit_branch_p_fail": 0.00728917,
+          "trajectory_mc_p_fail": 0.00734652
+        },
+        "2": {
+          "abs_diff": 7.943e-05,
+          "exact_qutrit_branch_p_fail": 0.00863823,
+          "trajectory_mc_p_fail": 0.0085588
+        }
+      },
+      "fit": {
+        "epsilon_L_at_max_round": 0.00249966,
+        "epsilon_L_at_max_round_ci95": [
+          0.00230501,
+          0.00269826
+        ],
+        "epsilon_L_slope_ci95": [
+          0.00171706,
+          0.00215152
+        ],
+        "epsilon_L_slope_fit": 0.00192722,
+        "per_round_epsilon_L": {
+          "1": 0.00734652,
+          "2": 0.00429787,
+          "3": 0.00354057,
+          "5": 0.00281072,
+          "7": 0.00265908,
+          "9": 0.00249966
+        }
+      },
+      "leakage_diagnostics": {
+        "ancilla_streak_ge2_fraction_at_max_round": 0.0187667,
+        "mean_ancilla_qutrit_p2_by_round": {
+          "1": 0.00131667,
+          "2": 0.00176667,
+          "3": 0.00227778,
+          "5": 0.00311667,
+          "7": 0.00472619,
+          "9": 0.00577037
+        },
+        "mean_data_qutrit_p2_by_round": {
+          "1": 0.00079282,
+          "2": 0.00155559,
+          "3": 0.00232377,
+          "5": 0.00382811,
+          "7": 0.00534166,
+          "9": 0.00632688
+        }
+      },
+      "lru_parameters": {
+        "dt_lru_us": 0.12,
+        "lru_infidelity": 0.0005,
+        "p_leak_2q": 0.0012,
+        "p_lru_1q": 0.0003,
+        "p_ro_2_as_1": 0.92,
+        "p_seep_reset": 0.002857142857142857,
+        "p_seep_round": 0.015714285714285712
+      },
+      "n_shots_per_round": 30000,
+      "p_fail_by_round": {
+        "1": 0.0073465,
+        "2": 0.0085588,
+        "3": 0.0105467,
+        "5": 0.0138965,
+        "7": 0.0183192,
+        "9": 0.0220523
+      },
+      "rounds_evaluated": [
+        1,
+        2,
+        3,
+        5,
+        7,
+        9
+      ],
+      "target_profile_id": "FEZ_DRIFTED_SPAM"
+    },
+    "FEZ_PUBLISHED__pleak_0.00000__ANCILLA_LRU_ONLY": {
+      "architecture": "ANCILLA_LRU_ONLY",
+      "crossing_vs_card_c_baselines": {
+        "beats_arm2_at_any_tested_round": true,
+        "crosses_below_both_sustained": true,
+        "r_cross_vs_arm1_unencoded": 1,
+        "r_cross_vs_arm2_no_correction": 1,
+        "r_cross_vs_both_first": 1,
+        "r_cross_vs_both_sustained": 1,
+        "verdict": "PASS_CROSSING_OBSERVED"
+      },
+      "delta_eps_L_r9_vs_zero_leak": 5.7e-07,
+      "delta_eps_L_slope_vs_zero_leak": -9e-07,
+      "exact_qutrit_branch_crosschecks": {
+        "1": {
+          "abs_diff": 5.041e-05,
+          "exact_qutrit_branch_p_fail": 0.00209485,
+          "trajectory_mc_p_fail": 0.00214525
+        },
+        "2": {
+          "abs_diff": 5.799e-05,
+          "exact_qutrit_branch_p_fail": 0.00267516,
+          "trajectory_mc_p_fail": 0.00261718
+        },
+        "3": {
+          "abs_diff": 0.00014822,
+          "exact_qutrit_branch_p_fail": 0.00340604,
+          "trajectory_mc_p_fail": 0.00355427
+        }
+      },
+      "fit": {
+        "epsilon_L_at_max_round": 0.00084742,
+        "epsilon_L_at_max_round_ci95": [
+          0.00074517,
+          0.00095542
+        ],
+        "epsilon_L_slope_ci95": [
+          0.00057541,
+          0.00080447
+        ],
+        "epsilon_L_slope_fit": 0.00069053,
+        "per_round_epsilon_L": {
+          "1": 0.00214525,
+          "2": 0.00131031,
+          "3": 0.00118757,
+          "5": 0.00101169,
+          "7": 0.0008779,
+          "9": 0.00084742
+        }
+      },
+      "leakage_diagnostics": {
+        "ancilla_streak_ge2_fraction_at_max_round": 0.0,
+        "mean_ancilla_qutrit_p2_by_round": {
+          "1": 0.0,
+          "2": 0.0,
+          "3": 0.0,
+          "5": 0.0,
+          "7": 0.0,
+          "9": 0.0
+        },
+        "mean_data_qutrit_p2_by_round": {
+          "1": 0.0,
+          "2": 0.0,
+          "3": 0.0,
+          "5": 0.0,
+          "7": 0.0,
+          "9": 0.0
+        }
+      },
+      "lru_parameters": {
+        "dt_lru_us": 0.12,
+        "lru_infidelity": 0.0005,
+        "p_leak_2q": 0.0,
+        "p_lru_1q": 0.0003,
+        "p_ro_2_as_1": 0.92,
+        "p_seep_reset": 0.002857142857142857,
+        "p_seep_round": 0.015714285714285712
+      },
+      "n_shots_per_round": 30000,
+      "p_fail_by_round": {
+        "1": 0.0021453,
+        "2": 0.0026172,
+        "3": 0.0035543,
+        "5": 0.005038,
+        "7": 0.006113,
+        "9": 0.0075753
+      },
+      "rounds_evaluated": [
+        1,
+        2,
+        3,
+        5,
+        7,
+        9
+      ],
+      "target_profile_id": "FEZ_PUBLISHED"
+    },
+    "FEZ_PUBLISHED__pleak_0.00000__FULL_DATA_AND_ANCILLA_LRU": {
+      "architecture": "FULL_DATA_AND_ANCILLA_LRU",
+      "crossing_vs_card_c_baselines": {
+        "beats_arm2_at_any_tested_round": true,
+        "crosses_below_both_sustained": true,
+        "r_cross_vs_arm1_unencoded": 1,
+        "r_cross_vs_arm2_no_correction": 1,
+        "r_cross_vs_both_first": 1,
+        "r_cross_vs_both_sustained": 1,
+        "verdict": "PASS_CROSSING_OBSERVED"
+      },
+      "delta_eps_L_r9_vs_zero_leak": 8.519e-05,
+      "delta_eps_L_slope_vs_zero_leak": 8.813e-05,
+      "exact_qutrit_branch_crosschecks": {
+        "1": {
+          "abs_diff": 5.176e-05,
+          "exact_qutrit_branch_p_fail": 0.00218625,
+          "trajectory_mc_p_fail": 0.00223802
+        },
+        "2": {
+          "abs_diff": 6.526e-05,
+          "exact_qutrit_branch_p_fail": 0.00287448,
+          "trajectory_mc_p_fail": 0.00280923
+        },
+        "3": {
+          "abs_diff": 0.0001458,
+          "exact_qutrit_branch_p_fail": 0.00369348,
+          "trajectory_mc_p_fail": 0.00383928
+        }
+      },
+      "fit": {
+        "epsilon_L_at_max_round": 0.00093204,
+        "epsilon_L_at_max_round_ci95": [
+          0.00081642,
+          0.00104574
+        ],
+        "epsilon_L_slope_ci95": [
+          0.00065443,
+          0.00090354
+        ],
+        "epsilon_L_slope_fit": 0.00077956,
+        "per_round_epsilon_L": {
+          "1": 0.00223802,
+          "2": 0.00140659,
+          "3": 0.00128305,
+          "5": 0.00110104,
+          "7": 0.00098158,
+          "9": 0.00093204
+        }
+      },
+      "leakage_diagnostics": {
+        "ancilla_streak_ge2_fraction_at_max_round": 0.0,
+        "mean_ancilla_qutrit_p2_by_round": {
+          "1": 0.0,
+          "2": 0.0,
+          "3": 0.0,
+          "5": 0.0,
+          "7": 0.0,
+          "9": 0.0
+        },
+        "mean_data_qutrit_p2_by_round": {
+          "1": 0.0,
+          "2": 0.0,
+          "3": 0.0,
+          "5": 0.0,
+          "7": 0.0,
+          "9": 0.0
+        }
+      },
+      "lru_parameters": {
+        "dt_lru_us": 0.12,
+        "lru_infidelity": 0.0005,
+        "p_leak_2q": 0.0,
+        "p_lru_1q": 0.0003,
+        "p_ro_2_as_1": 0.92,
+        "p_seep_reset": 0.002857142857142857,
+        "p_seep_round": 0.015714285714285712
+      },
+      "n_shots_per_round": 30000,
+      "p_fail_by_round": {
+        "1": 0.002238,
+        "2": 0.0028092,
+        "3": 0.0038393,
+        "5": 0.005481,
+        "7": 0.0068307,
+        "9": 0.0083261
+      },
+      "rounds_evaluated": [
+        1,
+        2,
+        3,
+        5,
+        7,
+        9
+      ],
+      "target_profile_id": "FEZ_PUBLISHED"
+    },
+    "FEZ_PUBLISHED__pleak_0.00000__NO_LRU": {
+      "architecture": "NO_LRU",
+      "crossing_vs_card_c_baselines": {
+        "beats_arm2_at_any_tested_round": true,
+        "crosses_below_both_sustained": true,
+        "r_cross_vs_arm1_unencoded": 1,
+        "r_cross_vs_arm2_no_correction": 1,
+        "r_cross_vs_both_first": 1,
+        "r_cross_vs_both_sustained": 1,
+        "verdict": "PASS_CROSSING_OBSERVED"
+      },
+      "delta_eps_L_r9_vs_zero_leak": 0.0,
+      "delta_eps_L_slope_vs_zero_leak": 0.0,
+      "exact_qutrit_branch_crosschecks": {
+        "1": {
+          "abs_diff": 4.985e-05,
+          "exact_qutrit_branch_p_fail": 0.00209485,
+          "trajectory_mc_p_fail": 0.0021447
+        },
+        "2": {
+          "abs_diff": 5.145e-05,
+          "exact_qutrit_branch_p_fail": 0.00267029,
+          "trajectory_mc_p_fail": 0.00261884
+        },
+        "3": {
+          "abs_diff": 0.00010767,
+          "exact_qutrit_branch_p_fail": 0.00339623,
+          "trajectory_mc_p_fail": 0.00350391
+        }
+      },
+      "fit": {
+        "epsilon_L_at_max_round": 0.00084685,
+        "epsilon_L_at_max_round_ci95": [
+          0.00073767,
+          0.00095918
+        ],
+        "epsilon_L_slope_ci95": [
+          0.00058183,
+          0.00080674
+        ],
+        "epsilon_L_slope_fit": 0.00069143,
+        "per_round_epsilon_L": {
+          "1": 0.0021447,
+          "2": 0.00131114,
+          "3": 0.00117071,
+          "5": 0.00100782,
+          "7": 0.000878,
+          "9": 0.00084685
+        }
+      },
+      "leakage_diagnostics": {
+        "ancilla_streak_ge2_fraction_at_max_round": 0.0,
+        "mean_ancilla_qutrit_p2_by_round": {
+          "1": 0.0,
+          "2": 0.0,
+          "3": 0.0,
+          "5": 0.0,
+          "7": 0.0,
+          "9": 0.0
+        },
+        "mean_data_qutrit_p2_by_round": {
+          "1": 0.0,
+          "2": 0.0,
+          "3": 0.0,
+          "5": 0.0,
+          "7": 0.0,
+          "9": 0.0
+        }
+      },
+      "lru_parameters": {
+        "dt_lru_us": 0.12,
+        "lru_infidelity": 0.0005,
+        "p_leak_2q": 0.0,
+        "p_lru_1q": 0.0003,
+        "p_ro_2_as_1": 0.92,
+        "p_seep_reset": 0.002857142857142857,
+        "p_seep_round": 0.015714285714285712
+      },
+      "n_shots_per_round": 30000,
+      "p_fail_by_round": {
+        "1": 0.0021447,
+        "2": 0.0026188,
+        "3": 0.0035039,
+        "5": 0.0050189,
+        "7": 0.0061137,
+        "9": 0.0075702
+      },
+      "rounds_evaluated": [
+        1,
+        2,
+        3,
+        5,
+        7,
+        9
+      ],
+      "target_profile_id": "FEZ_PUBLISHED"
+    },
+    "FEZ_PUBLISHED__pleak_0.00020__ANCILLA_LRU_ONLY": {
+      "architecture": "ANCILLA_LRU_ONLY",
+      "crossing_vs_card_c_baselines": {
+        "beats_arm2_at_any_tested_round": true,
+        "crosses_below_both_sustained": true,
+        "r_cross_vs_arm1_unencoded": 1,
+        "r_cross_vs_arm2_no_correction": 1,
+        "r_cross_vs_both_first": 1,
+        "r_cross_vs_both_sustained": 1,
+        "verdict": "PASS_CROSSING_OBSERVED"
+      },
+      "delta_eps_L_r9_vs_zero_leak": 7.582e-05,
+      "delta_eps_L_slope_vs_zero_leak": 8.63e-05,
+      "exact_qutrit_branch_crosschecks": {
+        "1": {
+          "abs_diff": 4.596e-05,
+          "exact_qutrit_branch_p_fail": 0.00211686,
+          "trajectory_mc_p_fail": 0.00216282
+        },
+        "2": {
+          "abs_diff": 5.54e-05,
+          "exact_qutrit_branch_p_fail": 0.00274565,
+          "trajectory_mc_p_fail": 0.00269025
+        }
+      },
+      "fit": {
+        "epsilon_L_at_max_round": 0.00092267,
+        "epsilon_L_at_max_round_ci95": [
+          0.00081258,
+          0.00103077
+        ],
+        "epsilon_L_slope_ci95": [
+          0.00065806,
+          0.00090192
+        ],
+        "epsilon_L_slope_fit": 0.00077773,
+        "per_round_epsilon_L": {
+          "1": 0.00216282,
+          "2": 0.00134694,
+          "3": 0.00122754,
+          "5": 0.00106107,
+          "7": 0.00095757,
+          "9": 0.00092267
+        }
+      },
+      "leakage_diagnostics": {
+        "ancilla_streak_ge2_fraction_at_max_round": 0.0,
+        "mean_ancilla_qutrit_p2_by_round": {
+          "1": 0.00015,
+          "2": 0.00018333,
+          "3": 0.00015,
+          "5": 0.00020667,
+          "7": 0.00016429,
+          "9": 0.00020185
+        },
+        "mean_data_qutrit_p2_by_round": {
+          "1": 0.00013367,
+          "2": 0.00025625,
+          "3": 0.00038694,
+          "5": 0.00064775,
+          "7": 0.00090201,
+          "9": 0.00107843
+        }
+      },
+      "lru_parameters": {
+        "dt_lru_us": 0.12,
+        "lru_infidelity": 0.0005,
+        "p_leak_2q": 0.0002,
+        "p_lru_1q": 0.0003,
+        "p_ro_2_as_1": 0.92,
+        "p_seep_reset": 0.002857142857142857,
+        "p_seep_round": 0.015714285714285712
+      },
+      "n_shots_per_round": 30000,
+      "p_fail_by_round": {
+        "1": 0.0021628,
+        "2": 0.0026903,
+        "3": 0.0036736,
+        "5": 0.0052829,
+        "7": 0.0066646,
+        "9": 0.008243
+      },
+      "rounds_evaluated": [
+        1,
+        2,
+        3,
+        5,
+        7,
+        9
+      ],
+      "target_profile_id": "FEZ_PUBLISHED"
+    },
+    "FEZ_PUBLISHED__pleak_0.00020__FULL_DATA_AND_ANCILLA_LRU": {
+      "architecture": "FULL_DATA_AND_ANCILLA_LRU",
+      "crossing_vs_card_c_baselines": {
+        "beats_arm2_at_any_tested_round": true,
+        "crosses_below_both_sustained": true,
+        "r_cross_vs_arm1_unencoded": 1,
+        "r_cross_vs_arm2_no_correction": 1,
+        "r_cross_vs_both_first": 1,
+        "r_cross_vs_both_sustained": 1,
+        "verdict": "PASS_CROSSING_OBSERVED"
+      },
+      "delta_eps_L_r9_vs_zero_leak": 0.00010338,
+      "delta_eps_L_slope_vs_zero_leak": 0.00011022,
+      "exact_qutrit_branch_crosschecks": {
+        "1": {
+          "abs_diff": 4.703e-05,
+          "exact_qutrit_branch_p_fail": 0.00220001,
+          "trajectory_mc_p_fail": 0.00224704
+        },
+        "2": {
+          "abs_diff": 5.136e-05,
+          "exact_qutrit_branch_p_fail": 0.00290807,
+          "trajectory_mc_p_fail": 0.00285672
+        }
+      },
+      "fit": {
+        "epsilon_L_at_max_round": 0.00095023,
+        "epsilon_L_at_max_round_ci95": [
+          0.00083143,
+          0.00105704
+        ],
+        "epsilon_L_slope_ci95": [
+          0.00068057,
+          0.00092539
+        ],
+        "epsilon_L_slope_fit": 0.00080165,
+        "per_round_epsilon_L": {
+          "1": 0.00224704,
+          "2": 0.0014304,
+          "3": 0.00130004,
+          "5": 0.00111964,
+          "7": 0.00100973,
+          "9": 0.00095023
+        }
+      },
+      "leakage_diagnostics": {
+        "ancilla_streak_ge2_fraction_at_max_round": 0.0,
+        "mean_ancilla_qutrit_p2_by_round": {
+          "1": 0.00015,
+          "2": 0.00018333,
+          "3": 0.00015,
+          "5": 0.00020667,
+          "7": 0.00016429,
+          "9": 0.00020185
+        },
+        "mean_data_qutrit_p2_by_round": {
+          "1": 7e-08,
+          "2": 6e-08,
+          "3": 7e-08,
+          "5": 7e-08,
+          "7": 7e-08,
+          "9": 7e-08
+        }
+      },
+      "lru_parameters": {
+        "dt_lru_us": 0.12,
+        "lru_infidelity": 0.0005,
+        "p_leak_2q": 0.0002,
+        "p_lru_1q": 0.0003,
+        "p_ro_2_as_1": 0.92,
+        "p_seep_reset": 0.002857142857142857,
+        "p_seep_round": 0.015714285714285712
+      },
+      "n_shots_per_round": 30000,
+      "p_fail_by_round": {
+        "1": 0.002247,
+        "2": 0.0028567,
+        "3": 0.00389,
+        "5": 0.0055732,
+        "7": 0.0070254,
+        "9": 0.0084874
+      },
+      "rounds_evaluated": [
+        1,
+        2,
+        3,
+        5,
+        7,
+        9
+      ],
+      "target_profile_id": "FEZ_PUBLISHED"
+    },
+    "FEZ_PUBLISHED__pleak_0.00020__NO_LRU": {
+      "architecture": "NO_LRU",
+      "crossing_vs_card_c_baselines": {
+        "beats_arm2_at_any_tested_round": true,
+        "crosses_below_both_sustained": true,
+        "r_cross_vs_arm1_unencoded": 1,
+        "r_cross_vs_arm2_no_correction": 1,
+        "r_cross_vs_both_first": 1,
+        "r_cross_vs_both_sustained": 1,
+        "verdict": "PASS_CROSSING_OBSERVED"
+      },
+      "delta_eps_L_r9_vs_zero_leak": 0.00019551,
+      "delta_eps_L_slope_vs_zero_leak": 0.00020774,
+      "exact_qutrit_branch_crosschecks": {
+        "1": {
+          "abs_diff": 4.917e-05,
+          "exact_qutrit_branch_p_fail": 0.00211686,
+          "trajectory_mc_p_fail": 0.00216603
+        },
+        "2": {
+          "abs_diff": 7.522e-05,
+          "exact_qutrit_branch_p_fail": 0.00279215,
+          "trajectory_mc_p_fail": 0.00271693
+        }
+      },
+      "fit": {
+        "epsilon_L_at_max_round": 0.00104236,
+        "epsilon_L_at_max_round_ci95": [
+          0.00092534,
+          0.00116261
+        ],
+        "epsilon_L_slope_ci95": [
+          0.00077669,
+          0.0010278
+        ],
+        "epsilon_L_slope_fit": 0.00089917,
+        "per_round_epsilon_L": {
+          "1": 0.00216603,
+          "2": 0.00136031,
+          "3": 0.00126378,
+          "5": 0.00111868,
+          "7": 0.00101568,
+          "9": 0.00104236
+        }
+      },
+      "leakage_diagnostics": {
+        "ancilla_streak_ge2_fraction_at_max_round": 0.0033667,
+        "mean_ancilla_qutrit_p2_by_round": {
+          "1": 0.00015,
+          "2": 0.000275,
+          "3": 0.00033333,
+          "5": 0.00062,
+          "7": 0.0006119,
+          "9": 0.00107593
+        },
+        "mean_data_qutrit_p2_by_round": {
+          "1": 0.00013376,
+          "2": 0.00025547,
+          "3": 0.00038273,
+          "5": 0.00064691,
+          "7": 0.00087235,
+          "9": 0.00109986
+        }
+      },
+      "lru_parameters": {
+        "dt_lru_us": 0.12,
+        "lru_infidelity": 0.0005,
+        "p_leak_2q": 0.0002,
+        "p_lru_1q": 0.0003,
+        "p_ro_2_as_1": 0.92,
+        "p_seep_reset": 0.002857142857142857,
+        "p_seep_round": 0.015714285714285712
+      },
+      "n_shots_per_round": 30000,
+      "p_fail_by_round": {
+        "1": 0.002166,
+        "2": 0.0027169,
+        "3": 0.0037818,
+        "5": 0.0055684,
+        "7": 0.0070666,
+        "9": 0.0093034
+      },
+      "rounds_evaluated": [
+        1,
+        2,
+        3,
+        5,
+        7,
+        9
+      ],
+      "target_profile_id": "FEZ_PUBLISHED"
+    },
+    "FEZ_PUBLISHED__pleak_0.00050__ANCILLA_LRU_ONLY": {
+      "architecture": "ANCILLA_LRU_ONLY",
+      "crossing_vs_card_c_baselines": {
+        "beats_arm2_at_any_tested_round": true,
+        "crosses_below_both_sustained": true,
+        "r_cross_vs_arm1_unencoded": 1,
+        "r_cross_vs_arm2_no_correction": 1,
+        "r_cross_vs_both_first": 1,
+        "r_cross_vs_both_sustained": 1,
+        "verdict": "PASS_CROSSING_OBSERVED"
+      },
+      "delta_eps_L_r9_vs_zero_leak": 0.00020426,
+      "delta_eps_L_slope_vs_zero_leak": 0.00021324,
+      "exact_qutrit_branch_crosschecks": {
+        "1": {
+          "abs_diff": 4.989e-05,
+          "exact_qutrit_branch_p_fail": 0.00215002,
+          "trajectory_mc_p_fail": 0.00219991
+        },
+        "2": {
+          "abs_diff": 5.234e-05,
+          "exact_qutrit_branch_p_fail": 0.0028519,
+          "trajectory_mc_p_fail": 0.00279956
+        }
+      },
+      "fit": {
+        "epsilon_L_at_max_round": 0.00105111,
+        "epsilon_L_at_max_round_ci95": [
+          0.00092525,
+          0.00115515
+        ],
+        "epsilon_L_slope_ci95": [
+          0.0007735,
+          0.00102519
+        ],
+        "epsilon_L_slope_fit": 0.00090467,
+        "per_round_epsilon_L": {
+          "1": 0.00219991,
+          "2": 0.00140175,
+          "3": 0.00129713,
+          "5": 0.00111044,
+          "7": 0.00103874,
+          "9": 0.00105111
+        }
+      },
+      "leakage_diagnostics": {
+        "ancilla_streak_ge2_fraction_at_max_round": 0.0,
+        "mean_ancilla_qutrit_p2_by_round": {
+          "1": 0.00035,
+          "2": 0.00044167,
+          "3": 0.00045,
+          "5": 0.00047667,
+          "7": 0.00046905,
+          "9": 0.00051852
+        },
+        "mean_data_qutrit_p2_by_round": {
+          "1": 0.0003343,
+          "2": 0.00064019,
+          "3": 0.00096964,
+          "5": 0.00159264,
+          "7": 0.00225288,
+          "9": 0.00272901
+        }
+      },
+      "lru_parameters": {
+        "dt_lru_us": 0.12,
+        "lru_infidelity": 0.0005,
+        "p_leak_2q": 0.0005,
+        "p_lru_1q": 0.0003,
+        "p_ro_2_as_1": 0.92,
+        "p_seep_reset": 0.002857142857142857,
+        "p_seep_round": 0.015714285714285712
+      },
+      "n_shots_per_round": 30000,
+      "p_fail_by_round": {
+        "1": 0.0021999,
+        "2": 0.0027996,
+        "3": 0.0038813,
+        "5": 0.0055276,
+        "7": 0.0072261,
+        "9": 0.0093808
+      },
+      "rounds_evaluated": [
+        1,
+        2,
+        3,
+        5,
+        7,
+        9
+      ],
+      "target_profile_id": "FEZ_PUBLISHED"
+    },
+    "FEZ_PUBLISHED__pleak_0.00050__FULL_DATA_AND_ANCILLA_LRU": {
+      "architecture": "FULL_DATA_AND_ANCILLA_LRU",
+      "crossing_vs_card_c_baselines": {
+        "beats_arm2_at_any_tested_round": true,
+        "crosses_below_both_sustained": true,
+        "r_cross_vs_arm1_unencoded": 1,
+        "r_cross_vs_arm2_no_correction": 1,
+        "r_cross_vs_both_first": 1,
+        "r_cross_vs_both_sustained": 1,
+        "verdict": "PASS_CROSSING_OBSERVED"
+      },
+      "delta_eps_L_r9_vs_zero_leak": 0.00016196,
+      "delta_eps_L_slope_vs_zero_leak": 0.00015904,
+      "exact_qutrit_branch_crosschecks": {
+        "1": {
+          "abs_diff": 5.074e-05,
+          "exact_qutrit_branch_p_fail": 0.0022207,
+          "trajectory_mc_p_fail": 0.00227144
+        },
+        "2": {
+          "abs_diff": 4.123e-05,
+          "exact_qutrit_branch_p_fail": 0.00295874,
+          "trajectory_mc_p_fail": 0.00291751
+        }
+      },
+      "fit": {
+        "epsilon_L_at_max_round": 0.00100881,
+        "epsilon_L_at_max_round_ci95": [
+          0.00088776,
+          0.00112488
+        ],
+        "epsilon_L_slope_ci95": [
+          0.00072201,
+          0.00097404
+        ],
+        "epsilon_L_slope_fit": 0.00085047,
+        "per_round_epsilon_L": {
+          "1": 0.00227144,
+          "2": 0.00146089,
+          "3": 0.00132791,
+          "5": 0.00114179,
+          "7": 0.00102426,
+          "9": 0.00100881
+        }
+      },
+      "leakage_diagnostics": {
+        "ancilla_streak_ge2_fraction_at_max_round": 0.0,
+        "mean_ancilla_qutrit_p2_by_round": {
+          "1": 0.00035,
+          "2": 0.00044167,
+          "3": 0.00045,
+          "5": 0.00047667,
+          "7": 0.00046905,
+          "9": 0.00052037
+        },
+        "mean_data_qutrit_p2_by_round": {
+          "1": 1.7e-07,
+          "2": 1.6e-07,
+          "3": 1.6e-07,
+          "5": 1.6e-07,
+          "7": 1.6e-07,
+          "9": 1.7e-07
+        }
+      },
+      "lru_parameters": {
+        "dt_lru_us": 0.12,
+        "lru_infidelity": 0.0005,
+        "p_leak_2q": 0.0005,
+        "p_lru_1q": 0.0003,
+        "p_ro_2_as_1": 0.92,
+        "p_seep_reset": 0.002857142857142857,
+        "p_seep_round": 0.015714285714285712
+      },
+      "n_shots_per_round": 30000,
+      "p_fail_by_round": {
+        "1": 0.0022714,
+        "2": 0.0029175,
+        "3": 0.0039732,
+        "5": 0.0056829,
+        "7": 0.0071259,
+        "9": 0.0090063
+      },
+      "rounds_evaluated": [
+        1,
+        2,
+        3,
+        5,
+        7,
+        9
+      ],
+      "target_profile_id": "FEZ_PUBLISHED"
+    },
+    "FEZ_PUBLISHED__pleak_0.00050__NO_LRU": {
+      "architecture": "NO_LRU",
+      "crossing_vs_card_c_baselines": {
+        "beats_arm2_at_any_tested_round": true,
+        "crosses_below_both_sustained": true,
+        "r_cross_vs_arm1_unencoded": 1,
+        "r_cross_vs_arm2_no_correction": 1,
+        "r_cross_vs_both_first": 1,
+        "r_cross_vs_both_sustained": 1,
+        "verdict": "PASS_CROSSING_OBSERVED"
+      },
+      "delta_eps_L_r9_vs_zero_leak": 0.00047676,
+      "delta_eps_L_slope_vs_zero_leak": 0.0005104,
+      "exact_qutrit_branch_crosschecks": {
+        "1": {
+          "abs_diff": 5.266e-05,
+          "exact_qutrit_branch_p_fail": 0.00215002,
+          "trajectory_mc_p_fail": 0.00220269
+        },
+        "2": {
+          "abs_diff": 3.049e-05,
+          "exact_qutrit_branch_p_fail": 0.00297551,
+          "trajectory_mc_p_fail": 0.00294502
+        }
+      },
+      "fit": {
+        "epsilon_L_at_max_round": 0.00132361,
+        "epsilon_L_at_max_round_ci95": [
+          0.00118903,
+          0.00145762
+        ],
+        "epsilon_L_slope_ci95": [
+          0.00106501,
+          0.00134284
+        ],
+        "epsilon_L_slope_fit": 0.00120183,
+        "per_round_epsilon_L": {
+          "1": 0.00220269,
+          "2": 0.00147468,
+          "3": 0.00136696,
+          "5": 0.00125713,
+          "7": 0.00123288,
+          "9": 0.00132361
+        }
+      },
+      "leakage_diagnostics": {
+        "ancilla_streak_ge2_fraction_at_max_round": 0.0083,
+        "mean_ancilla_qutrit_p2_by_round": {
+          "1": 0.00035,
+          "2": 0.00068333,
+          "3": 0.00096111,
+          "5": 0.00137667,
+          "7": 0.00176667,
+          "9": 0.00266111
+        },
+        "mean_data_qutrit_p2_by_round": {
+          "1": 0.00033458,
+          "2": 0.00064371,
+          "3": 0.00095531,
+          "5": 0.00158775,
+          "7": 0.0022397,
+          "9": 0.00266171
+        }
+      },
+      "lru_parameters": {
+        "dt_lru_us": 0.12,
+        "lru_infidelity": 0.0005,
+        "p_leak_2q": 0.0005,
+        "p_lru_1q": 0.0003,
+        "p_ro_2_as_1": 0.92,
+        "p_seep_reset": 0.002857142857142857,
+        "p_seep_round": 0.015714285714285712
+      },
+      "n_shots_per_round": 30000,
+      "p_fail_by_round": {
+        "1": 0.0022027,
+        "2": 0.002945,
+        "3": 0.0040897,
+        "5": 0.0062541,
+        "7": 0.0085666,
+        "9": 0.0117872
+      },
+      "rounds_evaluated": [
+        1,
+        2,
+        3,
+        5,
+        7,
+        9
+      ],
+      "target_profile_id": "FEZ_PUBLISHED"
+    },
+    "FEZ_PUBLISHED__pleak_0.00120__ANCILLA_LRU_ONLY": {
+      "architecture": "ANCILLA_LRU_ONLY",
+      "crossing_vs_card_c_baselines": {
+        "beats_arm2_at_any_tested_round": true,
+        "crosses_below_both_sustained": true,
+        "r_cross_vs_arm1_unencoded": 1,
+        "r_cross_vs_arm2_no_correction": 1,
+        "r_cross_vs_both_first": 1,
+        "r_cross_vs_both_sustained": 1,
+        "verdict": "PASS_CROSSING_OBSERVED"
+      },
+      "delta_eps_L_r9_vs_zero_leak": 0.00042645,
+      "delta_eps_L_slope_vs_zero_leak": 0.00046798,
+      "exact_qutrit_branch_crosschecks": {
+        "1": {
+          "abs_diff": 5.298e-05,
+          "exact_qutrit_branch_p_fail": 0.00222803,
+          "trajectory_mc_p_fail": 0.002281
+        },
+        "2": {
+          "abs_diff": 7.126e-05,
+          "exact_qutrit_branch_p_fail": 0.0031023,
+          "trajectory_mc_p_fail": 0.00303103
+        }
+      },
+      "fit": {
+        "epsilon_L_at_max_round": 0.0012733,
+        "epsilon_L_at_max_round_ci95": [
+          0.00114355,
+          0.00140457
+        ],
+        "epsilon_L_slope_ci95": [
+          0.00101811,
+          0.0012863
+        ],
+        "epsilon_L_slope_fit": 0.00115941,
+        "per_round_epsilon_L": {
+          "1": 0.002281,
+          "2": 0.00151782,
+          "3": 0.00141051,
+          "5": 0.00131186,
+          "7": 0.00126561,
+          "9": 0.0012733
+        }
+      },
+      "leakage_diagnostics": {
+        "ancilla_streak_ge2_fraction_at_max_round": 0.0,
+        "mean_ancilla_qutrit_p2_by_round": {
+          "1": 0.00111667,
+          "2": 0.00113333,
+          "3": 0.00123333,
+          "5": 0.00116333,
+          "7": 0.00114524,
+          "9": 0.00119444
+        },
+        "mean_data_qutrit_p2_by_round": {
+          "1": 0.0008013,
+          "2": 0.00153428,
+          "3": 0.00229262,
+          "5": 0.00384091,
+          "7": 0.00531725,
+          "9": 0.00669057
+        }
+      },
+      "lru_parameters": {
+        "dt_lru_us": 0.12,
+        "lru_infidelity": 0.0005,
+        "p_leak_2q": 0.0012,
+        "p_lru_1q": 0.0003,
+        "p_ro_2_as_1": 0.92,
+        "p_seep_reset": 0.002857142857142857,
+        "p_seep_round": 0.015714285714285712
+      },
+      "n_shots_per_round": 30000,
+      "p_fail_by_round": {
+        "1": 0.002281,
+        "2": 0.003031,
+        "3": 0.0042196,
+        "5": 0.006525,
+        "7": 0.0087923,
+        "9": 0.0113437
+      },
+      "rounds_evaluated": [
+        1,
+        2,
+        3,
+        5,
+        7,
+        9
+      ],
+      "target_profile_id": "FEZ_PUBLISHED"
+    },
+    "FEZ_PUBLISHED__pleak_0.00120__FULL_DATA_AND_ANCILLA_LRU": {
+      "architecture": "FULL_DATA_AND_ANCILLA_LRU",
+      "crossing_vs_card_c_baselines": {
+        "beats_arm2_at_any_tested_round": true,
+        "crosses_below_both_sustained": true,
+        "r_cross_vs_arm1_unencoded": 1,
+        "r_cross_vs_arm2_no_correction": 1,
+        "r_cross_vs_both_first": 1,
+        "r_cross_vs_both_sustained": 1,
+        "verdict": "PASS_CROSSING_OBSERVED"
+      },
+      "delta_eps_L_r9_vs_zero_leak": 0.0002513,
+      "delta_eps_L_slope_vs_zero_leak": 0.00026339,
+      "exact_qutrit_branch_crosschecks": {
+        "1": {
+          "abs_diff": 5.304e-05,
+          "exact_qutrit_branch_p_fail": 0.00226925,
+          "trajectory_mc_p_fail": 0.00232229
+        },
+        "2": {
+          "abs_diff": 6.715e-05,
+          "exact_qutrit_branch_p_fail": 0.00307828,
+          "trajectory_mc_p_fail": 0.00301112
+        }
+      },
+      "fit": {
+        "epsilon_L_at_max_round": 0.00109815,
+        "epsilon_L_at_max_round_ci95": [
+          0.00097037,
+          0.00121187
+        ],
+        "epsilon_L_slope_ci95": [
+          0.0008224,
+          0.00108166
+        ],
+        "epsilon_L_slope_fit": 0.00095482,
+        "per_round_epsilon_L": {
+          "1": 0.00232229,
+          "2": 0.00150784,
+          "3": 0.00135546,
+          "5": 0.00120383,
+          "7": 0.0011225,
+          "9": 0.00109815
+        }
+      },
+      "leakage_diagnostics": {
+        "ancilla_streak_ge2_fraction_at_max_round": 0.0,
+        "mean_ancilla_qutrit_p2_by_round": {
+          "1": 0.00111667,
+          "2": 0.00113333,
+          "3": 0.00123333,
+          "5": 0.00116667,
+          "7": 0.00114524,
+          "9": 0.00120185
+        },
+        "mean_data_qutrit_p2_by_round": {
+          "1": 4e-07,
+          "2": 3.9e-07,
+          "3": 3.9e-07,
+          "5": 3.9e-07,
+          "7": 3.9e-07,
+          "9": 3.9e-07
+        }
+      },
+      "lru_parameters": {
+        "dt_lru_us": 0.12,
+        "lru_infidelity": 0.0005,
+        "p_leak_2q": 0.0012,
+        "p_lru_1q": 0.0003,
+        "p_ro_2_as_1": 0.92,
+        "p_seep_reset": 0.002857142857142857,
+        "p_seep_round": 0.015714285714285712
+      },
+      "n_shots_per_round": 30000,
+      "p_fail_by_round": {
+        "1": 0.0023223,
+        "2": 0.0030111,
+        "3": 0.0040554,
+        "5": 0.0059902,
+        "7": 0.0078048,
+        "9": 0.0097969
+      },
+      "rounds_evaluated": [
+        1,
+        2,
+        3,
+        5,
+        7,
+        9
+      ],
+      "target_profile_id": "FEZ_PUBLISHED"
+    },
+    "FEZ_PUBLISHED__pleak_0.00120__NO_LRU": {
+      "architecture": "NO_LRU",
+      "crossing_vs_card_c_baselines": {
+        "beats_arm2_at_any_tested_round": true,
+        "crosses_below_both_sustained": true,
+        "r_cross_vs_arm1_unencoded": 1,
+        "r_cross_vs_arm2_no_correction": 1,
+        "r_cross_vs_both_first": 1,
+        "r_cross_vs_both_sustained": 1,
+        "verdict": "PASS_CROSSING_OBSERVED"
+      },
+      "delta_eps_L_r9_vs_zero_leak": 0.00108262,
+      "delta_eps_L_slope_vs_zero_leak": 0.00120467,
+      "exact_qutrit_branch_crosschecks": {
+        "1": {
+          "abs_diff": 5.683e-05,
+          "exact_qutrit_branch_p_fail": 0.00222803,
+          "trajectory_mc_p_fail": 0.00228485
+        },
+        "2": {
+          "abs_diff": 3.533e-05,
+          "exact_qutrit_branch_p_fail": 0.00340593,
+          "trajectory_mc_p_fail": 0.0033706
+        }
+      },
+      "fit": {
+        "epsilon_L_at_max_round": 0.00192947,
+        "epsilon_L_at_max_round_ci95": [
+          0.00176166,
+          0.00209792
+        ],
+        "epsilon_L_slope_ci95": [
+          0.00172272,
+          0.00206316
+        ],
+        "epsilon_L_slope_fit": 0.0018961,
+        "per_round_epsilon_L": {
+          "1": 0.00228485,
+          "2": 0.00168815,
+          "3": 0.00164539,
+          "5": 0.00170567,
+          "7": 0.0018,
+          "9": 0.00192947
+        }
+      },
+      "leakage_diagnostics": {
+        "ancilla_streak_ge2_fraction_at_max_round": 0.0186,
+        "mean_ancilla_qutrit_p2_by_round": {
+          "1": 0.00111667,
+          "2": 0.00175,
+          "3": 0.00244444,
+          "5": 0.00334333,
+          "7": 0.00437857,
+          "9": 0.00572222
+        },
+        "mean_data_qutrit_p2_by_round": {
+          "1": 0.00080216,
+          "2": 0.00153763,
+          "3": 0.0022823,
+          "5": 0.00381751,
+          "7": 0.00535589,
+          "9": 0.00662469
+        }
+      },
+      "lru_parameters": {
+        "dt_lru_us": 0.12,
+        "lru_infidelity": 0.0005,
+        "p_leak_2q": 0.0012,
+        "p_lru_1q": 0.0003,
+        "p_ro_2_as_1": 0.92,
+        "p_seep_reset": 0.002857142857142857,
+        "p_seep_round": 0.015714285714285712
+      },
+      "n_shots_per_round": 30000,
+      "p_fail_by_round": {
+        "1": 0.0022849,
+        "2": 0.0033706,
+        "3": 0.0049199,
+        "5": 0.0084703,
+        "7": 0.0124647,
+        "9": 0.0170996
+      },
+      "rounds_evaluated": [
+        1,
+        2,
+        3,
+        5,
+        7,
+        9
+      ],
+      "target_profile_id": "FEZ_PUBLISHED"
+    },
+    "H2_1_PUBLISHED__pleak_0.00000__ANCILLA_LRU_ONLY": {
+      "architecture": "ANCILLA_LRU_ONLY",
+      "crossing_vs_card_c_baselines": {
+        "beats_arm2_at_any_tested_round": true,
+        "crosses_below_both_sustained": true,
+        "r_cross_vs_arm1_unencoded": 1,
+        "r_cross_vs_arm2_no_correction": 1,
+        "r_cross_vs_both_first": 1,
+        "r_cross_vs_both_sustained": 1,
+        "verdict": "PASS_CROSSING_OBSERVED"
+      },
+      "delta_eps_L_r9_vs_zero_leak": 2.4e-07,
+      "delta_eps_L_slope_vs_zero_leak": -8.6e-07,
+      "exact_qutrit_branch_crosschecks": {
+        "1": {
+          "abs_diff": 3.64e-06,
+          "exact_qutrit_branch_p_fail": 5.689e-05,
+          "trajectory_mc_p_fail": 5.325e-05
+        },
+        "2": {
+          "abs_diff": 2.66e-06,
+          "exact_qutrit_branch_p_fail": 7.406e-05,
+          "trajectory_mc_p_fail": 7.14e-05
+        },
+        "3": {
+          "abs_diff": 5.31e-06,
+          "exact_qutrit_branch_p_fail": 8.964e-05,
+          "trajectory_mc_p_fail": 9.494e-05
+        }
+      },
+      "fit": {
+        "epsilon_L_at_max_round": 2.175e-05,
+        "epsilon_L_at_max_round_ci95": [
+          7.41e-06,
+          4.075e-05
+        ],
+        "epsilon_L_slope_ci95": [
+          0.0,
+          3.687e-05
+        ],
+        "epsilon_L_slope_fit": 1.771e-05,
+        "per_round_epsilon_L": {
+          "1": 5.325e-05,
+          "2": 3.57e-05,
+          "3": 3.165e-05,
+          "5": 2.524e-05,
+          "7": 2.312e-05,
+          "9": 2.175e-05
+        }
+      },
+      "leakage_diagnostics": {
+        "ancilla_streak_ge2_fraction_at_max_round": 0.0,
+        "mean_ancilla_qutrit_p2_by_round": {
+          "1": 0.0,
+          "2": 0.0,
+          "3": 0.0,
+          "5": 0.0,
+          "7": 0.0,
+          "9": 0.0
+        },
+        "mean_data_qutrit_p2_by_round": {
+          "1": 0.0,
+          "2": 0.0,
+          "3": 0.0,
+          "5": 0.0,
+          "7": 0.0,
+          "9": 0.0
+        }
+      },
+      "lru_parameters": {
+        "dt_lru_us": 20.0,
+        "lru_infidelity": 5e-05,
+        "p_leak_2q": 0.0,
+        "p_lru_1q": 1.5e-05,
+        "p_ro_2_as_1": 0.92,
+        "p_seep_reset": 3e-05,
+        "p_seep_round": 0.00024
+      },
+      "n_shots_per_round": 30000,
+      "p_fail_by_round": {
+        "1": 5.33e-05,
+        "2": 7.14e-05,
+        "3": 9.49e-05,
+        "5": 0.0001262,
+        "7": 0.0001618,
+        "9": 0.0001957
+      },
+      "rounds_evaluated": [
+        1,
+        2,
+        3,
+        5,
+        7,
+        9
+      ],
+      "target_profile_id": "H2_1_PUBLISHED"
+    },
+    "H2_1_PUBLISHED__pleak_0.00000__FULL_DATA_AND_ANCILLA_LRU": {
+      "architecture": "FULL_DATA_AND_ANCILLA_LRU",
+      "crossing_vs_card_c_baselines": {
+        "beats_arm2_at_any_tested_round": true,
+        "crosses_below_both_sustained": true,
+        "r_cross_vs_arm1_unencoded": 1,
+        "r_cross_vs_arm2_no_correction": 1,
+        "r_cross_vs_both_first": 1,
+        "r_cross_vs_both_sustained": 1,
+        "verdict": "PASS_CROSSING_OBSERVED"
+      },
+      "delta_eps_L_r9_vs_zero_leak": 1.6e-07,
+      "delta_eps_L_slope_vs_zero_leak": -2e-08,
+      "exact_qutrit_branch_crosschecks": {
+        "1": {
+          "abs_diff": 3.66e-06,
+          "exact_qutrit_branch_p_fail": 5.732e-05,
+          "trajectory_mc_p_fail": 5.367e-05
+        },
+        "2": {
+          "abs_diff": 2.87e-06,
+          "exact_qutrit_branch_p_fail": 7.499e-05,
+          "trajectory_mc_p_fail": 7.212e-05
+        },
+        "3": {
+          "abs_diff": 5.27e-06,
+          "exact_qutrit_branch_p_fail": 9.105e-05,
+          "trajectory_mc_p_fail": 9.633e-05
+        }
+      },
+      "fit": {
+        "epsilon_L_at_max_round": 2.167e-05,
+        "epsilon_L_at_max_round_ci95": [
+          7.41e-06,
+          4.075e-05
+        ],
+        "epsilon_L_slope_ci95": [
+          0.0,
+          3.826e-05
+        ],
+        "epsilon_L_slope_fit": 1.855e-05,
+        "per_round_epsilon_L": {
+          "1": 5.367e-05,
+          "2": 3.606e-05,
+          "3": 3.211e-05,
+          "5": 2.495e-05,
+          "7": 2.591e-05,
+          "9": 2.167e-05
+        }
+      },
+      "leakage_diagnostics": {
+        "ancilla_streak_ge2_fraction_at_max_round": 0.0,
+        "mean_ancilla_qutrit_p2_by_round": {
+          "1": 0.0,
+          "2": 0.0,
+          "3": 0.0,
+          "5": 0.0,
+          "7": 0.0,
+          "9": 0.0
+        },
+        "mean_data_qutrit_p2_by_round": {
+          "1": 0.0,
+          "2": 0.0,
+          "3": 0.0,
+          "5": 0.0,
+          "7": 0.0,
+          "9": 0.0
+        }
+      },
+      "lru_parameters": {
+        "dt_lru_us": 20.0,
+        "lru_infidelity": 5e-05,
+        "p_leak_2q": 0.0,
+        "p_lru_1q": 1.5e-05,
+        "p_ro_2_as_1": 0.92,
+        "p_seep_reset": 3e-05,
+        "p_seep_round": 0.00024
+      },
+      "n_shots_per_round": 30000,
+      "p_fail_by_round": {
+        "1": 5.37e-05,
+        "2": 7.21e-05,
+        "3": 9.63e-05,
+        "5": 0.0001247,
+        "7": 0.0001814,
+        "9": 0.000195
+      },
+      "rounds_evaluated": [
+        1,
+        2,
+        3,
+        5,
+        7,
+        9
+      ],
+      "target_profile_id": "H2_1_PUBLISHED"
+    },
+    "H2_1_PUBLISHED__pleak_0.00000__NO_LRU": {
+      "architecture": "NO_LRU",
+      "crossing_vs_card_c_baselines": {
+        "beats_arm2_at_any_tested_round": true,
+        "crosses_below_both_sustained": true,
+        "r_cross_vs_arm1_unencoded": 1,
+        "r_cross_vs_arm2_no_correction": 1,
+        "r_cross_vs_both_first": 1,
+        "r_cross_vs_both_sustained": 1,
+        "verdict": "PASS_CROSSING_OBSERVED"
+      },
+      "delta_eps_L_r9_vs_zero_leak": 0.0,
+      "delta_eps_L_slope_vs_zero_leak": 0.0,
+      "exact_qutrit_branch_crosschecks": {
+        "1": {
+          "abs_diff": 3.72e-06,
+          "exact_qutrit_branch_p_fail": 5.689e-05,
+          "trajectory_mc_p_fail": 5.318e-05
+        },
+        "2": {
+          "abs_diff": 1.57e-06,
+          "exact_qutrit_branch_p_fail": 7.398e-05,
+          "trajectory_mc_p_fail": 7.555e-05
+        },
+        "3": {
+          "abs_diff": 5.45e-06,
+          "exact_qutrit_branch_p_fail": 8.961e-05,
+          "trajectory_mc_p_fail": 9.506e-05
+        }
+      },
+      "fit": {
+        "epsilon_L_at_max_round": 2.151e-05,
+        "epsilon_L_at_max_round_ci95": [
+          7.41e-06,
+          4.075e-05
+        ],
+        "epsilon_L_slope_ci95": [
+          0.0,
+          3.792e-05
+        ],
+        "epsilon_L_slope_fit": 1.857e-05,
+        "per_round_epsilon_L": {
+          "1": 5.318e-05,
+          "2": 3.778e-05,
+          "3": 3.169e-05,
+          "5": 2.208e-05,
+          "7": 2.704e-05,
+          "9": 2.151e-05
+        }
+      },
+      "leakage_diagnostics": {
+        "ancilla_streak_ge2_fraction_at_max_round": 0.0,
+        "mean_ancilla_qutrit_p2_by_round": {
+          "1": 0.0,
+          "2": 0.0,
+          "3": 0.0,
+          "5": 0.0,
+          "7": 0.0,
+          "9": 0.0
+        },
+        "mean_data_qutrit_p2_by_round": {
+          "1": 0.0,
+          "2": 0.0,
+          "3": 0.0,
+          "5": 0.0,
+          "7": 0.0,
+          "9": 0.0
+        }
+      },
+      "lru_parameters": {
+        "dt_lru_us": 20.0,
+        "lru_infidelity": 5e-05,
+        "p_leak_2q": 0.0,
+        "p_lru_1q": 1.5e-05,
+        "p_ro_2_as_1": 0.92,
+        "p_seep_reset": 3e-05,
+        "p_seep_round": 0.00024
+      },
+      "n_shots_per_round": 30000,
+      "p_fail_by_round": {
+        "1": 5.32e-05,
+        "2": 7.56e-05,
+        "3": 9.51e-05,
+        "5": 0.0001104,
+        "7": 0.0001892,
+        "9": 0.0001936
+      },
+      "rounds_evaluated": [
+        1,
+        2,
+        3,
+        5,
+        7,
+        9
+      ],
+      "target_profile_id": "H2_1_PUBLISHED"
+    },
+    "H2_1_PUBLISHED__pleak_0.00005__ANCILLA_LRU_ONLY": {
+      "architecture": "ANCILLA_LRU_ONLY",
+      "crossing_vs_card_c_baselines": {
+        "beats_arm2_at_any_tested_round": true,
+        "crosses_below_both_sustained": true,
+        "r_cross_vs_arm1_unencoded": 1,
+        "r_cross_vs_arm2_no_correction": 1,
+        "r_cross_vs_both_first": 1,
+        "r_cross_vs_both_sustained": 1,
+        "verdict": "PASS_CROSSING_OBSERVED"
+      },
+      "delta_eps_L_r9_vs_zero_leak": 2.51e-06,
+      "delta_eps_L_slope_vs_zero_leak": 4.23e-06,
+      "exact_qutrit_branch_crosschecks": {
+        "1": {
+          "abs_diff": 4.16e-06,
+          "exact_qutrit_branch_p_fail": 5.784e-05,
+          "trajectory_mc_p_fail": 5.368e-05
+        },
+        "2": {
+          "abs_diff": 3.6e-06,
+          "exact_qutrit_branch_p_fail": 8.19e-05,
+          "trajectory_mc_p_fail": 7.829e-05
+        }
+      },
+      "fit": {
+        "epsilon_L_at_max_round": 2.402e-05,
+        "epsilon_L_at_max_round_ci95": [
+          7.41e-06,
+          4.446e-05
+        ],
+        "epsilon_L_slope_ci95": [
+          2.81e-06,
+          4.318e-05
+        ],
+        "epsilon_L_slope_fit": 2.28e-05,
+        "per_round_epsilon_L": {
+          "1": 5.368e-05,
+          "2": 3.915e-05,
+          "3": 3.273e-05,
+          "5": 2.832e-05,
+          "7": 3.258e-05,
+          "9": 2.402e-05
+        }
+      },
+      "leakage_diagnostics": {
+        "ancilla_streak_ge2_fraction_at_max_round": 0.0,
+        "mean_ancilla_qutrit_p2_by_round": {
+          "1": 6.667e-05,
+          "2": 2.5e-05,
+          "3": 2.778e-05,
+          "5": 4.667e-05,
+          "7": 5.476e-05,
+          "9": 5.556e-05
+        },
+        "mean_data_qutrit_p2_by_round": {
+          "1": 3.189e-05,
+          "2": 6.877e-05,
+          "3": 0.00010688,
+          "5": 0.0001829,
+          "7": 0.00019986,
+          "9": 0.00028682
+        }
+      },
+      "lru_parameters": {
+        "dt_lru_us": 20.0,
+        "lru_infidelity": 5e-05,
+        "p_leak_2q": 5e-05,
+        "p_lru_1q": 1.5e-05,
+        "p_ro_2_as_1": 0.92,
+        "p_seep_reset": 3e-05,
+        "p_seep_round": 0.00024
+      },
+      "n_shots_per_round": 30000,
+      "p_fail_by_round": {
+        "1": 5.37e-05,
+        "2": 7.83e-05,
+        "3": 9.82e-05,
+        "5": 0.0001416,
+        "7": 0.000228,
+        "9": 0.0002162
+      },
+      "rounds_evaluated": [
+        1,
+        2,
+        3,
+        5,
+        7,
+        9
+      ],
+      "target_profile_id": "H2_1_PUBLISHED"
+    },
+    "H2_1_PUBLISHED__pleak_0.00005__FULL_DATA_AND_ANCILLA_LRU": {
+      "architecture": "FULL_DATA_AND_ANCILLA_LRU",
+      "crossing_vs_card_c_baselines": {
+        "beats_arm2_at_any_tested_round": true,
+        "crosses_below_both_sustained": true,
+        "r_cross_vs_arm1_unencoded": 1,
+        "r_cross_vs_arm2_no_correction": 1,
+        "r_cross_vs_both_first": 1,
+        "r_cross_vs_both_sustained": 1,
+        "verdict": "PASS_CROSSING_OBSERVED"
+      },
+      "delta_eps_L_r9_vs_zero_leak": -9.1e-07,
+      "delta_eps_L_slope_vs_zero_leak": -8.8e-07,
+      "exact_qutrit_branch_crosschecks": {
+        "1": {
+          "abs_diff": 4.15e-06,
+          "exact_qutrit_branch_p_fail": 5.791e-05,
+          "trajectory_mc_p_fail": 5.376e-05
+        },
+        "2": {
+          "abs_diff": 2.2e-06,
+          "exact_qutrit_branch_p_fail": 7.644e-05,
+          "trajectory_mc_p_fail": 7.424e-05
+        }
+      },
+      "fit": {
+        "epsilon_L_at_max_round": 2.06e-05,
+        "epsilon_L_at_max_round_ci95": [
+          7.41e-06,
+          3.705e-05
+        ],
+        "epsilon_L_slope_ci95": [
+          0.0,
+          3.756e-05
+        ],
+        "epsilon_L_slope_fit": 1.769e-05,
+        "per_round_epsilon_L": {
+          "1": 5.376e-05,
+          "2": 3.712e-05,
+          "3": 3.141e-05,
+          "5": 2.796e-05,
+          "7": 2.579e-05,
+          "9": 2.06e-05
+        }
+      },
+      "leakage_diagnostics": {
+        "ancilla_streak_ge2_fraction_at_max_round": 0.0,
+        "mean_ancilla_qutrit_p2_by_round": {
+          "1": 6.667e-05,
+          "2": 2.5e-05,
+          "3": 2.778e-05,
+          "5": 4.667e-05,
+          "7": 5.476e-05,
+          "9": 5.556e-05
+        },
+        "mean_data_qutrit_p2_by_round": {
+          "1": 0.0,
+          "2": 0.0,
+          "3": 0.0,
+          "5": 0.0,
+          "7": 0.0,
+          "9": 0.0
+        }
+      },
+      "lru_parameters": {
+        "dt_lru_us": 20.0,
+        "lru_infidelity": 5e-05,
+        "p_leak_2q": 5e-05,
+        "p_lru_1q": 1.5e-05,
+        "p_ro_2_as_1": 0.92,
+        "p_seep_reset": 3e-05,
+        "p_seep_round": 0.00024
+      },
+      "n_shots_per_round": 30000,
+      "p_fail_by_round": {
+        "1": 5.38e-05,
+        "2": 7.42e-05,
+        "3": 9.42e-05,
+        "5": 0.0001398,
+        "7": 0.0001805,
+        "9": 0.0001853
+      },
+      "rounds_evaluated": [
+        1,
+        2,
+        3,
+        5,
+        7,
+        9
+      ],
+      "target_profile_id": "H2_1_PUBLISHED"
+    },
+    "H2_1_PUBLISHED__pleak_0.00005__NO_LRU": {
+      "architecture": "NO_LRU",
+      "crossing_vs_card_c_baselines": {
+        "beats_arm2_at_any_tested_round": true,
+        "crosses_below_both_sustained": true,
+        "r_cross_vs_arm1_unencoded": 1,
+        "r_cross_vs_arm2_no_correction": 1,
+        "r_cross_vs_both_first": 1,
+        "r_cross_vs_both_sustained": 1,
+        "verdict": "PASS_CROSSING_OBSERVED"
+      },
+      "delta_eps_L_r9_vs_zero_leak": 2.836e-05,
+      "delta_eps_L_slope_vs_zero_leak": 3.131e-05,
+      "exact_qutrit_branch_crosschecks": {
+        "1": {
+          "abs_diff": 4.02e-06,
+          "exact_qutrit_branch_p_fail": 5.784e-05,
+          "trajectory_mc_p_fail": 5.382e-05
+        },
+        "2": {
+          "abs_diff": 3.89e-06,
+          "exact_qutrit_branch_p_fail": 9.377e-05,
+          "trajectory_mc_p_fail": 8.988e-05
+        }
+      },
+      "fit": {
+        "epsilon_L_at_max_round": 4.987e-05,
+        "epsilon_L_at_max_round_ci95": [
+          2.593e-05,
+          7.783e-05
+        ],
+        "epsilon_L_slope_ci95": [
+          2.422e-05,
+          7.725e-05
+        ],
+        "epsilon_L_slope_fit": 4.988e-05,
+        "per_round_epsilon_L": {
+          "1": 5.382e-05,
+          "2": 4.494e-05,
+          "3": 3.266e-05,
+          "5": 3.277e-05,
+          "7": 4.729e-05,
+          "9": 4.987e-05
+        }
+      },
+      "leakage_diagnostics": {
+        "ancilla_streak_ge2_fraction_at_max_round": 0.0008667,
+        "mean_ancilla_qutrit_p2_by_round": {
+          "1": 6.667e-05,
+          "2": 4.167e-05,
+          "3": 5e-05,
+          "5": 0.00015333,
+          "7": 0.00021905,
+          "9": 0.00026667
+        },
+        "mean_data_qutrit_p2_by_round": {
+          "1": 3.198e-05,
+          "2": 6.963e-05,
+          "3": 0.00011443,
+          "5": 0.00019076,
+          "7": 0.00020472,
+          "9": 0.0002991
+        }
+      },
+      "lru_parameters": {
+        "dt_lru_us": 20.0,
+        "lru_infidelity": 5e-05,
+        "p_leak_2q": 5e-05,
+        "p_lru_1q": 1.5e-05,
+        "p_ro_2_as_1": 0.92,
+        "p_seep_reset": 3e-05,
+        "p_seep_round": 0.00024
+      },
+      "n_shots_per_round": 30000,
+      "p_fail_by_round": {
+        "1": 5.38e-05,
+        "2": 8.99e-05,
+        "3": 9.8e-05,
+        "5": 0.0001638,
+        "7": 0.0003309,
+        "9": 0.0004487
+      },
+      "rounds_evaluated": [
+        1,
+        2,
+        3,
+        5,
+        7,
+        9
+      ],
+      "target_profile_id": "H2_1_PUBLISHED"
+    }
+  },
+  "execution_tier": "SIMULATED",
+  "experiment_card": "Card C: OSIRIS-QEC \u2014 Transmon Qutrit |2> Leakage & LRU Ablation (phase1/verification_queue.md)",
+  "hardware_execution_authorized": false,
+  "prerequisite_card_c_crossing_report_sha256": "8527279fe95e3547329a7ead876ab553ee3a13af24086107280654d0cab303a0",
+  "provider_job_id": null,
+  "qpu_seconds": 0,
+  "qutrit_model_documentation": {
+    "code_evaluated": "[[3,1,3]] distance-3 phase-flip repetition code (X-memory, 3 data + 2 syndrome ancillas)",
+    "fez_drifted_spam_leak_sweep": [
+      0.0,
+      0.0005,
+      0.0012
+    ],
+    "fez_leak_sweep": [
+      0.0,
+      0.0002,
+      0.0005,
+      0.0012
+    ],
+    "h2_1_leak_sweep": [
+      0.0,
+      5e-05
+    ],
+    "hilbert_space": "5-qutrit {|0>, |1>, |2>}^{x 5} (3^5 = 243 pure states; 125-dim exact block-coherent 3-data-qutrit Liouville instrument)",
+    "lru_architectures": [
+      "NO_LRU",
+      "ANCILLA_LRU_ONLY",
+      "FULL_DATA_AND_ANCILLA_LRU"
+    ],
+    "modeled_qutrit_mechanisms": [
+      "cz_diabatic_11_to_02_20_leakage_heating",
+      "spontaneous_qutrit_seepage_2_to_1_at_2x_t1_rate",
+      "leaked_data_to_ancilla_50pct_syndrome_randomization",
+      "leaked_ancilla_to_data_50pct_phase_hook_corruption",
+      "dispersive_binary_readout_state2_as_1_bias_0p92",
+      "ancilla_multilevel_reset_lru_infidelity",
+      "data_dqlr_swap_lru_pulse_gate_and_120ns_idle_overhead",
+      "ion_trap_h2_1_spontaneous_raman_hyperfine_leakage_baseline"
+    ],
+    "p_ro_2_as_1": 0.92
+  },
+  "schema": "osiris.qec_card_c.qutrit_leakage_lru_report/1",
+  "seed": 20261124,
+  "stop_go_decision": {
+    "full_data_and_ancilla_lru_preserves_card_c_crossing": true,
+    "qutrit_243_state_engine_verified": true,
+    "scope_limit": "Simulated 5-qutrit (3^5 = 243-state) evaluation of [[3,1,3]] (d=3) only (0 QPU seconds, provider_job_id=None). Quantifies non-computational |2> leakage floors and Leakage Reduction Unit (LRU) requirements at d=3; multi-distance surface-code fault-tolerance scaling (d = 3 -> 5 -> 7) and live hardware LRU calibration require separate experiments.",
+    "strict_monotonicity_no_lru_gt_ancilla_gt_full_at_1p2e3": true,
+    "verdict": "PASS_QUTRIT_LEAKAGE_GAP_CLOSED_WITH_LRU",
+    "zero_leakage_matches_card_c_baseline": true
+  },
+  "summary_ablation_table": [
+    {
+      "ancilla_streak_ge2_max_round": 0.0,
+      "architecture": "NO_LRU",
+      "data_qutrit_p2_max_round": 0.0,
+      "delta_eps_L_slope_vs_zero_leak": 0.0,
+      "eps_L_at_max_round": 0.00084685,
+      "eps_L_slope_fit": 0.00069143,
+      "p_fail_max_round": 0.0075702,
+      "p_leak_2q": 0.0,
+      "r_cross_vs_both": 1,
+      "target_profile_id": "FEZ_PUBLISHED",
+      "verdict": "PASS_CROSSING_OBSERVED"
+    },
+    {
+      "ancilla_streak_ge2_max_round": 0.0,
+      "architecture": "ANCILLA_LRU_ONLY",
+      "data_qutrit_p2_max_round": 0.0,
+      "delta_eps_L_slope_vs_zero_leak": -9e-07,
+      "eps_L_at_max_round": 0.00084742,
+      "eps_L_slope_fit": 0.00069053,
+      "p_fail_max_round": 0.0075753,
+      "p_leak_2q": 0.0,
+      "r_cross_vs_both": 1,
+      "target_profile_id": "FEZ_PUBLISHED",
+      "verdict": "PASS_CROSSING_OBSERVED"
+    },
+    {
+      "ancilla_streak_ge2_max_round": 0.0,
+      "architecture": "FULL_DATA_AND_ANCILLA_LRU",
+      "data_qutrit_p2_max_round": 0.0,
+      "delta_eps_L_slope_vs_zero_leak": 8.813e-05,
+      "eps_L_at_max_round": 0.00093204,
+      "eps_L_slope_fit": 0.00077956,
+      "p_fail_max_round": 0.0083261,
+      "p_leak_2q": 0.0,
+      "r_cross_vs_both": 1,
+      "target_profile_id": "FEZ_PUBLISHED",
+      "verdict": "PASS_CROSSING_OBSERVED"
+    },
+    {
+      "ancilla_streak_ge2_max_round": 0.0033667,
+      "architecture": "NO_LRU",
+      "data_qutrit_p2_max_round": 0.00109986,
+      "delta_eps_L_slope_vs_zero_leak": 0.00020774,
+      "eps_L_at_max_round": 0.00104236,
+      "eps_L_slope_fit": 0.00089917,
+      "p_fail_max_round": 0.0093034,
+      "p_leak_2q": 0.0002,
+      "r_cross_vs_both": 1,
+      "target_profile_id": "FEZ_PUBLISHED",
+      "verdict": "PASS_CROSSING_OBSERVED"
+    },
+    {
+      "ancilla_streak_ge2_max_round": 0.0,
+      "architecture": "ANCILLA_LRU_ONLY",
+      "data_qutrit_p2_max_round": 0.00107843,
+      "delta_eps_L_slope_vs_zero_leak": 8.63e-05,
+      "eps_L_at_max_round": 0.00092267,
+      "eps_L_slope_fit": 0.00077773,
+      "p_fail_max_round": 0.008243,
+      "p_leak_2q": 0.0002,
+      "r_cross_vs_both": 1,
+      "target_profile_id": "FEZ_PUBLISHED",
+      "verdict": "PASS_CROSSING_OBSERVED"
+    },
+    {
+      "ancilla_streak_ge2_max_round": 0.0,
+      "architecture": "FULL_DATA_AND_ANCILLA_LRU",
+      "data_qutrit_p2_max_round": 7e-08,
+      "delta_eps_L_slope_vs_zero_leak": 0.00011022,
+      "eps_L_at_max_round": 0.00095023,
+      "eps_L_slope_fit": 0.00080165,
+      "p_fail_max_round": 0.0084874,
+      "p_leak_2q": 0.0002,
+      "r_cross_vs_both": 1,
+      "target_profile_id": "FEZ_PUBLISHED",
+      "verdict": "PASS_CROSSING_OBSERVED"
+    },
+    {
+      "ancilla_streak_ge2_max_round": 0.0083,
+      "architecture": "NO_LRU",
+      "data_qutrit_p2_max_round": 0.00266171,
+      "delta_eps_L_slope_vs_zero_leak": 0.0005104,
+      "eps_L_at_max_round": 0.00132361,
+      "eps_L_slope_fit": 0.00120183,
+      "p_fail_max_round": 0.0117872,
+      "p_leak_2q": 0.0005,
+      "r_cross_vs_both": 1,
+      "target_profile_id": "FEZ_PUBLISHED",
+      "verdict": "PASS_CROSSING_OBSERVED"
+    },
+    {
+      "ancilla_streak_ge2_max_round": 0.0,
+      "architecture": "ANCILLA_LRU_ONLY",
+      "data_qutrit_p2_max_round": 0.00272901,
+      "delta_eps_L_slope_vs_zero_leak": 0.00021324,
+      "eps_L_at_max_round": 0.00105111,
+      "eps_L_slope_fit": 0.00090467,
+      "p_fail_max_round": 0.0093808,
+      "p_leak_2q": 0.0005,
+      "r_cross_vs_both": 1,
+      "target_profile_id": "FEZ_PUBLISHED",
+      "verdict": "PASS_CROSSING_OBSERVED"
+    },
+    {
+      "ancilla_streak_ge2_max_round": 0.0,
+      "architecture": "FULL_DATA_AND_ANCILLA_LRU",
+      "data_qutrit_p2_max_round": 1.7e-07,
+      "delta_eps_L_slope_vs_zero_leak": 0.00015904,
+      "eps_L_at_max_round": 0.00100881,
+      "eps_L_slope_fit": 0.00085047,
+      "p_fail_max_round": 0.0090063,
+      "p_leak_2q": 0.0005,
+      "r_cross_vs_both": 1,
+      "target_profile_id": "FEZ_PUBLISHED",
+      "verdict": "PASS_CROSSING_OBSERVED"
+    },
+    {
+      "ancilla_streak_ge2_max_round": 0.0186,
+      "architecture": "NO_LRU",
+      "data_qutrit_p2_max_round": 0.00662469,
+      "delta_eps_L_slope_vs_zero_leak": 0.00120467,
+      "eps_L_at_max_round": 0.00192947,
+      "eps_L_slope_fit": 0.0018961,
+      "p_fail_max_round": 0.0170996,
+      "p_leak_2q": 0.0012,
+      "r_cross_vs_both": 1,
+      "target_profile_id": "FEZ_PUBLISHED",
+      "verdict": "PASS_CROSSING_OBSERVED"
+    },
+    {
+      "ancilla_streak_ge2_max_round": 0.0,
+      "architecture": "ANCILLA_LRU_ONLY",
+      "data_qutrit_p2_max_round": 0.00669057,
+      "delta_eps_L_slope_vs_zero_leak": 0.00046798,
+      "eps_L_at_max_round": 0.0012733,
+      "eps_L_slope_fit": 0.00115941,
+      "p_fail_max_round": 0.0113437,
+      "p_leak_2q": 0.0012,
+      "r_cross_vs_both": 1,
+      "target_profile_id": "FEZ_PUBLISHED",
+      "verdict": "PASS_CROSSING_OBSERVED"
+    },
+    {
+      "ancilla_streak_ge2_max_round": 0.0,
+      "architecture": "FULL_DATA_AND_ANCILLA_LRU",
+      "data_qutrit_p2_max_round": 3.9e-07,
+      "delta_eps_L_slope_vs_zero_leak": 0.00026339,
+      "eps_L_at_max_round": 0.00109815,
+      "eps_L_slope_fit": 0.00095482,
+      "p_fail_max_round": 0.0097969,
+      "p_leak_2q": 0.0012,
+      "r_cross_vs_both": 1,
+      "target_profile_id": "FEZ_PUBLISHED",
+      "verdict": "PASS_CROSSING_OBSERVED"
+    },
+    {
+      "ancilla_streak_ge2_max_round": 0.0,
+      "architecture": "NO_LRU",
+      "data_qutrit_p2_max_round": 0.0,
+      "delta_eps_L_slope_vs_zero_leak": 0.0,
+      "eps_L_at_max_round": 0.00155984,
+      "eps_L_slope_fit": 0.00087266,
+      "p_fail_max_round": 0.0138646,
+      "p_leak_2q": 0.0,
+      "r_cross_vs_both": 1,
+      "target_profile_id": "FEZ_DRIFTED_SPAM",
+      "verdict": "PASS_CROSSING_OBSERVED"
+    },
+    {
+      "ancilla_streak_ge2_max_round": 0.0,
+      "architecture": "ANCILLA_LRU_ONLY",
+      "data_qutrit_p2_max_round": 0.0,
+      "delta_eps_L_slope_vs_zero_leak": 4.52e-06,
+      "eps_L_at_max_round": 0.00156622,
+      "eps_L_slope_fit": 0.00087718,
+      "p_fail_max_round": 0.0139206,
+      "p_leak_2q": 0.0,
+      "r_cross_vs_both": 1,
+      "target_profile_id": "FEZ_DRIFTED_SPAM",
+      "verdict": "PASS_CROSSING_OBSERVED"
+    },
+    {
+      "ancilla_streak_ge2_max_round": 0.0,
+      "architecture": "FULL_DATA_AND_ANCILLA_LRU",
+      "data_qutrit_p2_max_round": 0.0,
+      "delta_eps_L_slope_vs_zero_leak": 0.00011156,
+      "eps_L_at_max_round": 0.00167899,
+      "eps_L_slope_fit": 0.00098422,
+      "p_fail_max_round": 0.0149095,
+      "p_leak_2q": 0.0,
+      "r_cross_vs_both": 1,
+      "target_profile_id": "FEZ_DRIFTED_SPAM",
+      "verdict": "PASS_CROSSING_OBSERVED"
+    },
+    {
+      "ancilla_streak_ge2_max_round": 0.0077,
+      "architecture": "NO_LRU",
+      "data_qutrit_p2_max_round": 0.00263658,
+      "delta_eps_L_slope_vs_zero_leak": 0.00042134,
+      "eps_L_at_max_round": 0.00194531,
+      "eps_L_slope_fit": 0.001294,
+      "p_fail_max_round": 0.0172378,
+      "p_leak_2q": 0.0005,
+      "r_cross_vs_both": 1,
+      "target_profile_id": "FEZ_DRIFTED_SPAM",
+      "verdict": "PASS_CROSSING_OBSERVED"
+    },
+    {
+      "ancilla_streak_ge2_max_round": 0.0,
+      "architecture": "ANCILLA_LRU_ONLY",
+      "data_qutrit_p2_max_round": 0.00266988,
+      "delta_eps_L_slope_vs_zero_leak": 0.00017654,
+      "eps_L_at_max_round": 0.00173606,
+      "eps_L_slope_fit": 0.0010492,
+      "p_fail_max_round": 0.0154093,
+      "p_leak_2q": 0.0005,
+      "r_cross_vs_both": 1,
+      "target_profile_id": "FEZ_DRIFTED_SPAM",
+      "verdict": "PASS_CROSSING_OBSERVED"
+    },
+    {
+      "ancilla_streak_ge2_max_round": 0.0,
+      "architecture": "FULL_DATA_AND_ANCILLA_LRU",
+      "data_qutrit_p2_max_round": 1.6e-07,
+      "delta_eps_L_slope_vs_zero_leak": 0.0001911,
+      "eps_L_at_max_round": 0.00176023,
+      "eps_L_slope_fit": 0.00106376,
+      "p_fail_max_round": 0.0156208,
+      "p_leak_2q": 0.0005,
+      "r_cross_vs_both": 1,
+      "target_profile_id": "FEZ_DRIFTED_SPAM",
+      "verdict": "PASS_CROSSING_OBSERVED"
+    },
+    {
+      "ancilla_streak_ge2_max_round": 0.0187667,
+      "architecture": "NO_LRU",
+      "data_qutrit_p2_max_round": 0.00632688,
+      "delta_eps_L_slope_vs_zero_leak": 0.00105456,
+      "eps_L_at_max_round": 0.00249966,
+      "eps_L_slope_fit": 0.00192722,
+      "p_fail_max_round": 0.0220523,
+      "p_leak_2q": 0.0012,
+      "r_cross_vs_both": 1,
+      "target_profile_id": "FEZ_DRIFTED_SPAM",
+      "verdict": "PASS_CROSSING_OBSERVED"
+    },
+    {
+      "ancilla_streak_ge2_max_round": 3.33e-05,
+      "architecture": "ANCILLA_LRU_ONLY",
+      "data_qutrit_p2_max_round": 0.00630304,
+      "delta_eps_L_slope_vs_zero_leak": 0.00040706,
+      "eps_L_at_max_round": 0.0019487,
+      "eps_L_slope_fit": 0.00127972,
+      "p_fail_max_round": 0.0172674,
+      "p_leak_2q": 0.0012,
+      "r_cross_vs_both": 1,
+      "target_profile_id": "FEZ_DRIFTED_SPAM",
+      "verdict": "PASS_CROSSING_OBSERVED"
+    },
+    {
+      "ancilla_streak_ge2_max_round": 3.33e-05,
+      "architecture": "FULL_DATA_AND_ANCILLA_LRU",
+      "data_qutrit_p2_max_round": 3.9e-07,
+      "delta_eps_L_slope_vs_zero_leak": 0.00024789,
+      "eps_L_at_max_round": 0.00181562,
+      "eps_L_slope_fit": 0.00112055,
+      "p_fail_max_round": 0.0161053,
+      "p_leak_2q": 0.0012,
+      "r_cross_vs_both": 1,
+      "target_profile_id": "FEZ_DRIFTED_SPAM",
+      "verdict": "PASS_CROSSING_OBSERVED"
+    },
+    {
+      "ancilla_streak_ge2_max_round": 0.0,
+      "architecture": "NO_LRU",
+      "data_qutrit_p2_max_round": 0.0,
+      "delta_eps_L_slope_vs_zero_leak": 0.0,
+      "eps_L_at_max_round": 2.151e-05,
+      "eps_L_slope_fit": 1.857e-05,
+      "p_fail_max_round": 0.0001936,
+      "p_leak_2q": 0.0,
+      "r_cross_vs_both": 1,
+      "target_profile_id": "H2_1_PUBLISHED",
+      "verdict": "PASS_CROSSING_OBSERVED"
+    },
+    {
+      "ancilla_streak_ge2_max_round": 0.0,
+      "architecture": "ANCILLA_LRU_ONLY",
+      "data_qutrit_p2_max_round": 0.0,
+      "delta_eps_L_slope_vs_zero_leak": -8.6e-07,
+      "eps_L_at_max_round": 2.175e-05,
+      "eps_L_slope_fit": 1.771e-05,
+      "p_fail_max_round": 0.0001957,
+      "p_leak_2q": 0.0,
+      "r_cross_vs_both": 1,
+      "target_profile_id": "H2_1_PUBLISHED",
+      "verdict": "PASS_CROSSING_OBSERVED"
+    },
+    {
+      "ancilla_streak_ge2_max_round": 0.0,
+      "architecture": "FULL_DATA_AND_ANCILLA_LRU",
+      "data_qutrit_p2_max_round": 0.0,
+      "delta_eps_L_slope_vs_zero_leak": -2e-08,
+      "eps_L_at_max_round": 2.167e-05,
+      "eps_L_slope_fit": 1.855e-05,
+      "p_fail_max_round": 0.000195,
+      "p_leak_2q": 0.0,
+      "r_cross_vs_both": 1,
+      "target_profile_id": "H2_1_PUBLISHED",
+      "verdict": "PASS_CROSSING_OBSERVED"
+    },
+    {
+      "ancilla_streak_ge2_max_round": 0.0008667,
+      "architecture": "NO_LRU",
+      "data_qutrit_p2_max_round": 0.0002991,
+      "delta_eps_L_slope_vs_zero_leak": 3.131e-05,
+      "eps_L_at_max_round": 4.987e-05,
+      "eps_L_slope_fit": 4.988e-05,
+      "p_fail_max_round": 0.0004487,
+      "p_leak_2q": 5e-05,
+      "r_cross_vs_both": 1,
+      "target_profile_id": "H2_1_PUBLISHED",
+      "verdict": "PASS_CROSSING_OBSERVED"
+    },
+    {
+      "ancilla_streak_ge2_max_round": 0.0,
+      "architecture": "ANCILLA_LRU_ONLY",
+      "data_qutrit_p2_max_round": 0.00028682,
+      "delta_eps_L_slope_vs_zero_leak": 4.23e-06,
+      "eps_L_at_max_round": 2.402e-05,
+      "eps_L_slope_fit": 2.28e-05,
+      "p_fail_max_round": 0.0002162,
+      "p_leak_2q": 5e-05,
+      "r_cross_vs_both": 1,
+      "target_profile_id": "H2_1_PUBLISHED",
+      "verdict": "PASS_CROSSING_OBSERVED"
+    },
+    {
+      "ancilla_streak_ge2_max_round": 0.0,
+      "architecture": "FULL_DATA_AND_ANCILLA_LRU",
+      "data_qutrit_p2_max_round": 0.0,
+      "delta_eps_L_slope_vs_zero_leak": -8.8e-07,
+      "eps_L_at_max_round": 2.06e-05,
+      "eps_L_slope_fit": 1.769e-05,
+      "p_fail_max_round": 0.0001853,
+      "p_leak_2q": 5e-05,
+      "r_cross_vs_both": 1,
+      "target_profile_id": "H2_1_PUBLISHED",
+      "verdict": "PASS_CROSSING_OBSERVED"
+    }
+  ],
+  "verification_controls": {
+    "cptp_completeness_errors": {
+      "cz_cx_qutrit_9x9": 8.88178472727669e-16,
+      "data_dqlr_3x3": 2.220446049250313e-16,
+      "t1_t2_seep_3x3": 1.1102230246251565e-16
+    },
+    "full_243x243_vs_liouville125_max_abs_diff": 2.0819945356174282e-16,
+    "full_243x243_vs_liouville125_max_abs_diff_by_arch": {
+      "ANCILLA_LRU_ONLY": 1.6675917617219398e-16,
+      "FULL_DATA_AND_ANCILLA_LRU": 2.0819945356174282e-16,
+      "NO_LRU": 1.666604602051902e-16
+    },
+    "full_lru_preserves_crossing_all_regimes": true,
+    "max_cptp_error": 8.88178472727669e-16,
+    "strict_lru_ordering_at_fez_1p2e3": true,
+    "zero_leakage_exact_card_c_agreement": {
+      "FEZ_DRIFTED_SPAM": {
+        "eps_L_slope_diff_vs_card_c_report": 0.0,
+        "max_p_fail_diff_vs_card_c_report": 0.0
+      },
+      "FEZ_PUBLISHED": {
+        "eps_L_slope_diff_vs_card_c_report": 0.0,
+        "max_p_fail_diff_vs_card_c_report": 0.0
+      },
+      "H2_1_PUBLISHED": {
+        "eps_L_slope_diff_vs_card_c_report": 0.0,
+        "max_p_fail_diff_vs_card_c_report": 0.0
+      }
+    }
+  }
+}

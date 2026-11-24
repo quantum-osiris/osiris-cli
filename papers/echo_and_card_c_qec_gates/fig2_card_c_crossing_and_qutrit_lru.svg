@@ -1,0 +1,146 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="576" height="336" viewBox="0 0 576 336">
+<rect x="0" y="0" width="576" height="336" fill="#ffffff"/>
+<text x="288.00" y="15.50" font-family="Helvetica, Arial, sans-serif" font-size="9.2" font-weight="bold" fill="#111827" text-anchor="middle">Card C (OSIRIS-QEC, SIMULATED, 0 s QPU): Repeated-Correction Crossing &amp; 5-Qutrit |2&gt; LRU Floor</text>
+<text x="288.00" y="27.50" font-family="Helvetica, Arial, sans-serif" font-size="7.2" font-weight="normal" fill="#475569" text-anchor="middle">[[3,1,3]] &amp; [[9,1,3]] Space-Time MWPM Crossing vs. 3.2% SPAM Drift Erasure and Transmon |2&gt; Leakage Mitigation</text>
+<text x="50.00" y="41.00" font-family="Helvetica, Arial, sans-serif" font-size="7.6" font-weight="bold" fill="#0f172a" text-anchor="start">(a) Logical Failure P_fail(R) vs. Rounds R (Log10)</text>
+<rect x="50.00" y="47.00" width="242.00" height="214.00" fill="#fafafa" stroke="#334155" stroke-width="0.90"/>
+<line x1="50.00" y1="254.71" x2="292.00" y2="254.71" stroke="#e2e8f0" stroke-width="0.60"/>
+<text x="45.50" y="257.01" font-family="monospace" font-size="6.1" font-weight="normal" fill="#334155" text-anchor="end">1e-4</text>
+<line x1="50.00" y1="191.76" x2="292.00" y2="191.76" stroke="#e2e8f0" stroke-width="0.60"/>
+<text x="45.50" y="194.06" font-family="monospace" font-size="6.1" font-weight="normal" fill="#334155" text-anchor="end">1e-3</text>
+<line x1="50.00" y1="128.82" x2="292.00" y2="128.82" stroke="#e2e8f0" stroke-width="0.60"/>
+<text x="45.50" y="131.12" font-family="monospace" font-size="6.1" font-weight="normal" fill="#334155" text-anchor="end">1e-2</text>
+<line x1="50.00" y1="65.88" x2="292.00" y2="65.88" stroke="#e2e8f0" stroke-width="0.60"/>
+<text x="45.50" y="68.18" font-family="monospace" font-size="6.1" font-weight="normal" fill="#334155" text-anchor="end">1e-1</text>
+<line x1="64.00" y1="261.00" x2="64.00" y2="264.00" stroke="#334155" stroke-width="0.70"/>
+<text x="64.00" y="272.00" font-family="monospace" font-size="6.3" font-weight="bold" fill="#111827" text-anchor="middle">1</text>
+<line x1="90.75" y1="261.00" x2="90.75" y2="264.00" stroke="#334155" stroke-width="0.70"/>
+<text x="90.75" y="272.00" font-family="monospace" font-size="6.3" font-weight="bold" fill="#111827" text-anchor="middle">2</text>
+<line x1="117.50" y1="261.00" x2="117.50" y2="264.00" stroke="#334155" stroke-width="0.70"/>
+<text x="117.50" y="272.00" font-family="monospace" font-size="6.3" font-weight="bold" fill="#111827" text-anchor="middle">3</text>
+<line x1="171.00" y1="261.00" x2="171.00" y2="264.00" stroke="#334155" stroke-width="0.70"/>
+<text x="171.00" y="272.00" font-family="monospace" font-size="6.3" font-weight="bold" fill="#111827" text-anchor="middle">5</text>
+<line x1="224.50" y1="261.00" x2="224.50" y2="264.00" stroke="#334155" stroke-width="0.70"/>
+<text x="224.50" y="272.00" font-family="monospace" font-size="6.3" font-weight="bold" fill="#111827" text-anchor="middle">7</text>
+<line x1="278.00" y1="261.00" x2="278.00" y2="264.00" stroke="#334155" stroke-width="0.70"/>
+<text x="278.00" y="272.00" font-family="monospace" font-size="6.3" font-weight="bold" fill="#111827" text-anchor="middle">9</text>
+<text x="171.00" y="282.50" font-family="Helvetica, Arial, sans-serif" font-size="6.5" font-weight="bold" fill="#111827" text-anchor="middle">Syndrome Extraction Rounds R</text>
+<polyline points="64.00,91.22 90.75,85.92 117.50,81.53 171.00,74.08 224.50,70.58 278.00,65.65" fill="none" stroke="#dc2626" stroke-width="1.50"/>
+<circle cx="64.00" cy="91.22" r="2.00" fill="#dc2626" stroke="#0f172a" stroke-width="0.50"/>
+<circle cx="90.75" cy="85.92" r="2.00" fill="#dc2626" stroke="#0f172a" stroke-width="0.50"/>
+<circle cx="117.50" cy="81.53" r="2.00" fill="#dc2626" stroke="#0f172a" stroke-width="0.50"/>
+<circle cx="171.00" cy="74.08" r="2.00" fill="#dc2626" stroke="#0f172a" stroke-width="0.50"/>
+<circle cx="224.50" cy="70.58" r="2.00" fill="#dc2626" stroke="#0f172a" stroke-width="0.50"/>
+<circle cx="278.00" cy="65.65" r="2.00" fill="#dc2626" stroke="#0f172a" stroke-width="0.50"/>
+<polyline points="64.00,104.54 90.75,98.92 117.50,94.26 171.00,86.80 224.50,80.95 278.00,76.14" fill="none" stroke="#475569" stroke-width="1.50" stroke-dasharray="5,3"/>
+<circle cx="64.00" cy="104.54" r="2.00" fill="#475569" stroke="#0f172a" stroke-width="0.50"/>
+<circle cx="90.75" cy="98.92" r="2.00" fill="#475569" stroke="#0f172a" stroke-width="0.50"/>
+<circle cx="117.50" cy="94.26" r="2.00" fill="#475569" stroke="#0f172a" stroke-width="0.50"/>
+<circle cx="171.00" cy="86.80" r="2.00" fill="#475569" stroke="#0f172a" stroke-width="0.50"/>
+<circle cx="224.50" cy="80.95" r="2.00" fill="#475569" stroke="#0f172a" stroke-width="0.50"/>
+<circle cx="278.00" cy="76.14" r="2.00" fill="#475569" stroke="#0f172a" stroke-width="0.50"/>
+<polyline points="64.00,117.20 90.75,107.49 117.50,98.95 171.00,89.73 224.50,82.75 278.00,77.26" fill="none" stroke="#f59e0b" stroke-width="1.50"/>
+<circle cx="64.00" cy="117.20" r="2.00" fill="#f59e0b" stroke="#0f172a" stroke-width="0.50"/>
+<circle cx="90.75" cy="107.49" r="2.00" fill="#f59e0b" stroke="#0f172a" stroke-width="0.50"/>
+<circle cx="117.50" cy="98.95" r="2.00" fill="#f59e0b" stroke="#0f172a" stroke-width="0.50"/>
+<circle cx="171.00" cy="89.73" r="2.00" fill="#f59e0b" stroke="#0f172a" stroke-width="0.50"/>
+<circle cx="224.50" cy="82.75" r="2.00" fill="#f59e0b" stroke="#0f172a" stroke-width="0.50"/>
+<circle cx="278.00" cy="77.26" r="2.00" fill="#f59e0b" stroke="#0f172a" stroke-width="0.50"/>
+<polyline points="64.00,162.80 90.75,148.46 117.50,138.53 171.00,124.50 224.50,114.37 278.00,106.35" fill="none" stroke="#94a3b8" stroke-width="1.50" stroke-dasharray="5,3"/>
+<circle cx="64.00" cy="162.80" r="2.00" fill="#94a3b8" stroke="#0f172a" stroke-width="0.50"/>
+<circle cx="90.75" cy="148.46" r="2.00" fill="#94a3b8" stroke="#0f172a" stroke-width="0.50"/>
+<circle cx="117.50" cy="138.53" r="2.00" fill="#94a3b8" stroke="#0f172a" stroke-width="0.50"/>
+<circle cx="171.00" cy="124.50" r="2.00" fill="#94a3b8" stroke="#0f172a" stroke-width="0.50"/>
+<circle cx="224.50" cy="114.37" r="2.00" fill="#94a3b8" stroke="#0f172a" stroke-width="0.50"/>
+<circle cx="278.00" cy="106.35" r="2.00" fill="#94a3b8" stroke="#0f172a" stroke-width="0.50"/>
+<polyline points="64.00,170.91 90.75,165.45 117.50,157.49 171.00,147.67 224.50,142.27 278.00,136.43" fill="none" stroke="#2563eb" stroke-width="1.50"/>
+<circle cx="64.00" cy="170.91" r="2.00" fill="#2563eb" stroke="#0f172a" stroke-width="0.50"/>
+<circle cx="90.75" cy="165.45" r="2.00" fill="#2563eb" stroke="#0f172a" stroke-width="0.50"/>
+<circle cx="117.50" cy="157.49" r="2.00" fill="#2563eb" stroke="#0f172a" stroke-width="0.50"/>
+<circle cx="171.00" cy="147.67" r="2.00" fill="#2563eb" stroke="#0f172a" stroke-width="0.50"/>
+<circle cx="224.50" cy="142.27" r="2.00" fill="#2563eb" stroke="#0f172a" stroke-width="0.50"/>
+<circle cx="278.00" cy="136.43" r="2.00" fill="#2563eb" stroke="#0f172a" stroke-width="0.50"/>
+<polyline points="64.00,198.73 90.75,195.41 117.50,187.36 171.00,179.35 224.50,172.82 278.00,165.91" fill="none" stroke="#059669" stroke-width="1.50"/>
+<circle cx="64.00" cy="198.73" r="2.00" fill="#059669" stroke="#0f172a" stroke-width="0.50"/>
+<circle cx="90.75" cy="195.41" r="2.00" fill="#059669" stroke="#0f172a" stroke-width="0.50"/>
+<circle cx="117.50" cy="187.36" r="2.00" fill="#059669" stroke="#0f172a" stroke-width="0.50"/>
+<circle cx="171.00" cy="179.35" r="2.00" fill="#059669" stroke="#0f172a" stroke-width="0.50"/>
+<circle cx="224.50" cy="172.82" r="2.00" fill="#059669" stroke="#0f172a" stroke-width="0.50"/>
+<circle cx="278.00" cy="165.91" r="2.00" fill="#059669" stroke="#0f172a" stroke-width="0.50"/>
+<polyline points="64.00,261.00 90.75,261.00 117.50,256.08 171.00,252.00 224.50,237.28 278.00,236.65" fill="none" stroke="#7c3aed" stroke-width="1.50"/>
+<circle cx="64.00" cy="261.00" r="2.00" fill="#7c3aed" stroke="#0f172a" stroke-width="0.50"/>
+<circle cx="90.75" cy="261.00" r="2.00" fill="#7c3aed" stroke="#0f172a" stroke-width="0.50"/>
+<circle cx="117.50" cy="256.08" r="2.00" fill="#7c3aed" stroke="#0f172a" stroke-width="0.50"/>
+<circle cx="171.00" cy="252.00" r="2.00" fill="#7c3aed" stroke="#0f172a" stroke-width="0.50"/>
+<circle cx="224.50" cy="237.28" r="2.00" fill="#7c3aed" stroke="#0f172a" stroke-width="0.50"/>
+<circle cx="278.00" cy="236.65" r="2.00" fill="#7c3aed" stroke="#0f172a" stroke-width="0.50"/>
+<text x="57.00" y="58.50" font-family="Helvetica, Arial, sans-serif" font-size="5.7" font-weight="bold" fill="#dc2626" text-anchor="start">Red: [[9,1,3]] FEZ Drifted (NO CROSSING)</text>
+<text x="57.00" y="67.50" font-family="Helvetica, Arial, sans-serif" font-size="5.7" font-weight="bold" fill="#334155" text-anchor="start">Slate dashed: FEZ Bare Arm 1</text>
+<text x="57.00" y="76.50" font-family="Helvetica, Arial, sans-serif" font-size="5.7" font-weight="bold" fill="#1e3a8a" text-anchor="start">Blue: [[3,1,3]] FEZ Arm 4a (R_cross=1)</text>
+<text x="57.00" y="252.00" font-family="Helvetica, Arial, sans-serif" font-size="5.7" font-weight="bold" fill="#065f46" text-anchor="start">Green/Purple: H2-1 [[9,1,3]] &amp; [[3,1,3]]</text>
+<text x="330.00" y="41.00" font-family="Helvetica, Arial, sans-serif" font-size="7.6" font-weight="bold" fill="#0f172a" text-anchor="start">(b) 5-Qutrit [[3,1,3]] eps_L Slope vs. CZ Leakage</text>
+<rect x="330.00" y="47.00" width="230.00" height="214.00" fill="#fafafa" stroke="#334155" stroke-width="0.90"/>
+<line x1="330.00" y1="261.00" x2="560.00" y2="261.00" stroke="#e2e8f0" stroke-width="0.60"/>
+<text x="325.50" y="263.30" font-family="monospace" font-size="6.1" font-weight="normal" fill="#334155" text-anchor="end">0.0</text>
+<line x1="330.00" y1="213.44" x2="560.00" y2="213.44" stroke="#e2e8f0" stroke-width="0.60"/>
+<text x="325.50" y="215.74" font-family="monospace" font-size="6.1" font-weight="normal" fill="#334155" text-anchor="end">0.5</text>
+<line x1="330.00" y1="165.89" x2="560.00" y2="165.89" stroke="#e2e8f0" stroke-width="0.60"/>
+<text x="325.50" y="168.19" font-family="monospace" font-size="6.1" font-weight="normal" fill="#334155" text-anchor="end">1.0</text>
+<line x1="330.00" y1="118.33" x2="560.00" y2="118.33" stroke="#e2e8f0" stroke-width="0.60"/>
+<text x="325.50" y="120.63" font-family="monospace" font-size="6.1" font-weight="normal" fill="#334155" text-anchor="end">1.5</text>
+<line x1="330.00" y1="70.78" x2="560.00" y2="70.78" stroke="#e2e8f0" stroke-width="0.60"/>
+<text x="325.50" y="73.08" font-family="monospace" font-size="6.1" font-weight="normal" fill="#334155" text-anchor="end">2.0</text>
+<line x1="514.00" y1="47.00" x2="514.00" y2="261.00" stroke="#94a3b8" stroke-width="0.80" stroke-dasharray="5,3"/>
+<rect x="336.05" y="195.24" width="10.50" height="65.76" fill="#ef4444" stroke="#991b1b" stroke-width="0.70"/>
+<line x1="341.30" y1="205.66" x2="341.30" y2="184.27" stroke="#0f172a" stroke-width="0.90"/>
+<rect x="347.75" y="195.32" width="10.50" height="65.68" fill="#f59e0b" stroke="#b45309" stroke-width="0.70"/>
+<line x1="353.00" y1="206.27" x2="353.00" y2="184.49" stroke="#0f172a" stroke-width="0.90"/>
+<rect x="359.45" y="186.86" width="10.50" height="74.14" fill="#2563eb" stroke="#1e3a8a" stroke-width="0.70"/>
+<line x1="364.70" y1="198.76" x2="364.70" y2="175.06" stroke="#0f172a" stroke-width="0.90"/>
+<line x1="353.00" y1="261.00" x2="353.00" y2="264.00" stroke="#334155" stroke-width="0.70"/>
+<text x="353.00" y="272.00" font-family="monospace" font-size="6.0" font-weight="bold" fill="#111827" text-anchor="middle">0</text>
+<rect x="382.05" y="175.48" width="10.50" height="85.52" fill="#ef4444" stroke="#991b1b" stroke-width="0.70"/>
+<line x1="387.30" y1="187.13" x2="387.30" y2="163.24" stroke="#0f172a" stroke-width="0.90"/>
+<rect x="393.75" y="187.03" width="10.50" height="73.97" fill="#f59e0b" stroke="#b45309" stroke-width="0.70"/>
+<line x1="399.00" y1="198.41" x2="399.00" y2="175.22" stroke="#0f172a" stroke-width="0.90"/>
+<rect x="405.45" y="184.75" width="10.50" height="76.25" fill="#2563eb" stroke="#1e3a8a" stroke-width="0.70"/>
+<line x1="410.70" y1="196.27" x2="410.70" y2="172.99" stroke="#0f172a" stroke-width="0.90"/>
+<line x1="399.00" y1="261.00" x2="399.00" y2="264.00" stroke="#334155" stroke-width="0.70"/>
+<text x="399.00" y="272.00" font-family="monospace" font-size="6.0" font-weight="bold" fill="#111827" text-anchor="middle">2e-4</text>
+<rect x="428.05" y="146.69" width="10.50" height="114.31" fill="#ef4444" stroke="#991b1b" stroke-width="0.70"/>
+<line x1="433.30" y1="159.71" x2="433.30" y2="133.28" stroke="#0f172a" stroke-width="0.90"/>
+<rect x="439.75" y="174.96" width="10.50" height="86.04" fill="#f59e0b" stroke="#b45309" stroke-width="0.70"/>
+<line x1="445.00" y1="187.43" x2="445.00" y2="163.49" stroke="#0f172a" stroke-width="0.90"/>
+<rect x="451.45" y="180.11" width="10.50" height="80.89" fill="#2563eb" stroke="#1e3a8a" stroke-width="0.70"/>
+<line x1="456.70" y1="192.33" x2="456.70" y2="168.36" stroke="#0f172a" stroke-width="0.90"/>
+<line x1="445.00" y1="261.00" x2="445.00" y2="264.00" stroke="#334155" stroke-width="0.70"/>
+<text x="445.00" y="272.00" font-family="monospace" font-size="6.0" font-weight="bold" fill="#111827" text-anchor="middle">5e-4</text>
+<rect x="474.05" y="80.66" width="10.50" height="180.34" fill="#ef4444" stroke="#991b1b" stroke-width="0.70"/>
+<line x1="479.30" y1="97.15" x2="479.30" y2="64.77" stroke="#0f172a" stroke-width="0.90"/>
+<text x="479.30" y="61.27" font-family="monospace" font-size="5.3" font-weight="bold" fill="#991b1b" text-anchor="middle">1.90</text>
+<rect x="485.75" y="150.73" width="10.50" height="110.27" fill="#f59e0b" stroke="#b45309" stroke-width="0.70"/>
+<line x1="491.00" y1="164.17" x2="491.00" y2="138.66" stroke="#0f172a" stroke-width="0.90"/>
+<text x="491.00" y="135.16" font-family="monospace" font-size="5.3" font-weight="bold" fill="#b45309" text-anchor="middle">1.16</text>
+<rect x="497.45" y="170.19" width="10.50" height="90.81" fill="#2563eb" stroke="#1e3a8a" stroke-width="0.70"/>
+<line x1="502.70" y1="182.78" x2="502.70" y2="158.12" stroke="#0f172a" stroke-width="0.90"/>
+<text x="502.70" y="154.62" font-family="monospace" font-size="5.3" font-weight="bold" fill="#1e3a8a" text-anchor="middle">0.95</text>
+<line x1="491.00" y1="261.00" x2="491.00" y2="264.00" stroke="#334155" stroke-width="0.70"/>
+<text x="491.00" y="272.00" font-family="monospace" font-size="6.0" font-weight="bold" fill="#111827" text-anchor="middle">1.2e-3</text>
+<rect x="520.05" y="256.26" width="10.50" height="4.74" fill="#ef4444" stroke="#991b1b" stroke-width="0.70"/>
+<line x1="525.30" y1="258.70" x2="525.30" y2="253.65" stroke="#0f172a" stroke-width="0.90"/>
+<rect x="531.75" y="258.83" width="10.50" height="2.17" fill="#f59e0b" stroke="#b45309" stroke-width="0.70"/>
+<line x1="537.00" y1="260.73" x2="537.00" y2="256.89" stroke="#0f172a" stroke-width="0.90"/>
+<rect x="543.45" y="259.32" width="10.50" height="1.68" fill="#2563eb" stroke="#1e3a8a" stroke-width="0.70"/>
+<line x1="548.70" y1="261.00" x2="548.70" y2="257.43" stroke="#0f172a" stroke-width="0.90"/>
+<line x1="537.00" y1="261.00" x2="537.00" y2="264.00" stroke="#334155" stroke-width="0.70"/>
+<text x="537.00" y="272.00" font-family="monospace" font-size="6.0" font-weight="bold" fill="#111827" text-anchor="middle">H2 5e-5</text>
+<text x="445.00" y="282.50" font-family="Helvetica, Arial, sans-serif" font-size="6.3" font-weight="bold" fill="#111827" text-anchor="middle">2Q Leakage Rate p_leak (eps_L Slope x 10^-3 / Round)</text>
+<rect x="50.00" y="288.00" width="510.00" height="38.00" fill="#f8fafc" stroke="#cbd5e1" stroke-width="0.70"/>
+<rect x="58.00" y="294.00" width="9.00" height="6.50" fill="#ef4444" stroke="#991b1b" stroke-width="0.70"/>
+<text x="70.00" y="299.50" font-family="Helvetica, Arial, sans-serif" font-size="6.0" font-weight="bold" fill="#1e293b" text-anchor="start">NO_LRU (|1&gt;-&gt;|0&gt; only; |2&gt; unreset)</text>
+<rect x="228.00" y="294.00" width="9.00" height="6.50" fill="#f59e0b" stroke="#b45309" stroke-width="0.70"/>
+<text x="240.00" y="299.50" font-family="Helvetica, Arial, sans-serif" font-size="6.0" font-weight="bold" fill="#1e293b" text-anchor="start">ANCILLA_LRU_ONLY (ancilla |1&gt;,|2&gt;-&gt;|0&gt;)</text>
+<rect x="404.00" y="294.00" width="9.00" height="6.50" fill="#2563eb" stroke="#1e3a8a" stroke-width="0.70"/>
+<text x="416.00" y="299.50" font-family="Helvetica, Arial, sans-serif" font-size="6.0" font-weight="bold" fill="#1e293b" text-anchor="start">FULL_DATA_AND_ANCILLA_LRU (DQLR/SWAP-LRU)</text>
+<text x="288.00" y="316.00" font-family="Helvetica, Arial, sans-serif" font-size="6.0" font-weight="bold" fill="#0f172a" text-anchor="middle">At p_leak_cz = 1.2e-3 on ibm_fez: NO_LRU eps_L = 0.001896 &gt; ANCILLA_LRU_ONLY = 0.001159 &gt; FULL_LRU = 0.000955 (R_cross = 1 preserved)  |  243-state CPTP &amp; p_leak=0 diff = 0.0</text>
+</svg>
