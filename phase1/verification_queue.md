@@ -111,3 +111,31 @@ Where a row above omits one of these, it is **unknown**, not zero.
 - an independent G1 review (check 2);
 - a frozen preregistration;
 - explicit owner approval naming the provider, target, shot budget and cost ceiling.
+
+---
+
+## 5. Reconciliation & Execution Ledger (2026-11-24)
+
+The table below records the post-2026-11-22 execution and verification outcomes for the prioritized checks and experiment cards above, preserving the original 2026-11-22 baselines verbatim for auditability.
+
+### 5.1 Prioritized Checks Status Update
+
+| # | Check | Claim | Updated Status (2026-11-24) | Evidence Artifact(s) |
+|---|---|---|---|---|
+| 2 | Independent rederivation of `bt2t-enc-1` & test rerun | `BT2T-2` | **CLOSED — PASS (`Gate G1` signed off)** via clean-room $SU(2)$ $2\times 2$ matrix adjoint & Boolean coset-parity derivation | `experiments/bt2t_inversion/G1_INDEPENDENT_REVIEW.md` |
+| 3 | Retrieve IBM `creation_date` for job `dc0uhdts2omc7389tmt0` | `SCI-XTOP-1` | **CLOSED — `SUPPORTED` on provider clocks:** Zenodo `24425416` server `created = 2026-11-21T18:53:24.06Z` precedes IBM Quantum `timestamps.created = 2026-11-21T18:53:43.172751Z` by **`+19.11 s`** | `experiments/xtop006_fez/sci_xtop1_dc0uhdts2omc7389tmt0_provider_receipt.json` |
+| 6 | Relabel A-field harness outputs & add injection-recovery | `PHY-9` | **CLOSED — REMEDIATED (`SIMULATED`):** emits `BELOW_THRESHOLD_WITH_ZERO_INJECTED_SIGNAL` + `physical_claim_assessment: UNVERIFIED` + 4,000-trial injection-recovery (`0.35%/0.25%` FPR at $0\sigma$, `49.7%` at $3\sigma$, `>99.8%` at $6\sigma$) | `research/a_field_study/experiments/falsification_harness.py`, `experiment_results.json`, `tests/test_echo_placement_and_phy9.py` |
+| 8 | Approved Nexus 1-circuit preflight & HQC comparison | `ENG-NEXUS-4` | **OFFLINE PREFLIGHT READY (`UNVERIFIED` live):** `36.9000` HQC single-canary `xtop005q_Q0_L3_ZZ` verified offline (`0` paid HQC, Tier 3 hard-blocked); awaits live `qnexus` login | `scripts/nexus_onboard_preflight.py`, `xtop005/eng_nexus_4_preflight_receipt.json` |
+
+### 5.2 Experiment Cards & Milestone 2 Status Update
+
+1. **Card A (`OSIRIS-BT2T-001`, Milestone 1 Hardware Stage) — EXECUTED (`HARDWARE_ATTESTED`, `N_windows = 1`):**
+   - **Pre-gates satisfied:** (a) independent `G1` review (`G1_INDEPENDENT_REVIEW.md`); (b) write-ahead preregistration commit `240046bd` (`PRE_REGISTRATION.md`, `qpy_sha256 = 81a90cf8...`); (c) runtime quota check (`19 s` available $\to$ `11 s` QPU charged, `8 s` remaining); (d) explicit owner approval.
+   - **Result (`ibm_fez`, `job_id = dc2ee3uq4uuc73a56o6g`, `288` PUBs $\times$ `96` = `27,648` equal shots on `[21, 22, 23, 16, 24]`):** `H1 SUPPORTED` (`72-CZ` structured `0.5337 +/- 0.0059` raw, `0.6104` RO-mitigated, `24/24` modal vs `723-CZ` generic `0.0661 +/- 0.0030`; `+46.76 pp`, Wilcoxon $p = 1.19\times 10^{-7}$); `H2 SUPPORTED` (unused-8 `0.5595` vs `0.0777`, leakage `0.0940 < 0.15`); `H3 REFUTED` (`PREP_RO_CTRL` valid-24 `0.8643 < 0.90` due to `14.91x` live readout drift on `q24`). Manuscript package: `papers/bt2t001_binary_tetrahedral_fez/`.
+   - **Milestone 2 (`OSIRIS-BT2T-002`, `SIMULATED`/`PROXY`):** Exact 10Q zero-ancilla $2T$ multiplication (`1,739` vs `33,042 CZ` all-to-all = `19.00x`; `3,662` vs `78,035 CZ` heavy-hex = `21.31x`; `0.0` `1024x1024` unitary error) and exact 5Q Peter–Weyl non-abelian $2T$ QFT (`9.80e-16` unitarity, `3.11e-16` simultaneous block-diagonalization across all 7 irreps) verified in `experiments/bt2t_primitives/`.
+2. **Card B (`OSIRIS-ECHO`) — FIRST STOP/GO GATE PASSED (`SIMULATED`, `0 s` QPU):**
+   - Stabilizer-reflected `16-CZ` probe retains `16 CZ` after `RemoveBarriers() + optimization_level=3`. Across `K = 10` disjoint `T5` subgraphs on `ibm_fez` and `M = 16` simulated calibration windows, `ECHO_RANKED` achieved $\bar{\rho} = +0.9333$ vs stale `CALIBRATION_RANKED` $+0.3871$ ($\Delta\rho = +0.5462$, 95% window-bootstrap CI `[+0.4594, +0.6288]`) across held-out `BT2T`, Clifford, and mirror circuits (`experiments/echo_placement/artifacts/echo_stopgo_report.json`). Hardware multi-window pilot remains gated on replenished IBM QPU quota.
+3. **Card C (`OSIRIS-QEC`) — FIRST STOP/GO GATE COMPLETED (`SIMULATED`, `0 s` QPU):**
+   - Auditable Dijkstra + exact bitmask-DP/Blossom MWPM space-time decoder (`100%` single-fault recovery across `[[3,1,3]]` and Tomita-Svore `[[9,1,3]]` rotated surface code; 5Q Kraus engine `< 1.9e-16` vs analytical $T_1/T_2$; `|2>` leakage documented as omitted) evaluated across `R in {1, 2, 3, 5, 7, 9}` (`experiments/qec_card_c/artifacts/card_c_qec_crossing_report.json`):
+     - **`[[3,1,3]]` (`5Q`):** **GO** (`PASS_CROSSING_OBSERVED` at `R = 1` on `FEZ_PUBLISHED`, `R = 1/2` on `FEZ_DRIFTED_SPAM`, and `R = 1` on `H2_1_PUBLISHED`).
+     - **`[[9,1,3]]` (`17Q` surface code):** **GO on native `H2-1`** (`R_cross = 3` for both Pauli-frame `2.26e-4` and physical feed-forward `2.39e-4`); **CONDITIONAL / STOP on heavy-hex** (`FEZ_PUBLISHED` crosses only under software Pauli-frame tracking at `R = 2`, fails under physical feed-forward, and `3.2%` drifted heavy-hex readout erases the crossing completely: `STOP_NO_CROSSING_AT_TESTED_ROUNDS`). Single-distance ($d=3$) scope strictly enforced.

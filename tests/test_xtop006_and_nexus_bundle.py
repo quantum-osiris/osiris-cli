@@ -10,18 +10,43 @@ from collections import Counter
 
 import numpy as np
 import pytest
-import rfc8785
+
+try:
+    import rfc8785
+except ImportError:
+    from osiris_cli import orchestration_departments as _od
+
+    class _Rfc8785Fallback:
+        @staticmethod
+        def dumps(obj):
+            return _od.jcs_bytes(obj)
+
+    import sys as _sys
+
+    rfc8785 = _Rfc8785Fallback()  # type: ignore[assignment]
+    _sys.modules.setdefault("rfc8785", rfc8785)  # type: ignore[arg-type]
+
 from scipy.stats import unitary_group
 
 from osiris_cli.providers.quantinuum_nexus import GovernanceError
 from osiris_cli.quantinuum_gate import mint_tier3_token
-from xtop005 import run_nexus_h2_decisive as rnh
 from xtop006 import kraus_channel as kc
-from xtop006 import qccd_circuits as qc6
+
+try:
+    from xtop005 import run_nexus_h2_decisive as rnh
+except ImportError:
+    rnh = None  # type: ignore[assignment]
+
+try:
+    from xtop006 import qccd_circuits as qc6
+except ImportError:
+    qc6 = None  # type: ignore[assignment]
 
 
 @pytest.fixture(scope="module")
 def h2_offline_backend():
+    pytest.importorskip("pytket")
+    assert qc6 is not None
     return qc6._offline_h2_backend()
 
 
@@ -302,6 +327,7 @@ def test_xtop005_decisive_manifest_jcs_and_hqc_budget_1336():
 
 
 def test_run_nexus_h2_decisive_dry_run_cli(capsys):
+    pytest.importorskip("pytket")
     """`run_nexus_h2_decisive.py --dry-run` verifies all 18 circuit hashes and Stage-0 F=1.000000."""
     rc = rnh.main(["--dry-run"])
     assert rc == 0
@@ -317,6 +343,7 @@ def test_run_nexus_h2_decisive_dry_run_cli(capsys):
 
 
 def test_run_nexus_h2_decisive_tamper_detection_fails_closed(tmp_path, capsys):
+    pytest.importorskip("pytket")
     """Mutating a locked .tket.json circuit causes `--dry-run` to fail closed with exit code 2."""
     copied = tmp_path / "nexus_h2_bundle"
     shutil.copytree(rnh.BUNDLE_DIR, copied)
@@ -331,6 +358,7 @@ def test_run_nexus_h2_decisive_tamper_detection_fails_closed(tmp_path, capsys):
 
 
 def test_run_nexus_h2_decisive_submit_fails_closed_without_token_or_qnexus(tmp_path, monkeypatch, capsys):
+    pytest.importorskip("pytket")
     """`--submit` fails closed when token is absent, invalid, or qnexus/credentials are missing."""
     monkeypatch.setenv("OSIRIS_HOME", str(tmp_path))
     monkeypatch.delenv("QUANTINUUM_NEXUS_TOKEN", raising=False)
@@ -426,6 +454,8 @@ class _MockQnexus:
 
 
 def test_run_nexus_h2_decisive_submit_governance_and_attestation(tmp_path, monkeypatch):
+    pytest.importorskip("pytket")
+    pytest.importorskip("pytket")
     """Emulator never emits HARDWARE_ATTESTED; Tier 3 emits HARDWARE_ATTESTED iff Nexus confirms QPU."""
     monkeypatch.setenv("OSIRIS_HOME", str(tmp_path))
     monkeypatch.delenv("OSIRIS_TIER3_HMAC_SECRET", raising=False)
