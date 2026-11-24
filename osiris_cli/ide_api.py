@@ -856,7 +856,7 @@ def make_handler(backend: Backend, token: str, console_dir: Optional[str], allow
                         else ""
                     )
                 )
-                if not hmac.compare_digest(provided_token, token):
+                if not hmac.compare_digest(provided_token.encode("utf-8"), token.encode("utf-8")):
                     raise ApiError(
                         401,
                         "TOKEN_REQUIRED",
@@ -934,6 +934,10 @@ def make_handler(backend: Backend, token: str, console_dir: Optional[str], allow
 def serve(backend: Backend, *, host: str = "127.0.0.1", port: int = 8765, console_dir: Optional[str] = None,
           token: Optional[str] = None, token_file: Optional[str] = None) -> Tuple[ThreadingHTTPServer, str]:
     """Create (not start) the server. Refuses any non-loopback bind address."""
+    venv_bin = os.path.dirname(os.path.abspath(sys.executable))
+    cur_path = os.environ.get("PATH", "")
+    if venv_bin and venv_bin not in cur_path.split(os.pathsep):
+        os.environ["PATH"] = f"{venv_bin}{os.pathsep}{cur_path}" if cur_path else venv_bin
     if not ipaddress.ip_address(host).is_loopback:
         raise ValueError(f"refusing to bind {host}: the OSIRIS IDE API is loopback-only")
     token = token or secrets.token_urlsafe(32)

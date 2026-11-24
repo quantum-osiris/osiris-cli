@@ -1,0 +1,22 @@
+// Minimal valid DNA::}AI{::Lang 0.1 source for the dna-ir/0.1 conformance slice.
+// Compiled content id (pinned in tests/test_dna_ir_conformance.py):
+//   dna:sha256:f81d76b18b0c925ac660e03c4979dabca69f60466c7cb00df987f8dff5bb913c
+organism minimal {
+  meta {
+    schema "dna-lang/0.1"
+    title "Minimal conformance organism"
+  }
+  identity {
+    organism_id "urn:osiris:organism:00000000-0000-0000-0000-000000000000"
+    species "test_species"
+    generation 0
+  }
+  intent {
+    objective "Exercise the dna-ir/0.1 conformance slice"
+  }
+  constraints {
+    require ["read_only"]
+    prohibit []
+    allowed_roots ["work"]
+  }
+}

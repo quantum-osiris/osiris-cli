@@ -43,6 +43,8 @@ OSIRIS_COMPILER = {
     # legacy lexer has '#' comments only: a '//' comment containing the word "organism" breaks it
     "dnalang_core_bell.dna": ("ERR SyntaxError", "ERR SyntaxError"),
     "repo_organism_scimitar_sse_128.dna": ("ERR SyntaxError", "ERR SyntaxError"),
+    # legacy ignores the body, so a dna-ir document still yields the default circuit
+    "dnalang_ir_organism.dna": ("ops=H,CX,MEASURE", "ERR SyntaxError"),
 }
 
 # fixture -> dnalang-core parse+check
@@ -51,14 +53,27 @@ DNALANG_CORE = {
     "empty_organism.dna": "ERR ParseError", "osiris_loop_form.dna": "ERR ParseError",
     "currency_card_form.dna": "ERR LexError", "repo_organism_scimitar_sse_128.dna": "ERR LexError",
     "dnalang_core_bell.dna": "ok errors=0 warnings=0", "dnalang_core_rule_gene.dna": "ok errors=0 warnings=0",
+    # dna-ir's space-separated `key value` entries are a ParseError in the genome grammar
+    "dnalang_ir_organism.dna": "ERR ParseError",
 }
 
 # fixture -> copilot-sdk-dnalang DNACompiler.parse_organism(filepath) is not None
 COPILOT_SDK = {n: (n == "repo_organism_scimitar_sse_128.dna") for n in DNALANG_CORE}
 
+# fixture -> osiris-cli/dna_lang.py (DNA::}AI{::Lang 0.1 -> dna-ir/0.1) compile_source;
+# observed 2026-11-24. Only dna-ir's own grammar is accepted.
+DNALANG_IR = {
+    "bare_name.txt": "ERR DNA-E-SYNTAX", "garbage.txt": "ERR DNA-E-SYNTAX",
+    "empty_organism.dna": "ERR DNA-E-MISSING", "osiris_loop_form.dna": "ERR DNA-E-SYNTAX",
+    "currency_card_form.dna": "ERR DNA-E-SYNTAX", "dnalang_core_bell.dna": "ERR DNA-E-SYNTAX",
+    "dnalang_core_rule_gene.dna": "ERR DNA-E-SYNTAX",
+    "repo_organism_scimitar_sse_128.dna": "ERR DNA-E-SYNTAX",
+    "dnalang_ir_organism.dna": "ok",
+}
+
 
 def test_fixture_set_is_complete():
-    assert set(os.listdir(D)) == set(OSIRIS_COMPILER) == set(DNALANG_CORE)
+    assert set(os.listdir(D)) == set(OSIRIS_COMPILER) == set(DNALANG_CORE) == set(DNALANG_IR)
 
 
 @pytest.mark.parametrize("name", sorted(OSIRIS_COMPILER))
@@ -99,3 +114,14 @@ def test_copilot_sdk_file_compiler_column(name):
         pytest.skip("organisms_compiler not importable here")
     got = mod.DNACompiler().parse_organism(os.path.join(D, name)) is not None
     assert got is COPILOT_SDK[name]
+
+
+@pytest.mark.parametrize("name", sorted(DNALANG_IR))
+def test_dnalang_ir_column(name):
+    import dna_lang
+    try:
+        dna_lang.compile_source(read(name))
+        got = "ok"
+    except dna_lang.Invalid as e:
+        got = "ERR " + "/".join(sorted({d.rule for d in e.diags}))
+    assert got == DNALANG_IR[name]

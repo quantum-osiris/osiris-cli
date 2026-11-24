@@ -1,0 +1,33 @@
+{
+  "report_type": "OSIRIS_LICENSE_COMPLIANCE_VIOLATION",
+  "report_version": "1.0",
+  "generated_at": "2026-11-22T10:18:27.637595+00:00",
+  "software": {
+    "name": "OSIRIS-CLI",
+    "version": "2.0.0",
+    "repository": "https://github.com/osiris-dnalang/osiris-cli",
+    "license": "OSIRIS Source-Available Dual License v1.0"
+  },
+  "environment": {
+    "hostname_hash": "acb6be09e2607a93e29190b0b31055c7b9b8c492b93c66f7709a125744c04330",
+    "classification": "corporate",
+    "indicators_detected": [
+      "hostname_pattern:laptop-"
+    ],
+    "os_family": "Linux",
+    "detection_timestamp": "2026-11-22T10:18:27.637566+00:00"
+  },
+  "violation": {
+    "type": "UNAUTHORIZED_CORPORATE_USE",
+    "description": "Software deployed in corporate environment without valid commercial license key.",
+    "license_key_present": false,
+    "remediation": "Obtain a commercial license at https://github.com/osiris-dnalang/osiris-cli or contact licensing@agiledefensesystems.com"
+  },
+  "legal": {
+    "applicable_license": "OSIRIS Source-Available Dual License v1.0",
+    "section": "\u00a74 ENFORCEMENT & LIQUIDATED DAMAGES",
+    "damages_per_instance": "USD $150,000",
+    "damages_per_month": "USD $50,000/month",
+    "copyright_holder": "Devin Phillip Davis / Agile Defense Systems LLC"
+  }
+}

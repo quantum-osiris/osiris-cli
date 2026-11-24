@@ -1191,6 +1191,10 @@ class TaskGraphEngine:
             node["artifact_path"] = str(artifact_path) if artifact_path else None
             node["artifact_sha256"] = artifact_sha256
             node["exec_journal_hash"] = exec_journal_hash
+            node["exit_code"] = observed_exit_code
+            if artifact_path is not None and artifact_path.is_file():
+                from .task_verifier import _read_artifact_text
+                node["output_preview"] = _read_artifact_text(artifact_path)[:4000]
 
             # EXECUTING -> VERIFYING
             self._transition(
