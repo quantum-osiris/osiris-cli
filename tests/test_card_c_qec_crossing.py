@@ -11,6 +11,10 @@ from typing import Any
 import networkx as nx
 import numpy as np
 import pytest
+
+pytest.importorskip("qiskit")
+pytest.importorskip("qiskit_aer")
+
 from qiskit import QuantumCircuit
 from qiskit_aer import AerSimulator
 from qiskit_aer.noise import NoiseModel, thermal_relaxation_error

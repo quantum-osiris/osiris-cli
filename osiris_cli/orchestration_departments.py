@@ -1491,6 +1491,40 @@ def materialize_workspace_reproducibility_capsules(
             zenodo_doi=None,
         )
 
+    # 22. OSIRIS-QEC-CARDC (Card C 4-arm repeated-correction crossing gate)
+    qecc_rep = cli_repo / "experiments" / "qec_card_c" / "artifacts" / "card_c_qec_crossing_report.json"
+    qecc_src = cli_repo / "experiments" / "qec_card_c" / "qec_crossing_gate.py"
+    if qecc_rep.is_file() and qecc_src.is_file():
+        _append_capsule(
+            experiment_id="OSIRIS-QEC-CARDC",
+            evidence_class="SIMULATED",
+            prereg_sha256=_sha256_file(qecc_rep),
+            circuit_isa_sha256=_sha256_file(qecc_src),
+            provider="Simulator",
+            backend_id="mwpm_5q_kraus_17q_surface",
+            shots=240000,
+            provider_job_id=None,
+            raw_counts_sha256=_sha256_file(qecc_rep),
+            zenodo_doi=None,
+        )
+
+    # 23. OSIRIS-BT2T-002 (Milestone 2: 10Q reversible 2T multiplication & 5Q non-abelian QFT)
+    bt2_rep = cli_repo / "experiments" / "bt2t_primitives" / "manifest_bt2t002.json"
+    bt2_src = cli_repo / "experiments" / "bt2t_primitives" / "bt2t_mul.py"
+    if bt2_rep.is_file() and bt2_src.is_file():
+        _append_capsule(
+            experiment_id="OSIRIS-BT2T-002",
+            evidence_class="SIMULATED",
+            prereg_sha256=_sha256_file(bt2_rep),
+            circuit_isa_sha256=_sha256_file(bt2_src),
+            provider="Simulator",
+            backend_id="exact_statevector_and_proxy_isa",
+            shots=1024,
+            provider_job_id=None,
+            raw_counts_sha256=_sha256_file(bt2_rep),
+            zenodo_doi=None,
+        )
+
     out_file.parent.mkdir(parents=True, exist_ok=True)
     tmp_out = out_file.with_suffix(".jsonl.tmp")
     raw_jsonl = b"".join(jcs_bytes(cap) + b"\n" for cap in capsules)
