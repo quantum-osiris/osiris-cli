@@ -1,0 +1,789 @@
+{
+  "backend": "ibm_fez",
+  "calibration_snapshot_sha256": "428275ded50d8bc0c29e409b153657c2d087df4784b774f488c5bc5dc8d2b6de",
+  "credential_provenance": {
+    "channel": "ibm_quantum_platform",
+    "credential_basename": "troykey.json",
+    "credential_source": "enclave_troykey",
+    "instance_alias": "open-instance",
+    "key_created_at": "2026-11-20T11:28+0000",
+    "key_file_sha256_prefix16": "796a765c3ef02e9d"
+  },
+  "execution_tier": "OFFLINE_STAGED",
+  "fez_rep3_chain": [
+    58,
+    71,
+    70,
+    69,
+    78
+  ],
+  "min_quota_seconds_gate": 25.0,
+  "n_blocks": 3,
+  "preregistration_md_sha256": "291c3c363983a2169537fda159fc668763d55ae36a6864db55c3c8a3e48032d3",
+  "protocol_id": "OSIRIS-QEC-REP3-FEZ",
+  "provider_job_id": null,
+  "pubs_per_block": 32,
+  "qpy_filename": "rep3_fez_staged_circuits.qpy",
+  "qpy_sha256": "f240d445acc36a69ab2a2604132fa8fc8a0dd5c45130cd8d641b6780fcecc83a",
+  "round_dt": 904,
+  "rounds_list": [
+    1,
+    3,
+    5
+  ],
+  "schedule": [
+    {
+      "arm": "RO_CAL",
+      "block": 0,
+      "circuit_name": "b0_ro_cal_100",
+      "pub_index": 0,
+      "ro_state": 4
+    },
+    {
+      "arm": "ARM1_UNENCODED",
+      "block": 0,
+      "circuit_name": "b0_arm1_unencoded_r5_l0",
+      "logical_bit": 0,
+      "pub_index": 1,
+      "rounds": 5
+    },
+    {
+      "arm": "ARM4B_PHYSICAL_FEEDFORWARD",
+      "block": 0,
+      "circuit_name": "b0_arm4b_physical_feedforward_r5_l0",
+      "logical_bit": 0,
+      "pub_index": 2,
+      "rounds": 5
+    },
+    {
+      "arm": "ARM4B_PHYSICAL_FEEDFORWARD",
+      "block": 0,
+      "circuit_name": "b0_arm4b_physical_feedforward_r5_l1",
+      "logical_bit": 1,
+      "pub_index": 3,
+      "rounds": 5
+    },
+    {
+      "arm": "ARM2_ENCODED_NO_CORR",
+      "block": 0,
+      "circuit_name": "b0_arm2_encoded_no_corr_r3_l1",
+      "logical_bit": 1,
+      "pub_index": 4,
+      "rounds": 3
+    },
+    {
+      "arm": "ARM3_4A_SYNDROME_STREAM",
+      "block": 0,
+      "circuit_name": "b0_arm3_4a_syndrome_stream_r1_l1",
+      "logical_bit": 1,
+      "pub_index": 5,
+      "rounds": 1
+    },
+    {
+      "arm": "ARM2_ENCODED_NO_CORR",
+      "block": 0,
+      "circuit_name": "b0_arm2_encoded_no_corr_r1_l1",
+      "logical_bit": 1,
+      "pub_index": 6,
+      "rounds": 1
+    },
+    {
+      "arm": "RO_CAL",
+      "block": 0,
+      "circuit_name": "b0_ro_cal_111",
+      "pub_index": 7,
+      "ro_state": 7
+    },
+    {
+      "arm": "ARM2_ENCODED_NO_CORR",
+      "block": 0,
+      "circuit_name": "b0_arm2_encoded_no_corr_r5_l1",
+      "logical_bit": 1,
+      "pub_index": 8,
+      "rounds": 5
+    },
+    {
+      "arm": "RO_CAL",
+      "block": 0,
+      "circuit_name": "b0_ro_cal_011",
+      "pub_index": 9,
+      "ro_state": 3
+    },
+    {
+      "arm": "ARM1_UNENCODED",
+      "block": 0,
+      "circuit_name": "b0_arm1_unencoded_r3_l1",
+      "logical_bit": 1,
+      "pub_index": 10,
+      "rounds": 3
+    },
+    {
+      "arm": "RO_CAL",
+      "block": 0,
+      "circuit_name": "b0_ro_cal_110",
+      "pub_index": 11,
+      "ro_state": 6
+    },
+    {
+      "arm": "ARM2_ENCODED_NO_CORR",
+      "block": 0,
+      "circuit_name": "b0_arm2_encoded_no_corr_r5_l0",
+      "logical_bit": 0,
+      "pub_index": 12,
+      "rounds": 5
+    },
+    {
+      "arm": "ARM1_UNENCODED",
+      "block": 0,
+      "circuit_name": "b0_arm1_unencoded_r1_l1",
+      "logical_bit": 1,
+      "pub_index": 13,
+      "rounds": 1
+    },
+    {
+      "arm": "ARM3_4A_SYNDROME_STREAM",
+      "block": 0,
+      "circuit_name": "b0_arm3_4a_syndrome_stream_r3_l1",
+      "logical_bit": 1,
+      "pub_index": 14,
+      "rounds": 3
+    },
+    {
+      "arm": "ARM1_UNENCODED",
+      "block": 0,
+      "circuit_name": "b0_arm1_unencoded_r1_l0",
+      "logical_bit": 0,
+      "pub_index": 15,
+      "rounds": 1
+    },
+    {
+      "arm": "RO_CAL",
+      "block": 0,
+      "circuit_name": "b0_ro_cal_101",
+      "pub_index": 16,
+      "ro_state": 5
+    },
+    {
+      "arm": "RO_CAL",
+      "block": 0,
+      "circuit_name": "b0_ro_cal_010",
+      "pub_index": 17,
+      "ro_state": 2
+    },
+    {
+      "arm": "RO_CAL",
+      "block": 0,
+      "circuit_name": "b0_ro_cal_001",
+      "pub_index": 18,
+      "ro_state": 1
+    },
+    {
+      "arm": "ARM4B_PHYSICAL_FEEDFORWARD",
+      "block": 0,
+      "circuit_name": "b0_arm4b_physical_feedforward_r3_l0",
+      "logical_bit": 0,
+      "pub_index": 19,
+      "rounds": 3
+    },
+    {
+      "arm": "ARM2_ENCODED_NO_CORR",
+      "block": 0,
+      "circuit_name": "b0_arm2_encoded_no_corr_r1_l0",
+      "logical_bit": 0,
+      "pub_index": 20,
+      "rounds": 1
+    },
+    {
+      "arm": "ARM4B_PHYSICAL_FEEDFORWARD",
+      "block": 0,
+      "circuit_name": "b0_arm4b_physical_feedforward_r3_l1",
+      "logical_bit": 1,
+      "pub_index": 21,
+      "rounds": 3
+    },
+    {
+      "arm": "ARM2_ENCODED_NO_CORR",
+      "block": 0,
+      "circuit_name": "b0_arm2_encoded_no_corr_r3_l0",
+      "logical_bit": 0,
+      "pub_index": 22,
+      "rounds": 3
+    },
+    {
+      "arm": "ARM1_UNENCODED",
+      "block": 0,
+      "circuit_name": "b0_arm1_unencoded_r3_l0",
+      "logical_bit": 0,
+      "pub_index": 23,
+      "rounds": 3
+    },
+    {
+      "arm": "ARM3_4A_SYNDROME_STREAM",
+      "block": 0,
+      "circuit_name": "b0_arm3_4a_syndrome_stream_r3_l0",
+      "logical_bit": 0,
+      "pub_index": 24,
+      "rounds": 3
+    },
+    {
+      "arm": "ARM3_4A_SYNDROME_STREAM",
+      "block": 0,
+      "circuit_name": "b0_arm3_4a_syndrome_stream_r1_l0",
+      "logical_bit": 0,
+      "pub_index": 25,
+      "rounds": 1
+    },
+    {
+      "arm": "ARM4B_PHYSICAL_FEEDFORWARD",
+      "block": 0,
+      "circuit_name": "b0_arm4b_physical_feedforward_r1_l1",
+      "logical_bit": 1,
+      "pub_index": 26,
+      "rounds": 1
+    },
+    {
+      "arm": "ARM4B_PHYSICAL_FEEDFORWARD",
+      "block": 0,
+      "circuit_name": "b0_arm4b_physical_feedforward_r1_l0",
+      "logical_bit": 0,
+      "pub_index": 27,
+      "rounds": 1
+    },
+    {
+      "arm": "ARM3_4A_SYNDROME_STREAM",
+      "block": 0,
+      "circuit_name": "b0_arm3_4a_syndrome_stream_r5_l0",
+      "logical_bit": 0,
+      "pub_index": 28,
+      "rounds": 5
+    },
+    {
+      "arm": "ARM1_UNENCODED",
+      "block": 0,
+      "circuit_name": "b0_arm1_unencoded_r5_l1",
+      "logical_bit": 1,
+      "pub_index": 29,
+      "rounds": 5
+    },
+    {
+      "arm": "ARM3_4A_SYNDROME_STREAM",
+      "block": 0,
+      "circuit_name": "b0_arm3_4a_syndrome_stream_r5_l1",
+      "logical_bit": 1,
+      "pub_index": 30,
+      "rounds": 5
+    },
+    {
+      "arm": "RO_CAL",
+      "block": 0,
+      "circuit_name": "b0_ro_cal_000",
+      "pub_index": 31,
+      "ro_state": 0
+    },
+    {
+      "arm": "RO_CAL",
+      "block": 1,
+      "circuit_name": "b1_ro_cal_011",
+      "pub_index": 32,
+      "ro_state": 3
+    },
+    {
+      "arm": "ARM3_4A_SYNDROME_STREAM",
+      "block": 1,
+      "circuit_name": "b1_arm3_4a_syndrome_stream_r3_l0",
+      "logical_bit": 0,
+      "pub_index": 33,
+      "rounds": 3
+    },
+    {
+      "arm": "ARM1_UNENCODED",
+      "block": 1,
+      "circuit_name": "b1_arm1_unencoded_r1_l0",
+      "logical_bit": 0,
+      "pub_index": 34,
+      "rounds": 1
+    },
+    {
+      "arm": "ARM2_ENCODED_NO_CORR",
+      "block": 1,
+      "circuit_name": "b1_arm2_encoded_no_corr_r5_l1",
+      "logical_bit": 1,
+      "pub_index": 35,
+      "rounds": 5
+    },
+    {
+      "arm": "ARM3_4A_SYNDROME_STREAM",
+      "block": 1,
+      "circuit_name": "b1_arm3_4a_syndrome_stream_r5_l1",
+      "logical_bit": 1,
+      "pub_index": 36,
+      "rounds": 5
+    },
+    {
+      "arm": "ARM3_4A_SYNDROME_STREAM",
+      "block": 1,
+      "circuit_name": "b1_arm3_4a_syndrome_stream_r1_l0",
+      "logical_bit": 0,
+      "pub_index": 37,
+      "rounds": 1
+    },
+    {
+      "arm": "ARM3_4A_SYNDROME_STREAM",
+      "block": 1,
+      "circuit_name": "b1_arm3_4a_syndrome_stream_r1_l1",
+      "logical_bit": 1,
+      "pub_index": 38,
+      "rounds": 1
+    },
+    {
+      "arm": "ARM1_UNENCODED",
+      "block": 1,
+      "circuit_name": "b1_arm1_unencoded_r3_l0",
+      "logical_bit": 0,
+      "pub_index": 39,
+      "rounds": 3
+    },
+    {
+      "arm": "ARM4B_PHYSICAL_FEEDFORWARD",
+      "block": 1,
+      "circuit_name": "b1_arm4b_physical_feedforward_r5_l1",
+      "logical_bit": 1,
+      "pub_index": 40,
+      "rounds": 5
+    },
+    {
+      "arm": "RO_CAL",
+      "block": 1,
+      "circuit_name": "b1_ro_cal_110",
+      "pub_index": 41,
+      "ro_state": 6
+    },
+    {
+      "arm": "ARM1_UNENCODED",
+      "block": 1,
+      "circuit_name": "b1_arm1_unencoded_r5_l0",
+      "logical_bit": 0,
+      "pub_index": 42,
+      "rounds": 5
+    },
+    {
+      "arm": "ARM4B_PHYSICAL_FEEDFORWARD",
+      "block": 1,
+      "circuit_name": "b1_arm4b_physical_feedforward_r3_l1",
+      "logical_bit": 1,
+      "pub_index": 43,
+      "rounds": 3
+    },
+    {
+      "arm": "RO_CAL",
+      "block": 1,
+      "circuit_name": "b1_ro_cal_000",
+      "pub_index": 44,
+      "ro_state": 0
+    },
+    {
+      "arm": "ARM1_UNENCODED",
+      "block": 1,
+      "circuit_name": "b1_arm1_unencoded_r3_l1",
+      "logical_bit": 1,
+      "pub_index": 45,
+      "rounds": 3
+    },
+    {
+      "arm": "ARM4B_PHYSICAL_FEEDFORWARD",
+      "block": 1,
+      "circuit_name": "b1_arm4b_physical_feedforward_r1_l0",
+      "logical_bit": 0,
+      "pub_index": 46,
+      "rounds": 1
+    },
+    {
+      "arm": "ARM2_ENCODED_NO_CORR",
+      "block": 1,
+      "circuit_name": "b1_arm2_encoded_no_corr_r1_l1",
+      "logical_bit": 1,
+      "pub_index": 47,
+      "rounds": 1
+    },
+    {
+      "arm": "RO_CAL",
+      "block": 1,
+      "circuit_name": "b1_ro_cal_010",
+      "pub_index": 48,
+      "ro_state": 2
+    },
+    {
+      "arm": "ARM1_UNENCODED",
+      "block": 1,
+      "circuit_name": "b1_arm1_unencoded_r5_l1",
+      "logical_bit": 1,
+      "pub_index": 49,
+      "rounds": 5
+    },
+    {
+      "arm": "ARM4B_PHYSICAL_FEEDFORWARD",
+      "block": 1,
+      "circuit_name": "b1_arm4b_physical_feedforward_r5_l0",
+      "logical_bit": 0,
+      "pub_index": 50,
+      "rounds": 5
+    },
+    {
+      "arm": "ARM4B_PHYSICAL_FEEDFORWARD",
+      "block": 1,
+      "circuit_name": "b1_arm4b_physical_feedforward_r3_l0",
+      "logical_bit": 0,
+      "pub_index": 51,
+      "rounds": 3
+    },
+    {
+      "arm": "ARM1_UNENCODED",
+      "block": 1,
+      "circuit_name": "b1_arm1_unencoded_r1_l1",
+      "logical_bit": 1,
+      "pub_index": 52,
+      "rounds": 1
+    },
+    {
+      "arm": "ARM2_ENCODED_NO_CORR",
+      "block": 1,
+      "circuit_name": "b1_arm2_encoded_no_corr_r3_l1",
+      "logical_bit": 1,
+      "pub_index": 53,
+      "rounds": 3
+    },
+    {
+      "arm": "RO_CAL",
+      "block": 1,
+      "circuit_name": "b1_ro_cal_101",
+      "pub_index": 54,
+      "ro_state": 5
+    },
+    {
+      "arm": "ARM2_ENCODED_NO_CORR",
+      "block": 1,
+      "circuit_name": "b1_arm2_encoded_no_corr_r1_l0",
+      "logical_bit": 0,
+      "pub_index": 55,
+      "rounds": 1
+    },
+    {
+      "arm": "RO_CAL",
+      "block": 1,
+      "circuit_name": "b1_ro_cal_111",
+      "pub_index": 56,
+      "ro_state": 7
+    },
+    {
+      "arm": "RO_CAL",
+      "block": 1,
+      "circuit_name": "b1_ro_cal_100",
+      "pub_index": 57,
+      "ro_state": 4
+    },
+    {
+      "arm": "ARM3_4A_SYNDROME_STREAM",
+      "block": 1,
+      "circuit_name": "b1_arm3_4a_syndrome_stream_r3_l1",
+      "logical_bit": 1,
+      "pub_index": 58,
+      "rounds": 3
+    },
+    {
+      "arm": "RO_CAL",
+      "block": 1,
+      "circuit_name": "b1_ro_cal_001",
+      "pub_index": 59,
+      "ro_state": 1
+    },
+    {
+      "arm": "ARM2_ENCODED_NO_CORR",
+      "block": 1,
+      "circuit_name": "b1_arm2_encoded_no_corr_r5_l0",
+      "logical_bit": 0,
+      "pub_index": 60,
+      "rounds": 5
+    },
+    {
+      "arm": "ARM3_4A_SYNDROME_STREAM",
+      "block": 1,
+      "circuit_name": "b1_arm3_4a_syndrome_stream_r5_l0",
+      "logical_bit": 0,
+      "pub_index": 61,
+      "rounds": 5
+    },
+    {
+      "arm": "ARM4B_PHYSICAL_FEEDFORWARD",
+      "block": 1,
+      "circuit_name": "b1_arm4b_physical_feedforward_r1_l1",
+      "logical_bit": 1,
+      "pub_index": 62,
+      "rounds": 1
+    },
+    {
+      "arm": "ARM2_ENCODED_NO_CORR",
+      "block": 1,
+      "circuit_name": "b1_arm2_encoded_no_corr_r3_l0",
+      "logical_bit": 0,
+      "pub_index": 63,
+      "rounds": 3
+    },
+    {
+      "arm": "RO_CAL",
+      "block": 2,
+      "circuit_name": "b2_ro_cal_101",
+      "pub_index": 64,
+      "ro_state": 5
+    },
+    {
+      "arm": "RO_CAL",
+      "block": 2,
+      "circuit_name": "b2_ro_cal_000",
+      "pub_index": 65,
+      "ro_state": 0
+    },
+    {
+      "arm": "RO_CAL",
+      "block": 2,
+      "circuit_name": "b2_ro_cal_100",
+      "pub_index": 66,
+      "ro_state": 4
+    },
+    {
+      "arm": "RO_CAL",
+      "block": 2,
+      "circuit_name": "b2_ro_cal_111",
+      "pub_index": 67,
+      "ro_state": 7
+    },
+    {
+      "arm": "ARM2_ENCODED_NO_CORR",
+      "block": 2,
+      "circuit_name": "b2_arm2_encoded_no_corr_r1_l1",
+      "logical_bit": 1,
+      "pub_index": 68,
+      "rounds": 1
+    },
+    {
+      "arm": "ARM3_4A_SYNDROME_STREAM",
+      "block": 2,
+      "circuit_name": "b2_arm3_4a_syndrome_stream_r3_l1",
+      "logical_bit": 1,
+      "pub_index": 69,
+      "rounds": 3
+    },
+    {
+      "arm": "ARM4B_PHYSICAL_FEEDFORWARD",
+      "block": 2,
+      "circuit_name": "b2_arm4b_physical_feedforward_r3_l1",
+      "logical_bit": 1,
+      "pub_index": 70,
+      "rounds": 3
+    },
+    {
+      "arm": "ARM3_4A_SYNDROME_STREAM",
+      "block": 2,
+      "circuit_name": "b2_arm3_4a_syndrome_stream_r5_l1",
+      "logical_bit": 1,
+      "pub_index": 71,
+      "rounds": 5
+    },
+    {
+      "arm": "ARM3_4A_SYNDROME_STREAM",
+      "block": 2,
+      "circuit_name": "b2_arm3_4a_syndrome_stream_r5_l0",
+      "logical_bit": 0,
+      "pub_index": 72,
+      "rounds": 5
+    },
+    {
+      "arm": "ARM1_UNENCODED",
+      "block": 2,
+      "circuit_name": "b2_arm1_unencoded_r5_l1",
+      "logical_bit": 1,
+      "pub_index": 73,
+      "rounds": 5
+    },
+    {
+      "arm": "RO_CAL",
+      "block": 2,
+      "circuit_name": "b2_ro_cal_001",
+      "pub_index": 74,
+      "ro_state": 1
+    },
+    {
+      "arm": "ARM2_ENCODED_NO_CORR",
+      "block": 2,
+      "circuit_name": "b2_arm2_encoded_no_corr_r5_l0",
+      "logical_bit": 0,
+      "pub_index": 75,
+      "rounds": 5
+    },
+    {
+      "arm": "ARM2_ENCODED_NO_CORR",
+      "block": 2,
+      "circuit_name": "b2_arm2_encoded_no_corr_r1_l0",
+      "logical_bit": 0,
+      "pub_index": 76,
+      "rounds": 1
+    },
+    {
+      "arm": "ARM1_UNENCODED",
+      "block": 2,
+      "circuit_name": "b2_arm1_unencoded_r5_l0",
+      "logical_bit": 0,
+      "pub_index": 77,
+      "rounds": 5
+    },
+    {
+      "arm": "ARM3_4A_SYNDROME_STREAM",
+      "block": 2,
+      "circuit_name": "b2_arm3_4a_syndrome_stream_r3_l0",
+      "logical_bit": 0,
+      "pub_index": 78,
+      "rounds": 3
+    },
+    {
+      "arm": "ARM1_UNENCODED",
+      "block": 2,
+      "circuit_name": "b2_arm1_unencoded_r1_l0",
+      "logical_bit": 0,
+      "pub_index": 79,
+      "rounds": 1
+    },
+    {
+      "arm": "ARM1_UNENCODED",
+      "block": 2,
+      "circuit_name": "b2_arm1_unencoded_r3_l0",
+      "logical_bit": 0,
+      "pub_index": 80,
+      "rounds": 3
+    },
+    {
+      "arm": "ARM2_ENCODED_NO_CORR",
+      "block": 2,
+      "circuit_name": "b2_arm2_encoded_no_corr_r5_l1",
+      "logical_bit": 1,
+      "pub_index": 81,
+      "rounds": 5
+    },
+    {
+      "arm": "ARM4B_PHYSICAL_FEEDFORWARD",
+      "block": 2,
+      "circuit_name": "b2_arm4b_physical_feedforward_r1_l0",
+      "logical_bit": 0,
+      "pub_index": 82,
+      "rounds": 1
+    },
+    {
+      "arm": "ARM2_ENCODED_NO_CORR",
+      "block": 2,
+      "circuit_name": "b2_arm2_encoded_no_corr_r3_l1",
+      "logical_bit": 1,
+      "pub_index": 83,
+      "rounds": 3
+    },
+    {
+      "arm": "ARM4B_PHYSICAL_FEEDFORWARD",
+      "block": 2,
+      "circuit_name": "b2_arm4b_physical_feedforward_r5_l1",
+      "logical_bit": 1,
+      "pub_index": 84,
+      "rounds": 5
+    },
+    {
+      "arm": "ARM4B_PHYSICAL_FEEDFORWARD",
+      "block": 2,
+      "circuit_name": "b2_arm4b_physical_feedforward_r5_l0",
+      "logical_bit": 0,
+      "pub_index": 85,
+      "rounds": 5
+    },
+    {
+      "arm": "ARM3_4A_SYNDROME_STREAM",
+      "block": 2,
+      "circuit_name": "b2_arm3_4a_syndrome_stream_r1_l0",
+      "logical_bit": 0,
+      "pub_index": 86,
+      "rounds": 1
+    },
+    {
+      "arm": "ARM2_ENCODED_NO_CORR",
+      "block": 2,
+      "circuit_name": "b2_arm2_encoded_no_corr_r3_l0",
+      "logical_bit": 0,
+      "pub_index": 87,
+      "rounds": 3
+    },
+    {
+      "arm": "ARM4B_PHYSICAL_FEEDFORWARD",
+      "block": 2,
+      "circuit_name": "b2_arm4b_physical_feedforward_r3_l0",
+      "logical_bit": 0,
+      "pub_index": 88,
+      "rounds": 3
+    },
+    {
+      "arm": "ARM1_UNENCODED",
+      "block": 2,
+      "circuit_name": "b2_arm1_unencoded_r3_l1",
+      "logical_bit": 1,
+      "pub_index": 89,
+      "rounds": 3
+    },
+    {
+      "arm": "RO_CAL",
+      "block": 2,
+      "circuit_name": "b2_ro_cal_010",
+      "pub_index": 90,
+      "ro_state": 2
+    },
+    {
+      "arm": "ARM3_4A_SYNDROME_STREAM",
+      "block": 2,
+      "circuit_name": "b2_arm3_4a_syndrome_stream_r1_l1",
+      "logical_bit": 1,
+      "pub_index": 91,
+      "rounds": 1
+    },
+    {
+      "arm": "RO_CAL",
+      "block": 2,
+      "circuit_name": "b2_ro_cal_011",
+      "pub_index": 92,
+      "ro_state": 3
+    },
+    {
+      "arm": "ARM4B_PHYSICAL_FEEDFORWARD",
+      "block": 2,
+      "circuit_name": "b2_arm4b_physical_feedforward_r1_l1",
+      "logical_bit": 1,
+      "pub_index": 93,
+      "rounds": 1
+    },
+    {
+      "arm": "RO_CAL",
+      "block": 2,
+      "circuit_name": "b2_ro_cal_110",
+      "pub_index": 94,
+      "ro_state": 6
+    },
+    {
+      "arm": "ARM1_UNENCODED",
+      "block": 2,
+      "circuit_name": "b2_arm1_unencoded_r1_l1",
+      "logical_bit": 1,
+      "pub_index": 95,
+      "rounds": 1
+    }
+  ],
+  "schema": "osiris.quantum_protocol/1",
+  "shots_per_pub": 512,
+  "stage0_verification": {
+    "arm4b_single_fault_feedforward_exact": true,
+    "noiseless_all_24_cells_exact": true
+  },
+  "staged_utc": "2026-11-24T13:46:20.815506+00:00",
+  "total_pubs": 96,
+  "total_shots": 49152
+}
