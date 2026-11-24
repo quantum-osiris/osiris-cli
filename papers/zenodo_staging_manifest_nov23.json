@@ -1,15 +1,249 @@
 {
-  "manifest_sha256": "50e733b38794f4c0f93778063a58197f35f7cdf8ede9c87bfcbe3a4f7393b323",
+  "manifest_sha256": "c5ca6575cd31899c35034053df07961e0cb3e0548d0f59571facc72b66bed0cd",
   "mode": "DRY_RUN_STAGED",
   "network_calls": 0,
-  "paper_count": 4,
+  "paper_count": 5,
   "paper_order": [
     "xtop006_non_clifford_kraus_fez",
     "wp2_27q_debiased_ot_fez",
     "nonabelian_2bga_and_adv1",
-    "heron_r2_calibration_staleness_and_colored_nulls"
+    "heron_r2_calibration_staleness_and_colored_nulls",
+    "bt2t001_binary_tetrahedral_fez"
   ],
   "papers": {
+    "bt2t001_binary_tetrahedral_fez": {
+      "bundle_sha256": "3279c0fd52abe6097a73f8e3e7a81e831797f31107d46827bc8bd402b478c50e",
+      "files": [
+        {
+          "required": true,
+          "sha256": "7c206bd80de0f313cbb90fe1c5190346eff3e43472dcc454a3f35c138fec0202",
+          "size_bytes": 33469,
+          "source_relpath": "papers/bt2t001_binary_tetrahedral_fez/bt2t001_binary_tetrahedral_fez.tex",
+          "upload_name": "bt2t001_binary_tetrahedral_fez.tex"
+        },
+        {
+          "required": true,
+          "sha256": "52ffe9d9d28d59bbc6e36c3a3ed4668c3aa703172cdd17572cff1452a1eb4f0f",
+          "size_bytes": 10694,
+          "source_relpath": "papers/bt2t001_binary_tetrahedral_fez/generated.tex",
+          "upload_name": "generated.tex"
+        },
+        {
+          "required": true,
+          "sha256": "9dde625e6b9e6dd855419d853a015832ae5577ce2cb6df3949be9ceb62d6dd8e",
+          "size_bytes": 86504,
+          "source_relpath": "papers/bt2t001_binary_tetrahedral_fez/generate_bt2t001_paper_assets.py",
+          "upload_name": "generate_bt2t001_paper_assets.py"
+        },
+        {
+          "required": true,
+          "sha256": "4625f9158b608ea80193c322311ee192833f05f9c2ec5a2541ae2c3653938f23",
+          "size_bytes": 12511,
+          "source_relpath": "papers/bt2t001_binary_tetrahedral_fez/fig1_bt2t001_fez_synthesis_and_sectors.svg",
+          "upload_name": "fig1_bt2t001_fez_synthesis_and_sectors.svg"
+        },
+        {
+          "required": true,
+          "sha256": "de77d53e9f087cf90e220f7bb3542e000f353549a88a680121366f704e94873d",
+          "size_bytes": 8662,
+          "source_relpath": "papers/bt2t001_binary_tetrahedral_fez/fig1_bt2t001_fez_synthesis_and_sectors.pdf",
+          "upload_name": "fig1_bt2t001_fez_synthesis_and_sectors.pdf"
+        },
+        {
+          "required": true,
+          "sha256": "d33cf06074ab27ee1d6e35b8dd172bb6e9f6f861527725cf8a6e63b13aba3455",
+          "size_bytes": 26836,
+          "source_relpath": "papers/bt2t001_binary_tetrahedral_fez/fig2_bt2t001_fez_elementwise_and_spam_drift.svg",
+          "upload_name": "fig2_bt2t001_fez_elementwise_and_spam_drift.svg"
+        },
+        {
+          "required": true,
+          "sha256": "eb1957ed45e51424a9e2a57b6ac8d7ff790da0138002428538c49247c12f3744",
+          "size_bytes": 36003,
+          "source_relpath": "papers/bt2t001_binary_tetrahedral_fez/fig2_bt2t001_fez_elementwise_and_spam_drift.pdf",
+          "upload_name": "fig2_bt2t001_fez_elementwise_and_spam_drift.pdf"
+        },
+        {
+          "required": true,
+          "sha256": "711a69c200d8d8b9d743b79895f386c7cce85fcbc5ece2dc5fcc4ed0dc788a23",
+          "size_bytes": 2700,
+          "source_relpath": "papers/bt2t001_binary_tetrahedral_fez/reproducibility_capsule.json",
+          "upload_name": "reproducibility_capsule.json"
+        },
+        {
+          "required": true,
+          "sha256": "bd770098f4d28fcd57512d55f21015e93e7a1be3a6fbd65ba57c457777c57a4a",
+          "size_bytes": 2735,
+          "source_relpath": "papers/bt2t001_binary_tetrahedral_fez/SHA256SUMS.txt",
+          "upload_name": "SHA256SUMS.txt"
+        },
+        {
+          "required": true,
+          "sha256": "513f55909f613c0d7ec94197622e0be6a875a62b847d5a49eea9a6efb627c952",
+          "size_bytes": 6506,
+          "source_relpath": "experiments/bt2t_fez/PRE_REGISTRATION.md",
+          "upload_name": "PRE_REGISTRATION.md"
+        },
+        {
+          "required": true,
+          "sha256": "174c0e96ac373a703a299c39da4a855381f36c0d48e4df1adeef421c6f55889f",
+          "size_bytes": 30765,
+          "source_relpath": "experiments/bt2t_fez/stage_and_harvest_bt2t_fez.py",
+          "upload_name": "stage_and_harvest_bt2t_fez.py"
+        },
+        {
+          "required": true,
+          "sha256": "4b70cf7210a73ba39bb1e9118f23cd43effbb6362af55c533c7310f70d3686d6",
+          "size_bytes": 39727,
+          "source_relpath": "experiments/bt2t_fez/physical_bt2t_fez_results.json",
+          "upload_name": "physical_bt2t_fez_results.json"
+        },
+        {
+          "required": true,
+          "sha256": "b3be6057b50a9223f4b61a09b4c9ae9ce89308894e2862d65cf1a8487ec6f45c",
+          "size_bytes": 7518,
+          "source_relpath": "experiments/bt2t_fez/physical_bt2t_fez_raw_counts.json.gz",
+          "upload_name": "physical_bt2t_fez_raw_counts.json.gz"
+        },
+        {
+          "required": true,
+          "sha256": "81a90cf823da78f29aa51b33dec982f8e2c48395e9edb99c488c740f4e5484c4",
+          "size_bytes": 17638628,
+          "source_relpath": "experiments/bt2t_fez/bt2t_fez_staged_circuits.qpy",
+          "upload_name": "bt2t_fez_staged_circuits.qpy"
+        },
+        {
+          "required": true,
+          "sha256": "071f149b8d4c0d99a4dab55a248c72605b79c4aad01db6222a54899f2cdf4410",
+          "size_bytes": 95833,
+          "source_relpath": "experiments/bt2t_fez/bt2t_fez_staging_manifest.json",
+          "upload_name": "bt2t_fez_staging_manifest.json"
+        },
+        {
+          "required": true,
+          "sha256": "f6316b95b102338973ebdd5a86c610939fca26e4c3cbaa7dfc4dc29af1e25b21",
+          "size_bytes": 998,
+          "source_relpath": "experiments/bt2t_fez/bt2t_fez_calibration_snapshot.json",
+          "upload_name": "bt2t_fez_calibration_snapshot.json"
+        },
+        {
+          "required": true,
+          "sha256": "d88d9dbf2d621406bee6e86e9cc86127ee759f5ddc78c69c42f6bb8199fb309a",
+          "size_bytes": 489,
+          "source_relpath": "experiments/bt2t_fez/bt2t_fez_submitted_job.json",
+          "upload_name": "bt2t_fez_submitted_job.json"
+        },
+        {
+          "required": true,
+          "sha256": "f543aa9613469e34ebdc47d47eab6f7ef2517ce245ffda3708ef3d8e31120826",
+          "size_bytes": 5426,
+          "source_relpath": "experiments/bt2t_inversion/G1_INDEPENDENT_REVIEW.md",
+          "upload_name": "G1_INDEPENDENT_REVIEW.md"
+        },
+        {
+          "required": true,
+          "sha256": "e179cfb1cd431615a75b2cf30a389d5ba1d406c289b394919b23e5c594117dac",
+          "size_bytes": 10125,
+          "source_relpath": "experiments/bt2t_inversion/bt2t.py",
+          "upload_name": "bt2t.py"
+        },
+        {
+          "required": true,
+          "sha256": "1860daba0c9a0d5440c4601e64a8c50f0e5139a16972fb38ad9c2f3c0724cd33",
+          "size_bytes": 10198,
+          "source_relpath": "experiments/bt2t_inversion/verify.py",
+          "upload_name": "verify.py"
+        },
+        {
+          "required": true,
+          "sha256": "0ae94a8c4340b1d914265ad4f1f886ad2c15afe8c6403ced16bf1b1bd390e9af",
+          "size_bytes": 3672,
+          "source_relpath": "experiments/bt2t_inversion/manifest.py",
+          "upload_name": "bt2t_inversion_manifest.py"
+        },
+        {
+          "required": true,
+          "sha256": "098dc803446aecb75245fa1fa5e4bbb2c2e71aa291db8b5dc52389438be0903f",
+          "size_bytes": 12568,
+          "source_relpath": "experiments/bt2t_inversion/manifest.json",
+          "upload_name": "bt2t_inversion_manifest.json"
+        },
+        {
+          "required": false,
+          "sha256": "4cc8d872afe5e78c4d62ece39d3b82e28a3c873b92a797e816b98b74b9bb0bc1",
+          "size_bytes": 87812,
+          "source_relpath": "papers/bt2t001_binary_tetrahedral_fez/bt2t001_binary_tetrahedral_fez.pdf",
+          "upload_name": "bt2t001_binary_tetrahedral_fez.pdf"
+        }
+      ],
+      "metadata": {
+        "access_right": "open",
+        "creators": [
+          {
+            "affiliation": "Agile Defense Systems LLC",
+            "name": "Davis, Devin Phillip"
+          }
+        ],
+        "description": "<p>Write-ahead preregistered benchmark (<code>OSIRIS-BT2T-001-FEZ</code>, <code>Card A</code>; independent gate <code>G1</code> signed off prior to submission) of exact non-abelian group inversion <code>g -&gt; g^-1</code> in the 24-element binary tetrahedral group <code>2T = Q_8 |x Z_3</code> embedded in a 5-qubit register (frozen encoding <code>bt2t-enc-1</code>) on a five-transmon heavy-hex T-junction <code>[21, 22, 23, 16, 24]</code> of the 156-qubit IBM Heron r2 processor <code>ibm_fez</code> (job <code>dc2ee3uq4uuc73a56o6g</code>; <code>HARDWARE_ATTESTED</code>, 288 ISA circuits, 27,648 equal-shot physical measurements across 3 interleaved randomized blocks, 11 s QPU, <code>N_windows = 1</code>).</p><ul><li>Coset-parity Boolean factoring over <code>2T = Q_8 |x Z_3</code> compresses heavy-hex <code>CZ</code> count 10.04x from 723 <code>CZ</code> (1,560 <code>sqrt(X)</code>, unitary depth 2,073) in the generic 11-transposition reference to 72 <code>CZ</code> (151 <code>sqrt(X)</code>, unitary depth 218) for the identical 32x32 permutation unitary, and compresses local <code>pytket</code> <code>H2</code>-native compilation from 400 to 47 <code>ZZPhase</code> gates (8.51x).</li><li>Uniform valid-24 raw inversion accuracy rises from 0.0661 +/- 0.0030 to 0.5337 +/- 0.0059 (0.6104 readout-mitigated, <code>cond(M_32) = 1.4524</code>), yielding Delta P_valid24 = +0.4676 (paired block t = 73.23, one-sided p = 9.32e-5; 24/24 elementwise wins, Wilcoxon p = 1.19e-7; <code>H1 = SUPPORTED</code>) and 32/32 exact modal majority-vote recovery.</li><li>Unused-codeword fixed-point preservation rises by +0.4818 (0.5595 vs 0.0777) while valid-to-unused subspace leakage drops to 0.0940 &lt; 0.15 below the 0.25 uniform random baseline (<code>H2 = SUPPORTED</code>).</li><li>The interleaved 0-<code>CZ</code> SPAM control achieves 0.9076 &ge; 0.90 on unused-8 but 0.8643 &lt; 0.90 on valid-24, honestly refuting <code>H3</code> (<code>REFUTED</code>) and isolating an unflagged 14.91x live readout staleness excursion on leaf transmon <code>q24</code> (0.33% published vs 4.92% live) and a 2.70x excursion on <code>q21</code> (2.34% vs 6.33%).</li></ul>",
+        "keywords": [
+          "binary tetrahedral group",
+          "non-abelian group primitives",
+          "quantum circuit synthesis",
+          "lattice gauge theory",
+          "calibration staleness",
+          "IBM Heron r2",
+          "ibm_fez",
+          "preregistration",
+          "OSIRIS-BT2T-001-FEZ"
+        ],
+        "language": "eng",
+        "license": "cc-by-4.0",
+        "publication_date": "2026-11-23",
+        "publication_type": "preprint",
+        "related_identifiers": [
+          {
+            "identifier": "https://github.com/quantum-osiris/osiris-cli",
+            "relation": "isSupplementedBy",
+            "scheme": "url"
+          },
+          {
+            "identifier": "10.5281/zenodo.24420902",
+            "relation": "references",
+            "scheme": "doi"
+          },
+          {
+            "identifier": "10.5281/zenodo.24406426",
+            "relation": "references",
+            "scheme": "doi"
+          }
+        ],
+        "title": "Exact Binary Tetrahedral Group Inversion on a 5-Qubit Heavy-Hex Superconducting Register: Coset-Parity Synthesis Compression and Unflagged Readout Staleness (OSIRIS-BT2T-001-FEZ)",
+        "upload_type": "publication",
+        "version": "1.0.0"
+      },
+      "paper_dir": "papers/bt2t001_binary_tetrahedral_fez",
+      "paper_key": "bt2t001_binary_tetrahedral_fez",
+      "pdf_compiled": true,
+      "sha256sums_check": {
+        "capsule_sha256": "711a69c200d8d8b9d743b79895f386c7cce85fcbc5ece2dc5fcc4ed0dc788a23",
+        "passed": true,
+        "sha256sums_sha256": "bd770098f4d28fcd57512d55f21015e93e7a1be3a6fbd65ba57c457777c57a4a",
+        "verified_count": 22
+      },
+      "sys024_check": {
+        "flagged_claims": [],
+        "passed": true,
+        "quarantined_constants": [],
+        "surfaces_checked": [
+          "raw_tex",
+          "generated_tex",
+          "expanded_tex",
+          "zenodo_metadata"
+        ]
+      },
+      "total_bytes": 18170379,
+      "total_files": 23
+    },
     "heron_r2_calibration_staleness_and_colored_nulls": {
       "bundle_sha256": "b0b584b4378e6c2255bafbd8909008358f9f5b6691105dec4282fceb7fa3a356",
       "files": [

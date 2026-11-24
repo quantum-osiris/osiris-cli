@@ -98,6 +98,24 @@ PAPER_SPECS: Sequence[Tuple[str, str, str, Tuple[str, ...], Tuple[str, ...]]] = 
             "10.5281/zenodo.24420902",
         ),
     ),
+    (
+        "bt2t001_binary_tetrahedral_fez",
+        "generate_bt2t001_paper_assets.py",
+        "bt2t001_binary_tetrahedral_fez.pdf",
+        (
+            "fig1_bt2t001_fez_synthesis_and_sectors.pdf",
+            "fig2_bt2t001_fez_elementwise_and_spam_drift.pdf",
+        ),
+        (
+            "dc2ee3uq4uuc73a56o6g",
+            "bt2t-enc-1",
+            "27,648",
+            "0.5337",
+            "73.23",
+            "14.91x",
+            "REFUTED",
+        ),
+    ),
 )
 
 
