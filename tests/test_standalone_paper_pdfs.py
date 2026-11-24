@@ -116,6 +116,44 @@ PAPER_SPECS: Sequence[Tuple[str, str, str, Tuple[str, ...], Tuple[str, ...]]] = 
             "REFUTED",
         ),
     ),
+    (
+        "bt2t002_mul_and_nonabelian_qft",
+        "generate_bt2t002_paper_assets.py",
+        "bt2t002_mul_and_nonabelian_qft.pdf",
+        (
+            "fig1_bt2t002_semidirect_mul_compression.pdf",
+            "fig2_bt2t002_peter_weyl_qft_and_hsp.pdf",
+        ),
+        (
+            "SIMULATED",
+            "provider_job_id: null",
+            "1,739",
+            "33,042",
+            "19.00x",
+            "423",
+            "Peter-Weyl",
+        ),
+    ),
+    (
+        "echo_and_card_c_qec_gates",
+        "generate_echo_qec_paper_assets.py",
+        "echo_and_card_c_qec_gates.pdf",
+        (
+            "fig1_echo_placement_spearman_and_regret.pdf",
+            "fig2_card_c_crossing_and_qutrit_lru.pdf",
+        ),
+        (
+            "SIMULATED",
+            "provider_job_id: null",
+            "0.9333",
+            "0.3871",
+            "243",
+            "0.001896",
+            "0.000955",
+            "78.1%",
+            "LRU",
+        ),
+    ),
 )
 
 

@@ -33,6 +33,8 @@ EXPECTED_NOV23_PAPERS = (
     "nonabelian_2bga_and_adv1",
     "heron_r2_calibration_staleness_and_colored_nulls",
     "bt2t001_binary_tetrahedral_fez",
+    "bt2t002_mul_and_nonabelian_qft",
+    "echo_and_card_c_qec_gates",
 )
 
 

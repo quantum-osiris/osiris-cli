@@ -1,14 +1,16 @@
 {
-  "manifest_sha256": "c5ca6575cd31899c35034053df07961e0cb3e0548d0f59571facc72b66bed0cd",
+  "manifest_sha256": "db742c6259b6c3b68ad7c12103e78d011174bec1ca37d480929ff827fb4dc255",
   "mode": "DRY_RUN_STAGED",
   "network_calls": 0,
-  "paper_count": 5,
+  "paper_count": 7,
   "paper_order": [
     "xtop006_non_clifford_kraus_fez",
     "wp2_27q_debiased_ot_fez",
     "nonabelian_2bga_and_adv1",
     "heron_r2_calibration_staleness_and_colored_nulls",
-    "bt2t001_binary_tetrahedral_fez"
+    "bt2t001_binary_tetrahedral_fez",
+    "bt2t002_mul_and_nonabelian_qft",
+    "echo_and_card_c_qec_gates"
   ],
   "papers": {
     "bt2t001_binary_tetrahedral_fez": {
@@ -243,6 +245,368 @@
       },
       "total_bytes": 18170379,
       "total_files": 23
+    },
+    "bt2t002_mul_and_nonabelian_qft": {
+      "bundle_sha256": "6fc2dc136d0f6fb3245a504809c0abceed5727bbad4141fcfa6f0c01b607005e",
+      "files": [
+        {
+          "required": true,
+          "sha256": "6b907c212a893e6dc681573574c6be909650a24de9acb4b96fa1c9301e429160",
+          "size_bytes": 38913,
+          "source_relpath": "papers/bt2t002_mul_and_nonabelian_qft/bt2t002_mul_and_nonabelian_qft.tex",
+          "upload_name": "bt2t002_mul_and_nonabelian_qft.tex"
+        },
+        {
+          "required": true,
+          "sha256": "19b80570e55c426fe9be9467487929ed8d683ce216472677f594e4254d41e576",
+          "size_bytes": 13873,
+          "source_relpath": "papers/bt2t002_mul_and_nonabelian_qft/generated.tex",
+          "upload_name": "generated.tex"
+        },
+        {
+          "required": true,
+          "sha256": "927eef115d9c747fd86537aa4dd65a6cd56375c6e0b887e09c4fe4d4a5ef07c5",
+          "size_bytes": 92183,
+          "source_relpath": "papers/bt2t002_mul_and_nonabelian_qft/generate_bt2t002_paper_assets.py",
+          "upload_name": "generate_bt2t002_paper_assets.py"
+        },
+        {
+          "required": true,
+          "sha256": "080c025ffce6fb2c6134b9f40cdcf1f526e1ac117ade44c8dd3dbb99015b5f89",
+          "size_bytes": 16440,
+          "source_relpath": "papers/bt2t002_mul_and_nonabelian_qft/fig1_bt2t002_semidirect_mul_compression.svg",
+          "upload_name": "fig1_bt2t002_semidirect_mul_compression.svg"
+        },
+        {
+          "required": true,
+          "sha256": "c8380fed1f85ab22b6e160ee8ff64544220b97064b4fac28d724a12cf1cd05a2",
+          "size_bytes": 10067,
+          "source_relpath": "papers/bt2t002_mul_and_nonabelian_qft/fig1_bt2t002_semidirect_mul_compression.pdf",
+          "upload_name": "fig1_bt2t002_semidirect_mul_compression.pdf"
+        },
+        {
+          "required": true,
+          "sha256": "5cd85dcebfa263753403286da33441b57bee3fd772454eabc95e815d0ad9615b",
+          "size_bytes": 33648,
+          "source_relpath": "papers/bt2t002_mul_and_nonabelian_qft/fig2_bt2t002_peter_weyl_qft_and_hsp.svg",
+          "upload_name": "fig2_bt2t002_peter_weyl_qft_and_hsp.svg"
+        },
+        {
+          "required": true,
+          "sha256": "5599ca17f3894af06cfeb5cad7e248dbfd10e3a99b17875c519cdb0ba1cce28f",
+          "size_bytes": 21469,
+          "source_relpath": "papers/bt2t002_mul_and_nonabelian_qft/fig2_bt2t002_peter_weyl_qft_and_hsp.pdf",
+          "upload_name": "fig2_bt2t002_peter_weyl_qft_and_hsp.pdf"
+        },
+        {
+          "required": true,
+          "sha256": "4558483000da3ab2a81bf38a1455c1ed477d24fc5c9c619eb67f0089d06467ad",
+          "size_bytes": 3525,
+          "source_relpath": "papers/bt2t002_mul_and_nonabelian_qft/reproducibility_capsule.json",
+          "upload_name": "reproducibility_capsule.json"
+        },
+        {
+          "required": true,
+          "sha256": "1f4baaa3f2d9b9eba4c6ff2b8f7070cab64765ef1f06bbc051807b789d5ea658",
+          "size_bytes": 2122,
+          "source_relpath": "papers/bt2t002_mul_and_nonabelian_qft/SHA256SUMS.txt",
+          "upload_name": "SHA256SUMS.txt"
+        },
+        {
+          "required": true,
+          "sha256": "00f6fffb5779f15e896f7960cb4f71f67682c9ec3de0b489e90ccc0ec7af1aa6",
+          "size_bytes": 24401,
+          "source_relpath": "experiments/bt2t_primitives/bt2t_mul.py",
+          "upload_name": "bt2t_mul.py"
+        },
+        {
+          "required": true,
+          "sha256": "1296db4fa4013db3442cecc740836f9235c4b6326822cf6e461e11f2c3e4148e",
+          "size_bytes": 20031,
+          "source_relpath": "experiments/bt2t_primitives/bt2t_qft.py",
+          "upload_name": "bt2t_qft.py"
+        },
+        {
+          "required": true,
+          "sha256": "6d05040123eada744e14499a1e72eccf931e483587788535244b30e50bb55815",
+          "size_bytes": 29484,
+          "source_relpath": "experiments/bt2t_primitives/verify_bt2t002.py",
+          "upload_name": "verify_bt2t002.py"
+        },
+        {
+          "required": true,
+          "sha256": "e51fb835398eb2210c676d570229561582203db135138c92faaf76b430e686eb",
+          "size_bytes": 18302,
+          "source_relpath": "experiments/bt2t_primitives/manifest_bt2t002.json",
+          "upload_name": "manifest_bt2t002.json"
+        },
+        {
+          "required": true,
+          "sha256": "e179cfb1cd431615a75b2cf30a389d5ba1d406c289b394919b23e5c594117dac",
+          "size_bytes": 10125,
+          "source_relpath": "experiments/bt2t_inversion/bt2t.py",
+          "upload_name": "bt2t.py"
+        },
+        {
+          "required": true,
+          "sha256": "098dc803446aecb75245fa1fa5e4bbb2c2e71aa291db8b5dc52389438be0903f",
+          "size_bytes": 12568,
+          "source_relpath": "experiments/bt2t_inversion/manifest.json",
+          "upload_name": "bt2t_inversion_manifest.json"
+        },
+        {
+          "required": false,
+          "sha256": "502fa5048a188fb74a4a6f541ce5207a612fc957bcd40a960c72bf1fb0b9d485",
+          "size_bytes": 82311,
+          "source_relpath": "papers/bt2t002_mul_and_nonabelian_qft/bt2t002_mul_and_nonabelian_qft.pdf",
+          "upload_name": "bt2t002_mul_and_nonabelian_qft.pdf"
+        }
+      ],
+      "metadata": {
+        "access_right": "open",
+        "creators": [
+          {
+            "affiliation": "Agile Defense Systems LLC",
+            "name": "Davis, Devin Phillip"
+          }
+        ],
+        "description": "<p>Exact group-algebraic quantum circuit synthesis and verification package (<code>OSIRIS-BT2T-002</code>, Milestone 2; <code>SIMULATED</code> / <code>OFFLINE_COMPILED</code>, <code>provider_job_id: null</code>) for reversible 10-qubit group multiplication and 5-qubit Peter-Weyl non-abelian quantum Fourier transform over the 24-element binary tetrahedral group <code>2T = Q_8 |x Z_3</code> under frozen encoding <code>bt2t-enc-1</code>.</p><ul><li>Zero-ancilla 10-qubit reversible multiplication matches the exact 1024x1024 Cayley permutation unitary across all 576 valid group pairs, 448 unused pairs, and complex superpositions (operator error 0.0) while compressing native <code>CZ</code> gates 19.00x all-to-all (1,739 vs 33,042 <code>CZ</code>) and 21.31x on a 10-qubit heavy-hex subgraph (3,662 vs 78,035 <code>CZ</code>) via twisted <code>Q_8</code> 2-cocycle lookup and Barenco dirty-ancilla decomposition.</li><li>The 5-qubit Peter-Weyl transform across all seven irreducible representations (<code>1^2+1^2+1^2+2^2+2^2+2^2+3^2 = 24</code>) achieves unitarity error 9.80e-16, simultaneous block-diagonalization error 3.11e-16 across all 24 left translations, 100% 1D-irrep concentration on normal-subgroup <code>Q_8</code> cosets, and compiles to 423 <code>CZ</code> all-to-all (613 <code>CZ</code> heavy-hex <code>T5</code>, 423 <code>ZZPhase</code> local <code>pytket</code> proxy).</li></ul>",
+        "keywords": [
+          "binary tetrahedral group",
+          "non-abelian quantum Fourier transform",
+          "Peter-Weyl theorem",
+          "reversible group multiplication",
+          "semidirect product synthesis",
+          "hidden subgroup problem",
+          "lattice gauge theory",
+          "OSIRIS-BT2T-002"
+        ],
+        "language": "eng",
+        "license": "cc-by-4.0",
+        "publication_date": "2026-11-23",
+        "publication_type": "preprint",
+        "related_identifiers": [
+          {
+            "identifier": "https://github.com/quantum-osiris/osiris-cli",
+            "relation": "isSupplementedBy",
+            "scheme": "url"
+          },
+          {
+            "identifier": "10.5281/zenodo.24486953",
+            "relation": "references",
+            "scheme": "doi"
+          }
+        ],
+        "title": "Zero-Ancilla Semidirect-Product Group Multiplication and Seven-Irrep Peter-Weyl Quantum Fourier Transform over the Binary Tetrahedral Group 2T (OSIRIS-BT2T-002)",
+        "upload_type": "publication",
+        "version": "1.0.0"
+      },
+      "paper_dir": "papers/bt2t002_mul_and_nonabelian_qft",
+      "paper_key": "bt2t002_mul_and_nonabelian_qft",
+      "pdf_compiled": true,
+      "sha256sums_check": {
+        "capsule_sha256": "4558483000da3ab2a81bf38a1455c1ed477d24fc5c9c619eb67f0089d06467ad",
+        "passed": true,
+        "sha256sums_sha256": "1f4baaa3f2d9b9eba4c6ff2b8f7070cab64765ef1f06bbc051807b789d5ea658",
+        "verified_count": 17
+      },
+      "sys024_check": {
+        "flagged_claims": [],
+        "passed": true,
+        "quarantined_constants": [],
+        "surfaces_checked": [
+          "raw_tex",
+          "generated_tex",
+          "expanded_tex",
+          "zenodo_metadata"
+        ]
+      },
+      "total_bytes": 429462,
+      "total_files": 16
+    },
+    "echo_and_card_c_qec_gates": {
+      "bundle_sha256": "84b028d47afa2af99f6f286e886a06ebe1ad384e1f0f6cff998c539b24c67c3e",
+      "files": [
+        {
+          "required": true,
+          "sha256": "658b7dfd6e8921b6c236c6fe8ad572002e075886220183c8de766e2aac54e6f5",
+          "size_bytes": 30224,
+          "source_relpath": "papers/echo_and_card_c_qec_gates/echo_and_card_c_qec_gates.tex",
+          "upload_name": "echo_and_card_c_qec_gates.tex"
+        },
+        {
+          "required": true,
+          "sha256": "b29c97e20f142e1a01e39a40f276fbc8f127985b9f17ec0b651c863c35dfa192",
+          "size_bytes": 11186,
+          "source_relpath": "papers/echo_and_card_c_qec_gates/generated.tex",
+          "upload_name": "generated.tex"
+        },
+        {
+          "required": true,
+          "sha256": "bdb634fb9058babd9152bd9c0ccc2dc5cbb510c54dc3325970659da0873cd1ca",
+          "size_bytes": 93883,
+          "source_relpath": "papers/echo_and_card_c_qec_gates/generate_echo_qec_paper_assets.py",
+          "upload_name": "generate_echo_qec_paper_assets.py"
+        },
+        {
+          "required": true,
+          "sha256": "857b38f0beab07fcc5cbd496f201e666926a0001fbe07c125f1b617446db0323",
+          "size_bytes": 14917,
+          "source_relpath": "papers/echo_and_card_c_qec_gates/fig1_echo_placement_spearman_and_regret.svg",
+          "upload_name": "fig1_echo_placement_spearman_and_regret.svg"
+        },
+        {
+          "required": true,
+          "sha256": "263c2a40f24bbd9e454fa4dde74f61be5ff353963a1c390e2aa273c4a1144c1d",
+          "size_bytes": 12038,
+          "source_relpath": "papers/echo_and_card_c_qec_gates/fig1_echo_placement_spearman_and_regret.pdf",
+          "upload_name": "fig1_echo_placement_spearman_and_regret.pdf"
+        },
+        {
+          "required": true,
+          "sha256": "aac78b4d363dc6903507675526fa23d4b7bacfaed99085d46f44885583a40869",
+          "size_bytes": 16907,
+          "source_relpath": "papers/echo_and_card_c_qec_gates/fig2_card_c_crossing_and_qutrit_lru.svg",
+          "upload_name": "fig2_card_c_crossing_and_qutrit_lru.svg"
+        },
+        {
+          "required": true,
+          "sha256": "a2415b084b2cef1f99f2fcff8f42a678a45b29380ffb496478d6db7a42e079fc",
+          "size_bytes": 19658,
+          "source_relpath": "papers/echo_and_card_c_qec_gates/fig2_card_c_crossing_and_qutrit_lru.pdf",
+          "upload_name": "fig2_card_c_crossing_and_qutrit_lru.pdf"
+        },
+        {
+          "required": true,
+          "sha256": "1040f46ba7a4688a5ba28c0c411aa86caab0060bd30984a33fd9cb43fbf87a57",
+          "size_bytes": 2679,
+          "source_relpath": "papers/echo_and_card_c_qec_gates/reproducibility_capsule.json",
+          "upload_name": "reproducibility_capsule.json"
+        },
+        {
+          "required": true,
+          "sha256": "137ebdf3cc8d1344dda538182a781da45a38019e43b95845dedce6cbcd22c00d",
+          "size_bytes": 1925,
+          "source_relpath": "papers/echo_and_card_c_qec_gates/SHA256SUMS.txt",
+          "upload_name": "SHA256SUMS.txt"
+        },
+        {
+          "required": true,
+          "sha256": "d40bdcd9b7d48191472aaeba810be547a57bcebd7effcf995d3bf44703ee3ab8",
+          "size_bytes": 48331,
+          "source_relpath": "experiments/echo_placement/echo_placement_gate.py",
+          "upload_name": "echo_placement_gate.py"
+        },
+        {
+          "required": true,
+          "sha256": "7cab344a6934958bd781a3b3686c860dec0d35bf0816750ab24b0053bb6ba4e0",
+          "size_bytes": 20283,
+          "source_relpath": "experiments/echo_placement/artifacts/echo_stopgo_report.json",
+          "upload_name": "echo_stopgo_report.json"
+        },
+        {
+          "required": true,
+          "sha256": "59f791b6f041ccecf3e8f5245062dba93988241f4bccbe0ed3245ad840924ff8",
+          "size_bytes": 95614,
+          "source_relpath": "experiments/qec_card_c/qec_crossing_gate.py",
+          "upload_name": "qec_crossing_gate.py"
+        },
+        {
+          "required": true,
+          "sha256": "8527279fe95e3547329a7ead876ab553ee3a13af24086107280654d0cab303a0",
+          "size_bytes": 67491,
+          "source_relpath": "experiments/qec_card_c/artifacts/card_c_qec_crossing_report.json",
+          "upload_name": "card_c_qec_crossing_report.json"
+        },
+        {
+          "required": true,
+          "sha256": "80844f508fb67e0a84eef2c3162525c888f1a95451998191c663ff5e5f2e38ce",
+          "size_bytes": 46261,
+          "source_relpath": "experiments/qec_card_c/qec_leakage_lru.py",
+          "upload_name": "qec_leakage_lru.py"
+        },
+        {
+          "required": true,
+          "sha256": "bb403f430c2f5a8faf88a3e2d04814ea85dc837cb86328468d655bb47b4cba45",
+          "size_bytes": 84952,
+          "source_relpath": "experiments/qec_card_c/artifacts/card_c_qutrit_leakage_lru_report.json",
+          "upload_name": "card_c_qutrit_leakage_lru_report.json"
+        },
+        {
+          "required": false,
+          "sha256": "e2ec5242c6d8540f1d749125164e423c2408bffea223cc157c154be7c89c9ed5",
+          "size_bytes": 82228,
+          "source_relpath": "papers/echo_and_card_c_qec_gates/echo_and_card_c_qec_gates.pdf",
+          "upload_name": "echo_and_card_c_qec_gates.pdf"
+        }
+      ],
+      "metadata": {
+        "access_right": "open",
+        "creators": [
+          {
+            "affiliation": "Agile Defense Systems LLC",
+            "name": "Davis, Devin Phillip"
+          }
+        ],
+        "description": "<p>Offline stop/go pre-gate synthesis and exact 5-qutrit (<code>3^5 = 243</code>) transmon leakage ablation package (<code>OSIRIS-ECHO</code> and <code>Card C: OSIRIS-QEC</code>; <code>SIMULATED</code>, <code>provider_job_id: null</code>, 0 s QPU) comparing superconducting heavy-hex (<code>ibm_fez</code>) and all-to-all trapped-ion QCCD (<code>H2-1</code>) architectures.</p><ul><li>Non-cancellable 16-<code>CZ</code> stabilizer-reflected echo probes across <code>K = 10</code> disjoint <code>T5</code> subgraphs over <code>M = 16</code> calibration windows achieve mean Spearman rank correlation +0.9333 vs +0.3871 for stale published calibration rankings (Delta = +0.5462, 95% bootstrap CI [+0.4594, +0.6288]).</li><li>Auditable Dijkstra + exact bitmask-DP MWPM space-time decoding achieves 100% single-fault recovery across <code>[[3,1,3]]</code> and Tomita-Svore <code>[[9,1,3]]</code>; <code>[[9,1,3]]</code> crosses cleanly at <code>R = 3</code> on native <code>H2-1</code> (2.26e-4 Pauli-frame vs 4.48e-4 bare) while losing its crossing completely under 3.2% heavy-hex readout drift.</li><li>Exact 5-qutrit Kraus modeling proves unmitigated <code>p_leak,CZ = 1.2e-3</code> inflates <code>[[3,1,3]]</code> logical error slope 2.74x (0.000691 to 0.001896) via persistent ancilla <code>|2&gt;</code> syndrome streaks (1.86% at <code>R = 9</code>), whereas full data+ancilla leakage reduction (<code>DQLR</code>) recovers 78.1% of the penalty (0.000955) with an exact crossover between 2.0e-4 and 5.0e-4 per-<code>CZ</code> leakage.</li></ul>",
+        "keywords": [
+          "quantum error correction",
+          "transmon leakage",
+          "leakage reduction unit",
+          "surface code",
+          "minimum-weight perfect matching",
+          "calibration staleness",
+          "placement screening",
+          "OSIRIS-ECHO",
+          "OSIRIS-QEC"
+        ],
+        "language": "eng",
+        "license": "cc-by-4.0",
+        "publication_date": "2026-11-23",
+        "publication_type": "preprint",
+        "related_identifiers": [
+          {
+            "identifier": "https://github.com/quantum-osiris/osiris-cli",
+            "relation": "isSupplementedBy",
+            "scheme": "url"
+          },
+          {
+            "identifier": "10.5281/zenodo.24486962",
+            "relation": "continues",
+            "scheme": "doi"
+          },
+          {
+            "identifier": "10.5281/zenodo.24424726",
+            "relation": "references",
+            "scheme": "doi"
+          }
+        ],
+        "title": "Pre-Execution Stabilizer-Reflected Placement Screening, Auditable Space-Time QEC Crossing, and 5-Qutrit |2> Leakage Reduction Requirements on Heavy-Hex vs. QCCD Architectures (OSIRIS-ECHO / Card C QEC)",
+        "upload_type": "publication",
+        "version": "1.0.0"
+      },
+      "paper_dir": "papers/echo_and_card_c_qec_gates",
+      "paper_key": "echo_and_card_c_qec_gates",
+      "pdf_compiled": true,
+      "sha256sums_check": {
+        "capsule_sha256": "1040f46ba7a4688a5ba28c0c411aa86caab0060bd30984a33fd9cb43fbf87a57",
+        "passed": true,
+        "sha256sums_sha256": "137ebdf3cc8d1344dda538182a781da45a38019e43b95845dedce6cbcd22c00d",
+        "verified_count": 15
+      },
+      "sys024_check": {
+        "flagged_claims": [],
+        "passed": true,
+        "quarantined_constants": [],
+        "surfaces_checked": [
+          "raw_tex",
+          "generated_tex",
+          "expanded_tex",
+          "zenodo_metadata"
+        ]
+      },
+      "total_bytes": 648577,
+      "total_files": 16
     },
     "heron_r2_calibration_staleness_and_colored_nulls": {
       "bundle_sha256": "b0b584b4378e6c2255bafbd8909008358f9f5b6691105dec4282fceb7fa3a356",

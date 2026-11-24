@@ -2,7 +2,7 @@
 OSIRIS Sovereign Truth Architecture - Universal CLI Package
 """
 
-__version__ = "6.2.1"
+__version__ = "6.2.2"
 
 
 def main(*args, **kwargs):

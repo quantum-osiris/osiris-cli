@@ -1525,6 +1525,55 @@ def materialize_workspace_reproducibility_capsules(
             zenodo_doi=None,
         )
 
+    # 24. OSIRIS-QEC-LEAKAGE-LRU (Card C 5-qutrit |2> transmon leakage & LRU crossover gate)
+    qec_lru_rep = cli_repo / "experiments" / "qec_card_c" / "artifacts" / "card_c_qutrit_leakage_lru_report.json"
+    qec_lru_src = cli_repo / "experiments" / "qec_card_c" / "qec_leakage_lru.py"
+    if qec_lru_rep.is_file() and qec_lru_src.is_file():
+        _append_capsule(
+            experiment_id="OSIRIS-QEC-LEAKAGE-LRU",
+            evidence_class="SIMULATED",
+            prereg_sha256=_sha256_file(qec_lru_rep),
+            circuit_isa_sha256=_sha256_file(qec_lru_src),
+            provider="Simulator",
+            backend_id="qutrit_243d_5q_kraus_lru",
+            shots=540000,
+            provider_job_id=None,
+            raw_counts_sha256=_sha256_file(qec_lru_rep),
+            zenodo_doi=None,
+        )
+
+    # 25. OSIRIS-ECHO-FEZ-STAGED (Write-ahead 240-PUB QPY staging across 10 disjoint T5 trees on ibm_fez)
+    echo_stg_dir = cli_repo / "experiments" / "echo_fez_staged"
+    if (echo_stg_dir / "PRE_REGISTRATION.md").is_file() and (echo_stg_dir / "echo_fez_staged_circuits.qpy").is_file():
+        _append_capsule(
+            experiment_id="OSIRIS-ECHO-FEZ-STAGED",
+            evidence_class="OFFLINE_COMPILED",
+            prereg_sha256=_sha256_file(echo_stg_dir / "PRE_REGISTRATION.md"),
+            circuit_isa_sha256=_sha256_file(echo_stg_dir / "echo_fez_staged_circuits.qpy"),
+            provider="IBM Quantum",
+            backend_id="ibm_fez",
+            shots=61440,
+            provider_job_id=None,
+            raw_counts_sha256=None,
+            zenodo_doi=None,
+        )
+
+    # 26. OSIRIS-QEC-REP3-FEZ-STAGED (Write-ahead 96-PUB dynamic [[3,1,3]] QPY staging on ibm_fez [58,71,70,69,78])
+    rep3_stg_dir = cli_repo / "experiments" / "rep3_fez_staged"
+    if (rep3_stg_dir / "PRE_REGISTRATION.md").is_file() and (rep3_stg_dir / "rep3_fez_staged_circuits.qpy").is_file():
+        _append_capsule(
+            experiment_id="OSIRIS-QEC-REP3-FEZ-STAGED",
+            evidence_class="OFFLINE_COMPILED",
+            prereg_sha256=_sha256_file(rep3_stg_dir / "PRE_REGISTRATION.md"),
+            circuit_isa_sha256=_sha256_file(rep3_stg_dir / "rep3_fez_staged_circuits.qpy"),
+            provider="IBM Quantum",
+            backend_id="ibm_fez",
+            shots=49152,
+            provider_job_id=None,
+            raw_counts_sha256=None,
+            zenodo_doi=None,
+        )
+
     out_file.parent.mkdir(parents=True, exist_ok=True)
     tmp_out = out_file.with_suffix(".jsonl.tmp")
     raw_jsonl = b"".join(jcs_bytes(cap) + b"\n" for cap in capsules)

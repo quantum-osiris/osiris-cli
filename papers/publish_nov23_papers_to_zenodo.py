@@ -70,6 +70,11 @@ PAPER_ALIASES: Dict[str, str] = {
     "bt2t": "bt2t001_binary_tetrahedral_fez",
     "bt2t001": "bt2t001_binary_tetrahedral_fez",
     "bt2t001_binary_tetrahedral_fez": "bt2t001_binary_tetrahedral_fez",
+    "bt2t002": "bt2t002_mul_and_nonabelian_qft",
+    "bt2t002_mul_and_nonabelian_qft": "bt2t002_mul_and_nonabelian_qft",
+    "echo_qec": "echo_and_card_c_qec_gates",
+    "card_bc": "echo_and_card_c_qec_gates",
+    "echo_and_card_c_qec_gates": "echo_and_card_c_qec_gates",
 }
 
 PAPER_ORDER: Tuple[str, ...] = (
@@ -78,6 +83,8 @@ PAPER_ORDER: Tuple[str, ...] = (
     "nonabelian_2bga_and_adv1",
     "heron_r2_calibration_staleness_and_colored_nulls",
     "bt2t001_binary_tetrahedral_fez",
+    "bt2t002_mul_and_nonabelian_qft",
+    "echo_and_card_c_qec_gates",
 )
 
 PAPERS: Dict[str, Dict[str, Any]] = {
@@ -544,6 +551,154 @@ PAPERS: Dict[str, Dict[str, Any]] = {
                 "ibm_fez",
                 "preregistration",
                 "OSIRIS-BT2T-001-FEZ",
+            ],
+        },
+    },
+    "bt2t002_mul_and_nonabelian_qft": {
+        "dir": "papers/bt2t002_mul_and_nonabelian_qft",
+        "tex_file": "bt2t002_mul_and_nonabelian_qft.tex",
+        "publication_type": "preprint",
+        "version": "1.0.0",
+        "related": [
+            {
+                "identifier": "10.5281/zenodo.24486953",
+                "relation": "references",
+                "scheme": "doi",
+            },
+        ],
+        "files": [
+            ("papers/bt2t002_mul_and_nonabelian_qft/bt2t002_mul_and_nonabelian_qft.tex", None),
+            ("papers/bt2t002_mul_and_nonabelian_qft/generated.tex", None),
+            ("papers/bt2t002_mul_and_nonabelian_qft/generate_bt2t002_paper_assets.py", None),
+            ("papers/bt2t002_mul_and_nonabelian_qft/fig1_bt2t002_semidirect_mul_compression.svg", None),
+            ("papers/bt2t002_mul_and_nonabelian_qft/fig1_bt2t002_semidirect_mul_compression.pdf", None),
+            ("papers/bt2t002_mul_and_nonabelian_qft/fig2_bt2t002_peter_weyl_qft_and_hsp.svg", None),
+            ("papers/bt2t002_mul_and_nonabelian_qft/fig2_bt2t002_peter_weyl_qft_and_hsp.pdf", None),
+            ("papers/bt2t002_mul_and_nonabelian_qft/reproducibility_capsule.json", None),
+            ("papers/bt2t002_mul_and_nonabelian_qft/SHA256SUMS.txt", None),
+            ("experiments/bt2t_primitives/bt2t_mul.py", None),
+            ("experiments/bt2t_primitives/bt2t_qft.py", None),
+            ("experiments/bt2t_primitives/verify_bt2t002.py", None),
+            ("experiments/bt2t_primitives/manifest_bt2t002.json", None),
+            ("experiments/bt2t_inversion/bt2t.py", None),
+            ("experiments/bt2t_inversion/manifest.json", "bt2t_inversion_manifest.json"),
+        ],
+        "optional_files": [
+            ("papers/bt2t002_mul_and_nonabelian_qft/bt2t002_mul_and_nonabelian_qft.pdf", None),
+        ],
+        "meta": {
+            "title": (
+                "Zero-Ancilla Semidirect-Product Group Multiplication and Seven-Irrep Peter-Weyl "
+                "Quantum Fourier Transform over the Binary Tetrahedral Group 2T (OSIRIS-BT2T-002)"
+            ),
+            "description": (
+                "<p>Exact group-algebraic quantum circuit synthesis and verification package "
+                "(<code>OSIRIS-BT2T-002</code>, Milestone 2; <code>SIMULATED</code> / "
+                "<code>OFFLINE_COMPILED</code>, <code>provider_job_id: null</code>) for "
+                "reversible 10-qubit group multiplication and 5-qubit Peter-Weyl non-abelian "
+                "quantum Fourier transform over the 24-element binary tetrahedral group "
+                "<code>2T = Q_8 |x Z_3</code> under frozen encoding <code>bt2t-enc-1</code>.</p>"
+                "<ul><li>Zero-ancilla 10-qubit reversible multiplication matches the exact "
+                "1024x1024 Cayley permutation unitary across all 576 valid group pairs, 448 "
+                "unused pairs, and complex superpositions (operator error 0.0) while compressing "
+                "native <code>CZ</code> gates 19.00x all-to-all (1,739 vs 33,042 <code>CZ</code>) "
+                "and 21.31x on a 10-qubit heavy-hex subgraph (3,662 vs 78,035 <code>CZ</code>) via "
+                "twisted <code>Q_8</code> 2-cocycle lookup and Barenco dirty-ancilla decomposition.</li>"
+                "<li>The 5-qubit Peter-Weyl transform across all seven irreducible representations "
+                "(<code>1^2+1^2+1^2+2^2+2^2+2^2+3^2 = 24</code>) achieves unitarity error "
+                "9.80e-16, simultaneous block-diagonalization error 3.11e-16 across all 24 left "
+                "translations, 100% 1D-irrep concentration on normal-subgroup <code>Q_8</code> "
+                "cosets, and compiles to 423 <code>CZ</code> all-to-all (613 <code>CZ</code> "
+                "heavy-hex <code>T5</code>, 423 <code>ZZPhase</code> local <code>pytket</code> proxy).</li></ul>"
+            ),
+            "keywords": [
+                "binary tetrahedral group",
+                "non-abelian quantum Fourier transform",
+                "Peter-Weyl theorem",
+                "reversible group multiplication",
+                "semidirect product synthesis",
+                "hidden subgroup problem",
+                "lattice gauge theory",
+                "OSIRIS-BT2T-002",
+            ],
+        },
+    },
+    "echo_and_card_c_qec_gates": {
+        "dir": "papers/echo_and_card_c_qec_gates",
+        "tex_file": "echo_and_card_c_qec_gates.tex",
+        "publication_type": "preprint",
+        "version": "1.0.0",
+        "related": [
+            {
+                "identifier": "10.5281/zenodo.24486962",
+                "relation": "continues",
+                "scheme": "doi",
+            },
+            {
+                "identifier": "10.5281/zenodo.24424726",
+                "relation": "references",
+                "scheme": "doi",
+            },
+        ],
+        "files": [
+            ("papers/echo_and_card_c_qec_gates/echo_and_card_c_qec_gates.tex", None),
+            ("papers/echo_and_card_c_qec_gates/generated.tex", None),
+            ("papers/echo_and_card_c_qec_gates/generate_echo_qec_paper_assets.py", None),
+            ("papers/echo_and_card_c_qec_gates/fig1_echo_placement_spearman_and_regret.svg", None),
+            ("papers/echo_and_card_c_qec_gates/fig1_echo_placement_spearman_and_regret.pdf", None),
+            ("papers/echo_and_card_c_qec_gates/fig2_card_c_crossing_and_qutrit_lru.svg", None),
+            ("papers/echo_and_card_c_qec_gates/fig2_card_c_crossing_and_qutrit_lru.pdf", None),
+            ("papers/echo_and_card_c_qec_gates/reproducibility_capsule.json", None),
+            ("papers/echo_and_card_c_qec_gates/SHA256SUMS.txt", None),
+            ("experiments/echo_placement/echo_placement_gate.py", None),
+            ("experiments/echo_placement/artifacts/echo_stopgo_report.json", None),
+            ("experiments/qec_card_c/qec_crossing_gate.py", None),
+            ("experiments/qec_card_c/artifacts/card_c_qec_crossing_report.json", None),
+            ("experiments/qec_card_c/qec_leakage_lru.py", None),
+            ("experiments/qec_card_c/artifacts/card_c_qutrit_leakage_lru_report.json", None),
+        ],
+        "optional_files": [
+            ("papers/echo_and_card_c_qec_gates/echo_and_card_c_qec_gates.pdf", None),
+        ],
+        "meta": {
+            "title": (
+                "Pre-Execution Stabilizer-Reflected Placement Screening, Auditable Space-Time QEC "
+                "Crossing, and 5-Qutrit |2> Leakage Reduction Requirements on Heavy-Hex vs. QCCD "
+                "Architectures (OSIRIS-ECHO / Card C QEC)"
+            ),
+            "description": (
+                "<p>Offline stop/go pre-gate synthesis and exact 5-qutrit (<code>3^5 = 243</code>) "
+                "transmon leakage ablation package (<code>OSIRIS-ECHO</code> and <code>Card C: "
+                "OSIRIS-QEC</code>; <code>SIMULATED</code>, <code>provider_job_id: null</code>, "
+                "0 s QPU) comparing superconducting heavy-hex (<code>ibm_fez</code>) and "
+                "all-to-all trapped-ion QCCD (<code>H2-1</code>) architectures.</p><ul>"
+                "<li>Non-cancellable 16-<code>CZ</code> stabilizer-reflected echo probes across "
+                "<code>K = 10</code> disjoint <code>T5</code> subgraphs over <code>M = 16</code> "
+                "calibration windows achieve mean Spearman rank correlation +0.9333 vs +0.3871 "
+                "for stale published calibration rankings (Delta = +0.5462, 95% bootstrap CI "
+                "[+0.4594, +0.6288]).</li>"
+                "<li>Auditable Dijkstra + exact bitmask-DP MWPM space-time decoding achieves "
+                "100% single-fault recovery across <code>[[3,1,3]]</code> and Tomita-Svore "
+                "<code>[[9,1,3]]</code>; <code>[[9,1,3]]</code> crosses cleanly at <code>R = 3</code> "
+                "on native <code>H2-1</code> (2.26e-4 Pauli-frame vs 4.48e-4 bare) while losing "
+                "its crossing completely under 3.2% heavy-hex readout drift.</li>"
+                "<li>Exact 5-qutrit Kraus modeling proves unmitigated <code>p_leak,CZ = 1.2e-3</code> "
+                "inflates <code>[[3,1,3]]</code> logical error slope 2.74x (0.000691 to 0.001896) "
+                "via persistent ancilla <code>|2&gt;</code> syndrome streaks (1.86% at <code>R = 9</code>), "
+                "whereas full data+ancilla leakage reduction (<code>DQLR</code>) recovers 78.1% "
+                "of the penalty (0.000955) with an exact crossover between 2.0e-4 and 5.0e-4 "
+                "per-<code>CZ</code> leakage.</li></ul>"
+            ),
+            "keywords": [
+                "quantum error correction",
+                "transmon leakage",
+                "leakage reduction unit",
+                "surface code",
+                "minimum-weight perfect matching",
+                "calibration staleness",
+                "placement screening",
+                "OSIRIS-ECHO",
+                "OSIRIS-QEC",
             ],
         },
     },
