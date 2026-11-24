@@ -141,7 +141,7 @@ def main():
     print(f"  False Positive Rate (FPR)   : {res_osiris['false_positive_rate']*100:.1f}%")
 
     # Generate REPORT.md
-    report_content = f"""# OSIRIS-SCI-BENCH-1 Benchmark Report
+    report_content = rf"""# OSIRIS-SCI-BENCH-1 Benchmark Report
 **Execution Timestamp:** 2026-11-05T04:55:00Z  
 **Corpus Size:** 100 scientific reports (50 Defective, 50 Sound Control)  
 **Corpus SHA-256:** `{hashlib.sha256(CORPUS_PATH.read_bytes()).hexdigest()}`  

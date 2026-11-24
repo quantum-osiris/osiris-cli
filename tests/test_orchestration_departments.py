@@ -147,3 +147,61 @@ def test_blockers_opportunities_and_cli_json(
     assert len(payload["opportunities"]) >= 4
     assert len(payload["publication_plan"]) >= 3
     assert "durable_system_built" in payload["self_improvement"]
+
+
+def test_index_doi_lineage_discovers_v620_zenodo_receipts_and_supersession(tmp_path: Path) -> None:
+    fake_work = tmp_path / "work"
+    dep_dir = fake_work / "osiris-cli" / "papers" / "zenodo_v620_deposits" / "hp004_v2_1"
+    dep_dir.mkdir(parents=True)
+    (dep_dir / "zenodo_receipt.json").write_text(
+        json.dumps(
+            {
+                "slug": "hp004_v2_1",
+                "deposition_id": 24486953,
+                "supersedes_record_id": 24287505,
+                "prereserved_doi": "10.5281/zenodo.24486953",
+                "updated_utc": "2026-11-24T01:11:57+00:00",
+                "title": "Dual-Processor Hayden-Preskill Certification v2.1",
+            }
+        ),
+        encoding="utf-8",
+    )
+    qdec_dir = fake_work / "osiris-cli" / "papers" / "zenodo_v620_deposits" / "qdecode_heron_59"
+    qdec_dir.mkdir(parents=True)
+    (qdec_dir / "zenodo_receipt.json").write_text(
+        json.dumps(
+            {
+                "slug": "qdecode_heron_59",
+                "deposition_id": 24486962,
+                "prereserved_doi": "10.5281/zenodo.24486962",
+                "updated_utc": "2026-11-24T01:12:10+00:00",
+                "title": "Reference-Verified Wire Deserialization 59-Job Corpus",
+            }
+        ),
+        encoding="utf-8",
+    )
+    out_json = tmp_path / "doi_lineage.json"
+    res = orchestration_departments.index_doi_lineage(
+        records_path=tmp_path / "missing_records.json",
+        output_path=out_json,
+        work_root=fake_work,
+    )
+    recs = res["records"]
+    assert recs["10.5281/zenodo.24486953"]["status"] == "ACTIVE"
+    assert recs["10.5281/zenodo.24486953"]["supersedes"] == ["10.5281/zenodo.24287505"]
+    assert recs["10.5281/zenodo.24287505"]["status"] == "SUPERSEDED"
+    assert recs["10.5281/zenodo.24287505"]["superseded_by"] == "10.5281/zenodo.24486953"
+    assert recs["10.5281/zenodo.24486962"]["status"] == "ACTIVE"
+
+
+def test_run_science_bench_compiles_without_syntax_warning() -> None:
+    import py_compile
+    import warnings
+
+    repo_root = Path(__file__).resolve().parents[1]
+    sb_file = repo_root / "osiris-benchmarks" / "science_bench" / "run_science_bench.py"
+    with warnings.catch_warnings(record=True) as caught:
+        warnings.simplefilter("always", SyntaxWarning)
+        py_compile.compile(str(sb_file), doraise=True)
+    syntax_warns = [w for w in caught if issubclass(w.category, SyntaxWarning)]
+    assert syntax_warns == []
