@@ -288,11 +288,17 @@ class PublishingWorkflow:
     def publish_result(self, result, report_md: str, 
                       campaign: str = "OSIRIS") -> Optional[Dict]:
         """Publish a single result"""
-        
+        from osiris_cli.substrate_guard import classify_zenodo_evidence, evidence_view
+
+        evidence = classify_zenodo_evidence(evidence_view(result))
+        if not evidence["admitted"]:
+            logger.info("Quarantined from production evidence: %s", evidence["reason"])
+            return {"status": "QUARANTINED", "reason": evidence["reason"]}
+
         logger.info(f"\n{'='*70}")
         logger.info(f"PUBLISHING WORKFLOW: {result.name}")
         logger.info(f"{'='*70}\n")
-        
+
         # Decision
         should_publish, reason, issues = self.decision.evaluate(result)
         

@@ -1168,21 +1168,21 @@ def execute_benchmark_llm() -> None:
         print("  " + "=" * 70)
         print("  \033[1;32mConclusion: NCLM achieves 10,000x parameter efficiency with guaranteed coherence bounds.\033[0m\n")
 
+def _refuse_untrusted_home_module(module_name: str) -> Dict[str, Any]:
+    """Fail closed. A module under the home directory is not an installed, reviewed artifact."""
+    from osiris_cli.orchestration.ast_firewall import refuse_untrusted_dynamic_import
+
+    refused = refuse_untrusted_dynamic_import(Path.home() / f"{module_name}.py")
+    print(f"\033[1;31m[!] {module_name} is not an installed module. {refused['reason']}\033[0m")
+    return refused
+
+
 def execute_tetra1d(state: Optional[OsirisReplState] = None, verbose: bool = True) -> Dict[str, Any]:
     """Execute TETRA-1D SWAP_01 analytical phase-lock & Strang compilation benchmark."""
     try:
         from osiris_tetra1d_benchmark import run_tetra1d_benchmark
     except ImportError:
-        home_bench = Path.home() / "osiris_tetra1d_benchmark.py"
-        if home_bench.is_file():
-            import importlib.util
-            spec = importlib.util.spec_from_file_location("osiris_tetra1d_benchmark", home_bench)
-            mod = importlib.util.module_from_spec(spec)
-            spec.loader.exec_module(mod)
-            run_tetra1d_benchmark = mod.run_tetra1d_benchmark
-        else:
-            print("\033[1;31m[!] osiris_tetra1d_benchmark module not found.\033[0m")
-            return {"error": "module_not_found"}
+        return _refuse_untrusted_home_module("osiris_tetra1d_benchmark")
 
     report = run_tetra1d_benchmark(verbose=verbose)
     res = {
@@ -1201,16 +1201,7 @@ def execute_closure_verify(state: Optional[OsirisReplState] = None, target_dir: 
     try:
         from osiris_claim_closure import ClaimPackClosureVerifier
     except ImportError:
-        home_closure = Path.home() / "osiris_claim_closure.py"
-        if home_closure.is_file():
-            import importlib.util
-            spec = importlib.util.spec_from_file_location("osiris_claim_closure", home_closure)
-            mod = importlib.util.module_from_spec(spec)
-            spec.loader.exec_module(mod)
-            ClaimPackClosureVerifier = mod.ClaimPackClosureVerifier
-        else:
-            print("\033[1;31m[!] osiris_claim_closure module not found.\033[0m")
-            return {"error": "module_not_found"}
+        return _refuse_untrusted_home_module("osiris_claim_closure")
 
     p = Path(target_dir)
     if not p.is_absolute() and not p.exists():
@@ -1264,16 +1255,7 @@ def execute_mutate(state: Optional[OsirisReplState] = None, verbose: bool = True
     try:
         from osiris_autonomous_mutation import run_autonomous_mutation_loop
     except ImportError:
-        home_mut = Path.home() / "osiris_autonomous_mutation.py"
-        if home_mut.is_file():
-            import importlib.util
-            spec = importlib.util.spec_from_file_location("osiris_autonomous_mutation", home_mut)
-            mod = importlib.util.module_from_spec(spec)
-            spec.loader.exec_module(mod)
-            run_autonomous_mutation_loop = mod.run_autonomous_mutation_loop
-        else:
-            print("\033[1;31m[!] osiris_autonomous_mutation module not found.\033[0m")
-            return {"error": "module_not_found"}
+        return _refuse_untrusted_home_module("osiris_autonomous_mutation")
 
     report = run_autonomous_mutation_loop(verbose=verbose)
     details = {
