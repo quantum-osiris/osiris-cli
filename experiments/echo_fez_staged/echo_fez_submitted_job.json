@@ -1,0 +1,45 @@
+{
+  "backend": "ibm_fez",
+  "credential_provenance": {
+    "channel": "ibm_quantum_platform",
+    "credential_basename": "apikey.json",
+    "credential_source": "OSIRIS_IBM_KEY_FILE",
+    "instance_alias": "open-instance",
+    "key_created_at": "2026-11-15T08:18+0000",
+    "key_file_sha256_prefix16": "1e1e6bf779378a8b"
+  },
+  "job_id": "dc35e35s2omc738cvcug",
+  "preregistration_md_sha256": "fa43b80df1aa9078995da59806fe5f72d906294fea73be83a3bdc0705bb8b331",
+  "protocol_id": "OSIRIS-ECHO-FEZ",
+  "provider_metadata": {
+    "backend": "ibm_fez",
+    "creation_date": "2026-11-24T22:33:32.141537-05:00",
+    "job_id": "dc35e35s2omc738cvcug",
+    "qiskit_version": "qiskit_ibm_runtime-0.52.1,qiskit-2.6.2*,qiskit_aer-0.18.2",
+    "status": "DONE",
+    "timestamps": {
+      "created": "2026-11-25T03:33:32.141537Z",
+      "finished": "2026-11-25T03:34:24.965895Z",
+      "running": "2026-11-25T03:33:33.816484Z"
+    },
+    "usage": {
+      "qpu_charge_time_seconds": 19,
+      "resource_units": 0.304433,
+      "status": "complete"
+    }
+  },
+  "qpy_sha256": "538af9bec5fd1ab2536272e5b33c50021d4e87247cb6f84cbbb415df3b406011",
+  "quota_after_completion": {
+    "usage_consumed_seconds": 543,
+    "usage_limit_seconds": 600,
+    "usage_remaining_seconds": 57
+  },
+  "quota_before_submission": {
+    "usage_consumed_seconds": 524,
+    "usage_limit_seconds": 600,
+    "usage_remaining_seconds": 76
+  },
+  "shots_per_pub": 256,
+  "total_pubs": 240,
+  "total_shots": 61440
+}
