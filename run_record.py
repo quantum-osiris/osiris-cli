@@ -110,10 +110,18 @@ def _is_sprint_run_dir(d: str, name: str) -> bool:
     return not (_KERNEL_ARTIFACT_ID.match(name) and not os.path.isfile(os.path.join(path, "run.json")))
 
 
+def _validate_entry_versions(ledger_entries):
+    import genome_ledger
+    for e in ledger_entries:
+        if isinstance(e, dict):
+            genome_ledger.entry_version(e)
+
+
 def orphans(ledger_entries, runs_dir: str = None) -> list:
     """Run ids on disk with no "sprint_run" ledger entry naming them -- a
     record or ledger append that failed part-way. Never valid input for
     /apply or /replay; kept, not deleted, as evidence of what was tried."""
+    _validate_entry_versions(ledger_entries)
     d = runs_dir or RUNS_DIR
     try:
         on_disk = sorted(n for n in os.listdir(d) if _is_sprint_run_dir(d, n))
@@ -215,6 +223,7 @@ def show(run_id: str, ledger_entries, candidate: int = None, root: str = None, r
     candidate (backend/model, stage reached, verdict, +/- lines, reason).
     With candidate=n, that candidate's module and test in full. root is the
     directory the target path is relative to (osiris's cwd)."""
+    _validate_entry_versions(ledger_entries)
     d = os.path.join(runs_dir or RUNS_DIR, run_id)
     try:
         record = load(run_id, runs_dir)
@@ -292,6 +301,7 @@ def stats(ledger_entries, runs_dir: str = None) -> str:
     applied, which candidate passed, per backend/model passed/tried, and the
     stage failed candidates stopped at. Raw counts, no percentages or ranking
     below RANK_MIN_RUNS runs. Read-only."""
+    _validate_entry_versions(ledger_entries)
     payloads = [(e.get("kind"), e.get("payload") or {}) for e in ledger_entries]
     vouched = {p["run_id"]: p.get("record_sha256") for k, p in payloads if k == "sprint_run" and p.get("run_id")}
     applied = {p.get("run_id") for k, p in payloads if k == "file_change" and p.get("run_id")}

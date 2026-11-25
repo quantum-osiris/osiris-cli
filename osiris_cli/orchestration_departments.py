@@ -1683,7 +1683,7 @@ def materialize_workspace_reproducibility_capsules(
             zenodo_doi=_v622_deposit_doi("bt2t003_kogut_susskind_plaquette"),
         )
 
-    # 30. OSIRIS-QEC-REP5-FEZ-STAGED (Write-ahead 72-PUB 9Q [[5,1,5]] vs 5Q [[3,1,3]] dynamic MCMR distance scaling on ibm_fez)
+    # 30. OSIRIS-QEC-REP5-FEZ (Live 72-PUB 9Q [[5,1,5]] vs 5Q [[3,1,3]] dynamic MCMR distance scaling on ibm_fez)
     rep5_stg_dir = cli_repo / "experiments" / "rep5_fez_staged"
     if (rep5_stg_dir / "rep5_fez_submitted_job.json").is_file() and (
         rep5_stg_dir / "physical_rep5_fez_raw_counts.json.gz"
@@ -1699,7 +1699,8 @@ def materialize_workspace_reproducibility_capsules(
             shots=int(jrep5["total_shots"]),
             provider_job_id=str(jrep5["job_id"]),
             raw_counts_sha256=_sha256_file(rep5_stg_dir / "physical_rep5_fez_raw_counts.json.gz"),
-            zenodo_doi=_v622_deposit_doi("rep3_echo_fez_and_multidistance_qec"),
+            zenodo_doi=_v622_deposit_doi("rep5_fez_softmwpm_and_bt2t004_ladder")
+            or _v622_deposit_doi("rep3_echo_fez_and_multidistance_qec"),
         )
     elif (rep5_stg_dir / "PRE_REGISTRATION.md").is_file() and (rep5_stg_dir / "rep5_fez_staged_circuits.qpy").is_file():
         _append_capsule(
@@ -1712,7 +1713,42 @@ def materialize_workspace_reproducibility_capsules(
             shots=36864,
             provider_job_id=None,
             raw_counts_sha256=None,
-            zenodo_doi=_v622_deposit_doi("rep3_echo_fez_and_multidistance_qec"),
+            zenodo_doi=_v622_deposit_doi("rep5_fez_softmwpm_and_bt2t004_ladder")
+            or _v622_deposit_doi("rep3_echo_fez_and_multidistance_qec"),
+        )
+
+    # 31. OSIRIS-QEC-SOFTMWPM (Drift- & streak-aware soft-weight Edmonds Blossom decoder + live dc35d4inj2vs73dhmsog re-scoring)
+    soft_rep = cli_repo / "experiments" / "qec_card_c" / "artifacts" / "card_c_soft_drift_mwpm_report.json"
+    soft_src = cli_repo / "experiments" / "qec_card_c" / "qec_soft_drift_mwpm.py"
+    if soft_rep.is_file() and soft_src.is_file():
+        _append_capsule(
+            experiment_id="OSIRIS-QEC-SOFTMWPM",
+            evidence_class="SIMULATED",
+            prereg_sha256=_sha256_file(soft_rep),
+            circuit_isa_sha256=_sha256_file(soft_src),
+            provider="Simulator",
+            backend_id="soft_drift_streak_blossom_mwpm",
+            shots=432000,
+            provider_job_id=None,
+            raw_counts_sha256=_sha256_file(soft_rep),
+            zenodo_doi=_v622_deposit_doi("rep5_fez_softmwpm_and_bt2t004_ladder"),
+        )
+
+    # 32. OSIRIS-BT2T-004 (10-qubit coupled 2-plaquette 2T Kogut-Susskind lattice gauge ladder)
+    bt4_rep = cli_repo / "experiments" / "bt2t_multiplaquette" / "manifest_bt2t004.json"
+    bt4_src = cli_repo / "experiments" / "bt2t_multiplaquette" / "bt2t_two_plaquette_ladder.py"
+    if bt4_rep.is_file() and bt4_src.is_file():
+        _append_capsule(
+            experiment_id="OSIRIS-BT2T-004",
+            evidence_class="SIMULATED",
+            prereg_sha256=_sha256_file(bt4_rep),
+            circuit_isa_sha256=_sha256_file(bt4_src),
+            provider="Simulator",
+            backend_id="kogut_susskind_2t_two_plaquette_ladder_10q",
+            shots=1024,
+            provider_job_id=None,
+            raw_counts_sha256=_sha256_file(bt4_rep),
+            zenodo_doi=_v622_deposit_doi("rep5_fez_softmwpm_and_bt2t004_ladder"),
         )
 
     out_file.parent.mkdir(parents=True, exist_ok=True)

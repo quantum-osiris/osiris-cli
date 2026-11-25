@@ -139,6 +139,74 @@ def _dnalang_ledger():
     return _ledger_mod
 
 
+def _load_dnalang_ledger_version():
+    try:
+        from dnalang import ledger_version as lv
+        return lv
+    except ImportError:
+        pass
+    lv_src = os.path.join(os.path.dirname(LEDGER_SRC), "ledger_version.py")
+    if os.path.exists(lv_src):
+        import sys
+        import types
+        pkg_name = "_genome_dnalang_pkg"
+        if pkg_name not in sys.modules:
+            pkg = types.ModuleType(pkg_name)
+            pkg.__path__ = [os.path.dirname(LEDGER_SRC)]
+            sys.modules[pkg_name] = pkg
+        sys.modules[f"{pkg_name}.ledger"] = _dnalang_ledger()
+        spec = importlib.util.spec_from_file_location(f"{pkg_name}.ledger_version", lv_src)
+        module = importlib.util.module_from_spec(spec)
+        module.__package__ = pkg_name
+        spec.loader.exec_module(module)
+        return module
+    return None
+
+
+_lv_mod = _load_dnalang_ledger_version()
+
+if _lv_mod is not None:
+    LEGACY_VERSION = _lv_mod.LEGACY_VERSION
+    CURRENT_VERSION = _lv_mod.CURRENT_VERSION
+    SUPPORTED_VERSIONS = _lv_mod.SUPPORTED_VERSIONS
+    UnsupportedVersionError = _lv_mod.UnsupportedVersionError
+    check_version = _lv_mod.check_version
+    entry_version = _lv_mod.entry_version
+    append_versioned = _lv_mod.append_versioned
+else:
+    LEGACY_VERSION = 1
+    CURRENT_VERSION = 2
+    SUPPORTED_VERSIONS = (LEGACY_VERSION, CURRENT_VERSION)
+
+    class UnsupportedVersionError(ValueError):
+        """Semantic rejection of a ledger entry's payload schema version."""
+
+        def __init__(self, version):
+            self.version = version
+            super().__init__(f"unsupported ledger payload version {version!r} (supported: {SUPPORTED_VERSIONS})")
+
+    def check_version(v):
+        """Strictly validate an explicit version value: booleans, strings, null,
+        floats and unsupported integers are all rejected with UnsupportedVersionError."""
+        if isinstance(v, bool) or not isinstance(v, int) or v not in SUPPORTED_VERSIONS:
+            raise UnsupportedVersionError(v)
+        return v
+
+    def entry_version(entry):
+        """Payload schema version of a ledger entry. Missing 'v' is legacy v1; no
+        default is inserted into the persisted record or its hash preimage."""
+        if "v" not in entry:
+            return LEGACY_VERSION
+        return check_version(entry["v"])
+
+    def append_versioned(ledger, kind, payload, *, version=CURRENT_VERSION):
+        """Ledger.append with the payload schema version recorded in the hashed body."""
+        check_version(version)
+        if "v" in payload:
+            raise ValueError("payload already carries a 'v' key")
+        return ledger.append(kind, {"v": version, **payload})
+
+
 SUPERSESSION_KIND = "LEDGER_SUPERSEDED_CORRECTION"
 
 
@@ -245,8 +313,15 @@ class GenomeLedger:
         """Every entry currently on disk, oldest first (re-read on each access)."""
         return list(self._ledger)
 
-    def append(self, entry_type, payload):
-        """Appends one entry {prev, ts, kind, payload, hash} and returns it.
+    def validated_entries(self):
+        """Return all entries after validating each entry's semantic payload version (v1 or v2)."""
+        rows = list(self._ledger)
+        for e in rows:
+            entry_version(e)
+        return rows
+
+    def append(self, entry_type, payload, *, version=CURRENT_VERSION):
+        """Appends one entry {prev, ts, kind, v, payload, hash} and returns it.
         The locks keep two writers from both reading the same tip and forking
         the chain. Both are taken, always in this order: the sidecar excludes
         older copies of this module (Termux runs its own), and chain_lock
@@ -256,14 +331,14 @@ class GenomeLedger:
             fcntl.flock(lock, fcntl.LOCK_EX)
             try:
                 with chain_lock.locked_tail(self.filepath):
-                    return self._append_locked(entry_type, payload)
+                    return self._append_locked(entry_type, payload, version=version)
             finally:
                 fcntl.flock(lock, fcntl.LOCK_UN)
 
-    def _append_locked(self, entry_type, payload):
+    def _append_locked(self, entry_type, payload, *, version=CURRENT_VERSION):
         size_before = os.path.getsize(self.filepath)
         try:
-            entry = self._ledger.append(entry_type, {"payload": payload})
+            entry = append_versioned(self._ledger, entry_type, {"payload": payload}, version=version)
             # Durable before it is acknowledged: /apply treats a returned
             # entry as the commit point of the write it records.
             with open(self.filepath, "a", encoding="utf-8") as f:

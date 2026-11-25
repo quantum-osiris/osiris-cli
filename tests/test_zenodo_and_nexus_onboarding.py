@@ -37,6 +37,7 @@ EXPECTED_NOV23_PAPERS = (
     "echo_and_card_c_qec_gates",
     "rep3_echo_fez_and_multidistance_qec",
     "bt2t003_kogut_susskind_plaquette",
+    "rep5_fez_softmwpm_and_bt2t004_ladder",
 )
 
 
