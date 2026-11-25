@@ -243,3 +243,73 @@ def test_replay_projection_is_canonical_bytes_not_file_bytes(tmp_path):
     assert is_canon_p is False  # valid, but sha256(file) != content id
     # re-serializing the loaded document reproduces the canonical bytes exactly
     assert dna_lang.canonical_bytes(ir_p) == canonical
+
+
+# ------------------------------------------ pinned named-collection fixtures
+
+# One fixture per named collection it exercises. Same rule as the pins above:
+# a changed id must be a deliberate version bump, not a silent drift.
+PINNED_FIXTURE_CONTENT_IDS = {
+    "capabilities_organism.dna":
+        "dna:sha256:d382bf96f22ae09d42c9e482146ea4c705d16ae725e85fc8e43bdc12bd762032",
+    "evidence_organism.dna":
+        "dna:sha256:7a5c76e399cd3ddfd49696fff372b027db0e12eb9c4e64ecc5f3df87c5aa5c34",
+}
+
+
+def _fixture_ir(name):
+    return dna_lang.compile_source((FIXTURES / name).read_text(encoding="utf-8"))
+
+
+def _enum(block, field):
+    return set(dna_lang.SPEC[block]["fields"][field]["values"])
+
+
+@pytest.mark.parametrize("name", sorted(PINNED_FIXTURE_CONTENT_IDS))
+def test_named_collection_fixture_content_id_is_pinned(name):
+    src = (FIXTURES / name).read_text(encoding="utf-8")
+    ir = dna_lang.compile_source(src)
+    pinned = PINNED_FIXTURE_CONTENT_IDS[name]
+    canonical = dna_lang.canonical_bytes(ir)
+    assert dna_lang.content_id(ir) == pinned
+    assert pinned == "dna:sha256:" + hashlib.sha256(canonical).hexdigest()
+    assert pinned in src  # the id quoted in the fixture's header comment is this pin
+    # canonical bytes survive a load + validate round trip unchanged
+    assert dna_lang.load_ir(canonical) == ir
+    assert dna_lang.canonical_bytes(dna_lang.load_ir(canonical)) == canonical
+
+
+def test_capability_fixture_covers_every_class_and_authority():
+    ir = _fixture_ir("capabilities_organism.dna")
+    caps = ir["capabilities"]
+    assert {c["class"] for c in caps.values()} == _enum("capability", "class")
+    assert {c["authority"] for c in caps.values()} == _enum("capability", "authority")
+    # optional fields and the limits block, present on one request and absent on another
+    assert caps["run_checks"]["profile"] == "unit_tests"
+    assert caps["run_checks"]["limits"] == {
+        "wall_seconds": 300, "memory_mb": 512, "network": "deny", "native_execution": "deny"}
+    assert not {"limits", "description", "profile"} & set(caps["read_workspace"])
+    # declared out of name order in the source; canonical bytes carry sorted keys
+    canonical = dna_lang.canonical_bytes(ir)
+    offsets = [canonical.index(b'"' + n.encode() + b'":{') for n in sorted(caps)]
+    assert offsets == sorted(offsets)
+    assert ir["evidence"] == {} and ir["metamorphoses"] == {}
+    # an execution request with its limits removed is refused
+    bad = copy.deepcopy(ir)
+    del bad["capabilities"]["run_checks"]["limits"]
+    assert "DNA-E-UNBOUNDED" in _rules(lambda: dna_lang.validate_ir(bad))
+
+
+def test_evidence_fixture_covers_every_kind_and_canonicalizes_ref_sets():
+    ir = _fixture_ir("evidence_organism.dna")
+    ev = ir["evidence"]
+    assert {e["kind"] for e in ev.values()} == _enum("evidence", "kind")
+    # refs is a set: written unsorted in the source, sorted in the IR
+    assert ev["observed_pass"]["refs"] == ["dna:sha256:" + "aa" * 32, "dna:sha256:" + "cc" * 32]
+    assert all(e["refs"] == sorted(e["refs"]) for e in ev.values())
+    assert ev["open_question"]["refs"] == [] and ev["operator_note"]["refs"] == []
+    assert ir["capabilities"] == {} and ir["metamorphoses"] == {}
+    # a verified observation with its refs removed is refused
+    bad = copy.deepcopy(ir)
+    bad["evidence"]["observed_pass"]["refs"] = []
+    assert "DNA-E-EVIDENCE" in _rules(lambda: dna_lang.validate_ir(bad))
