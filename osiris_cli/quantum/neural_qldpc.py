@@ -20,7 +20,7 @@ import hashlib
 import json
 import time
 from dataclasses import asdict, dataclass, field
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Sequence, Any, Dict, List, Optional, Tuple
 
 import numpy as np
 

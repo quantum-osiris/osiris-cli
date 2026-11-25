@@ -126,7 +126,7 @@ def _criticism(res: TrioResult) -> Dict[str, Any]:
 def _quarantine_path_for_lineage(lineage_ledger: str, explicit: Optional[str] = None) -> str:
     from osiris_cli import quarantine
     if explicit:
-        return str(Path(explicit).expanduser().resolve()) if 'Path' in globals() else os.path.abspath(os.path.expanduser(explicit))
+        return os.path.abspath(os.path.expanduser(explicit))
     if os.environ.get("OSIRIS_QUARANTINE_QUEUE"):
         return str(quarantine.default_quarantine_path())
     abs_lin = os.path.abspath(os.path.expanduser(lineage_ledger))
