@@ -1,0 +1,161 @@
+%PDF-1.4
+%‚„œ”
+1 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>
+endobj
+2 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica-Bold >>
+endobj
+3 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Courier >>
+endobj
+4 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Times-Roman >>
+endobj
+5 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Times-Bold >>
+endobj
+6 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Times-Italic >>
+endobj
+7 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Courier-Bold >>
+endobj
+8 0 obj
+<< /Type /Pages /Kids [10 0 R] /Count 1 >>
+endobj
+9 0 obj
+<< /Length 8047 >>
+stream
+1 1 1 rg
+0 0 576.00 324.00 re f
+BT /F2 8.6 Tf 0.067 0.094 0.153 rg 54.51 309.00 Td (OSIRIS-BT2T-003-FEZ: Live Two-Window \(N_windows = 2, +3.763 h\) OSIRIS-ECHO Intra-Calibration Drift Catch) Tj ET
+BT /F2 6.7 Tf 0.118 0.227 0.541 rg 75.41 297.50 Td (Win-1 dc35e35s2omc738cvcug -> Win-2 dc38nreq4uuc73a6g0k0  |  rho_echo = +0.948333 vs rho_cal = +0.454545 \(Delta = +0.493787\)) Tj ET
+BT /F2 7.1 Tf 0.059 0.090 0.165 rg 34.00 285.50 Td (\(a\) Window-2 10 Disjoint T5 Placements \(50 Transmons\): Echo vs Held-Out) Tj ET
+0.90 w 0.980 0.980 0.980 rg 0.200 0.255 0.333 RG 34.00 80.00 276.00 200.00 re B
+0.886 0.910 0.941 rg 34.60 261.40 274.80 18.00 re f
+BT /F7 5.5 Tf 0.059 0.090 0.165 rg 38.00 268.00 Td (PID \(Cal# -> Echo#\)) Tj ET
+BT /F2 5.5 Tf 0.059 0.090 0.165 rg 126.00 268.00 Td (ECHO_16CZ / Plaq_2WL / HeldOut_4WL) Tj ET
+q [] 0 d 0.70 w 0.200 0.255 0.333 RG 34.00 261.40 m 310.00 261.40 l S Q
+0.925 0.992 0.961 rg 34.80 242.90 274.40 17.20 re f
+BT /F7 5.4 Tf 0.024 0.373 0.275 rg 38.00 248.70 Td (p0 \(#2->#1\)) Tj ET
+0.145 0.388 0.922 rg 118.00 253.90 85.81 3.60 re f
+0.020 0.588 0.412 rg 118.00 249.50 82.36 3.60 re f
+0.486 0.227 0.929 rg 118.00 245.10 81.15 3.60 re f
+BT /F7 5.1 Tf 0.024 0.373 0.275 rg 253.98 248.70 Td (0.858/0.824/0.812) Tj ET
+q [] 0 d 0.40 w 0.886 0.910 0.941 RG 34.00 242.50 m 310.00 242.50 l S Q
+1.000 0.945 0.949 rg 34.80 224.90 274.40 17.20 re f
+BT /F7 5.4 Tf 0.745 0.071 0.235 rg 38.00 230.70 Td (p1 \(#1->#8\)) Tj ET
+0.145 0.388 0.922 rg 118.00 235.90 56.25 3.60 re f
+0.020 0.588 0.412 rg 118.00 231.50 45.05 3.60 re f
+0.486 0.227 0.929 rg 118.00 227.10 45.05 3.60 re f
+BT /F7 5.1 Tf 0.745 0.071 0.235 rg 253.98 230.70 Td (0.562/0.451/0.451) Tj ET
+q [] 0 d 0.40 w 0.886 0.910 0.941 RG 34.00 224.50 m 310.00 224.50 l S Q
+BT /F3 5.4 Tf 0.059 0.090 0.165 rg 38.00 212.70 Td (p2 \(#8->#5\)) Tj ET
+0.145 0.388 0.922 rg 118.00 217.90 69.79 3.60 re f
+0.020 0.588 0.412 rg 118.00 213.50 60.74 3.60 re f
+0.486 0.227 0.929 rg 118.00 209.10 58.63 3.60 re f
+BT /F3 5.1 Tf 0.059 0.090 0.165 rg 253.98 212.70 Td (0.698/0.607/0.586) Tj ET
+q [] 0 d 0.40 w 0.886 0.910 0.941 RG 34.00 206.50 m 310.00 206.50 l S Q
+BT /F3 5.4 Tf 0.059 0.090 0.165 rg 38.00 194.70 Td (p3 \(#9->#9\)) Tj ET
+0.145 0.388 0.922 rg 118.00 199.90 41.15 3.60 re f
+0.020 0.588 0.412 rg 118.00 195.50 59.70 3.60 re f
+0.486 0.227 0.929 rg 118.00 191.10 46.58 3.60 re f
+BT /F3 5.1 Tf 0.059 0.090 0.165 rg 253.98 194.70 Td (0.411/0.597/0.466) Tj ET
+q [] 0 d 0.40 w 0.886 0.910 0.941 RG 34.00 188.50 m 310.00 188.50 l S Q
+BT /F3 5.4 Tf 0.059 0.090 0.165 rg 38.00 176.70 Td (p4 \(#10->#10\)) Tj ET
+0.145 0.388 0.922 rg 118.00 181.90 20.96 3.60 re f
+0.020 0.588 0.412 rg 118.00 177.50 3.32 3.60 re f
+0.486 0.227 0.929 rg 118.00 173.10 5.60 3.60 re f
+BT /F3 5.1 Tf 0.059 0.090 0.165 rg 253.98 176.70 Td (0.210/0.033/0.056) Tj ET
+q [] 0 d 0.40 w 0.886 0.910 0.941 RG 34.00 170.50 m 310.00 170.50 l S Q
+BT /F3 5.4 Tf 0.059 0.090 0.165 rg 38.00 158.70 Td (p5 \(#7->#3\)) Tj ET
+0.145 0.388 0.922 rg 118.00 163.90 73.31 3.60 re f
+0.020 0.588 0.412 rg 118.00 159.50 69.60 3.60 re f
+0.486 0.227 0.929 rg 118.00 155.10 66.76 3.60 re f
+BT /F3 5.1 Tf 0.059 0.090 0.165 rg 253.98 158.70 Td (0.733/0.696/0.668) Tj ET
+q [] 0 d 0.40 w 0.886 0.910 0.941 RG 34.00 152.50 m 310.00 152.50 l S Q
+BT /F3 5.4 Tf 0.059 0.090 0.165 rg 38.00 140.70 Td (p6 \(#3->#2\)) Tj ET
+0.145 0.388 0.922 rg 118.00 145.90 83.20 3.60 re f
+0.020 0.588 0.412 rg 118.00 141.50 78.32 3.60 re f
+0.486 0.227 0.929 rg 118.00 137.10 74.80 3.60 re f
+BT /F3 5.1 Tf 0.059 0.090 0.165 rg 253.98 140.70 Td (0.832/0.783/0.748) Tj ET
+q [] 0 d 0.40 w 0.886 0.910 0.941 RG 34.00 134.50 m 310.00 134.50 l S Q
+BT /F3 5.4 Tf 0.059 0.090 0.165 rg 38.00 122.70 Td (p7 \(#4->#7\)) Tj ET
+0.145 0.388 0.922 rg 118.00 127.90 68.62 3.60 re f
+0.020 0.588 0.412 rg 118.00 123.50 69.66 3.60 re f
+0.486 0.227 0.929 rg 118.00 119.10 64.91 3.60 re f
+BT /F3 5.1 Tf 0.059 0.090 0.165 rg 253.98 122.70 Td (0.686/0.697/0.649) Tj ET
+q [] 0 d 0.40 w 0.886 0.910 0.941 RG 34.00 116.50 m 310.00 116.50 l S Q
+BT /F3 5.4 Tf 0.059 0.090 0.165 rg 38.00 104.70 Td (p8 \(#5->#6\)) Tj ET
+0.145 0.388 0.922 rg 118.00 109.90 69.79 3.60 re f
+0.020 0.588 0.412 rg 118.00 105.50 67.71 3.60 re f
+0.486 0.227 0.929 rg 118.00 101.10 66.41 3.60 re f
+BT /F3 5.1 Tf 0.059 0.090 0.165 rg 253.98 104.70 Td (0.698/0.677/0.664) Tj ET
+q [] 0 d 0.40 w 0.886 0.910 0.941 RG 34.00 98.50 m 310.00 98.50 l S Q
+BT /F3 5.4 Tf 0.059 0.090 0.165 rg 38.00 86.70 Td (p9 \(#6->#4\)) Tj ET
+0.145 0.388 0.922 rg 118.00 91.90 71.48 3.60 re f
+0.020 0.588 0.412 rg 118.00 87.50 66.80 3.60 re f
+0.486 0.227 0.929 rg 118.00 83.10 65.27 3.60 re f
+BT /F3 5.1 Tf 0.059 0.090 0.165 rg 253.98 86.70 Td (0.715/0.668/0.653) Tj ET
+BT /F2 7.1 Tf 0.059 0.090 0.165 rg 324.00 285.50 Td (\(b\) Hub Q7 Drift Catch & Two-Window Spearman / Regret) Tj ET
+0.90 w 1.000 1.000 1.000 rg 0.200 0.255 0.333 RG 324.00 80.00 236.00 200.00 re B
+0.70 w 1.000 0.945 0.949 rg 0.992 0.643 0.686 RG 330.00 198.00 224.00 74.00 re B
+BT /F2 5.8 Tf 0.624 0.071 0.224 rg 335.00 261.00 Td (Drifted pid=1 [5,6,7,8,17] Hub Q7 Excursion \(+3.763 h\):) Tj ET
+BT /F3 5.3 Tf 0.118 0.161 0.231 rg 335.00 249.00 Td (* IDENTITY_CTRL_0CZ: 0.962240 \(Win-1\) -> 0.677083 \(Win-2\)) Tj ET
+BT /F3 5.3 Tf 0.118 0.161 0.231 rg 335.00 238.00 Td (* ECHO_PROBE_16CZ:   0.815104 \(Win-1\) -> 0.562500 \(Win-2\)) Tj ET
+BT /F7 5.3 Tf 0.745 0.071 0.235 rg 335.00 227.00 Td (* Q7 |0>->|1> Bitmask-4 Excitation: +31.12% \(0.311198\)) Tj ET
+BT /F2 5.3 Tf 0.624 0.071 0.224 rg 335.00 216.00 Td (* Stale Cal keeps pid=1 at #1 \(regret 0.361002 = 36.10 pp\)!) Tj ET
+BT /F2 5.3 Tf 0.016 0.471 0.341 rg 335.00 205.00 Td (* Live ECHO switches #1 -> pid=0 \(regret 0.000000 in Win-1 & Win-2\)!) Tj ET
+0.70 w 0.973 0.980 0.988 rg 0.796 0.835 0.882 RG 330.00 88.00 224.00 102.00 re B
+BT /F2 5.7 Tf 0.059 0.090 0.165 rg 335.00 178.50 Td (Spearman rho Across 10 Placements \(Echo vs Stale Cal\):) Tj ET
+BT /F2 5.0 Tf 0.118 0.161 0.231 rg 335.00 166.00 Td (Win-2 Held-Out 4WL Composite) Tj ET
+BT /F7 5.0 Tf 0.016 0.471 0.341 rg 475.00 166.00 Td (+0.948 vs +0.455 \(+0.494\)) Tj ET
+BT /F1 5.0 Tf 0.118 0.161 0.231 rg 335.00 154.80 Td (Win-2 CLIFFORD_30CZ \(30 CZ\)) Tj ET
+BT /F3 5.0 Tf 0.016 0.471 0.341 rg 475.00 154.80 Td (+0.979 vs +0.539 \(+0.439\)) Tj ET
+BT /F1 5.0 Tf 0.118 0.161 0.231 rg 335.00 143.60 Td (Win-2 MIRROR_24CZ \(24 CZ\)) Tj ET
+BT /F3 5.0 Tf 0.016 0.471 0.341 rg 475.00 143.60 Td (+0.930 vs +0.565 \(+0.365\)) Tj ET
+BT /F1 5.0 Tf 0.118 0.161 0.231 rg 335.00 132.40 Td (Win-2 UB_HURWITZ_PI2 \(48 CZ\)) Tj ET
+BT /F3 5.0 Tf 0.016 0.471 0.341 rg 475.00 132.40 Td (+0.890 vs +0.456 \(+0.434\)) Tj ET
+BT /F1 5.0 Tf 0.118 0.161 0.231 rg 335.00 121.20 Td (Win-2 UB_CENTER_PI4 \(40 CZ\)) Tj ET
+BT /F3 5.0 Tf 0.016 0.471 0.341 rg 475.00 121.20 Td (+0.827 vs +0.503 \(+0.324\)) Tj ET
+BT /F1 5.0 Tf 0.118 0.161 0.231 rg 335.00 110.00 Td (Win-2 Plaquette 2WL Composite) Tj ET
+BT /F3 5.0 Tf 0.016 0.471 0.341 rg 475.00 110.00 Td (+0.845 vs +0.527 \(+0.318\)) Tj ET
+BT /F2 5.0 Tf 0.118 0.161 0.231 rg 335.00 98.80 Td (2-Window Mean \(Win-1 + Win-2\)) Tj ET
+BT /F7 5.0 Tf 0.114 0.306 0.847 rg 475.00 98.80 Td (+0.835 vs +0.618 \(+0.217\)) Tj ET
+0.80 w 0.937 0.965 1.000 rg 0.576 0.773 0.992 RG 34.00 12.00 528.00 58.00 re B
+BT /F2 6.2 Tf 0.118 0.227 0.541 rg 42.00 57.50 Td (Live Two-Window OSIRIS-ECHO Drift Catch Summary \(50 Physical Transmons on ibm_fez, 20 Placement-Window Observations\):) Tj ET
+BT /F1 5.7 Tf 0.118 0.161 0.231 rg 42.00 45.50 Td (* Window 1 \(dc35e35s2omc738cvcug, 03:33Z\): pid=1 ranked #1 by both Calibration and Echo \(ID_0CZ=0.962240, ECHO_16CZ=0.815104, regret=0.000000\).) Tj ET
+BT /F1 5.7 Tf 0.118 0.161 0.231 rg 42.00 34.00 Td (* Window 2 \(dc38nreq4uuc73a6g0k0, 07:19Z, +3.763 h\): Hub Q7 on pid=1 suffered +31.12% |0>->|1> drift; stale calibration collapsed to rho=+0.454545 \(regret 0.361002\).) Tj ET
+BT /F2 5.7 Tf 0.016 0.471 0.341 rg 42.00 22.50 Td (* Live ECHO_PROBE_16CZ caught the Q7 excursion in real time, promoted pid=0 to #1, and achieved rho=+0.948333 \(Delta rho=+0.493787\) with 0.000000 top-1 regret!) Tj ET
+endstream
+endobj
+10 0 obj
+<< /Type /Page /Parent 8 0 R /MediaBox [0 0 576.00 324.00] /Resources << /Font << /F1 1 0 R /F2 2 0 R /F3 3 0 R /F4 4 0 R /F5 5 0 R /F6 6 0 R /F7 7 0 R >> >> /Contents 9 0 R >>
+endobj
+11 0 obj
+<< /Type /Catalog /Pages 8 0 R >>
+endobj
+12 0 obj
+<< /Producer (OSIRIS Deterministic PDF 1.4 Preprint Renderer) /Title (fig3_two_window_echo_drift_catch) /Author (Devin Phillip Davis) /CreationDate (2023-11-14T22:13:20Z) >>
+endobj
+xref
+0 13
+0000000000 65535 f 
+0000000015 00000 n 
+0000000085 00000 n 
+0000000160 00000 n 
+0000000228 00000 n 
+0000000300 00000 n 
+0000000371 00000 n 
+0000000444 00000 n 
+0000000517 00000 n 
+0000000575 00000 n 
+0000008673 00000 n 
+0000008866 00000 n 
+0000008916 00000 n 
+trailer
+<< /Size 13 /Root 11 0 R /Info 12 0 R >>
+startxref
+9106
+%%EOF
