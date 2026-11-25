@@ -36,6 +36,27 @@ STAGES = ("dispatch", "result")
 MOCK_FIXTURE_CONFIDENCE = 0.6
 _MOCK_CLASSES = frozenset({"MOCK", "FIXTURE"})
 _MOCK_SOURCES = frozenset({"mock", "fixture"})
+_HEX_CHARS = frozenset("0123456789abcdefABCDEF")
+
+
+def _is_sha256_hex(value: Any) -> bool:
+    return isinstance(value, str) and len(value) == 64 and all(ch in _HEX_CHARS for ch in value)
+
+
+def _read_verified_handle(handle: Any) -> List[Dict[str, Any]]:
+    handle.seek(0)
+    raw = handle.read().decode("utf-8")
+    rows = [json.loads(line) for line in raw.splitlines() if line.strip()]
+    return verify_rows(rows) if rows else []
+
+
+def _write_all(fd: int, payload: bytes) -> None:
+    view = memoryview(payload)
+    while view:
+        wrote = os.write(fd, view)
+        if wrote <= 0:
+            raise SubstrateGuardError("temp ledger write wrote no bytes")
+        view = view[wrote:]
 
 
 class SubstrateGuardError(ValueError):
@@ -272,9 +293,13 @@ def apply_return_chain(local_path: Path, incoming: Sequence[Mapping[str, Any]]) 
         temporary = local_path.with_name(local_path.name + "." + secrets.token_hex(8) + ".tmp")
         fd = os.open(str(temporary), os.O_WRONLY | os.O_CREAT | os.O_EXCL, 0o600)
         try:
-            os.write(fd, payload)
+            _write_all(fd, payload)
             os.fsync(fd)
-        finally:
+        except BaseException:
+            os.close(fd)
+            temporary.unlink(missing_ok=True)
+            raise
+        else:
             os.close(fd)
         _fsync_dir(local_path.parent)
         # The lock fd is O_APPEND. On Linux pwrite appends anyway, so the
@@ -324,14 +349,11 @@ def begin_experiment(
     and does not ask the caller to run the experiment again. A key that was
     started and not finished stays in progress; it is not started a second time.
     """
-    if not experiment_id or not idempotency_key or len(payload_sha256) != 64:
+    if not experiment_id or not idempotency_key or not _is_sha256_hex(payload_sha256):
         raise SubstrateGuardError("experiment_id, idempotency_key, and a 64-hex payload hash are required")
     path.parent.mkdir(parents=True, exist_ok=True)
     with chain_lock.locked_tail(str(path)) as (handle, _last):
-        handle.seek(0)
-        raw = handle.read().decode("utf-8")
-        rows = [json.loads(line) for line in raw.splitlines() if line.strip()]
-        verified = verify_rows(rows) if rows else []
+        verified = _read_verified_handle(handle)
         prior = _rows_for_key(verified, idempotency_key)
         phases = [row.get("phase") for row in prior]
         if prior and prior[0].get("experiment_id") != experiment_id:
@@ -363,38 +385,50 @@ def record_execution(
     result: Mapping[str, Any],
 ) -> Dict[str, Any]:
     """Persist the execution result before the caller acknowledges it."""
-    rows = load_chain(path)
-    prior = _rows_for_key(rows, idempotency_key)
-    if not prior or prior[-1].get("phase") != "started" or prior[-1].get("experiment_id") != experiment_id:
+    if not path.exists():
         raise SubstrateGuardError("execution requires a started row for this experiment and key")
-    return append_entry(
-        path,
-        {
-            "experiment_id": experiment_id,
-            "idempotency_key": idempotency_key,
-            "payload_sha256": prior[-1]["payload_sha256"],
-            "phase": "executed",
-            "result": dict(result),
-        },
-    )
+    with chain_lock.locked_tail(str(path)) as (handle, _last):
+        verified = _read_verified_handle(handle)
+        prior = _rows_for_key(verified, idempotency_key)
+        if not prior or prior[-1].get("phase") != "started" or prior[-1].get("experiment_id") != experiment_id:
+            raise SubstrateGuardError("execution requires a started row for this experiment and key")
+        entry = _next_entry(
+            verified[-1],
+            {
+                "experiment_id": experiment_id,
+                "idempotency_key": idempotency_key,
+                "payload_sha256": prior[-1]["payload_sha256"],
+                "phase": "executed",
+                "result": dict(result),
+            },
+        )
+        chain_lock.write_line(handle, entry, sort_keys=True, ensure_ascii=False)
+        return entry
 
 
 def acknowledge(path: Path, experiment_id: str, idempotency_key: str) -> Dict[str, Any]:
-    rows = load_chain(path)
-    prior = _rows_for_key(rows, idempotency_key)
-    executed = [row for row in prior if row.get("phase") == "executed" and row.get("experiment_id") == experiment_id]
-    if not executed:
+    if not path.exists():
         raise SubstrateGuardError("ack requires an executed row for this experiment and key")
-    return append_entry(
-        path,
-        {
-            "experiment_id": experiment_id,
-            "idempotency_key": idempotency_key,
-            "payload_sha256": executed[-1]["payload_sha256"],
-            "phase": "acked",
-            "result": executed[-1].get("result"),
-        },
-    )
+    with chain_lock.locked_tail(str(path)) as (handle, _last):
+        verified = _read_verified_handle(handle)
+        prior = _rows_for_key(verified, idempotency_key)
+        if any(row.get("phase") == "acked" and row.get("experiment_id") == experiment_id for row in prior):
+            raise SubstrateGuardError("experiment and key are already acknowledged")
+        executed = [row for row in prior if row.get("phase") == "executed" and row.get("experiment_id") == experiment_id]
+        if not executed:
+            raise SubstrateGuardError("ack requires an executed row for this experiment and key")
+        entry = _next_entry(
+            verified[-1],
+            {
+                "experiment_id": experiment_id,
+                "idempotency_key": idempotency_key,
+                "payload_sha256": executed[-1]["payload_sha256"],
+                "phase": "acked",
+                "result": executed[-1].get("result"),
+            },
+        )
+        chain_lock.write_line(handle, entry, sort_keys=True, ensure_ascii=False)
+        return entry
 
 
 def retire_manifest(manifest: Path, quarantine_dir: Path, verify: Callable[[Path], bool]) -> str:
