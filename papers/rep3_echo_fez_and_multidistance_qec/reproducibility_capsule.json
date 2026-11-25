@@ -1,0 +1,82 @@
+{
+  "affiliation": "Agile Defense Systems LLC",
+  "author": "Devin Phillip Davis",
+  "backend": "ibm_fez",
+  "combined_physical_pubs": 336,
+  "combined_physical_shots": 110592,
+  "combined_qpu_seconds": 35,
+  "execution_tier": "HARDWARE_ATTESTED_PLUS_SIMULATED",
+  "hardware_jobs": {
+    "OSIRIS-ECHO-FEZ": {
+      "created_utc": "2026-11-25T03:33:32.141537Z",
+      "execution_tier": "HARDWARE_ATTESTED",
+      "preregistration_md_sha256": "fa43b80df1aa9078995da59806fe5f72d906294fea73be83a3bdc0705bb8b331",
+      "provider_job_id": "dc35e35s2omc738cvcug",
+      "qpu_seconds": 19,
+      "qpy_sha256": "538af9bec5fd1ab2536272e5b33c50021d4e87247cb6f84cbbb415df3b406011",
+      "raw_counts_gz_sha256": "db19dfe6dd7604305cabfb5d1f430c722aaf7fbb019df554d6dd1a06d0793e53",
+      "staged_utc": "2026-11-24T13:46:12.566346+00:00",
+      "total_pubs": 240,
+      "total_shots": 61440,
+      "write_ahead_margin_hours": "13.7888"
+    },
+    "OSIRIS-QEC-REP3-FEZ": {
+      "created_utc": "2026-11-25T03:31:30.401202Z",
+      "execution_tier": "HARDWARE_ATTESTED",
+      "preregistration_md_sha256": "291c3c363983a2169537fda159fc668763d55ae36a6864db55c3c8a3e48032d3",
+      "provider_job_id": "dc35d4inj2vs73dhmsog",
+      "qpu_seconds": 16,
+      "qpy_sha256": "f240d445acc36a69ab2a2604132fa8fc8a0dd5c45130cd8d641b6780fcecc83a",
+      "raw_counts_gz_sha256": "2af0e73634a873bff1429e5369f969b58ea19fac5ed57128dfd030e5df28f067",
+      "staged_utc": "2026-11-24T13:46:20.815506+00:00",
+      "total_pubs": 96,
+      "total_shots": 49152,
+      "write_ahead_margin_hours": "13.7527"
+    }
+  },
+  "paper_id": "OSIRIS-REP3-ECHO-MULTIDIST-2026",
+  "rfc8785_canonical_sha256": "51c669b30b22aaf265bc533711a89d46d4677a4de36de1a5970ab04b397ece92",
+  "schema": "osiris.reproducibility_capsule/1",
+  "simulated_companion": {
+    "distances_evaluated": [
+      3,
+      5,
+      7
+    ],
+    "execution_tier": "SIMULATED",
+    "hardware_execution_authorized": false,
+    "jcs_payload_sha256": "6d262b1b92406c15bffaa547504ed707b9e5b38a68f869bc490c982836efe280",
+    "protocol_id": "OSIRIS-QEC-MULTIDISTANCE",
+    "provider_job_id": null,
+    "qpu_seconds": 0,
+    "seed": 20261124
+  },
+  "source_artifacts": {
+    "experiments/echo_fez_staged/PRE_REGISTRATION.md": "fa43b80df1aa9078995da59806fe5f72d906294fea73be83a3bdc0705bb8b331",
+    "experiments/echo_fez_staged/echo_fez_calibration_snapshot.json": "df7a01b97598e9c525d1386a3f7f1ad46e89611191182ee8f6490269f74f23d1",
+    "experiments/echo_fez_staged/echo_fez_staged_circuits.qpy": "538af9bec5fd1ab2536272e5b33c50021d4e87247cb6f84cbbb415df3b406011",
+    "experiments/echo_fez_staged/echo_fez_staging_manifest.json": "c1445a0c32f22fd3859ff5362f5e92fd9d1fb673fcbfbc57306b2daa600a3845",
+    "experiments/echo_fez_staged/echo_fez_submitted_job.json": "4505461eef4f020c0d902d0db0e85a186811814dff416e82b92ea5b3565d956d",
+    "experiments/echo_fez_staged/physical_echo_fez_raw_counts.json.gz": "db19dfe6dd7604305cabfb5d1f430c722aaf7fbb019df554d6dd1a06d0793e53",
+    "experiments/echo_fez_staged/physical_echo_fez_results.json": "8c9340dd6e7c158e8b8111ed044e58bdb8ed391fcfa6836038b8c03adcfcf440",
+    "experiments/echo_fez_staged/stage_and_harvest_echo_fez.py": "94fb5406475c5cc6c1efe72bb185f589873ba86d14474de347131515d24f28f4",
+    "experiments/qec_card_c/artifacts/card_c_multidistance_threshold_report.json": "7cda9f4ac37aec94326dd8ff7a262078f535d67296e4c641f1904f4965e1e8a1",
+    "experiments/qec_card_c/qec_multidistance_scaling.py": "941aff7ced0eff5c4697933f7ca161bd67573f0ba2bd062a2c04e7e4ec5d669d",
+    "experiments/rep3_fez_staged/PRE_REGISTRATION.md": "291c3c363983a2169537fda159fc668763d55ae36a6864db55c3c8a3e48032d3",
+    "experiments/rep3_fez_staged/physical_rep3_fez_raw_counts.json.gz": "2af0e73634a873bff1429e5369f969b58ea19fac5ed57128dfd030e5df28f067",
+    "experiments/rep3_fez_staged/physical_rep3_fez_results.json": "332fe7728e990e3ca8aa9204c734b0129469ade5fe99c07115c80804103cd2dc",
+    "experiments/rep3_fez_staged/rep3_fez_calibration_snapshot.json": "428275ded50d8bc0c29e409b153657c2d087df4784b774f488c5bc5dc8d2b6de",
+    "experiments/rep3_fez_staged/rep3_fez_staged_circuits.qpy": "f240d445acc36a69ab2a2604132fa8fc8a0dd5c45130cd8d641b6780fcecc83a",
+    "experiments/rep3_fez_staged/rep3_fez_staging_manifest.json": "f67c41a2ac6735ea8e9fd512a5c3d8e601352ce2037fce8abc2abcc110ad49c1",
+    "experiments/rep3_fez_staged/rep3_fez_submitted_job.json": "7144531ba363b0097fbe7202d2b5ad15dd7430011d79275286cefaff2ae17753",
+    "experiments/rep3_fez_staged/stage_and_harvest_rep3_fez.py": "f675af6568c83160caceecc6bb7dc6c4f9eb105dccd69a3ffd104ab28b9f0467"
+  },
+  "verdicts": {
+    "echo_H1_positive_rank_recovery_vs_topology": "SUPPORTED",
+    "echo_H2_single_window_echo_beats_calibration": "REFUTED_SINGLE_WINDOW_NO_MAJOR_CAL_INVERSION",
+    "multidistance_threshold_and_lambda_scaling": "PASS_MULTIDISTANCE_THRESHOLD_AND_LAMBDA_SCALING_VERIFIED",
+    "rep3_H1_pauli_frame_crossing": "SUPPORTED",
+    "rep3_H2_physical_feedforward_crossing": "SUPPORTED",
+    "rep3_H3_feedforward_latency_quantified": "SUPPORTED"
+  }
+}
