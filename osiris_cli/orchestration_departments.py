@@ -1631,7 +1631,7 @@ def materialize_workspace_reproducibility_capsules(
             shots=720000,
             provider_job_id=None,
             raw_counts_sha256=_sha256_file(qec_md_rep),
-            zenodo_doi=None,
+            zenodo_doi=_v622_deposit_doi("rep3_echo_fez_and_multidistance_qec"),
         )
 
     # 28. OSIRIS-BT2T-003 (Kogut-Susskind 2T non-abelian lattice gauge plaquette Trotter dynamics)
@@ -1648,7 +1648,71 @@ def materialize_workspace_reproducibility_capsules(
             shots=1024,
             provider_job_id=None,
             raw_counts_sha256=_sha256_file(bt3_rep),
-            zenodo_doi=None,
+            zenodo_doi=_v622_deposit_doi("bt2t003_kogut_susskind_plaquette"),
+        )
+
+    # 29. OSIRIS-BT2T-003-FEZ (Live 240-PUB 2T magnetic plaquette character-sector trajectory & Window-2 ECHO on ibm_fez)
+    bt3_fez_dir = cli_repo / "experiments" / "bt2t003_fez"
+    if (bt3_fez_dir / "bt2t003_fez_submitted_job.json").is_file() and (
+        bt3_fez_dir / "physical_bt2t003_fez_raw_counts.json.gz"
+    ).is_file():
+        jbt3 = json.loads((bt3_fez_dir / "bt2t003_fez_submitted_job.json").read_text(encoding="utf-8"))
+        _append_capsule(
+            experiment_id="OSIRIS-BT2T-003-FEZ",
+            evidence_class="HARDWARE_ATTESTED",
+            prereg_sha256=_sha256_file(bt3_fez_dir / "PRE_REGISTRATION.md"),
+            circuit_isa_sha256=_sha256_file(bt3_fez_dir / "bt2t003_fez_staged_circuits.qpy"),
+            provider="IBM Quantum",
+            backend_id=str(jbt3["backend"]),
+            shots=int(jbt3["total_shots"]),
+            provider_job_id=str(jbt3["job_id"]),
+            raw_counts_sha256=_sha256_file(bt3_fez_dir / "physical_bt2t003_fez_raw_counts.json.gz"),
+            zenodo_doi=_v622_deposit_doi("bt2t003_kogut_susskind_plaquette"),
+        )
+    elif (bt3_fez_dir / "PRE_REGISTRATION.md").is_file() and (bt3_fez_dir / "bt2t003_fez_staged_circuits.qpy").is_file():
+        _append_capsule(
+            experiment_id="OSIRIS-BT2T-003-FEZ-STAGED",
+            evidence_class="OFFLINE_COMPILED",
+            prereg_sha256=_sha256_file(bt3_fez_dir / "PRE_REGISTRATION.md"),
+            circuit_isa_sha256=_sha256_file(bt3_fez_dir / "bt2t003_fez_staged_circuits.qpy"),
+            provider="IBM Quantum",
+            backend_id="ibm_fez",
+            shots=61440,
+            provider_job_id=None,
+            raw_counts_sha256=None,
+            zenodo_doi=_v622_deposit_doi("bt2t003_kogut_susskind_plaquette"),
+        )
+
+    # 30. OSIRIS-QEC-REP5-FEZ-STAGED (Write-ahead 72-PUB 9Q [[5,1,5]] vs 5Q [[3,1,3]] dynamic MCMR distance scaling on ibm_fez)
+    rep5_stg_dir = cli_repo / "experiments" / "rep5_fez_staged"
+    if (rep5_stg_dir / "rep5_fez_submitted_job.json").is_file() and (
+        rep5_stg_dir / "physical_rep5_fez_raw_counts.json.gz"
+    ).is_file():
+        jrep5 = json.loads((rep5_stg_dir / "rep5_fez_submitted_job.json").read_text(encoding="utf-8"))
+        _append_capsule(
+            experiment_id="OSIRIS-QEC-REP5-FEZ",
+            evidence_class="HARDWARE_ATTESTED",
+            prereg_sha256=_sha256_file(rep5_stg_dir / "PRE_REGISTRATION.md"),
+            circuit_isa_sha256=_sha256_file(rep5_stg_dir / "rep5_fez_staged_circuits.qpy"),
+            provider="IBM Quantum",
+            backend_id=str(jrep5["backend"]),
+            shots=int(jrep5["total_shots"]),
+            provider_job_id=str(jrep5["job_id"]),
+            raw_counts_sha256=_sha256_file(rep5_stg_dir / "physical_rep5_fez_raw_counts.json.gz"),
+            zenodo_doi=_v622_deposit_doi("rep3_echo_fez_and_multidistance_qec"),
+        )
+    elif (rep5_stg_dir / "PRE_REGISTRATION.md").is_file() and (rep5_stg_dir / "rep5_fez_staged_circuits.qpy").is_file():
+        _append_capsule(
+            experiment_id="OSIRIS-QEC-REP5-FEZ-STAGED",
+            evidence_class="OFFLINE_COMPILED",
+            prereg_sha256=_sha256_file(rep5_stg_dir / "PRE_REGISTRATION.md"),
+            circuit_isa_sha256=_sha256_file(rep5_stg_dir / "rep5_fez_staged_circuits.qpy"),
+            provider="IBM Quantum",
+            backend_id="ibm_fez",
+            shots=36864,
+            provider_job_id=None,
+            raw_counts_sha256=None,
+            zenodo_doi=_v622_deposit_doi("rep3_echo_fez_and_multidistance_qec"),
         )
 
     out_file.parent.mkdir(parents=True, exist_ok=True)

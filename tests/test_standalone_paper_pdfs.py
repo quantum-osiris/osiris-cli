@@ -154,6 +154,54 @@ PAPER_SPECS: Sequence[Tuple[str, str, str, Tuple[str, ...], Tuple[str, ...]]] = 
             "LRU",
         ),
     ),
+    (
+        "rep3_echo_fez_and_multidistance_qec",
+        "generate_rep3_echo_multidist_paper_assets.py",
+        "rep3_echo_fez_and_multidistance_qec.pdf",
+        (
+            "fig1_rep3_fez_live_crossing_and_echo_10t5.pdf",
+            "fig2_multidistance_d3_d5_d7_threshold_and_lambda.pdf",
+        ),
+        (
+            "HARDWARE_ATTESTED",
+            "SIMULATED",
+            "provider_job_id: null",
+            "dc35d4inj2vs73dhmsog",
+            "dc35e35s2omc738cvcug",
+            "110,592",
+            "0.0872",
+            "0.0980",
+            "9.0131",
+            "0.6594",
+            "+0.9515",
+            "1.124%",
+            "13.81%",
+        ),
+    ),
+    (
+        "bt2t003_kogut_susskind_plaquette",
+        "build_paper_assets.py",
+        "bt2t003_kogut_susskind_plaquette_preprint.pdf",
+        (
+            "figures/fig1_magnetic_potential_and_strang_scaling.pdf",
+            "figures/fig2_fez_character_sector_trajectories.pdf",
+            "figures/fig3_two_window_echo_drift_catch.pdf",
+        ),
+        (
+            "HARDWARE_ATTESTED",
+            "SIMULATED",
+            "dc38nreq4uuc73a6g0k0",
+            "dc35e35s2omc738cvcug",
+            "0.948333",
+            "0.454545",
+            "0.850260",
+            "0.796875",
+            "0.997576",
+            "0.997940",
+            "68.18x",
+            "2.000008",
+        ),
+    ),
 )
 
 
@@ -389,7 +437,7 @@ def test_byte_for_byte_determinism_and_sha256sum_cli(
     listed_basenames = {Path(t).name for t in listed_targets}
     assert pdf_fn in listed_basenames, f"{pdf_fn} missing from {pkg_name}/SHA256SUMS.txt"
     for fig_fn in fig_pdfs:
-        assert fig_fn in listed_basenames, f"{fig_fn} missing from {pkg_name}/SHA256SUMS.txt"
+        assert Path(fig_fn).name in listed_basenames, f"{fig_fn} missing from {pkg_name}/SHA256SUMS.txt"
 
     sha256sum_bin = shutil.which("sha256sum")
     assert sha256sum_bin is not None, "sha256sum binary required for manifest verification"

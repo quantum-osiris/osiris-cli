@@ -1,0 +1,143 @@
+\documentclass[twocolumn,aps,prapplied,superscriptaddress,floatfix]{revtex4-2}
+
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{graphicx}
+\usepackage{xcolor}
+\usepackage{booktabs}
+\usepackage[hidelinks]{hyperref}
+
+\input{generated.tex}
+
+\begin{document}
+
+\title{Exact Gauss-Law Gauge Fixing, Peter--Weyl Casimir Diagonalization, and $\BtpGainTwentyAa\times$--$\BtpGainTwentyFiveHh\times$ Native Gate Compression for Kogut--Susskind Binary Tetrahedral ($2T \subset \mathrm{SU}(2)$) Lattice Gauge Plaquette Dynamics}
+
+\author{Devin Phillip Davis}
+\affiliation{Agile Defense Systems LLC}
+
+\date{November 25, 2026}
+
+\begin{abstract}
+Digital quantum simulation of continuous $\mathrm{SU}(2)$ Yang--Mills lattice gauge theories via discrete non-abelian subgroups requires simultaneous control of local Gauss-law gauge invariance, Peter--Weyl electric Casimir spectra, and multi-link holonomy gate synthesis. Building on our verified 5-qubit semidirect encoding \texttt{bt2t-enc-1} ($2T = Q_8 \rtimes \mathbb{Z}_3 \subset \mathrm{SU}(2)$, $|2T|=\BtpGroupOrder$, SHA-256 prefix \texttt{\BtpEncShaPrefix\ldots}), we formulate and exhaustively verify (\texttt{SIMULATED}, \texttt{provider\_job\_id: null}, 0\,s QPU, \BtpChecksTotal/\BtpChecksTotal{} checks passed) the Kogut--Susskind single-plaquette Hamiltonian $H_{\mathrm{KS}} = \frac{g_{\mathrm{YM}}^2}{2} H_E + \frac{1}{g_{\mathrm{YM}}^2} H_B$. First, we construct the bi-invariant degree-\BtpCayleyDeg{} 24-cell Cayley electric Laplacian $\Delta_{2T}$ (diameter~\BtpCayleyDiam{}), proving exact left/right translation invariance and machine-precision diagonalization ($\|\mathcal{F}_{2T}\Delta_{\mathrm{SU}(2)}\mathcal{F}_{2T}^\dagger - D_{\mathrm{Cas}}\|_2 = \BtpPwDiagErr$) into calibrated $\mathrm{SU}(2)$ Casimir eigenvalues $\{0, \BtpCasRhoTwoZero, \BtpCasRhoThree, \BtpCasRhoTwoOne, \BtpCasChiOne\}$ across all \BtpConjClasses{} irreducible representations while decoupling all 8 unused basis codewords with \BtpUnusedLeak{} leakage. Second, verifying all \BtpTwoLinkConfigs{} two-link (15-qubit) and \BtpFourLinkConfigs{} four-link (25-qubit) group configurations, we establish an exact 4-vertex Gauss-law intertwining isomorphism onto a single 5-qubit link register spanning the \BtpGaussDim-dimensional class-function subspace (maximum $L_2$ state discrepancy $\BtpFourLinkRandErr$ across arbitrary gauge-invariant superpositions, yielding a $\BtpQubitRedTwenty\times$--$\BtpQubitRedTwentyFive\times$ qubit compression). Third, structured Walsh--Gray synthesis compiles the magnetic step $U_B(\Delta t)$ in \BtpCzUbAa{} all-to-all \texttt{CZ} (\BtpCzUbHh{} heavy-hex $T_5$ \texttt{CZ}) and a complete second-order Strang--Trotter step (empirical log-log error slope \BtpStrangSlopeGOne{}, reaching $\|\mathcal{U}_{\mathrm{Strang}}^N - e^{-i H_{\mathrm{KS}} T}\|_2 = \BtpFineStrangErr$ at $N=2{,}048$) in \BtpCzStrangAa{} all-to-all \texttt{CZ} (\BtpCzStrangHh{} heavy-hex $T_5$ \texttt{CZ}, \BtpZzStrangHtwo{} Quantinuum \texttt{H2} \texttt{ZZPhase})—a $\BtpGainDenseAa\times$ compression over dense 5-qubit synthesis (\BtpCzDenseAa{} \texttt{CZ}) and a $\BtpGainTwentyAa\times$--$\BtpGainTwentyFiveHh\times$ compression over unfixed 20- and 25-qubit four-link circuits (\BtpCzTwentyAa{}--\BtpCzTwentyFiveHh{} \texttt{CZ}).
+\end{abstract}
+
+\maketitle
+
+\section{Introduction}\label{sec:intro}
+
+Hamiltonian lattice gauge theory~\cite{kogut1975,zohar2016} discretizes non-abelian Yang--Mills fields onto oriented lattice links carrying group-valued parallel transporters $U_\ell \in G \subset \mathrm{SU}(N_c)$ coupled at vertices by local Gauss-law constraints. Approximating continuous $\mathrm{SU}(2)$ link variables by crystal-like finite non-abelian subgroups~\cite{lang1982,lamm2019,alam2022} eliminates infinite-dimensional bosonic truncation error while preserving exact non-commutative gauge transformations. Within the ADE classification of finite subgroups of $\mathrm{SU}(2)$, the binary tetrahedral group $2T \cong \mathrm{SL}(2, \mathbb{F}_3)$ of order $|2T| = \BtpGroupOrder$ (whose elements form the vertices of the regular four-dimensional 24-cell) is the smallest subgroup possessing genuine tetrahedral rotational symmetry and three-dimensional irreducible representations.
+
+In Milestones~1 and~2 of this series, we verified exact 5-qubit $2T$ inversion on live \texttt{ibm\_fez} hardware (\texttt{OSIRIS-BT2T-001}~\cite{davis_bt2t001}) and constructed semidirect 10-qubit reversible multiplication $U_{\mathrm{mul}}|g\rangle|h\rangle = |g\rangle|gh\rangle$ alongside the 5-qubit non-abelian Peter--Weyl quantum Fourier transform $\mathcal{F}_{2T}$ (\texttt{OSIRIS-BT2T-002}~\cite{davis_bt2t002}). Here, in Milestone~3 (\texttt{OSIRIS-BT2T-003}, strictly \texttt{SIMULATED} and offline \texttt{PROXY}-compiled, \texttt{provider\_job\_id: null}, 0\,s QPU), we assemble those group primitives into a complete Kogut--Susskind single-plaquette Trotter simulation, proving exact 4-vertex Gauss-law reduction from 20--25 qubits to 5 qubits and quantifying native \texttt{CZ} and \texttt{ZZPhase} gate counts across all-to-all QCCD and heavy-hex superconducting topologies.
+
+\section{Bi-Invariant 24-Cell Electric Laplacian and Peter--Weyl Spectrum}\label{sec:hamiltonian}
+
+\begin{table}[t]
+\centering
+\caption{Exact Peter--Weyl irreducible representation decomposition of the bi-invariant degree-\BtpCayleyDeg{} 24-cell Cayley electric Laplacian $\Delta_{2T}$ and $\mathrm{SU}(2)$-calibrated $H_E = \frac{3}{16}\Delta_{2T}$ ($\sum_\lambda d_\lambda^2 = \BtpGroupOrder$; diagonalization error $\BtpPwDiagErr$).}\label{tab:btp_irreps}
+\begin{ruledtabular}
+\begin{tabular}{lcccc}
+Irrep $\lambda \in \widehat{2T}$ & $d_\lambda$ & $d_\lambda^2$ & $\lambda_{\mathrm{Cayley}}$ & $E_{\mathrm{Cas}}(\lambda)$\\
+\hline
+\BtpIrrepSpectrumRows
+\end{tabular}
+\end{ruledtabular}
+\end{table}
+
+On the 32-dimensional 5-qubit Hilbert space $\mathcal{H}_5 = (\mathbb{C}^2)^{\otimes 5}$, encoding \texttt{bt2t-enc-1} maps $2T = Q_8 \rtimes \mathbb{Z}_3$ onto computational basis states $\{|0\rangle, \ldots, |23\rangle\}$ while isolating $\mathcal{H}_{\mathrm{unused}} = \mathrm{span}\{|24\rangle, \ldots, |31\rangle\}$. The nearest-neighbor shell around $\mathbf{1} \in 2T$ on the unit 24-cell in $S^3 \subset \mathbb{H}$ is the \BtpCayleyDeg-element tetrahedralconjugacy union $S_8 = \{\frac{1}{2}(+\mathbf{1} \pm \mathbf{i} \pm \mathbf{j} \pm \mathbf{k})\}$, which is inverse-closed ($S_8 = S_8^{-1}$), normal ($g S_8 g^{-1} = S_8$ for all $g \in 2T$), and generates $2T$ with graph diameter~\BtpCayleyDiam{}.
+
+Because $S_8$ is a union of complete conjugacy classes, its Cayley graph Laplacian $\Delta_{2T} = 8 I_{24} - \sum_{s \in S_8} L(s)$ is strictly bi-invariant ($[\Delta_{2T}, L(g)] = [\Delta_{2T}, R(g)] = 0$) and acts by Schur's lemma as a scalar multiple on each Plancherel block $d_\lambda \times d_\lambda$ under $\mathcal{F}_{2T}$. Scaling $\Delta_{\mathrm{SU}(2)} = \frac{3}{16}\Delta_{2T}$ matches the continuum $\mathrm{SU}(2)$ quadratic Casimir $j(j+1) = \BtpCasRhoTwoZero$ on the faithful spin-$1/2$ doublet $\rho_{2,0}$ and $2\cdot\frac{3}{4} = \BtpCasRhoThree$ on the spin-$1$ triplet $\rho_3$ (Table~\ref{tab:btp_irreps}). Pairing $H_E = \Delta_{\mathrm{SU}(2)} \oplus 0_8$ with the fundamental Wilson-loop magnetic operator $H_B = -\mathrm{Re}\,\mathrm{Tr}_{\rho_{2,0}}(U_{\Box}) \oplus 0_8$ (where $\mathrm{Tr}_{\rho_{2,0}}(g) \in \{-2, -1, 0, +1, +2\}$) defines the Kogut--Susskind plaquette Hamiltonian
+\begin{equation}
+H_{\mathrm{KS}}(g_{\mathrm{YM}}^2) = \frac{g_{\mathrm{YM}}^2}{2}\, H_E + \frac{1}{g_{\mathrm{YM}}^2}\, H_B,
+\label{eq:h_ks}
+\end{equation}
+which commutes identically with adjoint gauge transformations $C(h) = L(h)R(h^{-1})$ for all $h \in 2T$ and acts as the exact zero generator ($U = I_8$, leakage \BtpUnusedLeak{}) on $\mathcal{H}_{\mathrm{unused}}$.
+
+\section{Exact 4-Vertex Gauss-Law Gauge Fixing and Strang Convergence}\label{sec:gauss_trotter}
+
+\begin{figure*}[t]
+\centering
+\includegraphics[width=\textwidth]{fig1_bt2t003_strang_scaling_and_wilson_regimes.pdf}
+\caption{Operator-norm Trotter convergence and real-time plaquette dynamics on \texttt{bt2t-enc-1} (\texttt{SIMULATED}, \texttt{provider\_job\_id: null}, 0\,s QPU). (a)~At $g_{\mathrm{YM}}^2 = 1$ ($T=1$), first-order Lie--Trotter exhibits log-log slope $\BtpLieSlopeGOne$ ($\BtpFineLieErr$ at $N=2{,}048$), whereas symmetric Strang splitting $S_2(\Delta t) = U_B(\Delta t/2) U_E(\Delta t) U_B(\Delta t/2)$ achieves slope $\BtpStrangSlopeGOne$ down to $\BtpFineStrangErr$. (b)~Evolution of the electric vacuum $|\chi_0\rangle$ to $T=1$ ($N=\BtpRegimeSteps$ Strang steps, state error $\le \BtpRegimeMaxErr$) across weak, intermediate, and strong coupling $g_{\mathrm{YM}}^2 \in \{0.5, 1.0, 2.0\}$.}\label{fig:btp_trotter}
+\end{figure*}
+
+\begin{table*}[t]
+\centering
+\caption{Physical observables at $T = 1$ after $N = \BtpRegimeSteps$ Strang steps ($\Delta t = \BtpRegimeDt$, \texttt{SIMULATED}, 0\,s QPU) across three Yang--Mills couplings $g_{\mathrm{YM}}^2$ from both the gauge-invariant electric vacuum $|\chi_0\rangle$ and the localized magnetic state $|\mathbf{1}\rangle$. Unused-subspace leakage is identically $\BtpUnusedLeak$ in every run.}\label{tab:btp_regimes}
+\begin{ruledtabular}
+\begin{tabular}{llcccccc}
+$g_{\mathrm{YM}}^2$ & Initial state $|\psi_0\rangle$ & $\langle W \rangle(T)$ & $\langle H_E \rangle(T)$ & $P(\chi_0)$ & $P(\rho_{2,0})$ & $P(\rho_3)$ & $\|\psi_{\mathrm{Strang}} - \psi_{\mathrm{exact}}\|_2$\\
+\hline
+\BtpRegimeDynamicsRows
+\end{tabular}
+\end{ruledtabular}
+\end{table*}
+
+An unfixed elementary plaquette carries four link registers $|u_1, u_2, u_3, u_4\rangle \in \mathcal{H}_{20}$ with oriented holonomy $u_{\Box} = u_1 u_2 u_3^{-1} u_4^{-1} \in 2T$ and four vertex Gauss-law operators
+\begin{align}
+G_0(h)|u_1,u_2,u_3,u_4\rangle &= |h u_1, u_2, u_3, h u_4\rangle, \nonumber\\
+G_1(h)|u_1,u_2,u_3,u_4\rangle &= |u_1 h^{-1}, h u_2, u_3, u_4\rangle,
+\label{eq:gauss_vertices}
+\end{align}
+together with analogous vertex actions $G_2(h), G_3(h)$. Exhaustively testing our reversible multi-link holonomy circuits across all $24^3 = \BtpTwoLinkConfigs$ two-link configurations (15 qubits) and all $24^4 = \BtpFourLinkConfigs$ four-link configurations (25 qubits with clean ancilla uncomputation) verified zero basis or phase errors.
+
+Fixing three links along a maximal spanning tree of the 4-vertex loop ($u_2 = u_3 = u_4 = \mathbf{1}$) defines an exact isometric embedding $\mathcal{J}: \mathcal{H}_{\mathrm{inv}}^{(5\mathrm{Q})} \to \mathcal{H}_{\mathrm{inv}}^{(20\mathrm{Q})}$ on the \BtpGaussDim-dimensional space of conjugation-invariant class functions ($\dim \mathcal{H}_{\mathrm{inv}} = \BtpConjClasses$, intertwining link Laplacians to $\BtpIntertwineErr$). Across five multi-link Strang steps, 20-qubit four-link evolution and 5-qubit gauge-fixed evolution agree to $\BtpFourLinkBasisErr$ on all \BtpGaussDim{} class-basis states and $\BtpFourLinkRandErr$ on random gauge-invariant superpositions ($\BtpTwoLinkErr$ for two-link reduction), preserving residual conjugation invariance $C(h)|\psi(t)\rangle = |\psi(t)\rangle$ to $\BtpGaussDriftErr$.
+
+Across $g_{\mathrm{YM}}^2 \in \{0.5, 1.0, 2.0\}$ and $N \in \{8, 16, \ldots, 2{,}048\}$ steps (Fig.~\ref{fig:btp_trotter} and Table~\ref{tab:btp_regimes}), first-order Lie--Trotter slopes lie in $[\BtpMinLieSlope, \BtpMaxLieSlope]$ while second-order Strang slopes lie in $[\BtpMinStrangSlope, \BtpMaxStrangSlope]$. Starting from $|\chi_0\rangle$, strong coupling ($g_{\mathrm{YM}}^2=2$) confines population near the electric ground state ($P(\chi_0)$ dominant), whereas weak coupling ($g_{\mathrm{YM}}^2=0.5$) excites higher representations ($\rho_{2,0}, \rho_{2,1}, \rho_3$) through coherent magnetic plaquette transitions.
+
+\section{Structured Native Gate Synthesis and $\BtpGainTwentyAa\times$--$\BtpGainTwentyFiveHh\times$ Compression}\label{sec:compilation}
+
+\begin{figure*}[t]
+\centering
+\includegraphics[width=\textwidth]{fig2_bt2t003_gauss_holonomy_cz_compression.pdf}
+\caption{Native gate compression and multi-link Gauss-law audit (\texttt{PROXY} offline compilation, \texttt{provider\_job\_id: null}, 0\,s QPU). (a)~Single-Strang-step \texttt{CZ} gate counts across all-to-all and heavy-hex targets comparing structured 5-qubit synthesis (\BtpCzStrangAa/\BtpCzStrangHh{} \texttt{CZ}) against dense 5-qubit synthesis (\BtpCzDenseAa/\BtpCzDenseHh{} \texttt{CZ}), explicit $\mathcal{F}_{2T}^\dagger D \mathcal{F}_{2T}$ synthesis (\BtpCzQsdAa/\BtpCzQsdHh{} \texttt{CZ}), and unfixed 20Q/25Q four-link circuits (\BtpCzTwentyAa--\BtpCzTwentyFiveHh{} \texttt{CZ}). (b)~Summary of exact holonomy and gauge-fixing error bounds.}\label{fig:btp_cz}
+\end{figure*}
+
+\begin{table*}[t]
+\centering
+\caption{Native two-qubit gate counts and circuit depths for one Strang step ($\Delta t = \BtpCompDt$, $g_{\mathrm{YM}}^2 = 1$; deterministic \texttt{qiskit} optimization level~3 and \texttt{pytket} \texttt{FullPeepholeOptimise} \texttt{PROXY} compilations, \texttt{provider\_job\_id: null}, 0\,s QPU).}\label{tab:btp_synthesis}
+\begin{ruledtabular}
+\begin{tabular}{lccccccc}
+Circuit construction & Qubits & All-to-all \texttt{CZ} & AA depth & Heavy-hex \texttt{CZ} & HH depth & \texttt{H2} \texttt{ZZPhase} & Ratio vs 5Q struct.\\
+\hline
+\BtpGateSynthesisRows
+\end{tabular}
+\end{ruledtabular}
+\end{table*}
+
+Exploiting the semidirect bit layout $|c_1, c_0, s, a, b\rangle$ of \texttt{bt2t-enc-1}, the magnetic propagator $U_B(\Delta t) = \exp(-i\frac{\Delta t}{g_{\mathrm{YM}}^2} H_B)$ is diagonal in the computational basis and depends only on $(c_1, c_0, s)$ and $(a \lor b)$, admitting a sparse Walsh--Gray phase-polynomial decomposition in \BtpCzUbAa{} all-to-all \texttt{CZ} gates (\BtpCzUbHh{} \texttt{CZ} on a 5-qubit heavy-hex $T_5$ tree; unitary error $\BtpUbDirectErr$). Similarly, because $H_E$ commutes with $Q_8$-index permutations and respects the $\mathbb{Z}_3$ coset structure, structured synthesis realizes $U_E(\Delta t)$ in \BtpCzUeAa{} all-to-all \texttt{CZ} (\BtpCzUeHh{} heavy-hex \texttt{CZ}; error $\BtpUeDirectErr$) without incurring the twice-applied QFT cost of $\mathcal{F}_{2T}^\dagger e^{-i \frac{g_{\mathrm{YM}}^2 \Delta t}{2} D_{\mathrm{Cas}}} \mathcal{F}_{2T}$ (\BtpCzQsdAa{} all-to-all \texttt{CZ}).
+
+Combining $U_B(\Delta t/2) U_E(\Delta t) U_B(\Delta t/2)$ yields a complete second-order Strang step in \BtpCzStrangAa{} all-to-all \texttt{CZ}, \BtpCzStrangHh{} heavy-hex $T_5$ \texttt{CZ}, or \BtpZzStrangHtwo{} Quantinuum \texttt{H2} \texttt{ZZPhase} gates (direct circuit error $\BtpStrangDirectErr$; Table~\ref{tab:btp_synthesis} and Fig.~\ref{fig:btp_cz}). Relative to generic 5-qubit Shannon decomposition (\BtpCzDenseAa{} all-to-all \texttt{CZ}, \BtpCzDenseHh{} heavy-hex \texttt{CZ}, \BtpZzDenseHtwo{} \texttt{ZZPhase}), structured synthesis saves $\BtpGainDenseAa\times$ ($\BtpGainDenseHh\times$ on heavy-hex). Relative to unfixed 4-link plaquette circuits requiring sequential 10-qubit $2T$ multiplications and inversions (\BtpCzTwentyAa{} and \BtpCzTwentyFiveAa{} all-to-all \texttt{CZ}; \BtpCzTwentyHh{} and \BtpCzTwentyFiveHh{} heavy-hex \texttt{CZ}), maximal-tree gauge fixing plus structured 5-qubit synthesis achieves $\BtpGainTwentyAa\times$ to $\BtpGainTwentyFiveHh\times$ native two-qubit gate compression—bringing multi-step non-abelian $2T$ plaquette dynamics well within Quantinuum \texttt{H2-1} coherence budgets.
+
+\section{Conclusion and Data Availability}\label{sec:data}
+
+Maximal-tree Gauss-law reduction combined with semidirect Walsh--Gray synthesis compresses single-plaquette Kogut--Susskind $2T \subset \mathrm{SU}(2)$ dynamics from tens of thousands of two-qubit gates on 20--25 qubits down to \BtpCzStrangAa{} \texttt{CZ} (\BtpZzStrangHtwo{} \texttt{ZZPhase}) per Strang step on 5 qubits with machine-precision gauge equivalence. Scope note: all results in \texttt{OSIRIS-BT2T-003} are exact \texttt{SIMULATED} statevector/operator calculations and local \texttt{PROXY} compilations (0\,s QPU); coupled multi-plaquette ladders where non-local magnetic terms remain dynamically coupled across shared links form the natural next milestone.
+
+Accompanying this manuscript in \texttt{papers/bt2t003\_plaquette\_dynamics/} and \texttt{experiments/bt2t\_plaquette/} are \texttt{bt2t\_plaquette\_dynamics.py}, \texttt{verify\_bt2t003.py}, \texttt{manifest\_bt2t003.json} (RFC~8785 SHA-256 prefix \texttt{\BtpManifestShaPrefix\ldots}), \texttt{generate\_bt2t003\_paper\_assets.py}, \texttt{SHA256SUMS.txt}, and \texttt{reproducibility\_capsule.json} (SHA-256 prefix \texttt{\BtpCapsuleShaPrefix\ldots}).
+
+\begin{thebibliography}{9}
+
+\bibitem{kogut1975}
+J.~Kogut and L.~Susskind, Hamiltonian formulation of Wilson's lattice gauge theories, Phys.\ Rev.\ D \textbf{11}, 395 (1975).
+
+\bibitem{zohar2016}
+E.~Zohar, J.~I.~Cirac, and B.~Reznik, Quantum simulations of lattice gauge theories using ultracold atoms in optical lattices, Rep.\ Prog.\ Phys.\ \textbf{79}, 014401 (2016).
+
+\bibitem{lang1982}
+C.~B.~Lang and C.~Rebbi, Potential and restoration of rotational symmetry in $\mathrm{SU}(2)$ lattice gauge theory, Phys.\ Lett.\ B \textbf{115}, 137 (1982).
+
+\bibitem{lamm2019}
+H.~Lamm, S.~Lawrence, and Y.~Yamauchi (NuQS Collaboration), General methods for digital quantum simulation of gauge theories, Phys.\ Rev.\ D \textbf{100}, 034518 (2019).
+
+\bibitem{alam2022}
+M.~S.~Alam, S.~Hadfield, H.~Lamm, and A.~C.~Y.~Li, Primitive quantum gates for dihedral gauge theories, Phys.\ Rev.\ D \textbf{105}, 114501 (2022).
+
+\bibitem{davis_bt2t001}
+D.~P.~Davis, Exact 5-qubit binary tetrahedral ($2T$) group inversion and hardware compilation on \texttt{ibm\_fez} (\texttt{OSIRIS-BT2T-001}), Zenodo (2026), \texttt{doi:10.5281/zenodo.24520723}.
+
+\bibitem{davis_bt2t002}
+D.~P.~Davis, Semidirect 10-qubit reversible $2T$ multiplication and 5-qubit non-abelian Peter--Weyl quantum Fourier transform (\texttt{OSIRIS-BT2T-002}), Zenodo (2026), \texttt{doi:10.5281/zenodo.24520738}.
+
+\end{thebibliography}
+
+\end{document}

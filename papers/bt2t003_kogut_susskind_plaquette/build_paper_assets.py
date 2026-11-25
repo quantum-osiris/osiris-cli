@@ -2402,6 +2402,41 @@ def generate_all() -> Dict[str, Any]:
     if PREPRINTS_ARCHIVE_DIR.is_dir():
         (PREPRINTS_ARCHIVE_DIR / PREPRINT_FILENAME).write_bytes(preprint_bytes)
 
+    (HERE / "generated.tex").write_bytes((HERE / "generated_macros.tex").read_bytes())
+    capsule_body = {
+        "schema": "osiris.reproducibility_capsule/1",
+        "paper_id": "OSIRIS-PAPER-BT2T003-PLAQUETTE-2026",
+        "protocol_ids": ["OSIRIS-BT2T-003", "OSIRIS-BT2T-003-FEZ"],
+        "execution_tiers": {
+            "OSIRIS-BT2T-003": "SIMULATED",
+            "OSIRIS-BT2T-003-FEZ": "HARDWARE_ATTESTED",
+        },
+        "provider_job_ids": {
+            "OSIRIS-BT2T-003": None,
+            "OSIRIS-BT2T-003-FEZ": str(fez_results["provider_job_id"]),
+            "OSIRIS-ECHO-FEZ-WINDOW1": str(fez_results["two_window_echo_summary"]["window1_job_id"]),
+        },
+        "backend": "ibm_fez",
+        "upstream_manifests": {
+            "experiments/bt2t_plaquette/manifest_bt2t003.json": _sha256_file((HERE / "../../experiments/bt2t_plaquette/manifest_bt2t003.json").resolve()),
+            "experiments/bt2t003_fez/physical_bt2t003_fez_results.json": _sha256_file((HERE / "../../experiments/bt2t003_fez/physical_bt2t003_fez_results.json").resolve()),
+            "experiments/bt2t003_fez/physical_bt2t003_fez_raw_counts.json.gz": str(fez_results["raw_counts_gz_sha256"]),
+        },
+        "preprint_pdf_sha256": hashlib.sha256(preprint_bytes).hexdigest(),
+    }
+    canon_bytes = json.dumps(
+        capsule_body,
+        sort_keys=True,
+        separators=(",", ":"),
+        ensure_ascii=False,
+        allow_nan=False,
+    ).encode("utf-8")
+    capsule = dict(capsule_body)
+    capsule["rfc8785_canonical_sha256"] = hashlib.sha256(canon_bytes).hexdigest()
+    (HERE / "reproducibility_capsule.json").write_bytes(
+        (json.dumps(capsule, indent=2, sort_keys=True) + "\n").encode("utf-8")
+    )
+
     local_rels = [
         "README.md",
         PREPRINT_FILENAME,
@@ -2412,9 +2447,11 @@ def generate_all() -> Dict[str, Any]:
         f"figures/{FIG2_STEM}.png",
         f"figures/{FIG3_STEM}.pdf",
         f"figures/{FIG3_STEM}.png",
+        "generated.tex",
         "generated_macros.tex",
         "main.tex",
         "references.bib",
+        "reproducibility_capsule.json",
         "tables/table1_conjugacy_magnetic_potential.tex",
         "tables/table2_strang_scaling_and_gate_compression.tex",
         "tables/table3_fez_10placement_echo_and_plaquette.tex",

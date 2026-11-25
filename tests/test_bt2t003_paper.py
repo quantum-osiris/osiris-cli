@@ -312,7 +312,7 @@ def test_bt2t003_deterministic_regeneration_and_sha256sums() -> None:
     )
     assert chk.returncode == 0, f"sha256sum -c failed:\n{chk.stderr}\n{chk.stdout}"
     verified_lines = [ln for ln in chk.stdout.splitlines() if ln.strip()]
-    assert len(verified_lines) == 18
+    assert len(verified_lines) == 20
 
 
 def test_bt2t003_offline_regeneration_without_optional_sdks() -> None:

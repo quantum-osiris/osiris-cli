@@ -1,0 +1,25 @@
+{
+  "backend": "ibm_fez",
+  "execution_tiers": {
+    "OSIRIS-BT2T-003": "SIMULATED",
+    "OSIRIS-BT2T-003-FEZ": "HARDWARE_ATTESTED"
+  },
+  "paper_id": "OSIRIS-PAPER-BT2T003-PLAQUETTE-2026",
+  "preprint_pdf_sha256": "1778126fa96bdd7ac0a09a75b010021208c2b6c4b38abf22b12ae3930262114a",
+  "protocol_ids": [
+    "OSIRIS-BT2T-003",
+    "OSIRIS-BT2T-003-FEZ"
+  ],
+  "provider_job_ids": {
+    "OSIRIS-BT2T-003": null,
+    "OSIRIS-BT2T-003-FEZ": "dc38nreq4uuc73a6g0k0",
+    "OSIRIS-ECHO-FEZ-WINDOW1": "dc35e35s2omc738cvcug"
+  },
+  "rfc8785_canonical_sha256": "13d71fac8608c0b87f3f9fadd4c279344f4bb2de735a723177b0c8c894a6e29d",
+  "schema": "osiris.reproducibility_capsule/1",
+  "upstream_manifests": {
+    "experiments/bt2t003_fez/physical_bt2t003_fez_raw_counts.json.gz": "4667adc71b3af9b7dd3c9dff1fde9d4d6acaf768597992bfbc39bbde2c0abeb3",
+    "experiments/bt2t003_fez/physical_bt2t003_fez_results.json": "316dafb39c83b86f6d6bd4dac358e4a97d2b492d6fde8b6573e282f518a7f0d1",
+    "experiments/bt2t_plaquette/manifest_bt2t003.json": "39b1c7206ba983444785f0e6a7d86e01e779a54b296c8ff06b1813230f395b77"
+  }
+}
