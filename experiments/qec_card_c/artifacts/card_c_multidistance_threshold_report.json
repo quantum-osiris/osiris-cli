@@ -1,0 +1,3400 @@
+{
+  "canonicalization": "RFC8785-JCS",
+  "execution_tier": "SIMULATED",
+  "experiment_card": "Card C: OSIRIS-QEC-MULTIDISTANCE \u2014 Multi-Distance (d=3,5,7) Threshold & Lambda_d Gate",
+  "hardware_execution_authorized": false,
+  "jcs_payload_sha256": "6d262b1b92406c15bffaa547504ed707b9e5b38a68f869bc490c982836efe280",
+  "model_documentation": {
+    "decoder_arms": [
+      "PAULI_FRAME_MWPM",
+      "PHYSICAL_FEEDFORWARD_MWPM"
+    ],
+    "distances_evaluated": [
+      3,
+      5,
+      7
+    ],
+    "modeled_mechanisms": [
+      "amplitude_damping_t1",
+      "phase_damping_t2",
+      "coherent_over_rotation_1q_2q",
+      "mid_circuit_and_terminal_readout_confusion",
+      "active_reset_bit_flip",
+      "correlated_spectator_zz_crosstalk",
+      "feedforward_classical_latency_and_conditional_gate_error",
+      "heavy_hex_degree3_bridge_routing_overhead_for_surface_code"
+    ],
+    "omitted_mechanisms": [
+      "non_computational_state_2_leakage"
+    ],
+    "repetition_code_specs": {
+      "3": {
+        "code": "[[3,1,3]]",
+        "n_detectors": 8,
+        "n_qubits": 5,
+        "rounds": 3
+      },
+      "5": {
+        "code": "[[5,1,5]]",
+        "n_detectors": 24,
+        "n_qubits": 9,
+        "rounds": 5
+      },
+      "7": {
+        "code": "[[7,1,7]]",
+        "n_detectors": 48,
+        "n_qubits": 13,
+        "rounds": 7
+      }
+    },
+    "rotated_surface_code_specs": {
+      "3": {
+        "code": "[[9,1,3]]",
+        "heavy_hex_bridge_cz_per_round": 8,
+        "n_detectors": 16,
+        "n_qubits": 17,
+        "rounds": 3
+      },
+      "5": {
+        "code": "[[25,1,5]]",
+        "heavy_hex_bridge_cz_per_round": 32,
+        "n_detectors": 72,
+        "n_qubits": 49,
+        "rounds": 5
+      },
+      "7": {
+        "code": "[[49,1,7]]",
+        "heavy_hex_bridge_cz_per_round": 72,
+        "n_detectors": 192,
+        "n_qubits": 97,
+        "rounds": 7
+      }
+    },
+    "target_profiles": {
+      "FEZ_DRIFTED_SPAM": {
+        "calibration_provenance": "experiments/bt2t_fez/physical_bt2t_fez_results.json (H3_spam_control_integrity)",
+        "delta_theta_rad": 0.012,
+        "description": "IBM Heron r2 (`ibm_fez`) regime with drifted p_readout=0.0320 reflecting live PREP_RO_CTRL SPAM degradation observed in OSIRIS-BT2T-001-FEZ.",
+        "heavy_hex_bridge_cz_overhead_per_round": 8,
+        "p_1q": 0.00031,
+        "p_2q": 0.0023,
+        "p_corr": 0.0006,
+        "p_idle_nominal": 0.005657,
+        "p_readout": 0.032,
+        "p_reset": 0.01,
+        "profile_id": "FEZ_DRIFTED_SPAM",
+        "supports_native_d3_repetition": true,
+        "supports_native_d3_surface": false,
+        "t1_us": 210.0,
+        "t2_us": 145.0,
+        "t_ff_us": 0.35,
+        "t_gates_us": 0.15,
+        "t_readout_us": 1.2,
+        "t_reset_us": 0.3,
+        "t_round_us": 1.65,
+        "target_family": "ibm_fez (Heron r2 heavy-hex with live-observed SPAM staleness)"
+      },
+      "FEZ_PUBLISHED": {
+        "calibration_provenance": "experiments/bt2t_fez/bt2t_fez_calibration_snapshot.json (sha256_16=f6316b95b1023389) & experiments/qec001/qec001_fez_calibration_snapshot.json",
+        "delta_theta_rad": 0.012,
+        "description": "Published IBM Heron r2 (`ibm_fez`) calibration regime: CZ=0.0023, SX=0.00031, RO=0.0085, reset=0.0100, T1=210 us, T2=145 us, T_round=1.65 us.",
+        "heavy_hex_bridge_cz_overhead_per_round": 8,
+        "p_1q": 0.00031,
+        "p_2q": 0.0023,
+        "p_corr": 0.0006,
+        "p_idle_nominal": 0.005657,
+        "p_readout": 0.0085,
+        "p_reset": 0.01,
+        "profile_id": "FEZ_PUBLISHED",
+        "supports_native_d3_repetition": true,
+        "supports_native_d3_surface": false,
+        "t1_us": 210.0,
+        "t2_us": 145.0,
+        "t_ff_us": 0.35,
+        "t_gates_us": 0.15,
+        "t_readout_us": 1.2,
+        "t_reset_us": 0.3,
+        "t_round_us": 1.65,
+        "target_family": "ibm_fez (156Q Heron r2 superconducting heavy-hex)"
+      },
+      "H2_1_PUBLISHED": {
+        "calibration_provenance": "Published Quantinuum H2-1 system benchmark specifications",
+        "delta_theta_rad": 0.004,
+        "description": "Published Quantinuum H2-1 specifications: ZZ=0.0012, 1Q=0.00003, RO=0.0015, reset=0.0015, shuttling memory idle=0.0004/round, all-to-all connectivity.",
+        "heavy_hex_bridge_cz_overhead_per_round": 0,
+        "p_1q": 3e-05,
+        "p_2q": 0.0012,
+        "p_corr": 5e-05,
+        "p_idle_nominal": 0.0004,
+        "p_readout": 0.0015,
+        "p_reset": 0.0015,
+        "profile_id": "H2_1_PUBLISHED",
+        "supports_native_d3_repetition": true,
+        "supports_native_d3_surface": true,
+        "t1_us": 10000000.0,
+        "t2_us": 1500000.0,
+        "t_ff_us": 250.0,
+        "t_gates_us": 450.0,
+        "t_readout_us": 600.0,
+        "t_reset_us": 150.0,
+        "t_round_us": 1200.0,
+        "target_family": "Quantinuum H2-1 (56Q QCCD all-to-all trapped-ion)"
+      }
+    }
+  },
+  "operational_profile_cells": {
+    "FEZ_DRIFTED_SPAM__repetition__PAULI_FRAME_MWPM": {
+      "bare_unencoded_eps_L_slope": 0.00608346,
+      "cell_id": "FEZ_DRIFTED_SPAM__repetition__PAULI_FRAME_MWPM",
+      "code_family": "repetition",
+      "d3_beats_bare_in_block_rate": true,
+      "d3_beats_bare_in_differential_rate": true,
+      "d7_beats_bare_in_block_rate": true,
+      "decoder_arm": "PAULI_FRAME_MWPM",
+      "lambda_3_to_5": 11.603368,
+      "lambda_3_to_5_ci95": [
+        8.053345,
+        18.444717
+      ],
+      "lambda_3_to_5_differential": 12.529571,
+      "lambda_3_to_5_differential_ci95": [
+        1.785678,
+        155.968615
+      ],
+      "lambda_5_to_7": 6.305193,
+      "lambda_5_to_7_ci95": [
+        2.801039,
+        21.742638
+      ],
+      "lambda_5_to_7_differential": 3.331636,
+      "lambda_5_to_7_differential_ci95": [
+        0.270012,
+        28.040325
+      ],
+      "lambda_geometric_mean": 8.553448,
+      "per_distance": {
+        "3": {
+          "distance": 3,
+          "epsilon_L_differential": 0.0009653009,
+          "epsilon_L_differential_ci95": [
+            0.0001783376,
+            0.0022378102
+          ],
+          "epsilon_L_per_round": 0.0031362983,
+          "epsilon_L_per_round_ci95": [
+            0.0026810167,
+            0.0035924158
+          ],
+          "p_fail_block": 0.00935,
+          "p_fail_r1": 0.00745,
+          "rounds": 3
+        },
+        "5": {
+          "distance": 5,
+          "epsilon_L_differential": 7.70418e-05,
+          "epsilon_L_differential_ci95": [
+            6.8736e-06,
+            0.0002167647
+          ],
+          "epsilon_L_per_round": 0.0002702921,
+          "epsilon_L_per_round_ci95": [
+            0.0001801297,
+            0.0003805789
+          ],
+          "p_fail_block": 0.00135,
+          "p_fail_r1": 0.0010425464,
+          "rounds": 5
+        },
+        "7": {
+          "distance": 7,
+          "epsilon_L_differential": 2.31243e-05,
+          "epsilon_L_differential_ci95": [
+            5.4679e-06,
+            7.23412e-05
+          ],
+          "epsilon_L_per_round": 4.28682e-05,
+          "epsilon_L_per_round_ci95": [
+            1.42869e-05,
+            7.86085e-05
+          ],
+          "p_fail_block": 0.0003,
+          "p_fail_r1": 0.0001613149,
+          "rounds": 7
+        }
+      },
+      "sampling_metadata": {
+        "3": {
+          "estimator": "direct_bernoulli_mc",
+          "n_shots": 20000,
+          "raw_failure_hits": 187,
+          "tilt_gamma": 1.0
+        },
+        "5": {
+          "estimator": "direct_bernoulli_mc",
+          "n_shots": 20000,
+          "raw_failure_hits": 27,
+          "tilt_gamma": 1.0
+        },
+        "7": {
+          "estimator": "direct_bernoulli_mc",
+          "n_shots": 20000,
+          "raw_failure_hits": 6,
+          "tilt_gamma": 1.0
+        }
+      },
+      "scaling_regime": "DEEP_SUBTHRESHOLD_EXPONENTIAL_SUPPRESSION",
+      "target_profile_id": "FEZ_DRIFTED_SPAM"
+    },
+    "FEZ_DRIFTED_SPAM__repetition__PHYSICAL_FEEDFORWARD_MWPM": {
+      "bare_unencoded_eps_L_slope": 0.00608346,
+      "cell_id": "FEZ_DRIFTED_SPAM__repetition__PHYSICAL_FEEDFORWARD_MWPM",
+      "code_family": "repetition",
+      "d3_beats_bare_in_block_rate": true,
+      "d3_beats_bare_in_differential_rate": true,
+      "d7_beats_bare_in_block_rate": true,
+      "decoder_arm": "PHYSICAL_FEEDFORWARD_MWPM",
+      "lambda_3_to_5": 8.241311,
+      "lambda_3_to_5_ci95": [
+        6.729217,
+        9.9558
+      ],
+      "lambda_3_to_5_differential": 6.059034,
+      "lambda_3_to_5_differential_ci95": [
+        1.476366,
+        13.706746
+      ],
+      "lambda_5_to_7": 10.514461,
+      "lambda_5_to_7_ci95": [
+        7.63223,
+        15.174974
+      ],
+      "lambda_5_to_7_differential": 13.913314,
+      "lambda_5_to_7_differential_ci95": [
+        5.888778,
+        86.066792
+      ],
+      "lambda_geometric_mean": 9.308756,
+      "per_distance": {
+        "3": {
+          "distance": 3,
+          "epsilon_L_differential": 0.0010404254,
+          "epsilon_L_differential_ci95": [
+            0.0002540463,
+            0.002053272
+          ],
+          "epsilon_L_per_round": 0.003001313,
+          "epsilon_L_per_round_ci95": [
+            0.0025631167,
+            0.0034402835
+          ],
+          "p_fail_block": 0.00895,
+          "p_fail_r1": 0.0069,
+          "rounds": 3
+        },
+        "5": {
+          "distance": 5,
+          "epsilon_L_differential": 0.0001717147,
+          "epsilon_L_differential_ci95": [
+            0.0001080594,
+            0.0002387086
+          ],
+          "epsilon_L_per_round": 0.0003641791,
+          "epsilon_L_per_round_ci95": [
+            0.0003149962,
+            0.0004179476
+          ],
+          "p_fail_block": 0.0018182449,
+          "p_fail_r1": 0.0011332957,
+          "rounds": 5
+        },
+        "7": {
+          "distance": 7,
+          "epsilon_L_differential": 1.23418e-05,
+          "epsilon_L_differential_ci95": [
+            2.0001e-06,
+            2.64244e-05
+          ],
+          "epsilon_L_per_round": 3.4636e-05,
+          "epsilon_L_per_round_ci95": [
+            2.44509e-05,
+            4.64354e-05
+          ],
+          "p_fail_block": 0.0002424018,
+          "p_fail_r1": 0.0001683807,
+          "rounds": 7
+        }
+      },
+      "sampling_metadata": {
+        "3": {
+          "estimator": "direct_bernoulli_mc",
+          "n_shots": 20000,
+          "raw_failure_hits": 179,
+          "tilt_gamma": 1.0
+        },
+        "5": {
+          "estimator": "exact_poisson_binomial_stratified",
+          "n_shots": 20000,
+          "raw_failure_hits": 477,
+          "tilt_gamma": 1.0
+        },
+        "7": {
+          "estimator": "exact_likelihood_ratio_tilted_mc",
+          "n_shots": 20000,
+          "raw_failure_hits": 448,
+          "tilt_gamma": 2.8
+        }
+      },
+      "scaling_regime": "DEEP_SUBTHRESHOLD_EXPONENTIAL_SUPPRESSION",
+      "target_profile_id": "FEZ_DRIFTED_SPAM"
+    },
+    "FEZ_DRIFTED_SPAM__rotated_surface__PAULI_FRAME_MWPM": {
+      "bare_unencoded_eps_L_slope": 0.00608346,
+      "cell_id": "FEZ_DRIFTED_SPAM__rotated_surface__PAULI_FRAME_MWPM",
+      "code_family": "rotated_surface",
+      "d3_beats_bare_in_block_rate": false,
+      "d3_beats_bare_in_differential_rate": false,
+      "d7_beats_bare_in_block_rate": false,
+      "decoder_arm": "PAULI_FRAME_MWPM",
+      "lambda_3_to_5": 1.630774,
+      "lambda_3_to_5_ci95": [
+        1.495403,
+        1.759594
+      ],
+      "lambda_3_to_5_differential": 1.023096,
+      "lambda_3_to_5_differential_ci95": [
+        0.737021,
+        1.331343
+      ],
+      "lambda_5_to_7": 1.513805,
+      "lambda_5_to_7_ci95": [
+        1.397993,
+        1.653837
+      ],
+      "lambda_5_to_7_differential": 1.366446,
+      "lambda_5_to_7_differential_ci95": [
+        1.143895,
+        1.623777
+      ],
+      "lambda_geometric_mean": 1.571201,
+      "per_distance": {
+        "3": {
+          "distance": 3,
+          "epsilon_L_differential": 0.0086016696,
+          "epsilon_L_differential_ci95": [
+            0.0061913067,
+            0.0108137411
+          ],
+          "epsilon_L_per_round": 0.0197173251,
+          "epsilon_L_per_round_ci95": [
+            0.0184741841,
+            0.0209133762
+          ],
+          "p_fail_block": 0.05685,
+          "p_fail_r1": 0.0412,
+          "rounds": 3
+        },
+        "5": {
+          "distance": 5,
+          "epsilon_L_differential": 0.0084074941,
+          "epsilon_L_differential_ci95": [
+            0.0072356621,
+            0.0094711364
+          ],
+          "epsilon_L_per_round": 0.0120907776,
+          "epsilon_L_per_round_ci95": [
+            0.0114525101,
+            0.0128652406
+          ],
+          "p_fail_block": 0.0576,
+          "p_fail_r1": 0.02655,
+          "rounds": 5
+        },
+        "7": {
+          "distance": 7,
+          "epsilon_L_differential": 0.0061528163,
+          "epsilon_L_differential_ci95": [
+            0.0054507522,
+            0.0068102757
+          ],
+          "epsilon_L_per_round": 0.0079870108,
+          "epsilon_L_per_round_ci95": [
+            0.0075084963,
+            0.0084845588
+          ],
+          "p_fail_block": 0.0533,
+          "p_fail_r1": 0.01885,
+          "rounds": 7
+        }
+      },
+      "sampling_metadata": {
+        "3": {
+          "estimator": "direct_bernoulli_mc",
+          "n_shots": 20000,
+          "raw_failure_hits": 1137,
+          "tilt_gamma": 1.0
+        },
+        "5": {
+          "estimator": "direct_bernoulli_mc",
+          "n_shots": 20000,
+          "raw_failure_hits": 1152,
+          "tilt_gamma": 1.0
+        },
+        "7": {
+          "estimator": "direct_bernoulli_mc",
+          "n_shots": 20000,
+          "raw_failure_hits": 1066,
+          "tilt_gamma": 1.0
+        }
+      },
+      "scaling_regime": "NEAR_OR_ABOVE_THRESHOLD_DEGRADED_SUPPRESSION",
+      "target_profile_id": "FEZ_DRIFTED_SPAM"
+    },
+    "FEZ_DRIFTED_SPAM__rotated_surface__PHYSICAL_FEEDFORWARD_MWPM": {
+      "bare_unencoded_eps_L_slope": 0.00608346,
+      "cell_id": "FEZ_DRIFTED_SPAM__rotated_surface__PHYSICAL_FEEDFORWARD_MWPM",
+      "code_family": "rotated_surface",
+      "d3_beats_bare_in_block_rate": false,
+      "d3_beats_bare_in_differential_rate": false,
+      "d7_beats_bare_in_block_rate": false,
+      "decoder_arm": "PHYSICAL_FEEDFORWARD_MWPM",
+      "lambda_3_to_5": 1.682679,
+      "lambda_3_to_5_ci95": [
+        1.545167,
+        1.822683
+      ],
+      "lambda_3_to_5_differential": 1.116647,
+      "lambda_3_to_5_differential_ci95": [
+        0.840633,
+        1.433346
+      ],
+      "lambda_5_to_7": 1.400688,
+      "lambda_5_to_7_ci95": [
+        1.290648,
+        1.521061
+      ],
+      "lambda_5_to_7_differential": 1.195643,
+      "lambda_5_to_7_differential_ci95": [
+        1.009472,
+        1.398333
+      ],
+      "lambda_geometric_mean": 1.535222,
+      "per_distance": {
+        "3": {
+          "distance": 3,
+          "epsilon_L_differential": 0.0102108191,
+          "epsilon_L_differential_ci95": [
+            0.0077439938,
+            0.0124196418
+          ],
+          "epsilon_L_per_round": 0.0220406365,
+          "epsilon_L_per_round_ci95": [
+            0.0208575606,
+            0.0232474712
+          ],
+          "p_fail_block": 0.06325,
+          "p_fail_r1": 0.04485,
+          "rounds": 3
+        },
+        "5": {
+          "distance": 5,
+          "epsilon_L_differential": 0.009144176,
+          "epsilon_L_differential_ci95": [
+            0.0079551948,
+            0.0102608606
+          ],
+          "epsilon_L_per_round": 0.0130985428,
+          "epsilon_L_per_round_ci95": [
+            0.01238864,
+            0.0139018493
+          ],
+          "p_fail_block": 0.06215,
+          "p_fail_r1": 0.0286,
+          "rounds": 5
+        },
+        "7": {
+          "distance": 7,
+          "epsilon_L_differential": 0.0076479133,
+          "epsilon_L_differential_ci95": [
+            0.0068788894,
+            0.0083405811
+          ],
+          "epsilon_L_per_round": 0.0093515079,
+          "epsilon_L_per_round_ci95": [
+            0.0088168845,
+            0.0098977026
+          ],
+          "p_fail_block": 0.0619,
+          "p_fail_r1": 0.01945,
+          "rounds": 7
+        }
+      },
+      "sampling_metadata": {
+        "3": {
+          "estimator": "direct_bernoulli_mc",
+          "n_shots": 20000,
+          "raw_failure_hits": 1265,
+          "tilt_gamma": 1.0
+        },
+        "5": {
+          "estimator": "direct_bernoulli_mc",
+          "n_shots": 20000,
+          "raw_failure_hits": 1243,
+          "tilt_gamma": 1.0
+        },
+        "7": {
+          "estimator": "direct_bernoulli_mc",
+          "n_shots": 20000,
+          "raw_failure_hits": 1238,
+          "tilt_gamma": 1.0
+        }
+      },
+      "scaling_regime": "NEAR_OR_ABOVE_THRESHOLD_DEGRADED_SUPPRESSION",
+      "target_profile_id": "FEZ_DRIFTED_SPAM"
+    },
+    "FEZ_PUBLISHED__repetition__PAULI_FRAME_MWPM": {
+      "bare_unencoded_eps_L_slope": 0.00608346,
+      "cell_id": "FEZ_PUBLISHED__repetition__PAULI_FRAME_MWPM",
+      "code_family": "repetition",
+      "d3_beats_bare_in_block_rate": true,
+      "d3_beats_bare_in_differential_rate": true,
+      "d7_beats_bare_in_block_rate": true,
+      "decoder_arm": "PAULI_FRAME_MWPM",
+      "lambda_3_to_5": 10.56534,
+      "lambda_3_to_5_ci95": [
+        7.858377,
+        14.109253
+      ],
+      "lambda_3_to_5_differential": 7.695757,
+      "lambda_3_to_5_differential_ci95": [
+        1.881313,
+        15.095896
+      ],
+      "lambda_5_to_7": 9.695809,
+      "lambda_5_to_7_ci95": [
+        5.596677,
+        20.58427
+      ],
+      "lambda_5_to_7_differential": 8.372853,
+      "lambda_5_to_7_differential_ci95": [
+        4.242671,
+        23.166142
+      ],
+      "lambda_geometric_mean": 10.121241,
+      "per_distance": {
+        "3": {
+          "distance": 3,
+          "epsilon_L_differential": 0.0006025308,
+          "epsilon_L_differential_ci95": [
+            0.0001750735,
+            0.0010795109
+          ],
+          "epsilon_L_per_round": 0.0010020067,
+          "epsilon_L_per_round_ci95": [
+            0.0007511278,
+            0.0012866414
+          ],
+          "p_fail_block": 0.003,
+          "p_fail_r1": 0.0018,
+          "rounds": 3
+        },
+        "5": {
+          "distance": 5,
+          "epsilon_L_differential": 7.82939e-05,
+          "epsilon_L_differential_ci95": [
+            5.87524e-05,
+            9.95747e-05
+          ],
+          "epsilon_L_per_round": 9.4839e-05,
+          "epsilon_L_per_round_ci95": [
+            8.01335e-05,
+            0.0001097039
+          ],
+          "p_fail_block": 0.0004740153,
+          "p_fail_r1": 0.0001610141,
+          "rounds": 5
+        },
+        "7": {
+          "distance": 7,
+          "epsilon_L_differential": 9.3509e-06,
+          "epsilon_L_differential_ci95": [
+            3.6218e-06,
+            1.69333e-05
+          ],
+          "epsilon_L_per_round": 9.7814e-06,
+          "epsilon_L_per_round_ci95": [
+            4.6501e-06,
+            1.61475e-05
+          ],
+          "p_fail_block": 6.84661e-05,
+          "p_fail_r1": 1.23646e-05,
+          "rounds": 7
+        }
+      },
+      "sampling_metadata": {
+        "3": {
+          "estimator": "direct_bernoulli_mc",
+          "n_shots": 20000,
+          "raw_failure_hits": 60,
+          "tilt_gamma": 1.0
+        },
+        "5": {
+          "estimator": "exact_poisson_binomial_stratified",
+          "n_shots": 20000,
+          "raw_failure_hits": 507,
+          "tilt_gamma": 1.0
+        },
+        "7": {
+          "estimator": "exact_likelihood_ratio_tilted_mc",
+          "n_shots": 20000,
+          "raw_failure_hits": 247,
+          "tilt_gamma": 3.9201
+        }
+      },
+      "scaling_regime": "DEEP_SUBTHRESHOLD_EXPONENTIAL_SUPPRESSION",
+      "target_profile_id": "FEZ_PUBLISHED"
+    },
+    "FEZ_PUBLISHED__repetition__PHYSICAL_FEEDFORWARD_MWPM": {
+      "bare_unencoded_eps_L_slope": 0.00608346,
+      "cell_id": "FEZ_PUBLISHED__repetition__PHYSICAL_FEEDFORWARD_MWPM",
+      "code_family": "repetition",
+      "d3_beats_bare_in_block_rate": true,
+      "d3_beats_bare_in_differential_rate": true,
+      "d7_beats_bare_in_block_rate": true,
+      "decoder_arm": "PHYSICAL_FEEDFORWARD_MWPM",
+      "lambda_3_to_5": 13.92517,
+      "lambda_3_to_5_ci95": [
+        10.734341,
+        17.767053
+      ],
+      "lambda_3_to_5_differential": 13.916687,
+      "lambda_3_to_5_differential_ci95": [
+        6.861035,
+        23.196559
+      ],
+      "lambda_5_to_7": 5.966383,
+      "lambda_5_to_7_ci95": [
+        3.558567,
+        11.241856
+      ],
+      "lambda_5_to_7_differential": 4.571123,
+      "lambda_5_to_7_differential_ci95": [
+        2.612649,
+        10.695622
+      ],
+      "lambda_geometric_mean": 9.114982,
+      "per_distance": {
+        "3": {
+          "distance": 3,
+          "epsilon_L_differential": 0.0010803761,
+          "epsilon_L_differential_ci95": [
+            0.0005530127,
+            0.0016330594
+          ],
+          "epsilon_L_per_round": 0.0013704193,
+          "epsilon_L_per_round_ci95": [
+            0.0010856891,
+            0.0016554751
+          ],
+          "p_fail_block": 0.0041,
+          "p_fail_r1": 0.00195,
+          "rounds": 3
+        },
+        "5": {
+          "distance": 5,
+          "epsilon_L_differential": 7.76317e-05,
+          "epsilon_L_differential_ci95": [
+            5.91058e-05,
+            9.70267e-05
+          ],
+          "epsilon_L_per_round": 9.84131e-05,
+          "epsilon_L_per_round_ci95": [
+            8.35995e-05,
+            0.0001144995
+          ],
+          "p_fail_block": 0.0004918719,
+          "p_fail_r1": 0.0001815301,
+          "rounds": 5
+        },
+        "7": {
+          "distance": 7,
+          "epsilon_L_differential": 1.69831e-05,
+          "epsilon_L_differential_ci95": [
+            7.5895e-06,
+            2.86624e-05
+          ],
+          "epsilon_L_per_round": 1.64946e-05,
+          "epsilon_L_per_round_ci95": [
+            8.906e-06,
+            2.72632e-05
+          ],
+          "p_fail_block": 0.0001154508,
+          "p_fail_r1": 1.35638e-05,
+          "rounds": 7
+        }
+      },
+      "sampling_metadata": {
+        "3": {
+          "estimator": "direct_bernoulli_mc",
+          "n_shots": 20000,
+          "raw_failure_hits": 82,
+          "tilt_gamma": 1.0
+        },
+        "5": {
+          "estimator": "exact_poisson_binomial_stratified",
+          "n_shots": 20000,
+          "raw_failure_hits": 538,
+          "tilt_gamma": 1.0
+        },
+        "7": {
+          "estimator": "exact_likelihood_ratio_tilted_mc",
+          "n_shots": 20000,
+          "raw_failure_hits": 284,
+          "tilt_gamma": 3.7363
+        }
+      },
+      "scaling_regime": "DEEP_SUBTHRESHOLD_EXPONENTIAL_SUPPRESSION",
+      "target_profile_id": "FEZ_PUBLISHED"
+    },
+    "FEZ_PUBLISHED__rotated_surface__PAULI_FRAME_MWPM": {
+      "bare_unencoded_eps_L_slope": 0.00608346,
+      "cell_id": "FEZ_PUBLISHED__rotated_surface__PAULI_FRAME_MWPM",
+      "code_family": "rotated_surface",
+      "d3_beats_bare_in_block_rate": false,
+      "d3_beats_bare_in_differential_rate": false,
+      "d7_beats_bare_in_block_rate": true,
+      "decoder_arm": "PAULI_FRAME_MWPM",
+      "lambda_3_to_5": 1.701185,
+      "lambda_3_to_5_ci95": [
+        1.514131,
+        1.893666
+      ],
+      "lambda_3_to_5_differential": 1.193389,
+      "lambda_3_to_5_differential_ci95": [
+        0.917894,
+        1.487492
+      ],
+      "lambda_5_to_7": 1.977847,
+      "lambda_5_to_7_ci95": [
+        1.746978,
+        2.251566
+      ],
+      "lambda_5_to_7_differential": 1.990207,
+      "lambda_5_to_7_differential_ci95": [
+        1.696517,
+        2.332321
+      ],
+      "lambda_geometric_mean": 1.834307,
+      "per_distance": {
+        "3": {
+          "distance": 3,
+          "epsilon_L_differential": 0.0068185599,
+          "epsilon_L_differential_ci95": [
+            0.0053447644,
+            0.0082075333
+          ],
+          "epsilon_L_per_round": 0.0094092922,
+          "epsilon_L_per_round_ci95": [
+            0.0086655665,
+            0.0102416852
+          ],
+          "p_fail_block": 0.0277,
+          "p_fail_r1": 0.01455,
+          "rounds": 3
+        },
+        "5": {
+          "distance": 5,
+          "epsilon_L_differential": 0.0057136097,
+          "epsilon_L_differential_ci95": [
+            0.0050900156,
+            0.0063748718
+          ],
+          "epsilon_L_per_round": 0.0055310227,
+          "epsilon_L_per_round_ci95": [
+            0.0050715961,
+            0.0060026577
+          ],
+          "p_fail_block": 0.02705,
+          "p_fail_r1": 0.0048,
+          "rounds": 5
+        },
+        "7": {
+          "distance": 7,
+          "epsilon_L_differential": 0.0028708626,
+          "epsilon_L_differential_ci95": [
+            0.0025200118,
+            0.0032226789
+          ],
+          "epsilon_L_per_round": 0.0027964871,
+          "epsilon_L_per_round_ci95": [
+            0.0025307853,
+            0.0030628583
+          ],
+          "p_fail_block": 0.01925,
+          "p_fail_r1": 0.00235,
+          "rounds": 7
+        }
+      },
+      "sampling_metadata": {
+        "3": {
+          "estimator": "direct_bernoulli_mc",
+          "n_shots": 20000,
+          "raw_failure_hits": 554,
+          "tilt_gamma": 1.0
+        },
+        "5": {
+          "estimator": "direct_bernoulli_mc",
+          "n_shots": 20000,
+          "raw_failure_hits": 541,
+          "tilt_gamma": 1.0
+        },
+        "7": {
+          "estimator": "direct_bernoulli_mc",
+          "n_shots": 20000,
+          "raw_failure_hits": 385,
+          "tilt_gamma": 1.0
+        }
+      },
+      "scaling_regime": "MARGINAL_SUBTHRESHOLD_SUPPRESSION",
+      "target_profile_id": "FEZ_PUBLISHED"
+    },
+    "FEZ_PUBLISHED__rotated_surface__PHYSICAL_FEEDFORWARD_MWPM": {
+      "bare_unencoded_eps_L_slope": 0.00608346,
+      "cell_id": "FEZ_PUBLISHED__rotated_surface__PHYSICAL_FEEDFORWARD_MWPM",
+      "code_family": "rotated_surface",
+      "d3_beats_bare_in_block_rate": false,
+      "d3_beats_bare_in_differential_rate": false,
+      "d7_beats_bare_in_block_rate": true,
+      "decoder_arm": "PHYSICAL_FEEDFORWARD_MWPM",
+      "lambda_3_to_5": 1.691424,
+      "lambda_3_to_5_ci95": [
+        1.519826,
+        1.883998
+      ],
+      "lambda_3_to_5_differential": 1.401056,
+      "lambda_3_to_5_differential_ci95": [
+        1.102878,
+        1.742406
+      ],
+      "lambda_5_to_7": 1.652929,
+      "lambda_5_to_7_ci95": [
+        1.479525,
+        1.853781
+      ],
+      "lambda_5_to_7_differential": 1.499538,
+      "lambda_5_to_7_differential_ci95": [
+        1.283624,
+        1.742828
+      ],
+      "lambda_geometric_mean": 1.672066,
+      "per_distance": {
+        "3": {
+          "distance": 3,
+          "epsilon_L_differential": 0.008594838,
+          "epsilon_L_differential_ci95": [
+            0.0069626392,
+            0.0101779229
+          ],
+          "epsilon_L_per_round": 0.011042059,
+          "epsilon_L_per_round_ci95": [
+            0.010172211,
+            0.011915013
+          ],
+          "p_fail_block": 0.0324,
+          "p_fail_r1": 0.0159,
+          "rounds": 3
+        },
+        "5": {
+          "distance": 5,
+          "epsilon_L_differential": 0.0061345428,
+          "epsilon_L_differential_ci95": [
+            0.0054182118,
+            0.0068847141
+          ],
+          "epsilon_L_per_round": 0.0065282615,
+          "epsilon_L_per_round_ci95": [
+            0.0060548812,
+            0.0070352107
+          ],
+          "p_fail_block": 0.0318,
+          "p_fail_r1": 0.0081,
+          "rounds": 5
+        },
+        "7": {
+          "distance": 7,
+          "epsilon_L_differential": 0.0040909564,
+          "epsilon_L_differential_ci95": [
+            0.0037022336,
+            0.004514577
+          ],
+          "epsilon_L_per_round": 0.0039495123,
+          "epsilon_L_per_round_ci95": [
+            0.0036056447,
+            0.0043025268
+          ],
+          "p_fail_block": 0.027,
+          "p_fail_r1": 0.0031,
+          "rounds": 7
+        }
+      },
+      "sampling_metadata": {
+        "3": {
+          "estimator": "direct_bernoulli_mc",
+          "n_shots": 20000,
+          "raw_failure_hits": 648,
+          "tilt_gamma": 1.0
+        },
+        "5": {
+          "estimator": "direct_bernoulli_mc",
+          "n_shots": 20000,
+          "raw_failure_hits": 636,
+          "tilt_gamma": 1.0
+        },
+        "7": {
+          "estimator": "direct_bernoulli_mc",
+          "n_shots": 20000,
+          "raw_failure_hits": 540,
+          "tilt_gamma": 1.0
+        }
+      },
+      "scaling_regime": "MARGINAL_SUBTHRESHOLD_SUPPRESSION",
+      "target_profile_id": "FEZ_PUBLISHED"
+    },
+    "H2_1_PUBLISHED__repetition__PAULI_FRAME_MWPM": {
+      "bare_unencoded_eps_L_slope": 0.0004476,
+      "cell_id": "H2_1_PUBLISHED__repetition__PAULI_FRAME_MWPM",
+      "code_family": "repetition",
+      "d3_beats_bare_in_block_rate": true,
+      "d3_beats_bare_in_differential_rate": true,
+      "d7_beats_bare_in_block_rate": true,
+      "decoder_arm": "PAULI_FRAME_MWPM",
+      "lambda_3_to_5": 58.855993,
+      "lambda_3_to_5_ci95": [
+        37.439895,
+        102.558175
+      ],
+      "lambda_3_to_5_differential": 38.036307,
+      "lambda_3_to_5_differential_ci95": [
+        19.803857,
+        81.310383
+      ],
+      "lambda_5_to_7": 114.929993,
+      "lambda_5_to_7_ci95": [
+        33.523601,
+        8275.757449
+      ],
+      "lambda_5_to_7_differential": 129.440879,
+      "lambda_5_to_7_differential_ci95": [
+        28.096614,
+        7870.615724
+      ],
+      "lambda_geometric_mean": 82.245479,
+      "per_distance": {
+        "3": {
+          "distance": 3,
+          "epsilon_L_differential": 1.7069e-05,
+          "epsilon_L_differential_ci95": [
+            1.47925e-05,
+            1.9193e-05
+          ],
+          "epsilon_L_per_round": 2.99071e-05,
+          "epsilon_L_per_round_ci95": [
+            2.84771e-05,
+            3.13164e-05
+          ],
+          "p_fail_block": 8.9716e-05,
+          "p_fail_r1": 5.55824e-05,
+          "rounds": 3
+        },
+        "5": {
+          "distance": 5,
+          "epsilon_L_differential": 4.488e-07,
+          "epsilon_L_differential_ci95": [
+            2.102e-07,
+            8.389e-07
+          ],
+          "epsilon_L_per_round": 5.081e-07,
+          "epsilon_L_per_round_ci95": [
+            2.942e-07,
+            8.001e-07
+          ],
+          "p_fail_block": 2.5407e-06,
+          "p_fail_r1": 7.457e-07,
+          "rounds": 5
+        },
+        "7": {
+          "distance": 7,
+          "epsilon_L_differential": 3.5e-09,
+          "epsilon_L_differential_ci95": [
+            1e-10,
+            1.31e-08
+          ],
+          "epsilon_L_per_round": 4.4e-09,
+          "epsilon_L_per_round_ci95": [
+            1e-10,
+            1.25e-08
+          ],
+          "p_fail_block": 3.09e-08,
+          "p_fail_r1": 1.01e-08,
+          "rounds": 7
+        }
+      },
+      "sampling_metadata": {
+        "3": {
+          "estimator": "exact_poisson_binomial_stratified",
+          "n_shots": 20000,
+          "raw_failure_hits": 3552,
+          "tilt_gamma": 1.0
+        },
+        "5": {
+          "estimator": "exact_poisson_binomial_stratified",
+          "n_shots": 20000,
+          "raw_failure_hits": 290,
+          "tilt_gamma": 1.0
+        },
+        "7": {
+          "estimator": "exact_poisson_binomial_stratified",
+          "n_shots": 20000,
+          "raw_failure_hits": 8,
+          "tilt_gamma": 1.0
+        }
+      },
+      "scaling_regime": "DEEP_SUBTHRESHOLD_EXPONENTIAL_SUPPRESSION",
+      "target_profile_id": "H2_1_PUBLISHED"
+    },
+    "H2_1_PUBLISHED__repetition__PHYSICAL_FEEDFORWARD_MWPM": {
+      "bare_unencoded_eps_L_slope": 0.0004476,
+      "cell_id": "H2_1_PUBLISHED__repetition__PHYSICAL_FEEDFORWARD_MWPM",
+      "code_family": "repetition",
+      "d3_beats_bare_in_block_rate": true,
+      "d3_beats_bare_in_differential_rate": true,
+      "d7_beats_bare_in_block_rate": true,
+      "decoder_arm": "PHYSICAL_FEEDFORWARD_MWPM",
+      "lambda_3_to_5": 49.281587,
+      "lambda_3_to_5_ci95": [
+        33.495403,
+        75.704471
+      ],
+      "lambda_3_to_5_differential": 30.760747,
+      "lambda_3_to_5_differential_ci95": [
+        18.664161,
+        59.502242
+      ],
+      "lambda_5_to_7": 276.825547,
+      "lambda_5_to_7_ci95": [
+        117.570141,
+        1241.508298
+      ],
+      "lambda_5_to_7_differential": 528.194077,
+      "lambda_5_to_7_differential_ci95": [
+        125.642712,
+        5116.120372
+      ],
+      "lambda_geometric_mean": 116.800695,
+      "per_distance": {
+        "3": {
+          "distance": 3,
+          "epsilon_L_differential": 1.9229e-05,
+          "epsilon_L_differential_ci95": [
+            1.68485e-05,
+            2.1883e-05
+          ],
+          "epsilon_L_per_round": 3.25191e-05,
+          "epsilon_L_per_round_ci95": [
+            3.09166e-05,
+            3.3992e-05
+          ],
+          "p_fail_block": 9.75509e-05,
+          "p_fail_r1": 5.90982e-05,
+          "rounds": 3
+        },
+        "5": {
+          "distance": 5,
+          "epsilon_L_differential": 6.251e-07,
+          "epsilon_L_differential_ci95": [
+            3.311e-07,
+            1.003e-06
+          ],
+          "epsilon_L_per_round": 6.599e-07,
+          "epsilon_L_per_round_ci95": [
+            4.291e-07,
+            9.497e-07
+          ],
+          "p_fail_block": 3.2993e-06,
+          "p_fail_r1": 7.989e-07,
+          "rounds": 5
+        },
+        "7": {
+          "distance": 7,
+          "epsilon_L_differential": 1.2e-09,
+          "epsilon_L_differential_ci95": [
+            1e-10,
+            4.1e-09
+          ],
+          "epsilon_L_per_round": 2.4e-09,
+          "epsilon_L_per_round_ci95": [
+            6e-10,
+            5.2e-09
+          ],
+          "p_fail_block": 1.67e-08,
+          "p_fail_r1": 9.6e-09,
+          "rounds": 7
+        }
+      },
+      "sampling_metadata": {
+        "3": {
+          "estimator": "exact_poisson_binomial_stratified",
+          "n_shots": 20000,
+          "raw_failure_hits": 3707,
+          "tilt_gamma": 1.0
+        },
+        "5": {
+          "estimator": "exact_poisson_binomial_stratified",
+          "n_shots": 20000,
+          "raw_failure_hits": 290,
+          "tilt_gamma": 1.0
+        },
+        "7": {
+          "estimator": "exact_poisson_binomial_stratified",
+          "n_shots": 20000,
+          "raw_failure_hits": 13,
+          "tilt_gamma": 1.0
+        }
+      },
+      "scaling_regime": "DEEP_SUBTHRESHOLD_EXPONENTIAL_SUPPRESSION",
+      "target_profile_id": "H2_1_PUBLISHED"
+    },
+    "H2_1_PUBLISHED__rotated_surface__PAULI_FRAME_MWPM": {
+      "bare_unencoded_eps_L_slope": 0.0004476,
+      "cell_id": "H2_1_PUBLISHED__rotated_surface__PAULI_FRAME_MWPM",
+      "code_family": "rotated_surface",
+      "d3_beats_bare_in_block_rate": true,
+      "d3_beats_bare_in_differential_rate": true,
+      "d7_beats_bare_in_block_rate": true,
+      "decoder_arm": "PAULI_FRAME_MWPM",
+      "lambda_3_to_5": 6.963162,
+      "lambda_3_to_5_ci95": [
+        5.440476,
+        9.099935
+      ],
+      "lambda_3_to_5_differential": 5.570942,
+      "lambda_3_to_5_differential_ci95": [
+        4.211373,
+        7.773965
+      ],
+      "lambda_5_to_7": 13.776835,
+      "lambda_5_to_7_ci95": [
+        8.137359,
+        28.152081
+      ],
+      "lambda_5_to_7_differential": 13.753631,
+      "lambda_5_to_7_differential_ci95": [
+        7.588168,
+        29.640907
+      ],
+      "lambda_geometric_mean": 9.794404,
+      "per_distance": {
+        "3": {
+          "distance": 3,
+          "epsilon_L_differential": 0.000285186,
+          "epsilon_L_differential_ci95": [
+            0.0002606885,
+            0.0003096942
+          ],
+          "epsilon_L_per_round": 0.0003528721,
+          "epsilon_L_per_round_ci95": [
+            0.0003378258,
+            0.0003689928
+          ],
+          "p_fail_block": 0.0010578695,
+          "p_fail_r1": 0.0004882169,
+          "rounds": 3
+        },
+        "5": {
+          "distance": 5,
+          "epsilon_L_differential": 5.11917e-05,
+          "epsilon_L_differential_ci95": [
+            3.68529e-05,
+            6.57774e-05
+          ],
+          "epsilon_L_per_round": 5.0677e-05,
+          "epsilon_L_per_round_ci95": [
+            3.90443e-05,
+            6.44031e-05
+          ],
+          "p_fail_block": 0.0002533336,
+          "p_fail_r1": 4.86181e-05,
+          "rounds": 5
+        },
+        "7": {
+          "distance": 7,
+          "epsilon_L_differential": 3.7221e-06,
+          "epsilon_L_differential_ci95": [
+            1.9031e-06,
+            6.2465e-06
+          ],
+          "epsilon_L_per_round": 3.6784e-06,
+          "epsilon_L_per_round_ci95": [
+            1.9142e-06,
+            5.6814e-06
+          ],
+          "p_fail_block": 2.57484e-05,
+          "p_fail_r1": 3.4166e-06,
+          "rounds": 7
+        }
+      },
+      "sampling_metadata": {
+        "3": {
+          "estimator": "exact_poisson_binomial_stratified",
+          "n_shots": 20000,
+          "raw_failure_hits": 4033,
+          "tilt_gamma": 1.0
+        },
+        "5": {
+          "estimator": "exact_poisson_binomial_stratified",
+          "n_shots": 20000,
+          "raw_failure_hits": 262,
+          "tilt_gamma": 1.0
+        },
+        "7": {
+          "estimator": "exact_likelihood_ratio_tilted_mc",
+          "n_shots": 20000,
+          "raw_failure_hits": 51,
+          "tilt_gamma": 2.9283
+        }
+      },
+      "scaling_regime": "DEEP_SUBTHRESHOLD_EXPONENTIAL_SUPPRESSION",
+      "target_profile_id": "H2_1_PUBLISHED"
+    },
+    "H2_1_PUBLISHED__rotated_surface__PHYSICAL_FEEDFORWARD_MWPM": {
+      "bare_unencoded_eps_L_slope": 0.0004476,
+      "cell_id": "H2_1_PUBLISHED__rotated_surface__PHYSICAL_FEEDFORWARD_MWPM",
+      "code_family": "rotated_surface",
+      "d3_beats_bare_in_block_rate": true,
+      "d3_beats_bare_in_differential_rate": true,
+      "d7_beats_bare_in_block_rate": true,
+      "decoder_arm": "PHYSICAL_FEEDFORWARD_MWPM",
+      "lambda_3_to_5": 7.153968,
+      "lambda_3_to_5_ci95": [
+        5.810079,
+        9.352101
+      ],
+      "lambda_3_to_5_differential": 5.840097,
+      "lambda_3_to_5_differential_ci95": [
+        4.475362,
+        8.252658
+      ],
+      "lambda_5_to_7": 4.153653,
+      "lambda_5_to_7_ci95": [
+        2.173957,
+        10.864986
+      ],
+      "lambda_5_to_7_differential": 3.808396,
+      "lambda_5_to_7_differential_ci95": [
+        1.942548,
+        11.192275
+      ],
+      "lambda_geometric_mean": 5.451156,
+      "per_distance": {
+        "3": {
+          "distance": 3,
+          "epsilon_L_differential": 0.0003238586,
+          "epsilon_L_differential_ci95": [
+            0.0002986818,
+            0.0003510391
+          ],
+          "epsilon_L_per_round": 0.0003874119,
+          "epsilon_L_per_round_ci95": [
+            0.0003717443,
+            0.0004039892
+          ],
+          "p_fail_block": 0.0011613353,
+          "p_fail_r1": 0.0005144941,
+          "rounds": 3
+        },
+        "5": {
+          "distance": 5,
+          "epsilon_L_differential": 5.54543e-05,
+          "epsilon_L_differential_ci95": [
+            3.93966e-05,
+            7.22195e-05
+          ],
+          "epsilon_L_per_round": 5.41534e-05,
+          "epsilon_L_per_round_ci95": [
+            4.17954e-05,
+            6.61129e-05
+          ],
+          "p_fail_block": 0.0002707085,
+          "p_fail_r1": 4.89498e-05,
+          "rounds": 5
+        },
+        "7": {
+          "distance": 7,
+          "epsilon_L_differential": 1.45611e-05,
+          "epsilon_L_differential_ci95": [
+            5.0616e-06,
+            2.64605e-05
+          ],
+          "epsilon_L_per_round": 1.30375e-05,
+          "epsilon_L_per_round_ci95": [
+            5.2675e-06,
+            2.25678e-05
+          ],
+          "p_fail_block": 9.12557e-05,
+          "p_fail_r1": 3.8963e-06,
+          "rounds": 7
+        }
+      },
+      "sampling_metadata": {
+        "3": {
+          "estimator": "exact_poisson_binomial_stratified",
+          "n_shots": 20000,
+          "raw_failure_hits": 4183,
+          "tilt_gamma": 1.0
+        },
+        "5": {
+          "estimator": "exact_poisson_binomial_stratified",
+          "n_shots": 20000,
+          "raw_failure_hits": 259,
+          "tilt_gamma": 1.0
+        },
+        "7": {
+          "estimator": "exact_likelihood_ratio_tilted_mc",
+          "n_shots": 20000,
+          "raw_failure_hits": 66,
+          "tilt_gamma": 2.8662
+        }
+      },
+      "scaling_regime": "DEEP_SUBTHRESHOLD_EXPONENTIAL_SUPPRESSION",
+      "target_profile_id": "H2_1_PUBLISHED"
+    }
+  },
+  "operational_profile_summary": [
+    {
+      "code_family": "repetition",
+      "decoder_arm": "PAULI_FRAME_MWPM",
+      "eps_L_d3": 0.0010020067,
+      "eps_L_d5": 9.4839e-05,
+      "eps_L_d7": 9.7814e-06,
+      "eps_L_diff_d3": 0.0006025308,
+      "lambda_3_to_5": 10.56534,
+      "lambda_3_to_5_differential": 7.695757,
+      "lambda_5_to_7": 9.695809,
+      "lambda_5_to_7_differential": 8.372853,
+      "scaling_regime": "DEEP_SUBTHRESHOLD_EXPONENTIAL_SUPPRESSION",
+      "target_profile_id": "FEZ_PUBLISHED"
+    },
+    {
+      "code_family": "repetition",
+      "decoder_arm": "PHYSICAL_FEEDFORWARD_MWPM",
+      "eps_L_d3": 0.0013704193,
+      "eps_L_d5": 9.84131e-05,
+      "eps_L_d7": 1.64946e-05,
+      "eps_L_diff_d3": 0.0010803761,
+      "lambda_3_to_5": 13.92517,
+      "lambda_3_to_5_differential": 13.916687,
+      "lambda_5_to_7": 5.966383,
+      "lambda_5_to_7_differential": 4.571123,
+      "scaling_regime": "DEEP_SUBTHRESHOLD_EXPONENTIAL_SUPPRESSION",
+      "target_profile_id": "FEZ_PUBLISHED"
+    },
+    {
+      "code_family": "rotated_surface",
+      "decoder_arm": "PAULI_FRAME_MWPM",
+      "eps_L_d3": 0.0094092922,
+      "eps_L_d5": 0.0055310227,
+      "eps_L_d7": 0.0027964871,
+      "eps_L_diff_d3": 0.0068185599,
+      "lambda_3_to_5": 1.701185,
+      "lambda_3_to_5_differential": 1.193389,
+      "lambda_5_to_7": 1.977847,
+      "lambda_5_to_7_differential": 1.990207,
+      "scaling_regime": "MARGINAL_SUBTHRESHOLD_SUPPRESSION",
+      "target_profile_id": "FEZ_PUBLISHED"
+    },
+    {
+      "code_family": "rotated_surface",
+      "decoder_arm": "PHYSICAL_FEEDFORWARD_MWPM",
+      "eps_L_d3": 0.011042059,
+      "eps_L_d5": 0.0065282615,
+      "eps_L_d7": 0.0039495123,
+      "eps_L_diff_d3": 0.008594838,
+      "lambda_3_to_5": 1.691424,
+      "lambda_3_to_5_differential": 1.401056,
+      "lambda_5_to_7": 1.652929,
+      "lambda_5_to_7_differential": 1.499538,
+      "scaling_regime": "MARGINAL_SUBTHRESHOLD_SUPPRESSION",
+      "target_profile_id": "FEZ_PUBLISHED"
+    },
+    {
+      "code_family": "repetition",
+      "decoder_arm": "PAULI_FRAME_MWPM",
+      "eps_L_d3": 0.0031362983,
+      "eps_L_d5": 0.0002702921,
+      "eps_L_d7": 4.28682e-05,
+      "eps_L_diff_d3": 0.0009653009,
+      "lambda_3_to_5": 11.603368,
+      "lambda_3_to_5_differential": 12.529571,
+      "lambda_5_to_7": 6.305193,
+      "lambda_5_to_7_differential": 3.331636,
+      "scaling_regime": "DEEP_SUBTHRESHOLD_EXPONENTIAL_SUPPRESSION",
+      "target_profile_id": "FEZ_DRIFTED_SPAM"
+    },
+    {
+      "code_family": "repetition",
+      "decoder_arm": "PHYSICAL_FEEDFORWARD_MWPM",
+      "eps_L_d3": 0.003001313,
+      "eps_L_d5": 0.0003641791,
+      "eps_L_d7": 3.4636e-05,
+      "eps_L_diff_d3": 0.0010404254,
+      "lambda_3_to_5": 8.241311,
+      "lambda_3_to_5_differential": 6.059034,
+      "lambda_5_to_7": 10.514461,
+      "lambda_5_to_7_differential": 13.913314,
+      "scaling_regime": "DEEP_SUBTHRESHOLD_EXPONENTIAL_SUPPRESSION",
+      "target_profile_id": "FEZ_DRIFTED_SPAM"
+    },
+    {
+      "code_family": "rotated_surface",
+      "decoder_arm": "PAULI_FRAME_MWPM",
+      "eps_L_d3": 0.0197173251,
+      "eps_L_d5": 0.0120907776,
+      "eps_L_d7": 0.0079870108,
+      "eps_L_diff_d3": 0.0086016696,
+      "lambda_3_to_5": 1.630774,
+      "lambda_3_to_5_differential": 1.023096,
+      "lambda_5_to_7": 1.513805,
+      "lambda_5_to_7_differential": 1.366446,
+      "scaling_regime": "NEAR_OR_ABOVE_THRESHOLD_DEGRADED_SUPPRESSION",
+      "target_profile_id": "FEZ_DRIFTED_SPAM"
+    },
+    {
+      "code_family": "rotated_surface",
+      "decoder_arm": "PHYSICAL_FEEDFORWARD_MWPM",
+      "eps_L_d3": 0.0220406365,
+      "eps_L_d5": 0.0130985428,
+      "eps_L_d7": 0.0093515079,
+      "eps_L_diff_d3": 0.0102108191,
+      "lambda_3_to_5": 1.682679,
+      "lambda_3_to_5_differential": 1.116647,
+      "lambda_5_to_7": 1.400688,
+      "lambda_5_to_7_differential": 1.195643,
+      "scaling_regime": "NEAR_OR_ABOVE_THRESHOLD_DEGRADED_SUPPRESSION",
+      "target_profile_id": "FEZ_DRIFTED_SPAM"
+    },
+    {
+      "code_family": "repetition",
+      "decoder_arm": "PAULI_FRAME_MWPM",
+      "eps_L_d3": 2.99071e-05,
+      "eps_L_d5": 5.081e-07,
+      "eps_L_d7": 4.4e-09,
+      "eps_L_diff_d3": 1.7069e-05,
+      "lambda_3_to_5": 58.855993,
+      "lambda_3_to_5_differential": 38.036307,
+      "lambda_5_to_7": 114.929993,
+      "lambda_5_to_7_differential": 129.440879,
+      "scaling_regime": "DEEP_SUBTHRESHOLD_EXPONENTIAL_SUPPRESSION",
+      "target_profile_id": "H2_1_PUBLISHED"
+    },
+    {
+      "code_family": "repetition",
+      "decoder_arm": "PHYSICAL_FEEDFORWARD_MWPM",
+      "eps_L_d3": 3.25191e-05,
+      "eps_L_d5": 6.599e-07,
+      "eps_L_d7": 2.4e-09,
+      "eps_L_diff_d3": 1.9229e-05,
+      "lambda_3_to_5": 49.281587,
+      "lambda_3_to_5_differential": 30.760747,
+      "lambda_5_to_7": 276.825547,
+      "lambda_5_to_7_differential": 528.194077,
+      "scaling_regime": "DEEP_SUBTHRESHOLD_EXPONENTIAL_SUPPRESSION",
+      "target_profile_id": "H2_1_PUBLISHED"
+    },
+    {
+      "code_family": "rotated_surface",
+      "decoder_arm": "PAULI_FRAME_MWPM",
+      "eps_L_d3": 0.0003528721,
+      "eps_L_d5": 5.0677e-05,
+      "eps_L_d7": 3.6784e-06,
+      "eps_L_diff_d3": 0.000285186,
+      "lambda_3_to_5": 6.963162,
+      "lambda_3_to_5_differential": 5.570942,
+      "lambda_5_to_7": 13.776835,
+      "lambda_5_to_7_differential": 13.753631,
+      "scaling_regime": "DEEP_SUBTHRESHOLD_EXPONENTIAL_SUPPRESSION",
+      "target_profile_id": "H2_1_PUBLISHED"
+    },
+    {
+      "code_family": "rotated_surface",
+      "decoder_arm": "PHYSICAL_FEEDFORWARD_MWPM",
+      "eps_L_d3": 0.0003874119,
+      "eps_L_d5": 5.41534e-05,
+      "eps_L_d7": 1.30375e-05,
+      "eps_L_diff_d3": 0.0003238586,
+      "lambda_3_to_5": 7.153968,
+      "lambda_3_to_5_differential": 5.840097,
+      "lambda_5_to_7": 4.153653,
+      "lambda_5_to_7_differential": 3.808396,
+      "scaling_regime": "DEEP_SUBTHRESHOLD_EXPONENTIAL_SUPPRESSION",
+      "target_profile_id": "H2_1_PUBLISHED"
+    }
+  ],
+  "prerequisite_card_c_crossing_report_sha256": "8527279fe95e3547329a7ead876ab553ee3a13af24086107280654d0cab303a0",
+  "provider_job_id": null,
+  "qpu_seconds": 0,
+  "schema": "osiris.qec_card_c.multidistance_threshold_report/1",
+  "scientific_conclusions": {
+    "fez_drifted_spam_surface_degradation": {
+      "bare_unencoded_eps_L": 0.00608346,
+      "d3_block_eps_L_pauli_frame": 0.0197173251,
+      "explains_card_c_d3_non_crossing": true,
+      "feedforward_diff_lambda_3_to_5": 1.116647,
+      "feedforward_diff_lambda_5_to_7": 1.195643,
+      "pauli_frame_diff_lambda_3_to_5": 1.023096,
+      "pauli_frame_diff_lambda_5_to_7": 1.366446
+    },
+    "fez_published_repetition_deep_subthreshold": true,
+    "fez_published_surface_marginal_subthreshold": {
+      "feedforward_diff_lambda_3_to_5": 1.401056,
+      "feedforward_lambda_3_to_5": 1.691424,
+      "feedforward_lambda_5_to_7": 1.652929,
+      "pauli_frame_diff_lambda_3_to_5": 1.193389,
+      "pauli_frame_lambda_3_to_5": 1.701185,
+      "pauli_frame_lambda_5_to_7": 1.977847
+    },
+    "h2_1_published_surface_strong_exponential_suppression": {
+      "feedforward_lambda_3_to_5": 7.153968,
+      "feedforward_lambda_5_to_7": 4.153653,
+      "pauli_frame_lambda_3_to_5": 6.963162,
+      "pauli_frame_lambda_5_to_7": 13.776835,
+      "strong_exponential_suppression_verified": true
+    },
+    "hook_safe_full_distance_d3_d5_d7_verified": true,
+    "polynomial_mwpm_exact_match": true,
+    "repetition_circuit_threshold_p_th": 0.138142,
+    "rotated_surface_circuit_threshold_p_th": 0.011241,
+    "scope_limit": "Offline SIMULATED multi-distance (d in {3, 5, 7}) space-time DEM + exact polynomial-time MWPM study (0 QPU seconds, provider_job_id=None). Establishes simulated circuit-level thresholds and Lambda_d suppression across published ibm_fez, SPAM-drifted ibm_fez, and Quantinuum H2-1 noise specifications; note that [[49,1,7]] (97Q) exceeds physical H2-1 (56Q) capacity and represents a Helios-scale QCCD noise projection, while non-computational |2> leakage and live QPU multi-distance execution remain separate.",
+    "verdict": "PASS_MULTIDISTANCE_THRESHOLD_AND_LAMBDA_SCALING_VERIFIED"
+  },
+  "seed": 20261124,
+  "threshold_sweeps": {
+    "alpha_grid": [
+      0.25,
+      0.5,
+      0.75,
+      1.0,
+      1.25,
+      1.5,
+      2.0
+    ],
+    "n_shots_per_cell": 20000,
+    "repetition_matched_p_sweep": {
+      "all_points_deep_subthreshold": false,
+      "p_grid": [
+        0.001875,
+        0.00375,
+        0.005625,
+        0.0075,
+        0.009375,
+        0.01125,
+        0.015
+      ],
+      "p_reference": 0.0075,
+      "rows": [
+        {
+          "alpha": 0.25,
+          "lambda_3_to_5": 30.212516,
+          "lambda_3_to_5_ci95": [
+            25.210637,
+            36.787284
+          ],
+          "lambda_5_to_7": 24.424938,
+          "lambda_5_to_7_ci95": [
+            14.654617,
+            52.046381
+          ],
+          "lambda_geometric_mean": 27.16503,
+          "p_2q": 0.001875,
+          "per_distance": {
+            "3": {
+              "distance": 3,
+              "epsilon_L_per_round": 0.0001560525,
+              "epsilon_L_per_round_ci95": [
+                0.000150399,
+                0.0001614655
+              ],
+              "p_fail_block": 0.0004680113,
+              "rounds": 3
+            },
+            "5": {
+              "distance": 5,
+              "epsilon_L_per_round": 5.1652e-06,
+              "epsilon_L_per_round_ci95": [
+                4.2557e-06,
+                6.1851e-06
+              ],
+              "p_fail_block": 2.58253e-05,
+              "rounds": 5
+            },
+            "7": {
+              "distance": 7,
+              "epsilon_L_per_round": 2.115e-07,
+              "epsilon_L_per_round_ci95": [
+                1.007e-07,
+                3.412e-07
+              ],
+              "p_fail_block": 1.4803e-06,
+              "rounds": 7
+            }
+          },
+          "sampling_metadata": {
+            "3": {
+              "estimator": "exact_poisson_binomial_stratified",
+              "n_shots": 20000,
+              "raw_failure_hits": 5159,
+              "tilt_gamma": 1.0
+            },
+            "5": {
+              "estimator": "exact_poisson_binomial_stratified",
+              "n_shots": 20000,
+              "raw_failure_hits": 488,
+              "tilt_gamma": 1.0
+            },
+            "7": {
+              "estimator": "exact_poisson_binomial_stratified",
+              "n_shots": 20000,
+              "raw_failure_hits": 36,
+              "tilt_gamma": 1.0
+            }
+          }
+        },
+        {
+          "alpha": 0.5,
+          "lambda_3_to_5": 18.881999,
+          "lambda_3_to_5_ci95": [
+            15.994496,
+            22.657822
+          ],
+          "lambda_5_to_7": 12.727238,
+          "lambda_5_to_7_ci95": [
+            7.975918,
+            22.762884
+          ],
+          "lambda_geometric_mean": 15.502119,
+          "p_2q": 0.00375,
+          "per_distance": {
+            "3": {
+              "distance": 3,
+              "epsilon_L_per_round": 0.0005923769,
+              "epsilon_L_per_round_ci95": [
+                0.0005703758,
+                0.0006133364
+              ],
+              "p_fail_block": 0.0017750262,
+              "rounds": 3
+            },
+            "5": {
+              "distance": 5,
+              "epsilon_L_per_round": 3.13726e-05,
+              "epsilon_L_per_round_ci95": [
+                2.64983e-05,
+                3.67812e-05
+              ],
+              "p_fail_block": 0.0001568432,
+              "rounds": 5
+            },
+            "7": {
+              "distance": 7,
+              "epsilon_L_per_round": 2.465e-06,
+              "epsilon_L_per_round_ci95": [
+                1.372e-06,
+                3.7378e-06
+              ],
+              "p_fail_block": 1.72547e-05,
+              "rounds": 7
+            }
+          },
+          "sampling_metadata": {
+            "3": {
+              "estimator": "exact_poisson_binomial_stratified",
+              "n_shots": 20000,
+              "raw_failure_hits": 5332,
+              "tilt_gamma": 1.0
+            },
+            "5": {
+              "estimator": "exact_poisson_binomial_stratified",
+              "n_shots": 20000,
+              "raw_failure_hits": 570,
+              "tilt_gamma": 1.0
+            },
+            "7": {
+              "estimator": "exact_poisson_binomial_stratified",
+              "n_shots": 20000,
+              "raw_failure_hits": 48,
+              "tilt_gamma": 1.0
+            }
+          }
+        },
+        {
+          "alpha": 0.75,
+          "lambda_3_to_5": 9.585823,
+          "lambda_3_to_5_ci95": [
+            7.115097,
+            12.237912
+          ],
+          "lambda_5_to_7": 16.809139,
+          "lambda_5_to_7_ci95": [
+            11.631228,
+            25.737714
+          ],
+          "lambda_geometric_mean": 12.693677,
+          "p_2q": 0.005625,
+          "per_distance": {
+            "3": {
+              "distance": 3,
+              "epsilon_L_per_round": 0.0013536615,
+              "epsilon_L_per_round_ci95": [
+                0.0010354763,
+                0.0016722533
+              ],
+              "p_fail_block": 0.00405,
+              "rounds": 3
+            },
+            "5": {
+              "distance": 5,
+              "epsilon_L_per_round": 0.000141215,
+              "epsilon_L_per_round_ci95": [
+                0.0001224309,
+                0.0001602253
+              ],
+              "p_fail_block": 0.000705676,
+              "rounds": 5
+            },
+            "7": {
+              "distance": 7,
+              "epsilon_L_per_round": 8.4011e-06,
+              "epsilon_L_per_round_ci95": [
+                5.5486e-06,
+                1.19778e-05
+              ],
+              "p_fail_block": 5.88046e-05,
+              "rounds": 7
+            }
+          },
+          "sampling_metadata": {
+            "3": {
+              "estimator": "direct_bernoulli_mc",
+              "n_shots": 20000,
+              "raw_failure_hits": 81,
+              "tilt_gamma": 1.0
+            },
+            "5": {
+              "estimator": "exact_poisson_binomial_stratified",
+              "n_shots": 20000,
+              "raw_failure_hits": 763,
+              "tilt_gamma": 1.0
+            },
+            "7": {
+              "estimator": "exact_poisson_binomial_stratified",
+              "n_shots": 20000,
+              "raw_failure_hits": 65,
+              "tilt_gamma": 1.0
+            }
+          }
+        },
+        {
+          "alpha": 1.0,
+          "lambda_3_to_5": 9.768883,
+          "lambda_3_to_5_ci95": [
+            8.043579,
+            11.714728
+          ],
+          "lambda_5_to_7": 7.556758,
+          "lambda_5_to_7_ci95": [
+            5.320375,
+            10.90229
+          ],
+          "lambda_geometric_mean": 8.591919,
+          "p_2q": 0.0075,
+          "per_distance": {
+            "3": {
+              "distance": 3,
+              "epsilon_L_per_round": 0.0024789366,
+              "epsilon_L_per_round_ci95": [
+                0.0020920747,
+                0.0029005438
+              ],
+              "p_fail_block": 0.0074,
+              "rounds": 3
+            },
+            "5": {
+              "distance": 5,
+              "epsilon_L_per_round": 0.0002537585,
+              "epsilon_L_per_round_ci95": [
+                0.0002248303,
+                0.0002834576
+              ],
+              "p_fail_block": 0.001267505,
+              "rounds": 5
+            },
+            "7": {
+              "distance": 7,
+              "epsilon_L_per_round": 3.35803e-05,
+              "epsilon_L_per_round_ci95": [
+                2.35101e-05,
+                4.65566e-05
+              ],
+              "p_fail_block": 0.000235015,
+              "rounds": 7
+            }
+          },
+          "sampling_metadata": {
+            "3": {
+              "estimator": "direct_bernoulli_mc",
+              "n_shots": 20000,
+              "raw_failure_hits": 148,
+              "tilt_gamma": 1.0
+            },
+            "5": {
+              "estimator": "exact_poisson_binomial_stratified",
+              "n_shots": 20000,
+              "raw_failure_hits": 765,
+              "tilt_gamma": 1.0
+            },
+            "7": {
+              "estimator": "exact_likelihood_ratio_tilted_mc",
+              "n_shots": 20000,
+              "raw_failure_hits": 455,
+              "tilt_gamma": 3.1299
+            }
+          }
+        },
+        {
+          "alpha": 1.25,
+          "lambda_3_to_5": 8.840058,
+          "lambda_3_to_5_ci95": [
+            6.477291,
+            12.728417
+          ],
+          "lambda_5_to_7": 3.503209,
+          "lambda_5_to_7_ci95": [
+            2.015918,
+            7.359855
+          ],
+          "lambda_geometric_mean": 5.564941,
+          "p_2q": 0.009375,
+          "per_distance": {
+            "3": {
+              "distance": 3,
+              "epsilon_L_per_round": 0.0035416946,
+              "epsilon_L_per_round_ci95": [
+                0.0031021232,
+                0.0040154954
+              ],
+              "p_fail_block": 0.01055,
+              "rounds": 3
+            },
+            "5": {
+              "distance": 5,
+              "epsilon_L_per_round": 0.0004006415,
+              "epsilon_L_per_round_ci95": [
+                0.0002803141,
+                0.0005411702
+              ],
+              "p_fail_block": 0.002,
+              "rounds": 5
+            },
+            "7": {
+              "distance": 7,
+              "epsilon_L_per_round": 0.0001143642,
+              "epsilon_L_per_round_ci95": [
+                5.71625e-05,
+                0.0001716052
+              ],
+              "p_fail_block": 0.0008,
+              "rounds": 7
+            }
+          },
+          "sampling_metadata": {
+            "3": {
+              "estimator": "direct_bernoulli_mc",
+              "n_shots": 20000,
+              "raw_failure_hits": 211,
+              "tilt_gamma": 1.0
+            },
+            "5": {
+              "estimator": "direct_bernoulli_mc",
+              "n_shots": 20000,
+              "raw_failure_hits": 40,
+              "tilt_gamma": 1.0
+            },
+            "7": {
+              "estimator": "direct_bernoulli_mc",
+              "n_shots": 20000,
+              "raw_failure_hits": 16,
+              "tilt_gamma": 1.0
+            }
+          }
+        },
+        {
+          "alpha": 1.5,
+          "lambda_3_to_5": 5.767931,
+          "lambda_3_to_5_ci95": [
+            4.73839,
+            7.340778
+          ],
+          "lambda_5_to_7": 4.695823,
+          "lambda_5_to_7_ci95": [
+            3.360159,
+            6.273029
+          ],
+          "lambda_geometric_mean": 5.204343,
+          "p_2q": 0.01125,
+          "per_distance": {
+            "3": {
+              "distance": 3,
+              "epsilon_L_per_round": 0.0054423569,
+              "epsilon_L_per_round_ci95": [
+                0.0048638269,
+                0.0060222436
+              ],
+              "p_fail_block": 0.01615,
+              "rounds": 3
+            },
+            "5": {
+              "distance": 5,
+              "epsilon_L_per_round": 0.0009435545,
+              "epsilon_L_per_round_ci95": [
+                0.000732141,
+                0.0011250516
+              ],
+              "p_fail_block": 0.0047,
+              "rounds": 5
+            },
+            "7": {
+              "distance": 7,
+              "epsilon_L_per_round": 0.0002009348,
+              "epsilon_L_per_round_ci95": [
+                0.0001606877,
+                0.0002535074
+              ],
+              "p_fail_block": 0.0014048493,
+              "rounds": 7
+            }
+          },
+          "sampling_metadata": {
+            "3": {
+              "estimator": "direct_bernoulli_mc",
+              "n_shots": 20000,
+              "raw_failure_hits": 323,
+              "tilt_gamma": 1.0
+            },
+            "5": {
+              "estimator": "direct_bernoulli_mc",
+              "n_shots": 20000,
+              "raw_failure_hits": 94,
+              "tilt_gamma": 1.0
+            },
+            "7": {
+              "estimator": "exact_likelihood_ratio_tilted_mc",
+              "n_shots": 20000,
+              "raw_failure_hits": 1234,
+              "tilt_gamma": 2.8
+            }
+          }
+        },
+        {
+          "alpha": 2.0,
+          "lambda_3_to_5": 4.069005,
+          "lambda_3_to_5_ci95": [
+            3.503266,
+            4.836495
+          ],
+          "lambda_5_to_7": 2.90975,
+          "lambda_5_to_7_ci95": [
+            2.320592,
+            3.752641
+          ],
+          "lambda_geometric_mean": 3.440899,
+          "p_2q": 0.015,
+          "per_distance": {
+            "3": {
+              "distance": 3,
+              "epsilon_L_per_round": 0.0084934608,
+              "epsilon_L_per_round_ci95": [
+                0.0077873218,
+                0.0092539651
+              ],
+              "p_fail_block": 0.02505,
+              "rounds": 3
+            },
+            "5": {
+              "distance": 5,
+              "epsilon_L_per_round": 0.0020873556,
+              "epsilon_L_per_round_ci95": [
+                0.0018029558,
+                0.002362215
+              ],
+              "p_fail_block": 0.01035,
+              "rounds": 5
+            },
+            "7": {
+              "distance": 7,
+              "epsilon_L_per_round": 0.000717366,
+              "epsilon_L_per_round_ci95": [
+                0.00058059,
+                0.0008543672
+              ],
+              "p_fail_block": 0.005,
+              "rounds": 7
+            }
+          },
+          "sampling_metadata": {
+            "3": {
+              "estimator": "direct_bernoulli_mc",
+              "n_shots": 20000,
+              "raw_failure_hits": 501,
+              "tilt_gamma": 1.0
+            },
+            "5": {
+              "estimator": "direct_bernoulli_mc",
+              "n_shots": 20000,
+              "raw_failure_hits": 207,
+              "tilt_gamma": 1.0
+            },
+            "7": {
+              "estimator": "direct_bernoulli_mc",
+              "n_shots": 20000,
+              "raw_failure_hits": 100,
+              "tilt_gamma": 1.0
+            }
+          }
+        }
+      ]
+    },
+    "repetition_threshold_crossing_sweep": {
+      "p_grid": [
+        0.02125,
+        0.0425,
+        0.06375,
+        0.085,
+        0.10625,
+        0.1275,
+        0.17
+      ],
+      "p_reference": 0.085,
+      "rows": [
+        {
+          "alpha": 0.25,
+          "lambda_3_to_5": 3.205609,
+          "lambda_3_to_5_ci95": [
+            2.879243,
+            3.586648
+          ],
+          "lambda_5_to_7": 2.15367,
+          "lambda_5_to_7_ci95": [
+            1.8633,
+            2.467922
+          ],
+          "lambda_geometric_mean": 2.627512,
+          "p_2q": 0.02125,
+          "per_distance": {
+            "3": {
+              "distance": 3,
+              "epsilon_L_per_round": 0.0165590146,
+              "epsilon_L_per_round_ci95": [
+                0.0155449491,
+                0.0175773523
+              ],
+              "p_fail_block": 0.04805,
+              "rounds": 3
+            },
+            "5": {
+              "distance": 5,
+              "epsilon_L_per_round": 0.0051656382,
+              "epsilon_L_per_round_ci95": [
+                0.00471795,
+                0.0056149525
+              ],
+              "p_fail_block": 0.0253,
+              "rounds": 5
+            },
+            "7": {
+              "distance": 7,
+              "epsilon_L_per_round": 0.0023985287,
+              "epsilon_L_per_round_ci95": [
+                0.0021562687,
+                0.0026857513
+              ],
+              "p_fail_block": 0.01655,
+              "rounds": 7
+            }
+          },
+          "sampling_metadata": {
+            "3": {
+              "estimator": "direct_bernoulli_mc",
+              "n_shots": 20000,
+              "raw_failure_hits": 961,
+              "tilt_gamma": 1.0
+            },
+            "5": {
+              "estimator": "direct_bernoulli_mc",
+              "n_shots": 20000,
+              "raw_failure_hits": 506,
+              "tilt_gamma": 1.0
+            },
+            "7": {
+              "estimator": "direct_bernoulli_mc",
+              "n_shots": 20000,
+              "raw_failure_hits": 331,
+              "tilt_gamma": 1.0
+            }
+          }
+        },
+        {
+          "alpha": 0.5,
+          "lambda_3_to_5": 1.653602,
+          "lambda_3_to_5_ci95": [
+            1.561549,
+            1.749844
+          ],
+          "lambda_5_to_7": 1.459688,
+          "lambda_5_to_7_ci95": [
+            1.379405,
+            1.546066
+          ],
+          "lambda_geometric_mean": 1.553622,
+          "p_2q": 0.0425,
+          "per_distance": {
+            "3": {
+              "distance": 3,
+              "epsilon_L_per_round": 0.050969164,
+              "epsilon_L_per_round_ci95": [
+                0.0489120972,
+                0.0529206642
+              ],
+              "p_fail_block": 0.13785,
+              "rounds": 3
+            },
+            "5": {
+              "distance": 5,
+              "epsilon_L_per_round": 0.030823119,
+              "epsilon_L_per_round_ci95": [
+                0.0296551997,
+                0.0321592356
+              ],
+              "p_fail_block": 0.13625,
+              "rounds": 5
+            },
+            "7": {
+              "distance": 7,
+              "epsilon_L_per_round": 0.0211162446,
+              "epsilon_L_per_round_ci95": [
+                0.020287732,
+                0.0219721527
+              ],
+              "p_fail_block": 0.13035,
+              "rounds": 7
+            }
+          },
+          "sampling_metadata": {
+            "3": {
+              "estimator": "direct_bernoulli_mc",
+              "n_shots": 20000,
+              "raw_failure_hits": 2757,
+              "tilt_gamma": 1.0
+            },
+            "5": {
+              "estimator": "direct_bernoulli_mc",
+              "n_shots": 20000,
+              "raw_failure_hits": 2725,
+              "tilt_gamma": 1.0
+            },
+            "7": {
+              "estimator": "direct_bernoulli_mc",
+              "n_shots": 20000,
+              "raw_failure_hits": 2607,
+              "tilt_gamma": 1.0
+            }
+          }
+        },
+        {
+          "alpha": 0.75,
+          "lambda_3_to_5": 1.299159,
+          "lambda_3_to_5_ci95": [
+            1.245921,
+            1.360051
+          ],
+          "lambda_5_to_7": 1.145747,
+          "lambda_5_to_7_ci95": [
+            1.094674,
+            1.195127
+          ],
+          "lambda_geometric_mean": 1.220044,
+          "p_2q": 0.06375,
+          "per_distance": {
+            "3": {
+              "distance": 3,
+              "epsilon_L_per_round": 0.0946297143,
+              "epsilon_L_per_round_ci95": [
+                0.0918338646,
+                0.0973611965
+              ],
+              "p_fail_block": 0.23355,
+              "rounds": 3
+            },
+            "5": {
+              "distance": 5,
+              "epsilon_L_per_round": 0.0728392194,
+              "epsilon_L_per_round_ci95": [
+                0.0705180613,
+                0.0750776735
+              ],
+              "p_fail_block": 0.27245,
+              "rounds": 5
+            },
+            "7": {
+              "distance": 7,
+              "epsilon_L_per_round": 0.0635735657,
+              "epsilon_L_per_round_ci95": [
+                0.0616288126,
+                0.0657046935
+              ],
+              "p_fail_block": 0.307,
+              "rounds": 7
+            }
+          },
+          "sampling_metadata": {
+            "3": {
+              "estimator": "direct_bernoulli_mc",
+              "n_shots": 20000,
+              "raw_failure_hits": 4671,
+              "tilt_gamma": 1.0
+            },
+            "5": {
+              "estimator": "direct_bernoulli_mc",
+              "n_shots": 20000,
+              "raw_failure_hits": 5449,
+              "tilt_gamma": 1.0
+            },
+            "7": {
+              "estimator": "direct_bernoulli_mc",
+              "n_shots": 20000,
+              "raw_failure_hits": 6140,
+              "tilt_gamma": 1.0
+            }
+          }
+        },
+        {
+          "alpha": 1.0,
+          "lambda_3_to_5": 1.19646,
+          "lambda_3_to_5_ci95": [
+            1.146336,
+            1.249823
+          ],
+          "lambda_5_to_7": 1.026577,
+          "lambda_5_to_7_ci95": [
+            0.972095,
+            1.081832
+          ],
+          "lambda_geometric_mean": 1.108268,
+          "p_2q": 0.085,
+          "per_distance": {
+            "3": {
+              "distance": 3,
+              "epsilon_L_per_round": 0.1423454952,
+              "epsilon_L_per_round_ci95": [
+                0.1382556367,
+                0.146298635
+              ],
+              "p_fail_block": 0.317,
+              "rounds": 3
+            },
+            "5": {
+              "distance": 5,
+              "epsilon_L_per_round": 0.11897223,
+              "epsilon_L_per_round_ci95": [
+                0.1152502083,
+                0.1231581349
+              ],
+              "p_fail_block": 0.3715,
+              "rounds": 5
+            },
+            "7": {
+              "distance": 7,
+              "epsilon_L_per_round": 0.1158921652,
+              "epsilon_L_per_round_ci95": [
+                0.11120148,
+                0.1209559023
+              ],
+              "p_fail_block": 0.42105,
+              "rounds": 7
+            }
+          },
+          "sampling_metadata": {
+            "3": {
+              "estimator": "direct_bernoulli_mc",
+              "n_shots": 20000,
+              "raw_failure_hits": 6340,
+              "tilt_gamma": 1.0
+            },
+            "5": {
+              "estimator": "direct_bernoulli_mc",
+              "n_shots": 20000,
+              "raw_failure_hits": 7430,
+              "tilt_gamma": 1.0
+            },
+            "7": {
+              "estimator": "direct_bernoulli_mc",
+              "n_shots": 20000,
+              "raw_failure_hits": 8421,
+              "tilt_gamma": 1.0
+            }
+          }
+        },
+        {
+          "alpha": 1.25,
+          "lambda_3_to_5": 1.124475,
+          "lambda_3_to_5_ci95": [
+            1.065347,
+            1.182894
+          ],
+          "lambda_5_to_7": 1.066998,
+          "lambda_5_to_7_ci95": [
+            0.985845,
+            1.15026
+          ],
+          "lambda_geometric_mean": 1.09536,
+          "p_2q": 0.10625,
+          "per_distance": {
+            "3": {
+              "distance": 3,
+              "epsilon_L_per_round": 0.1907074753,
+              "epsilon_L_per_round_ci95": [
+                0.1848056986,
+                0.1965672078
+              ],
+              "p_fail_block": 0.38165,
+              "rounds": 3
+            },
+            "5": {
+              "distance": 5,
+              "epsilon_L_per_round": 0.1695969001,
+              "epsilon_L_per_round_ci95": [
+                0.1628976454,
+                0.1772905603
+              ],
+              "p_fail_block": 0.437,
+              "rounds": 5
+            },
+            "7": {
+              "distance": 7,
+              "epsilon_L_per_round": 0.1589477125,
+              "epsilon_L_per_round_ci95": [
+                0.1497270079,
+                0.1701333407
+              ],
+              "p_fail_block": 0.46565,
+              "rounds": 7
+            }
+          },
+          "sampling_metadata": {
+            "3": {
+              "estimator": "direct_bernoulli_mc",
+              "n_shots": 20000,
+              "raw_failure_hits": 7633,
+              "tilt_gamma": 1.0
+            },
+            "5": {
+              "estimator": "direct_bernoulli_mc",
+              "n_shots": 20000,
+              "raw_failure_hits": 8740,
+              "tilt_gamma": 1.0
+            },
+            "7": {
+              "estimator": "direct_bernoulli_mc",
+              "n_shots": 20000,
+              "raw_failure_hits": 9313,
+              "tilt_gamma": 1.0
+            }
+          }
+        },
+        {
+          "alpha": 1.5,
+          "lambda_3_to_5": 1.069967,
+          "lambda_3_to_5_ci95": [
+            1.001734,
+            1.137169
+          ],
+          "lambda_5_to_7": 0.991076,
+          "lambda_5_to_7_ci95": [
+            0.849921,
+            1.10809
+          ],
+          "lambda_geometric_mean": 1.029766,
+          "p_2q": 0.1275,
+          "per_distance": {
+            "3": {
+              "distance": 3,
+              "epsilon_L_per_round": 0.2186333817,
+              "epsilon_L_per_round_ci95": [
+                0.2117981868,
+                0.2257624436
+              ],
+              "p_fail_block": 0.4109,
+              "rounds": 3
+            },
+            "5": {
+              "distance": 5,
+              "epsilon_L_per_round": 0.204336534,
+              "epsilon_L_per_round_ci95": [
+                0.1938919577,
+                0.2166039821
+              ],
+              "p_fail_block": 0.46385,
+              "rounds": 5
+            },
+            "7": {
+              "distance": 7,
+              "epsilon_L_per_round": 0.2061765288,
+              "epsilon_L_per_round_ci95": [
+                0.1867272996,
+                0.2388703721
+              ],
+              "p_fail_block": 0.4879,
+              "rounds": 7
+            }
+          },
+          "sampling_metadata": {
+            "3": {
+              "estimator": "direct_bernoulli_mc",
+              "n_shots": 20000,
+              "raw_failure_hits": 8218,
+              "tilt_gamma": 1.0
+            },
+            "5": {
+              "estimator": "direct_bernoulli_mc",
+              "n_shots": 20000,
+              "raw_failure_hits": 9277,
+              "tilt_gamma": 1.0
+            },
+            "7": {
+              "estimator": "direct_bernoulli_mc",
+              "n_shots": 20000,
+              "raw_failure_hits": 9758,
+              "tilt_gamma": 1.0
+            }
+          }
+        },
+        {
+          "alpha": 2.0,
+          "lambda_3_to_5": 0.948563,
+          "lambda_3_to_5_ci95": [
+            0.631677,
+            1.124424
+          ],
+          "lambda_5_to_7": 0.95494,
+          "lambda_5_to_7_ci95": [
+            0.652215,
+            1.816087
+          ],
+          "lambda_geometric_mean": 0.951746,
+          "p_2q": 0.17,
+          "per_distance": {
+            "3": {
+              "distance": 3,
+              "epsilon_L_per_round": 0.3,
+              "epsilon_L_per_round_ci95": [
+                0.2864584011,
+                0.3139805565
+              ],
+              "p_fail_block": 0.468,
+              "rounds": 3
+            },
+            "5": {
+              "distance": 5,
+              "epsilon_L_per_round": 0.3162679313,
+              "epsilon_L_per_round_ci95": [
+                0.2695413089,
+                0.4637610168
+              ],
+              "p_fail_block": 0.49665,
+              "rounds": 5
+            },
+            "7": {
+              "distance": 7,
+              "epsilon_L_per_round": 0.3311915078,
+              "epsilon_L_per_round_ci95": [
+                0.2282671165,
+                0.4232936298
+              ],
+              "p_fail_block": 0.49975,
+              "rounds": 7
+            }
+          },
+          "sampling_metadata": {
+            "3": {
+              "estimator": "direct_bernoulli_mc",
+              "n_shots": 20000,
+              "raw_failure_hits": 9360,
+              "tilt_gamma": 1.0
+            },
+            "5": {
+              "estimator": "direct_bernoulli_mc",
+              "n_shots": 20000,
+              "raw_failure_hits": 9933,
+              "tilt_gamma": 1.0
+            },
+            "7": {
+              "estimator": "direct_bernoulli_mc",
+              "n_shots": 20000,
+              "raw_failure_hits": 9995,
+              "tilt_gamma": 1.0
+            }
+          }
+        }
+      ],
+      "threshold_estimate": {
+        "alpha_th_consensus": 1.6252,
+        "p_th_3_5_crossing": 0.151365,
+        "p_th_5_7_crossing": 0.124919,
+        "p_th_consensus": 0.138142,
+        "subthreshold_at_min_alpha": true,
+        "superthreshold_inversion_at_max_alpha": true
+      }
+    },
+    "rotated_surface_threshold_sweep": {
+      "p_grid": [
+        0.001875,
+        0.00375,
+        0.005625,
+        0.0075,
+        0.009375,
+        0.01125,
+        0.015
+      ],
+      "p_reference": 0.0075,
+      "rows": [
+        {
+          "alpha": 0.25,
+          "lambda_3_to_5": 4.506787,
+          "lambda_3_to_5_ci95": [
+            3.092207,
+            7.120376
+          ],
+          "lambda_5_to_7": 4.453351,
+          "lambda_5_to_7_ci95": [
+            2.306428,
+            8.247807
+          ],
+          "lambda_geometric_mean": 4.479989,
+          "p_2q": 0.001875,
+          "per_distance": {
+            "3": {
+              "distance": 3,
+              "epsilon_L_per_round": 0.0013536615,
+              "epsilon_L_per_round_ci95": [
+                0.0011020104,
+                0.0016722533
+              ],
+              "p_fail_block": 0.00405,
+              "rounds": 3
+            },
+            "5": {
+              "distance": 5,
+              "epsilon_L_per_round": 0.0003003606,
+              "epsilon_L_per_round_ci95": [
+                0.0002001602,
+                0.0004106741
+              ],
+              "p_fail_block": 0.0015,
+              "rounds": 5
+            },
+            "7": {
+              "distance": 7,
+              "epsilon_L_per_round": 6.7446e-05,
+              "epsilon_L_per_round_ci95": [
+                3.85775e-05,
+                0.0001085604
+              ],
+              "p_fail_block": 0.0004719309,
+              "rounds": 7
+            }
+          },
+          "sampling_metadata": {
+            "3": {
+              "estimator": "direct_bernoulli_mc",
+              "n_shots": 20000,
+              "raw_failure_hits": 81,
+              "tilt_gamma": 1.0
+            },
+            "5": {
+              "estimator": "direct_bernoulli_mc",
+              "n_shots": 20000,
+              "raw_failure_hits": 30,
+              "tilt_gamma": 1.0
+            },
+            "7": {
+              "estimator": "exact_likelihood_ratio_tilted_mc",
+              "n_shots": 20000,
+              "raw_failure_hits": 490,
+              "tilt_gamma": 2.8
+            }
+          }
+        },
+        {
+          "alpha": 0.5,
+          "lambda_3_to_5": 2.279707,
+          "lambda_3_to_5_ci95": [
+            1.911658,
+            2.689332
+          ],
+          "lambda_5_to_7": 2.383739,
+          "lambda_5_to_7_ci95": [
+            1.925152,
+            2.985111
+          ],
+          "lambda_geometric_mean": 2.331143,
+          "p_2q": 0.00375,
+          "per_distance": {
+            "3": {
+              "distance": 3,
+              "epsilon_L_per_round": 0.0051529228,
+              "epsilon_L_per_round_ci95": [
+                0.0045580928,
+                0.0056639177
+              ],
+              "p_fail_block": 0.0153,
+              "rounds": 3
+            },
+            "5": {
+              "distance": 5,
+              "epsilon_L_per_round": 0.0022603444,
+              "epsilon_L_per_round_ci95": [
+                0.0019755496,
+                0.002566462
+              ],
+              "p_fail_block": 0.0112,
+              "rounds": 5
+            },
+            "7": {
+              "distance": 7,
+              "epsilon_L_per_round": 0.000948235,
+              "epsilon_L_per_round_ci95": [
+                0.0007894438,
+                0.00110733
+              ],
+              "p_fail_block": 0.0066,
+              "rounds": 7
+            }
+          },
+          "sampling_metadata": {
+            "3": {
+              "estimator": "direct_bernoulli_mc",
+              "n_shots": 20000,
+              "raw_failure_hits": 306,
+              "tilt_gamma": 1.0
+            },
+            "5": {
+              "estimator": "direct_bernoulli_mc",
+              "n_shots": 20000,
+              "raw_failure_hits": 224,
+              "tilt_gamma": 1.0
+            },
+            "7": {
+              "estimator": "direct_bernoulli_mc",
+              "n_shots": 20000,
+              "raw_failure_hits": 132,
+              "tilt_gamma": 1.0
+            }
+          }
+        },
+        {
+          "alpha": 0.75,
+          "lambda_3_to_5": 1.529871,
+          "lambda_3_to_5_ci95": [
+            1.366234,
+            1.709222
+          ],
+          "lambda_5_to_7": 1.475398,
+          "lambda_5_to_7_ci95": [
+            1.313875,
+            1.649379
+          ],
+          "lambda_geometric_mean": 1.502387,
+          "p_2q": 0.005625,
+          "per_distance": {
+            "3": {
+              "distance": 3,
+              "epsilon_L_per_round": 0.0100680367,
+              "epsilon_L_per_round_ci95": [
+                0.0092708343,
+                0.0109375138
+              ],
+              "p_fail_block": 0.0296,
+              "rounds": 3
+            },
+            "5": {
+              "distance": 5,
+              "epsilon_L_per_round": 0.0065809716,
+              "epsilon_L_per_round_ci95": [
+                0.0060548812,
+                0.007088138
+              ],
+              "p_fail_block": 0.03205,
+              "rounds": 5
+            },
+            "7": {
+              "distance": 7,
+              "epsilon_L_per_round": 0.0044604729,
+              "epsilon_L_per_round_ci95": [
+                0.0041065968,
+                0.0048156826
+              ],
+              "p_fail_block": 0.0304,
+              "rounds": 7
+            }
+          },
+          "sampling_metadata": {
+            "3": {
+              "estimator": "direct_bernoulli_mc",
+              "n_shots": 20000,
+              "raw_failure_hits": 592,
+              "tilt_gamma": 1.0
+            },
+            "5": {
+              "estimator": "direct_bernoulli_mc",
+              "n_shots": 20000,
+              "raw_failure_hits": 641,
+              "tilt_gamma": 1.0
+            },
+            "7": {
+              "estimator": "direct_bernoulli_mc",
+              "n_shots": 20000,
+              "raw_failure_hits": 608,
+              "tilt_gamma": 1.0
+            }
+          }
+        },
+        {
+          "alpha": 1.0,
+          "lambda_3_to_5": 1.324721,
+          "lambda_3_to_5_ci95": [
+            1.209662,
+            1.43908
+          ],
+          "lambda_5_to_7": 1.13803,
+          "lambda_5_to_7_ci95": [
+            1.060043,
+            1.225135
+          ],
+          "lambda_geometric_mean": 1.227832,
+          "p_2q": 0.0075,
+          "per_distance": {
+            "3": {
+              "distance": 3,
+              "epsilon_L_per_round": 0.0177206213,
+              "epsilon_L_per_round_ci95": [
+                0.016505091,
+                0.0187983126
+              ],
+              "p_fail_block": 0.0513,
+              "rounds": 3
+            },
+            "5": {
+              "distance": 5,
+              "epsilon_L_per_round": 0.0133768678,
+              "epsilon_L_per_round_ci95": [
+                0.0126434628,
+                0.0141486469
+              ],
+              "p_fail_block": 0.0634,
+              "rounds": 5
+            },
+            "7": {
+              "distance": 7,
+              "epsilon_L_per_round": 0.0117544117,
+              "epsilon_L_per_round_ci95": [
+                0.0111713466,
+                0.0123582834
+              ],
+              "p_fail_block": 0.0767,
+              "rounds": 7
+            }
+          },
+          "sampling_metadata": {
+            "3": {
+              "estimator": "direct_bernoulli_mc",
+              "n_shots": 20000,
+              "raw_failure_hits": 1026,
+              "tilt_gamma": 1.0
+            },
+            "5": {
+              "estimator": "direct_bernoulli_mc",
+              "n_shots": 20000,
+              "raw_failure_hits": 1268,
+              "tilt_gamma": 1.0
+            },
+            "7": {
+              "estimator": "direct_bernoulli_mc",
+              "n_shots": 20000,
+              "raw_failure_hits": 1534,
+              "tilt_gamma": 1.0
+            }
+          }
+        },
+        {
+          "alpha": 1.25,
+          "lambda_3_to_5": 1.137447,
+          "lambda_3_to_5_ci95": [
+            1.067039,
+            1.217153
+          ],
+          "lambda_5_to_7": 1.05178,
+          "lambda_5_to_7_ci95": [
+            0.990659,
+            1.117238
+          ],
+          "lambda_geometric_mean": 1.093775,
+          "p_2q": 0.009375,
+          "per_distance": {
+            "3": {
+              "distance": 3,
+              "epsilon_L_per_round": 0.026588873,
+              "epsilon_L_per_round_ci95": [
+                0.0251981436,
+                0.0278751707
+              ],
+              "p_fail_block": 0.0756,
+              "rounds": 3
+            },
+            "5": {
+              "distance": 5,
+              "epsilon_L_per_round": 0.0233759125,
+              "epsilon_L_per_round_ci95": [
+                0.0223749219,
+                0.0243853834
+              ],
+              "p_fail_block": 0.10645,
+              "rounds": 5
+            },
+            "7": {
+              "distance": 7,
+              "epsilon_L_per_round": 0.0222250976,
+              "epsilon_L_per_round_ci95": [
+                0.0214031592,
+                0.0230743373
+              ],
+              "p_fail_block": 0.1363,
+              "rounds": 7
+            }
+          },
+          "sampling_metadata": {
+            "3": {
+              "estimator": "direct_bernoulli_mc",
+              "n_shots": 20000,
+              "raw_failure_hits": 1512,
+              "tilt_gamma": 1.0
+            },
+            "5": {
+              "estimator": "direct_bernoulli_mc",
+              "n_shots": 20000,
+              "raw_failure_hits": 2129,
+              "tilt_gamma": 1.0
+            },
+            "7": {
+              "estimator": "direct_bernoulli_mc",
+              "n_shots": 20000,
+              "raw_failure_hits": 2726,
+              "tilt_gamma": 1.0
+            }
+          }
+        },
+        {
+          "alpha": 1.5,
+          "lambda_3_to_5": 1.052722,
+          "lambda_3_to_5_ci95": [
+            0.992195,
+            1.114105
+          ],
+          "lambda_5_to_7": 0.930054,
+          "lambda_5_to_7_ci95": [
+            0.884697,
+            0.976392
+          ],
+          "lambda_geometric_mean": 0.989489,
+          "p_2q": 0.01125,
+          "per_distance": {
+            "3": {
+              "distance": 3,
+              "epsilon_L_per_round": 0.0368295577,
+              "epsilon_L_per_round_ci95": [
+                0.0352230615,
+                0.0383890955
+              ],
+              "p_fail_block": 0.10255,
+              "rounds": 3
+            },
+            "5": {
+              "distance": 5,
+              "epsilon_L_per_round": 0.0349850781,
+              "epsilon_L_per_round_ci95": [
+                0.0337747243,
+                0.0361943214
+              ],
+              "p_fail_block": 0.1521,
+              "rounds": 5
+            },
+            "7": {
+              "distance": 7,
+              "epsilon_L_per_round": 0.037616193,
+              "epsilon_L_per_round_ci95": [
+                0.0363139173,
+                0.0388134465
+              ],
+              "p_fail_block": 0.2108,
+              "rounds": 7
+            }
+          },
+          "sampling_metadata": {
+            "3": {
+              "estimator": "direct_bernoulli_mc",
+              "n_shots": 20000,
+              "raw_failure_hits": 2051,
+              "tilt_gamma": 1.0
+            },
+            "5": {
+              "estimator": "direct_bernoulli_mc",
+              "n_shots": 20000,
+              "raw_failure_hits": 3042,
+              "tilt_gamma": 1.0
+            },
+            "7": {
+              "estimator": "direct_bernoulli_mc",
+              "n_shots": 20000,
+              "raw_failure_hits": 4216,
+              "tilt_gamma": 1.0
+            }
+          }
+        },
+        {
+          "alpha": 2.0,
+          "lambda_3_to_5": 0.881915,
+          "lambda_3_to_5_ci95": [
+            0.842914,
+            0.926948
+          ],
+          "lambda_5_to_7": 0.790258,
+          "lambda_5_to_7_ci95": [
+            0.754499,
+            0.827049
+          ],
+          "lambda_geometric_mean": 0.834829,
+          "p_2q": 0.015,
+          "per_distance": {
+            "3": {
+              "distance": 3,
+              "epsilon_L_per_round": 0.0569589115,
+              "epsilon_L_per_round_ci95": [
+                0.0549093313,
+                0.0590281682
+              ],
+              "p_fail_block": 0.15215,
+              "rounds": 3
+            },
+            "5": {
+              "distance": 5,
+              "epsilon_L_per_round": 0.0645855193,
+              "epsilon_L_per_round_ci95": [
+                0.0625015244,
+                0.0666215679
+              ],
+              "p_fail_block": 0.2496,
+              "rounds": 5
+            },
+            "7": {
+              "distance": 7,
+              "epsilon_L_per_round": 0.0817271507,
+              "epsilon_L_per_round_ci95": [
+                0.0790885108,
+                0.0843834872
+              ],
+              "p_fail_block": 0.35665,
+              "rounds": 7
+            }
+          },
+          "sampling_metadata": {
+            "3": {
+              "estimator": "direct_bernoulli_mc",
+              "n_shots": 20000,
+              "raw_failure_hits": 3043,
+              "tilt_gamma": 1.0
+            },
+            "5": {
+              "estimator": "direct_bernoulli_mc",
+              "n_shots": 20000,
+              "raw_failure_hits": 4992,
+              "tilt_gamma": 1.0
+            },
+            "7": {
+              "estimator": "direct_bernoulli_mc",
+              "n_shots": 20000,
+              "raw_failure_hits": 7133,
+              "tilt_gamma": 1.0
+            }
+          }
+        }
+      ],
+      "threshold_estimate": {
+        "alpha_th_consensus": 1.4989,
+        "p_th_3_5_crossing": 0.012338,
+        "p_th_5_7_crossing": 0.010145,
+        "p_th_consensus": 0.011241,
+        "subthreshold_at_min_alpha": true,
+        "superthreshold_inversion_at_max_alpha": true
+      }
+    }
+  },
+  "verification_controls": {
+    "fault_distance_and_hook_safety_audit": {
+      "all_distance_and_t_fault_audits_passed": true,
+      "d3_exact_gate_compatibility": {
+        "repetition_d3_max_mech_prob_diff": 0.0,
+        "repetition_d3_ops_identical": true,
+        "rotated_surface_d3_max_mech_prob_diff": 0.0,
+        "rotated_surface_d3_ops_identical": true
+      },
+      "per_code_audits": {
+        "repetition_d3_5q__X": {
+          "basis": "X",
+          "code_family": "repetition",
+          "code_id": "repetition_d3_5q",
+          "distance": 3,
+          "exact_dem_fault_distance": 3,
+          "hook_safe_full_distance_verified": true,
+          "hyperedge_decomposed_count": 0,
+          "n_dem_mechanisms": 24,
+          "n_detectors": 8,
+          "n_qubits": 5,
+          "noiseless_zero_syndrome_verified": true,
+          "rounds": 3,
+          "t1_exhaustive_tested": 24,
+          "t1_unit_mwpm_failures": 0,
+          "t1_weighted_mwpm_failures": 0,
+          "t2_mode": "not_applicable_d3",
+          "t2_tested": 0,
+          "t2_unit_mwpm_failures": 0,
+          "t3_mode": "not_applicable_d_lt_7",
+          "t3_tested": 0,
+          "t3_unit_mwpm_failures": 0,
+          "target_t_correctable": 1,
+          "zero_t_fault_failures": true
+        },
+        "repetition_d3_5q__Z": {
+          "basis": "Z",
+          "code_family": "repetition",
+          "code_id": "repetition_d3_5q",
+          "distance": 3,
+          "exact_dem_fault_distance": 3,
+          "hook_safe_full_distance_verified": true,
+          "hyperedge_decomposed_count": 0,
+          "n_dem_mechanisms": 21,
+          "n_detectors": 8,
+          "n_qubits": 5,
+          "noiseless_zero_syndrome_verified": true,
+          "rounds": 3,
+          "t1_exhaustive_tested": 21,
+          "t1_unit_mwpm_failures": 0,
+          "t1_weighted_mwpm_failures": 0,
+          "t2_mode": "not_applicable_d3",
+          "t2_tested": 0,
+          "t2_unit_mwpm_failures": 0,
+          "t3_mode": "not_applicable_d_lt_7",
+          "t3_tested": 0,
+          "t3_unit_mwpm_failures": 0,
+          "target_t_correctable": 1,
+          "zero_t_fault_failures": true
+        },
+        "repetition_d5_9q__X": {
+          "basis": "X",
+          "code_family": "repetition",
+          "code_id": "repetition_d5_9q",
+          "distance": 5,
+          "exact_dem_fault_distance": 5,
+          "hook_safe_full_distance_verified": true,
+          "hyperedge_decomposed_count": 0,
+          "n_dem_mechanisms": 80,
+          "n_detectors": 24,
+          "n_qubits": 9,
+          "noiseless_zero_syndrome_verified": true,
+          "rounds": 5,
+          "t1_exhaustive_tested": 80,
+          "t1_unit_mwpm_failures": 0,
+          "t1_weighted_mwpm_failures": 0,
+          "t2_mode": "exhaustive_all_dem_pairs",
+          "t2_tested": 3160,
+          "t2_unit_mwpm_failures": 0,
+          "t3_mode": "not_applicable_d_lt_7",
+          "t3_tested": 0,
+          "t3_unit_mwpm_failures": 0,
+          "target_t_correctable": 2,
+          "zero_t_fault_failures": true
+        },
+        "repetition_d5_9q__Z": {
+          "basis": "Z",
+          "code_family": "repetition",
+          "code_id": "repetition_d5_9q",
+          "distance": 5,
+          "exact_dem_fault_distance": 5,
+          "hook_safe_full_distance_verified": true,
+          "hyperedge_decomposed_count": 0,
+          "n_dem_mechanisms": 65,
+          "n_detectors": 24,
+          "n_qubits": 9,
+          "noiseless_zero_syndrome_verified": true,
+          "rounds": 5,
+          "t1_exhaustive_tested": 65,
+          "t1_unit_mwpm_failures": 0,
+          "t1_weighted_mwpm_failures": 0,
+          "t2_mode": "min_cut_subchains_plus_sampled_pairs",
+          "t2_tested": 2080,
+          "t2_unit_mwpm_failures": 0,
+          "t3_mode": "not_applicable_d_lt_7",
+          "t3_tested": 0,
+          "t3_unit_mwpm_failures": 0,
+          "target_t_correctable": 2,
+          "zero_t_fault_failures": true
+        },
+        "repetition_d7_13q__X": {
+          "basis": "X",
+          "code_family": "repetition",
+          "code_id": "repetition_d7_13q",
+          "distance": 7,
+          "exact_dem_fault_distance": 7,
+          "hook_safe_full_distance_verified": true,
+          "hyperedge_decomposed_count": 0,
+          "n_dem_mechanisms": 168,
+          "n_detectors": 48,
+          "n_qubits": 13,
+          "noiseless_zero_syndrome_verified": true,
+          "rounds": 7,
+          "t1_exhaustive_tested": 168,
+          "t1_unit_mwpm_failures": 0,
+          "t1_weighted_mwpm_failures": 0,
+          "t2_mode": "exhaustive_all_dem_pairs",
+          "t2_tested": 14028,
+          "t2_unit_mwpm_failures": 0,
+          "t3_mode": "min_cut_witness_triples_plus_sampled_triples",
+          "t3_tested": 15035,
+          "t3_unit_mwpm_failures": 0,
+          "target_t_correctable": 3,
+          "zero_t_fault_failures": true
+        },
+        "repetition_d7_13q__Z": {
+          "basis": "Z",
+          "code_family": "repetition",
+          "code_id": "repetition_d7_13q",
+          "distance": 7,
+          "exact_dem_fault_distance": 7,
+          "hook_safe_full_distance_verified": true,
+          "hyperedge_decomposed_count": 0,
+          "n_dem_mechanisms": 133,
+          "n_detectors": 48,
+          "n_qubits": 13,
+          "noiseless_zero_syndrome_verified": true,
+          "rounds": 7,
+          "t1_exhaustive_tested": 133,
+          "t1_unit_mwpm_failures": 0,
+          "t1_weighted_mwpm_failures": 0,
+          "t2_mode": "min_cut_subchains_plus_sampled_pairs",
+          "t2_tested": 8778,
+          "t2_unit_mwpm_failures": 0,
+          "t3_mode": "min_cut_witness_triples_plus_sampled_triples",
+          "t3_tested": 5035,
+          "t3_unit_mwpm_failures": 0,
+          "target_t_correctable": 3,
+          "zero_t_fault_failures": true
+        },
+        "rotated_surface_d3_17q__X": {
+          "basis": "X",
+          "code_family": "rotated_surface",
+          "code_id": "rotated_surface_d3_17q",
+          "distance": 3,
+          "exact_dem_fault_distance": 3,
+          "hook_safe_full_distance_verified": true,
+          "hyperedge_decomposed_count": 0,
+          "n_dem_mechanisms": 64,
+          "n_detectors": 16,
+          "n_qubits": 17,
+          "noiseless_zero_syndrome_verified": true,
+          "rounds": 3,
+          "t1_exhaustive_tested": 64,
+          "t1_unit_mwpm_failures": 0,
+          "t1_weighted_mwpm_failures": 0,
+          "t2_mode": "not_applicable_d3",
+          "t2_tested": 0,
+          "t2_unit_mwpm_failures": 0,
+          "t3_mode": "not_applicable_d_lt_7",
+          "t3_tested": 0,
+          "t3_unit_mwpm_failures": 0,
+          "target_t_correctable": 1,
+          "zero_t_fault_failures": true
+        },
+        "rotated_surface_d3_17q__Z": {
+          "basis": "Z",
+          "code_family": "rotated_surface",
+          "code_id": "rotated_surface_d3_17q",
+          "distance": 3,
+          "exact_dem_fault_distance": 3,
+          "hook_safe_full_distance_verified": true,
+          "hyperedge_decomposed_count": 0,
+          "n_dem_mechanisms": 55,
+          "n_detectors": 16,
+          "n_qubits": 17,
+          "noiseless_zero_syndrome_verified": true,
+          "rounds": 3,
+          "t1_exhaustive_tested": 55,
+          "t1_unit_mwpm_failures": 0,
+          "t1_weighted_mwpm_failures": 0,
+          "t2_mode": "not_applicable_d3",
+          "t2_tested": 0,
+          "t2_unit_mwpm_failures": 0,
+          "t3_mode": "not_applicable_d_lt_7",
+          "t3_tested": 0,
+          "t3_unit_mwpm_failures": 0,
+          "target_t_correctable": 1,
+          "zero_t_fault_failures": true
+        },
+        "rotated_surface_d5_49q__X": {
+          "basis": "X",
+          "code_family": "rotated_surface",
+          "code_id": "rotated_surface_d5_49q",
+          "distance": 5,
+          "exact_dem_fault_distance": 5,
+          "hook_safe_full_distance_verified": true,
+          "hyperedge_decomposed_count": 0,
+          "n_dem_mechanisms": 376,
+          "n_detectors": 72,
+          "n_qubits": 49,
+          "noiseless_zero_syndrome_verified": true,
+          "rounds": 5,
+          "t1_exhaustive_tested": 376,
+          "t1_unit_mwpm_failures": 0,
+          "t1_weighted_mwpm_failures": 0,
+          "t2_mode": "exhaustive_all_dem_pairs",
+          "t2_tested": 70500,
+          "t2_unit_mwpm_failures": 0,
+          "t3_mode": "not_applicable_d_lt_7",
+          "t3_tested": 0,
+          "t3_unit_mwpm_failures": 0,
+          "target_t_correctable": 2,
+          "zero_t_fault_failures": true
+        },
+        "rotated_surface_d5_49q__Z": {
+          "basis": "Z",
+          "code_family": "rotated_surface",
+          "code_id": "rotated_surface_d5_49q",
+          "distance": 5,
+          "exact_dem_fault_distance": 5,
+          "hook_safe_full_distance_verified": true,
+          "hyperedge_decomposed_count": 0,
+          "n_dem_mechanisms": 301,
+          "n_detectors": 72,
+          "n_qubits": 49,
+          "noiseless_zero_syndrome_verified": true,
+          "rounds": 5,
+          "t1_exhaustive_tested": 301,
+          "t1_unit_mwpm_failures": 0,
+          "t1_weighted_mwpm_failures": 0,
+          "t2_mode": "min_cut_subchains_plus_sampled_pairs",
+          "t2_tested": 20000,
+          "t2_unit_mwpm_failures": 0,
+          "t3_mode": "not_applicable_d_lt_7",
+          "t3_tested": 0,
+          "t3_unit_mwpm_failures": 0,
+          "target_t_correctable": 2,
+          "zero_t_fault_failures": true
+        },
+        "rotated_surface_d7_97q__X": {
+          "basis": "X",
+          "code_family": "rotated_surface",
+          "code_id": "rotated_surface_d7_97q",
+          "distance": 7,
+          "exact_dem_fault_distance": 7,
+          "hook_safe_full_distance_verified": true,
+          "hyperedge_decomposed_count": 0,
+          "n_dem_mechanisms": 1128,
+          "n_detectors": 192,
+          "n_qubits": 97,
+          "noiseless_zero_syndrome_verified": true,
+          "rounds": 7,
+          "t1_exhaustive_tested": 1128,
+          "t1_unit_mwpm_failures": 0,
+          "t1_weighted_mwpm_failures": 0,
+          "t2_mode": "min_cut_subchains_plus_sampled_pairs",
+          "t2_tested": 20000,
+          "t2_unit_mwpm_failures": 0,
+          "t3_mode": "min_cut_witness_triples_plus_sampled_triples",
+          "t3_tested": 15035,
+          "t3_unit_mwpm_failures": 0,
+          "target_t_correctable": 3,
+          "zero_t_fault_failures": true
+        },
+        "rotated_surface_d7_97q__Z": {
+          "basis": "Z",
+          "code_family": "rotated_surface",
+          "code_id": "rotated_surface_d7_97q",
+          "distance": 7,
+          "exact_dem_fault_distance": 7,
+          "hook_safe_full_distance_verified": true,
+          "hyperedge_decomposed_count": 0,
+          "n_dem_mechanisms": 883,
+          "n_detectors": 192,
+          "n_qubits": 97,
+          "noiseless_zero_syndrome_verified": true,
+          "rounds": 7,
+          "t1_exhaustive_tested": 883,
+          "t1_unit_mwpm_failures": 0,
+          "t1_weighted_mwpm_failures": 0,
+          "t2_mode": "min_cut_subchains_plus_sampled_pairs",
+          "t2_tested": 20000,
+          "t2_unit_mwpm_failures": 0,
+          "t3_mode": "min_cut_witness_triples_plus_sampled_triples",
+          "t3_tested": 5035,
+          "t3_unit_mwpm_failures": 0,
+          "target_t_correctable": 3,
+          "zero_t_fault_failures": true
+        }
+      }
+    },
+    "polynomial_mwpm_vs_bitmask_dp_equivalence": {
+      "all_exact_100pct_match": true,
+      "per_dem_checks": {
+        "repetition_d3_R5_X": {
+          "agreement_rate": 1.0,
+          "exact_100pct_match": true,
+          "fast_poly_mismatches_vs_bitmask_dp": 0,
+          "n_detectors": 12,
+          "pure_blossom_mismatches_vs_bitmask_dp": 0,
+          "syndromes_tested": 1200
+        },
+        "rotated_surface_d3_R3_X": {
+          "agreement_rate": 1.0,
+          "exact_100pct_match": true,
+          "fast_poly_mismatches_vs_bitmask_dp": 0,
+          "n_detectors": 16,
+          "pure_blossom_mismatches_vs_bitmask_dp": 0,
+          "syndromes_tested": 1200
+        },
+        "rotated_surface_d3_R5_X": {
+          "agreement_rate": 1.0,
+          "exact_100pct_match": true,
+          "fast_poly_mismatches_vs_bitmask_dp": 0,
+          "n_detectors": 24,
+          "pure_blossom_mismatches_vs_bitmask_dp": 0,
+          "syndromes_tested": 1200
+        }
+      },
+      "total_multi_defect_syndromes_tested": 3600
+    }
+  }
+}

@@ -1,0 +1,46 @@
+{
+  "backend": "ibm_fez",
+  "credential_provenance": {
+    "channel": "ibm_quantum_platform",
+    "credential_basename": "apikey.json",
+    "credential_source": "OSIRIS_IBM_KEY_FILE",
+    "instance_alias": "open-instance",
+    "key_created_at": "2026-11-15T08:18+0000",
+    "key_file_sha256_prefix16": "1e1e6bf779378a8b"
+  },
+  "job_id": "dc38nreq4uuc73a6g0k0",
+  "preregistration_md_sha256": "da07a4f45ff994421c1c5802a1e83d526a56e6f328910fc8609a146907d6d497",
+  "protocol_id": "OSIRIS-BT2T-003-FEZ",
+  "provider_metadata": {
+    "backend": "ibm_fez",
+    "creation_date": "2026-11-25T02:19:09.238602-05:00",
+    "job_id": "dc38nreq4uuc73a6g0k0",
+    "qiskit_version": "qiskit_ibm_runtime-0.52.1,qiskit-2.6.2*,qiskit_aer-0.18.2",
+    "status": "DONE",
+    "timestamps": {
+      "created": "2026-11-25T07:19:09.238602Z",
+      "finished": "2026-11-25T07:19:51.042359Z",
+      "running": "2026-11-25T07:19:11.280475Z"
+    },
+    "usage": {
+      "qpu_charge_time_seconds": 19,
+      "resource_units": 0.310076,
+      "status": "pending"
+    }
+  },
+  "qpy_sha256": "349a7ab40a1a55db6ca85dbfd27c24f75aa3e4c67c20accad82a7a41b2c87b9a",
+  "quota_after_completion": {
+    "usage_consumed_seconds": 562,
+    "usage_limit_seconds": 600,
+    "usage_remaining_seconds": 38
+  },
+  "quota_before_submission": {
+    "usage_consumed_seconds": 543,
+    "usage_limit_seconds": 600,
+    "usage_remaining_seconds": 57
+  },
+  "shots_per_pub": 256,
+  "total_pubs": 240,
+  "total_shots": 61440,
+  "write_ahead_commit_sha": "82cfd46a8ef091fbb6919f5112578d8e657eef7a"
+}

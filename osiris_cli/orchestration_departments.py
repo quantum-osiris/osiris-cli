@@ -1325,6 +1325,17 @@ def materialize_workspace_reproducibility_capsules(
         except Exception:
             return None
 
+    def _v622_deposit_doi(slug: str) -> Optional[str]:
+        rec_p = cli_repo / "papers" / "zenodo_v622_deposits" / slug / "zenodo_receipt.json"
+        if not rec_p.is_file():
+            return None
+        try:
+            d = json.loads(rec_p.read_text(encoding="utf-8"))
+            val = str(d.get("doi") or d.get("prereserved_doi") or "").strip()
+            return val or None
+        except Exception:
+            return None
+
     # 13. OSIRIS-XTOP-006-FEZ (ibm_fez live Kraus trajectory)
     x6f_dir = cli_repo / "experiments" / "xtop006_fez"
     if (x6f_dir / "xtop006_fez_submitted_job.json").is_file() and (
@@ -1471,7 +1482,7 @@ def materialize_workspace_reproducibility_capsules(
             shots=int(mbt["total_shots"]),
             provider_job_id=str(jbt["job_id"]),
             raw_counts_sha256=_sha256_file(bt_dir / "physical_bt2t_fez_raw_counts.json.gz"),
-            zenodo_doi=None,
+            zenodo_doi=_v622_deposit_doi("bt2t001_binary_tetrahedral_fez"),
         )
 
     # 21. OSIRIS-ECHO-STOPGO (Card B offline placement-ranking stop/go gate)
@@ -1488,7 +1499,7 @@ def materialize_workspace_reproducibility_capsules(
             shots=163840,
             provider_job_id=None,
             raw_counts_sha256=_sha256_file(echo_rep),
-            zenodo_doi=None,
+            zenodo_doi=_v622_deposit_doi("echo_and_card_c_qec_gates"),
         )
 
     # 22. OSIRIS-QEC-CARDC (Card C 4-arm repeated-correction crossing gate)
@@ -1505,7 +1516,7 @@ def materialize_workspace_reproducibility_capsules(
             shots=240000,
             provider_job_id=None,
             raw_counts_sha256=_sha256_file(qecc_rep),
-            zenodo_doi=None,
+            zenodo_doi=_v622_deposit_doi("echo_and_card_c_qec_gates"),
         )
 
     # 23. OSIRIS-BT2T-002 (Milestone 2: 10Q reversible 2T multiplication & 5Q non-abelian QFT)
@@ -1522,7 +1533,7 @@ def materialize_workspace_reproducibility_capsules(
             shots=1024,
             provider_job_id=None,
             raw_counts_sha256=_sha256_file(bt2_rep),
-            zenodo_doi=None,
+            zenodo_doi=_v622_deposit_doi("bt2t002_mul_and_nonabelian_qft"),
         )
 
     # 24. OSIRIS-QEC-LEAKAGE-LRU (Card C 5-qutrit |2> transmon leakage & LRU crossover gate)
@@ -1539,12 +1550,28 @@ def materialize_workspace_reproducibility_capsules(
             shots=540000,
             provider_job_id=None,
             raw_counts_sha256=_sha256_file(qec_lru_rep),
-            zenodo_doi=None,
+            zenodo_doi=_v622_deposit_doi("echo_and_card_c_qec_gates"),
         )
 
-    # 25. OSIRIS-ECHO-FEZ-STAGED (Write-ahead 240-PUB QPY staging across 10 disjoint T5 trees on ibm_fez)
+    # 25. OSIRIS-ECHO-FEZ (Live 240-PUB T5 echo-ranking pilot on ibm_fez; fallback OFFLINE_COMPILED)
     echo_stg_dir = cli_repo / "experiments" / "echo_fez_staged"
-    if (echo_stg_dir / "PRE_REGISTRATION.md").is_file() and (echo_stg_dir / "echo_fez_staged_circuits.qpy").is_file():
+    if (echo_stg_dir / "echo_fez_submitted_job.json").is_file() and (
+        echo_stg_dir / "physical_echo_fez_raw_counts.json.gz"
+    ).is_file():
+        jecho = json.loads((echo_stg_dir / "echo_fez_submitted_job.json").read_text(encoding="utf-8"))
+        _append_capsule(
+            experiment_id="OSIRIS-ECHO-FEZ",
+            evidence_class="HARDWARE_ATTESTED",
+            prereg_sha256=_sha256_file(echo_stg_dir / "PRE_REGISTRATION.md"),
+            circuit_isa_sha256=_sha256_file(echo_stg_dir / "echo_fez_staged_circuits.qpy"),
+            provider="IBM Quantum",
+            backend_id=str(jecho["backend"]),
+            shots=int(jecho["total_shots"]),
+            provider_job_id=str(jecho["job_id"]),
+            raw_counts_sha256=_sha256_file(echo_stg_dir / "physical_echo_fez_raw_counts.json.gz"),
+            zenodo_doi=_v622_deposit_doi("echo_and_card_c_qec_gates"),
+        )
+    elif (echo_stg_dir / "PRE_REGISTRATION.md").is_file() and (echo_stg_dir / "echo_fez_staged_circuits.qpy").is_file():
         _append_capsule(
             experiment_id="OSIRIS-ECHO-FEZ-STAGED",
             evidence_class="OFFLINE_COMPILED",
@@ -1558,9 +1585,25 @@ def materialize_workspace_reproducibility_capsules(
             zenodo_doi=None,
         )
 
-    # 26. OSIRIS-QEC-REP3-FEZ-STAGED (Write-ahead 96-PUB dynamic [[3,1,3]] QPY staging on ibm_fez [58,71,70,69,78])
+    # 26. OSIRIS-QEC-REP3-FEZ (Live 96-PUB dynamic [[3,1,3]] MCMR + if_test crossing on ibm_fez)
     rep3_stg_dir = cli_repo / "experiments" / "rep3_fez_staged"
-    if (rep3_stg_dir / "PRE_REGISTRATION.md").is_file() and (rep3_stg_dir / "rep3_fez_staged_circuits.qpy").is_file():
+    if (rep3_stg_dir / "rep3_fez_submitted_job.json").is_file() and (
+        rep3_stg_dir / "physical_rep3_fez_raw_counts.json.gz"
+    ).is_file():
+        jrep3 = json.loads((rep3_stg_dir / "rep3_fez_submitted_job.json").read_text(encoding="utf-8"))
+        _append_capsule(
+            experiment_id="OSIRIS-QEC-REP3-FEZ",
+            evidence_class="HARDWARE_ATTESTED",
+            prereg_sha256=_sha256_file(rep3_stg_dir / "PRE_REGISTRATION.md"),
+            circuit_isa_sha256=_sha256_file(rep3_stg_dir / "rep3_fez_staged_circuits.qpy"),
+            provider="IBM Quantum",
+            backend_id=str(jrep3["backend"]),
+            shots=int(jrep3["total_shots"]),
+            provider_job_id=str(jrep3["job_id"]),
+            raw_counts_sha256=_sha256_file(rep3_stg_dir / "physical_rep3_fez_raw_counts.json.gz"),
+            zenodo_doi=_v622_deposit_doi("echo_and_card_c_qec_gates"),
+        )
+    elif (rep3_stg_dir / "PRE_REGISTRATION.md").is_file() and (rep3_stg_dir / "rep3_fez_staged_circuits.qpy").is_file():
         _append_capsule(
             experiment_id="OSIRIS-QEC-REP3-FEZ-STAGED",
             evidence_class="OFFLINE_COMPILED",
@@ -1572,6 +1615,140 @@ def materialize_workspace_reproducibility_capsules(
             provider_job_id=None,
             raw_counts_sha256=None,
             zenodo_doi=None,
+        )
+
+    # 27. OSIRIS-QEC-MULTIDISTANCE (d=3,5,7 repetition & rotated surface code threshold + Lambda_d gate)
+    qec_md_rep = cli_repo / "experiments" / "qec_card_c" / "artifacts" / "card_c_multidistance_threshold_report.json"
+    qec_md_src = cli_repo / "experiments" / "qec_card_c" / "qec_multidistance_scaling.py"
+    if qec_md_rep.is_file() and qec_md_src.is_file():
+        _append_capsule(
+            experiment_id="OSIRIS-QEC-MULTIDISTANCE",
+            evidence_class="SIMULATED",
+            prereg_sha256=_sha256_file(qec_md_rep),
+            circuit_isa_sha256=_sha256_file(qec_md_src),
+            provider="Simulator",
+            backend_id="blossom_mwpm_d3_d5_d7_surface",
+            shots=720000,
+            provider_job_id=None,
+            raw_counts_sha256=_sha256_file(qec_md_rep),
+            zenodo_doi=_v622_deposit_doi("rep3_echo_fez_and_multidistance_qec"),
+        )
+
+    # 28. OSIRIS-BT2T-003 (Kogut-Susskind 2T non-abelian lattice gauge plaquette Trotter dynamics)
+    bt3_rep = cli_repo / "experiments" / "bt2t_plaquette" / "manifest_bt2t003.json"
+    bt3_src = cli_repo / "experiments" / "bt2t_plaquette" / "bt2t_plaquette_dynamics.py"
+    if bt3_rep.is_file() and bt3_src.is_file():
+        _append_capsule(
+            experiment_id="OSIRIS-BT2T-003",
+            evidence_class="SIMULATED",
+            prereg_sha256=_sha256_file(bt3_rep),
+            circuit_isa_sha256=_sha256_file(bt3_src),
+            provider="Simulator",
+            backend_id="kogut_susskind_2t_strang_trotter",
+            shots=1024,
+            provider_job_id=None,
+            raw_counts_sha256=_sha256_file(bt3_rep),
+            zenodo_doi=_v622_deposit_doi("bt2t003_kogut_susskind_plaquette"),
+        )
+
+    # 29. OSIRIS-BT2T-003-FEZ (Live 240-PUB 2T magnetic plaquette character-sector trajectory & Window-2 ECHO on ibm_fez)
+    bt3_fez_dir = cli_repo / "experiments" / "bt2t003_fez"
+    if (bt3_fez_dir / "bt2t003_fez_submitted_job.json").is_file() and (
+        bt3_fez_dir / "physical_bt2t003_fez_raw_counts.json.gz"
+    ).is_file():
+        jbt3 = json.loads((bt3_fez_dir / "bt2t003_fez_submitted_job.json").read_text(encoding="utf-8"))
+        _append_capsule(
+            experiment_id="OSIRIS-BT2T-003-FEZ",
+            evidence_class="HARDWARE_ATTESTED",
+            prereg_sha256=_sha256_file(bt3_fez_dir / "PRE_REGISTRATION.md"),
+            circuit_isa_sha256=_sha256_file(bt3_fez_dir / "bt2t003_fez_staged_circuits.qpy"),
+            provider="IBM Quantum",
+            backend_id=str(jbt3["backend"]),
+            shots=int(jbt3["total_shots"]),
+            provider_job_id=str(jbt3["job_id"]),
+            raw_counts_sha256=_sha256_file(bt3_fez_dir / "physical_bt2t003_fez_raw_counts.json.gz"),
+            zenodo_doi=_v622_deposit_doi("bt2t003_kogut_susskind_plaquette"),
+        )
+    elif (bt3_fez_dir / "PRE_REGISTRATION.md").is_file() and (bt3_fez_dir / "bt2t003_fez_staged_circuits.qpy").is_file():
+        _append_capsule(
+            experiment_id="OSIRIS-BT2T-003-FEZ-STAGED",
+            evidence_class="OFFLINE_COMPILED",
+            prereg_sha256=_sha256_file(bt3_fez_dir / "PRE_REGISTRATION.md"),
+            circuit_isa_sha256=_sha256_file(bt3_fez_dir / "bt2t003_fez_staged_circuits.qpy"),
+            provider="IBM Quantum",
+            backend_id="ibm_fez",
+            shots=61440,
+            provider_job_id=None,
+            raw_counts_sha256=None,
+            zenodo_doi=_v622_deposit_doi("bt2t003_kogut_susskind_plaquette"),
+        )
+
+    # 30. OSIRIS-QEC-REP5-FEZ (Live 72-PUB 9Q [[5,1,5]] vs 5Q [[3,1,3]] dynamic MCMR distance scaling on ibm_fez)
+    rep5_stg_dir = cli_repo / "experiments" / "rep5_fez_staged"
+    if (rep5_stg_dir / "rep5_fez_submitted_job.json").is_file() and (
+        rep5_stg_dir / "physical_rep5_fez_raw_counts.json.gz"
+    ).is_file():
+        jrep5 = json.loads((rep5_stg_dir / "rep5_fez_submitted_job.json").read_text(encoding="utf-8"))
+        _append_capsule(
+            experiment_id="OSIRIS-QEC-REP5-FEZ",
+            evidence_class="HARDWARE_ATTESTED",
+            prereg_sha256=_sha256_file(rep5_stg_dir / "PRE_REGISTRATION.md"),
+            circuit_isa_sha256=_sha256_file(rep5_stg_dir / "rep5_fez_staged_circuits.qpy"),
+            provider="IBM Quantum",
+            backend_id=str(jrep5["backend"]),
+            shots=int(jrep5["total_shots"]),
+            provider_job_id=str(jrep5["job_id"]),
+            raw_counts_sha256=_sha256_file(rep5_stg_dir / "physical_rep5_fez_raw_counts.json.gz"),
+            zenodo_doi=_v622_deposit_doi("rep5_fez_softmwpm_and_bt2t004_ladder")
+            or _v622_deposit_doi("rep3_echo_fez_and_multidistance_qec"),
+        )
+    elif (rep5_stg_dir / "PRE_REGISTRATION.md").is_file() and (rep5_stg_dir / "rep5_fez_staged_circuits.qpy").is_file():
+        _append_capsule(
+            experiment_id="OSIRIS-QEC-REP5-FEZ-STAGED",
+            evidence_class="OFFLINE_COMPILED",
+            prereg_sha256=_sha256_file(rep5_stg_dir / "PRE_REGISTRATION.md"),
+            circuit_isa_sha256=_sha256_file(rep5_stg_dir / "rep5_fez_staged_circuits.qpy"),
+            provider="IBM Quantum",
+            backend_id="ibm_fez",
+            shots=36864,
+            provider_job_id=None,
+            raw_counts_sha256=None,
+            zenodo_doi=_v622_deposit_doi("rep5_fez_softmwpm_and_bt2t004_ladder")
+            or _v622_deposit_doi("rep3_echo_fez_and_multidistance_qec"),
+        )
+
+    # 31. OSIRIS-QEC-SOFTMWPM (Drift- & streak-aware soft-weight Edmonds Blossom decoder + live dc35d4inj2vs73dhmsog re-scoring)
+    soft_rep = cli_repo / "experiments" / "qec_card_c" / "artifacts" / "card_c_soft_drift_mwpm_report.json"
+    soft_src = cli_repo / "experiments" / "qec_card_c" / "qec_soft_drift_mwpm.py"
+    if soft_rep.is_file() and soft_src.is_file():
+        _append_capsule(
+            experiment_id="OSIRIS-QEC-SOFTMWPM",
+            evidence_class="SIMULATED",
+            prereg_sha256=_sha256_file(soft_rep),
+            circuit_isa_sha256=_sha256_file(soft_src),
+            provider="Simulator",
+            backend_id="soft_drift_streak_blossom_mwpm",
+            shots=432000,
+            provider_job_id=None,
+            raw_counts_sha256=_sha256_file(soft_rep),
+            zenodo_doi=_v622_deposit_doi("rep5_fez_softmwpm_and_bt2t004_ladder"),
+        )
+
+    # 32. OSIRIS-BT2T-004 (10-qubit coupled 2-plaquette 2T Kogut-Susskind lattice gauge ladder)
+    bt4_rep = cli_repo / "experiments" / "bt2t_multiplaquette" / "manifest_bt2t004.json"
+    bt4_src = cli_repo / "experiments" / "bt2t_multiplaquette" / "bt2t_two_plaquette_ladder.py"
+    if bt4_rep.is_file() and bt4_src.is_file():
+        _append_capsule(
+            experiment_id="OSIRIS-BT2T-004",
+            evidence_class="SIMULATED",
+            prereg_sha256=_sha256_file(bt4_rep),
+            circuit_isa_sha256=_sha256_file(bt4_src),
+            provider="Simulator",
+            backend_id="kogut_susskind_2t_two_plaquette_ladder_10q",
+            shots=1024,
+            provider_job_id=None,
+            raw_counts_sha256=_sha256_file(bt4_rep),
+            zenodo_doi=_v622_deposit_doi("rep5_fez_softmwpm_and_bt2t004_ladder"),
         )
 
     out_file.parent.mkdir(parents=True, exist_ok=True)

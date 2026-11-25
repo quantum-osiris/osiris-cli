@@ -1205,8 +1205,9 @@ def execute_closure_verify(state: Optional[OsirisReplState] = None, target_dir: 
 
     p = Path(target_dir)
     if not p.is_absolute() and not p.exists():
-        if (REPO_ROOT / target_dir).exists():
-            p = REPO_ROOT / target_dir
+        repo_root = Path(__file__).resolve().parents[1]
+        if (repo_root / target_dir).exists():
+            p = repo_root / target_dir
         elif (Path.home() / target_dir).exists():
             p = Path.home() / target_dir
 

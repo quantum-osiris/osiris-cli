@@ -1,0 +1,272 @@
+{
+  "ancilla_streak_diagnostics": {
+    "R3": {
+      "ancilla_a0_q71": {
+        "detector_excess_over_bernoulli": 2.8969,
+        "detector_p1": 0.11084,
+        "detector_p11": 0.03559,
+        "raw_meas_excess_over_bernoulli": 3.4784,
+        "raw_meas_p1": 0.122938,
+        "raw_meas_p11": 0.052572
+      },
+      "ancilla_a1_q69": {
+        "detector_excess_over_bernoulli": 2.6313,
+        "detector_p1": 0.131917,
+        "detector_p11": 0.04579,
+        "raw_meas_excess_over_bernoulli": 3.2199,
+        "raw_meas_p1": 0.142904,
+        "raw_meas_p11": 0.065755
+      }
+    },
+    "R5": {
+      "ancilla_a0_q71": {
+        "detector_excess_over_bernoulli": 2.5294,
+        "detector_p1": 0.122287,
+        "detector_p11": 0.037826,
+        "raw_meas_excess_over_bernoulli": 3.4628,
+        "raw_meas_p1": 0.185742,
+        "raw_meas_p11": 0.119466
+      },
+      "ancilla_a1_q69": {
+        "detector_excess_over_bernoulli": 2.3441,
+        "detector_p1": 0.133843,
+        "detector_p11": 0.041992,
+        "raw_meas_excess_over_bernoulli": 3.2223,
+        "raw_meas_p1": 0.197917,
+        "raw_meas_p11": 0.126221
+      }
+    }
+  },
+  "credential_provenance": {
+    "channel": "ibm_quantum_platform",
+    "credential_basename": "apikey.json",
+    "credential_source": "OSIRIS_IBM_KEY_FILE",
+    "instance_alias": "open-instance",
+    "key_created_at": "2026-11-15T08:18+0000",
+    "key_file_sha256_prefix16": "1e1e6bf779378a8b"
+  },
+  "execution_tier": "HARDWARE_ATTESTED",
+  "paired_block_tests": {
+    "R3_arm2_minus_arm4a": {
+      "block_wins": 3,
+      "delta_mean": 0.017253,
+      "p_one_sided": 0.015448,
+      "t_stat": 5.5564
+    },
+    "R3_arm2_minus_arm4b": {
+      "block_wins": 3,
+      "delta_mean": 0.008463,
+      "p_one_sided": 0.076445,
+      "t_stat": 2.2543
+    },
+    "R5_arm2_minus_arm4a": {
+      "block_wins": 3,
+      "delta_mean": 0.035807,
+      "p_one_sided": 0.017209,
+      "t_stat": 5.25
+    },
+    "R5_arm2_minus_arm4b": {
+      "block_wins": 3,
+      "delta_mean": 0.025065,
+      "p_one_sided": 0.006043,
+      "t_stat": 9.0131
+    }
+  },
+  "per_block_summary": {
+    "1": {
+      "ARM1_UNENCODED": {
+        "blocks": [
+          0.095703,
+          0.102539,
+          0.118164
+        ],
+        "mean": 0.105469,
+        "se": 0.006647
+      },
+      "ARM2_ENCODED_NO_CORR": {
+        "blocks": [
+          0.007812,
+          0.012695,
+          0.008789
+        ],
+        "mean": 0.009766,
+        "se": 0.001492
+      },
+      "ARM4A_DECODED_PAULI_FRAME": {
+        "blocks": [
+          0.015625,
+          0.006836,
+          0.014648
+        ],
+        "mean": 0.01237,
+        "se": 0.002781
+      },
+      "ARM4B_PHYSICAL_FEEDFORWARD": {
+        "blocks": [
+          0.027344,
+          0.024414,
+          0.026367
+        ],
+        "mean": 0.026042,
+        "se": 0.000861
+      }
+    },
+    "3": {
+      "ARM1_UNENCODED": {
+        "blocks": [
+          0.234375,
+          0.200195,
+          0.241211
+        ],
+        "mean": 0.22526,
+        "se": 0.012687
+      },
+      "ARM2_ENCODED_NO_CORR": {
+        "blocks": [
+          0.05957,
+          0.074219,
+          0.080078
+        ],
+        "mean": 0.071289,
+        "se": 0.006099
+      },
+      "ARM4A_DECODED_PAULI_FRAME": {
+        "blocks": [
+          0.045898,
+          0.05957,
+          0.056641
+        ],
+        "mean": 0.054036,
+        "se": 0.004156
+      },
+      "ARM4B_PHYSICAL_FEEDFORWARD": {
+        "blocks": [
+          0.058594,
+          0.0625,
+          0.067383
+        ],
+        "mean": 0.062826,
+        "se": 0.002542
+      }
+    },
+    "5": {
+      "ARM1_UNENCODED": {
+        "blocks": [
+          0.274414,
+          0.283203,
+          0.273438
+        ],
+        "mean": 0.277018,
+        "se": 0.003105
+      },
+      "ARM2_ENCODED_NO_CORR": {
+        "blocks": [
+          0.117188,
+          0.128906,
+          0.123047
+        ],
+        "mean": 0.123047,
+        "se": 0.003383
+      },
+      "ARM4A_DECODED_PAULI_FRAME": {
+        "blocks": [
+          0.094727,
+          0.083984,
+          0.083008
+        ],
+        "mean": 0.08724,
+        "se": 0.003754
+      },
+      "ARM4B_PHYSICAL_FEEDFORWARD": {
+        "blocks": [
+          0.097656,
+          0.100586,
+          0.095703
+        ],
+        "mean": 0.097982,
+        "se": 0.001419
+      }
+    }
+  },
+  "per_round_linear_slopes": {
+    "arm1_unencoded": {
+      "intercept": 0.073921,
+      "slope_per_round": 0.042887
+    },
+    "arm2_encoded_no_corr": {
+      "intercept": -0.016927,
+      "slope_per_round": 0.02832
+    },
+    "arm4a_decoded_pauli_frame": {
+      "intercept": -0.004937,
+      "slope_per_round": 0.018718
+    },
+    "arm4b_physical_feedforward": {
+      "intercept": 0.008328,
+      "slope_per_round": 0.017985
+    }
+  },
+  "preregistration_md_sha256": "291c3c363983a2169537fda159fc668763d55ae36a6864db55c3c8a3e48032d3",
+  "protocol_id": "OSIRIS-QEC-REP3-FEZ",
+  "provider_job_id": "dc35d4inj2vs73dhmsog",
+  "provider_metadata": {
+    "backend": "ibm_fez",
+    "creation_date": "2026-11-24T22:31:30.401202-05:00",
+    "job_id": "dc35d4inj2vs73dhmsog",
+    "qiskit_version": "qiskit_ibm_runtime-0.52.1,qiskit-2.6.2*,qiskit_aer-0.18.2",
+    "status": "DONE",
+    "timestamps": {
+      "created": "2026-11-25T03:31:30.401202Z",
+      "finished": "2026-11-25T03:31:56.430422Z",
+      "running": "2026-11-25T03:31:31.838082Z"
+    },
+    "usage": {
+      "qpu_charge_time_seconds": 16,
+      "resource_units": 0.250193,
+      "status": "complete"
+    }
+  },
+  "qpy_sha256": "f240d445acc36a69ab2a2604132fa8fc8a0dd5c45130cd8d641b6780fcecc83a",
+  "raw_counts_gz_sha256": "2af0e73634a873bff1429e5369f969b58ea19fac5ed57128dfd030e5df28f067",
+  "ro_cal_3q_assignment_fidelity": 0.983317,
+  "ro_cal_3q_condition_number": 1.038818,
+  "rounds_summary": [
+    {
+      "arm1_unencoded_p_fail": 0.105469,
+      "arm2_encoded_no_corr_p_fail": 0.009766,
+      "arm3_postselected_acceptance_rate": 0.766276,
+      "arm3_postselected_conditional_p_fail": 0.0,
+      "arm4a_decoded_pauli_frame_p_fail": 0.01237,
+      "arm4b_physical_feedforward_p_fail": 0.026042,
+      "rounds": 1
+    },
+    {
+      "arm1_unencoded_p_fail": 0.22526,
+      "arm2_encoded_no_corr_p_fail": 0.071289,
+      "arm3_postselected_acceptance_rate": 0.564128,
+      "arm3_postselected_conditional_p_fail": 0.000577,
+      "arm4a_decoded_pauli_frame_p_fail": 0.054036,
+      "arm4b_physical_feedforward_p_fail": 0.062826,
+      "rounds": 3
+    },
+    {
+      "arm1_unencoded_p_fail": 0.277018,
+      "arm2_encoded_no_corr_p_fail": 0.123047,
+      "arm3_postselected_acceptance_rate": 0.430664,
+      "arm3_postselected_conditional_p_fail": 0.003023,
+      "arm4a_decoded_pauli_frame_p_fail": 0.08724,
+      "arm4b_physical_feedforward_p_fail": 0.097982,
+      "rounds": 5
+    }
+  ],
+  "schema": "osiris.rep3_fez.results/1",
+  "total_pubs": 96,
+  "total_shots": 49152,
+  "verdicts": {
+    "H1_pauli_frame_crosses_below_unencoded_and_nocorr": "SUPPORTED",
+    "H2_physical_feedforward_crosses_below_unencoded_and_nocorr": "SUPPORTED",
+    "H3_feedforward_vs_pauli_frame_latency_overhead_quantified": "SUPPORTED",
+    "crossing_round_pauli_frame_vs_nocorr": 3,
+    "crossing_round_physical_feedforward_vs_nocorr": 3
+  }
+}

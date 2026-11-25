@@ -1,0 +1,131 @@
+{
+  "backend": "ibm_fez",
+  "chain_9q": [
+    120,
+    121,
+    122,
+    123,
+    136,
+    143,
+    142,
+    141,
+    140
+  ],
+  "execution_tier": "HARDWARE_ATTESTED",
+  "mean_lambda_3_to_5_mwpm": 2.1209,
+  "peak_lambda_3_to_5_mwpm_r3": 2.8333,
+  "preregistration_md_sha256": "18af4ae9aa2e0560475d25239a61dcc4a93e99216c8168822de22c3520d98214",
+  "protocol_id": "OSIRIS-QEC-REP5-FEZ",
+  "provider_job_id": "dc3bmlinj2vs73di19s0",
+  "qpy_sha256": "da8061639e8eaa7e708f506095c590f69dc39ec5573f67edebadbb6f9416aee1",
+  "raw_counts_gz_sha256": "d73bd9c153d2feddc7e403455b6b725630106ee3b09d8d4f103bdb83fcadea56",
+  "ro_cal_5d_assignment_fidelity": 0.947754,
+  "ro_cal_5d_per_data_qubit_error": {
+    "120": 0.019694,
+    "122": 0.003255,
+    "136": 0.012695,
+    "140": 0.012044,
+    "142": 0.006673
+  },
+  "rounds_summary": [
+    {
+      "arm1_unencoded_p_fail": 0.023438,
+      "arm2_rep3_nocorr_p_fail": 0.001953,
+      "arm2_rep5_nocorr_p_fail": 0.000977,
+      "arm3_rep3_acceptance_rate": 0.907227,
+      "arm3_rep3_postselected_p_fail": 0.0,
+      "arm3_rep5_acceptance_rate": 0.793457,
+      "arm3_rep5_postselected_p_fail": 0.0,
+      "arm4a_rep3_mwpm_p_fail": 0.000977,
+      "arm4a_rep5_mwpm_p_fail": 0.000488,
+      "block_arm4a_rep3_p_fail": [
+        0.000977,
+        0.000977
+      ],
+      "block_arm4a_rep5_p_fail": [
+        0.000977,
+        0.0
+      ],
+      "lambda_3_to_5_mwpm": 2.0,
+      "lambda_3_to_5_nocorr": 2.0,
+      "rep5_ancilla_streak_ratios_over_bernoulli": [
+        9.7522,
+        13.5854,
+        15.4074,
+        9.9861
+      ],
+      "rep5_crossing_below_rep3_mwpm_pp": 0.0488,
+      "rep5_crossing_below_rep5_nocorr_pp": 0.0488,
+      "rounds": 1
+    },
+    {
+      "arm1_unencoded_p_fail": 0.039062,
+      "arm2_rep3_nocorr_p_fail": 0.011719,
+      "arm2_rep5_nocorr_p_fail": 0.005859,
+      "arm3_rep3_acceptance_rate": 0.79248,
+      "arm3_rep3_postselected_p_fail": 0.0,
+      "arm3_rep5_acceptance_rate": 0.605957,
+      "arm3_rep5_postselected_p_fail": 0.0,
+      "arm4a_rep3_mwpm_p_fail": 0.008301,
+      "arm4a_rep5_mwpm_p_fail": 0.00293,
+      "block_arm4a_rep3_p_fail": [
+        0.005859,
+        0.010742
+      ],
+      "block_arm4a_rep5_p_fail": [
+        0.00293,
+        0.00293
+      ],
+      "lambda_3_to_5_mwpm": 2.8333,
+      "lambda_3_to_5_nocorr": 2.0,
+      "rep5_ancilla_streak_ratios_over_bernoulli": [
+        4.6282,
+        5.3589,
+        7.735,
+        5.9285
+      ],
+      "rep5_crossing_below_rep3_mwpm_pp": 0.5371,
+      "rep5_crossing_below_rep5_nocorr_pp": 0.293,
+      "rounds": 3
+    },
+    {
+      "arm1_unencoded_p_fail": 0.06543,
+      "arm2_rep3_nocorr_p_fail": 0.02002,
+      "arm2_rep5_nocorr_p_fail": 0.01709,
+      "arm3_rep3_acceptance_rate": 0.703125,
+      "arm3_rep3_postselected_p_fail": 0.0,
+      "arm3_rep5_acceptance_rate": 0.483887,
+      "arm3_rep5_postselected_p_fail": 0.0,
+      "arm4a_rep3_mwpm_p_fail": 0.012695,
+      "arm4a_rep5_mwpm_p_fail": 0.008301,
+      "block_arm4a_rep3_p_fail": [
+        0.010742,
+        0.014648
+      ],
+      "block_arm4a_rep5_p_fail": [
+        0.007812,
+        0.008789
+      ],
+      "lambda_3_to_5_mwpm": 1.5294,
+      "lambda_3_to_5_nocorr": 1.1714,
+      "rep5_ancilla_streak_ratios_over_bernoulli": [
+        4.2123,
+        5.2718,
+        6.6705,
+        4.8683
+      ],
+      "rep5_crossing_below_rep3_mwpm_pp": 0.4395,
+      "rep5_crossing_below_rep5_nocorr_pp": 0.8789,
+      "rounds": 5
+    }
+  ],
+  "schema": "osiris.rep5_fez.results/1",
+  "slope_per_round": {
+    "arm1_unencoded": 0.010498,
+    "arm2_rep3_nocorr": 0.004517,
+    "arm2_rep5_nocorr": 0.004028,
+    "arm4a_rep3_mwpm": 0.002929,
+    "arm4a_rep5_mwpm": 0.001953,
+    "lambda_3_to_5_slope_ratio": 1.4998
+  }
+}

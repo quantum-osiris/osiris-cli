@@ -1,0 +1,295 @@
+{
+  "credential_provenance": {
+    "channel": "ibm_quantum_platform",
+    "credential_basename": "apikey.json",
+    "credential_source": "OSIRIS_IBM_KEY_FILE",
+    "instance_alias": "open-instance",
+    "key_created_at": "2026-11-15T08:18+0000",
+    "key_file_sha256_prefix16": "1e1e6bf779378a8b"
+  },
+  "delta_spearman_echo_minus_best_comparator": -0.060606,
+  "execution_tier": "HARDWARE_ATTESTED",
+  "mean_echo_return": 0.63125,
+  "mean_identity_return": 0.909375,
+  "mean_overrot_return": 0.606771,
+  "n_windows": 1,
+  "per_workload_spearman": {
+    "bt2t_72cz_mean": {
+      "oracle_best_fidelity": 0.576389,
+      "p_calibration": 0.018573,
+      "p_echo": 0.04254,
+      "spearman_calibration": 0.721212,
+      "spearman_echo": 0.648485,
+      "spearman_spam_normalized_echo_posthoc": 0.951515,
+      "top1_calibration_fidelity": 0.538194,
+      "top1_echo_fidelity": 0.538194,
+      "top1_echo_regret": 0.038195
+    },
+    "clifford_30cz": {
+      "oracle_best_fidelity": 0.688802,
+      "p_calibration": 0.009222,
+      "p_echo": 0.021666,
+      "spearman_calibration": 0.769697,
+      "spearman_echo": 0.709091,
+      "spearman_spam_normalized_echo_posthoc": 0.890909,
+      "top1_calibration_fidelity": 0.688802,
+      "top1_echo_fidelity": 0.688802,
+      "top1_echo_regret": 0.0
+    },
+    "heldout_composite": {
+      "oracle_best_fidelity": 0.659433,
+      "p_calibration": 0.007547,
+      "p_echo": 0.018573,
+      "spearman_calibration": 0.781818,
+      "spearman_echo": 0.721212,
+      "spearman_spam_normalized_echo_posthoc": 0.90303,
+      "top1_calibration_fidelity": 0.659433,
+      "top1_echo_fidelity": 0.659433,
+      "top1_echo_regret": 0.0
+    },
+    "mirror_24cz": {
+      "oracle_best_fidelity": 0.751302,
+      "p_calibration": 0.011143,
+      "p_echo": 0.000344,
+      "spearman_calibration": 0.757576,
+      "spearman_echo": 0.90303,
+      "spearman_spam_normalized_echo_posthoc": 0.769697,
+      "top1_calibration_fidelity": 0.751302,
+      "top1_echo_fidelity": 0.751302,
+      "top1_echo_regret": 0.0
+    }
+  },
+  "placement_results": [
+    {
+      "bt2t_72cz_mean": 0.376302,
+      "calibration_rank_score": -0.139835,
+      "clifford_30cz": 0.515625,
+      "echo_probe_16cz": 0.722656,
+      "heldout_composite": 0.509115,
+      "identity_ctrl_0cz": 0.971354,
+      "mirror_24cz": 0.635417,
+      "overrot_ctrl_016": 0.707031,
+      "physical_qubits": [
+        21,
+        22,
+        23,
+        16,
+        24
+      ],
+      "placement_id": 0,
+      "spam_normalized_echo_ratio": 0.743968
+    },
+    {
+      "bt2t_72cz_mean": 0.538194,
+      "calibration_rank_score": -0.103649,
+      "clifford_30cz": 0.688802,
+      "echo_probe_16cz": 0.815104,
+      "heldout_composite": 0.659433,
+      "identity_ctrl_0cz": 0.96224,
+      "mirror_24cz": 0.751302,
+      "overrot_ctrl_016": 0.755208,
+      "physical_qubits": [
+        5,
+        6,
+        7,
+        8,
+        17
+      ],
+      "placement_id": 1,
+      "spam_normalized_echo_ratio": 0.847091
+    },
+    {
+      "bt2t_72cz_mean": 0.264757,
+      "calibration_rank_score": -0.393731,
+      "clifford_30cz": 0.496094,
+      "echo_probe_16cz": 0.723958,
+      "heldout_composite": 0.473235,
+      "identity_ctrl_0cz": 0.954427,
+      "mirror_24cz": 0.658854,
+      "overrot_ctrl_016": 0.671875,
+      "physical_qubits": [
+        9,
+        10,
+        11,
+        12,
+        18
+      ],
+      "placement_id": 2,
+      "spam_normalized_echo_ratio": 0.758527
+    },
+    {
+      "bt2t_72cz_mean": 0.143663,
+      "calibration_rank_score": -0.430006,
+      "clifford_30cz": 0.25,
+      "echo_probe_16cz": 0.377604,
+      "heldout_composite": 0.258825,
+      "identity_ctrl_0cz": 0.983073,
+      "mirror_24cz": 0.382812,
+      "overrot_ctrl_016": 0.384115,
+      "physical_qubits": [
+        27,
+        28,
+        29,
+        30,
+        38
+      ],
+      "placement_id": 3,
+      "spam_normalized_echo_ratio": 0.384106
+    },
+    {
+      "bt2t_72cz_mean": 0.021701,
+      "calibration_rank_score": -4.147669,
+      "clifford_30cz": 0.019531,
+      "echo_probe_16cz": 0.114583,
+      "heldout_composite": 0.041522,
+      "identity_ctrl_0cz": 0.946615,
+      "mirror_24cz": 0.083333,
+      "overrot_ctrl_016": 0.177083,
+      "physical_qubits": [
+        31,
+        32,
+        33,
+        34,
+        39
+      ],
+      "placement_id": 4,
+      "spam_normalized_echo_ratio": 0.121045
+    },
+    {
+      "bt2t_72cz_mean": 0.449219,
+      "calibration_rank_score": -0.345024,
+      "clifford_30cz": 0.541667,
+      "echo_probe_16cz": 0.610677,
+      "heldout_composite": 0.514757,
+      "identity_ctrl_0cz": 0.723958,
+      "mirror_24cz": 0.553385,
+      "overrot_ctrl_016": 0.55599,
+      "physical_qubits": [
+        43,
+        42,
+        41,
+        36,
+        40
+      ],
+      "placement_id": 5,
+      "spam_normalized_echo_ratio": 0.843525
+    },
+    {
+      "bt2t_72cz_mean": 0.576389,
+      "calibration_rank_score": -0.156496,
+      "clifford_30cz": 0.651042,
+      "echo_probe_16cz": 0.802083,
+      "heldout_composite": 0.647859,
+      "identity_ctrl_0cz": 0.936198,
+      "mirror_24cz": 0.716146,
+      "overrot_ctrl_016": 0.769531,
+      "physical_qubits": [
+        25,
+        37,
+        45,
+        44,
+        46
+      ],
+      "placement_id": 6,
+      "spam_normalized_echo_ratio": 0.856745
+    },
+    {
+      "bt2t_72cz_mean": 0.431424,
+      "calibration_rank_score": -0.163459,
+      "clifford_30cz": 0.575521,
+      "echo_probe_16cz": 0.727865,
+      "heldout_composite": 0.565249,
+      "identity_ctrl_0cz": 0.910156,
+      "mirror_24cz": 0.688802,
+      "overrot_ctrl_016": 0.690104,
+      "physical_qubits": [
+        49,
+        50,
+        51,
+        52,
+        58
+      ],
+      "placement_id": 7,
+      "spam_normalized_echo_ratio": 0.799714
+    },
+    {
+      "bt2t_72cz_mean": 0.496094,
+      "calibration_rank_score": -0.231744,
+      "clifford_30cz": 0.585938,
+      "echo_probe_16cz": 0.71875,
+      "heldout_composite": 0.596788,
+      "identity_ctrl_0cz": 0.860677,
+      "mirror_24cz": 0.708333,
+      "overrot_ctrl_016": 0.671875,
+      "physical_qubits": [
+        63,
+        62,
+        61,
+        60,
+        76
+      ],
+      "placement_id": 8,
+      "spam_normalized_echo_ratio": 0.835098
+    },
+    {
+      "bt2t_72cz_mean": 0.484809,
+      "calibration_rank_score": -0.251468,
+      "clifford_30cz": 0.60026,
+      "echo_probe_16cz": 0.699219,
+      "heldout_composite": 0.580874,
+      "identity_ctrl_0cz": 0.845052,
+      "mirror_24cz": 0.657552,
+      "overrot_ctrl_016": 0.684896,
+      "physical_qubits": [
+        67,
+        66,
+        65,
+        64,
+        77
+      ],
+      "placement_id": 9,
+      "spam_normalized_echo_ratio": 0.827427
+    }
+  ],
+  "preregistration_md_sha256": "fa43b80df1aa9078995da59806fe5f72d906294fea73be83a3bdc0705bb8b331",
+  "protocol_id": "OSIRIS-ECHO-FEZ",
+  "provider_job_id": "dc35e35s2omc738cvcug",
+  "provider_metadata": {
+    "backend": "ibm_fez",
+    "creation_date": "2026-11-24T22:33:32.141537-05:00",
+    "job_id": "dc35e35s2omc738cvcug",
+    "qiskit_version": "qiskit_ibm_runtime-0.52.1,qiskit-2.6.2*,qiskit_aer-0.18.2",
+    "status": "DONE",
+    "timestamps": {
+      "created": "2026-11-25T03:33:32.141537Z",
+      "finished": "2026-11-25T03:34:24.965895Z",
+      "running": "2026-11-25T03:33:33.816484Z"
+    },
+    "usage": {
+      "qpu_charge_time_seconds": 19,
+      "resource_units": 0.304433,
+      "status": "complete"
+    }
+  },
+  "qpy_sha256": "538af9bec5fd1ab2536272e5b33c50021d4e87247cb6f84cbbb415df3b406011",
+  "raw_counts_gz_sha256": "db19dfe6dd7604305cabfb5d1f430c722aaf7fbb019df554d6dd1a06d0793e53",
+  "schema": "osiris.echo_fez.results/1",
+  "spearman_calibration": 0.781818,
+  "spearman_echo": 0.721212,
+  "spearman_topology": -0.042424,
+  "total_pubs": 240,
+  "total_shots": 61440,
+  "verdicts": {
+    "H1_echo_positive_rank_recovery_vs_topology": "SUPPORTED",
+    "H2_single_window_echo_beats_calibration_spearman": "REFUTED_SINGLE_WINDOW_NO_MAJOR_CAL_INVERSION",
+    "top1_heldout_composite_regret": 0.0,
+    "top1_placement_qubits": [
+      5,
+      6,
+      7,
+      8,
+      17
+    ],
+    "top1_placement_selected_pid": 1
+  }
+}
