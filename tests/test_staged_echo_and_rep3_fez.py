@@ -240,9 +240,10 @@ def test_bt2t003_fez_harvested_bundle_integrity() -> None:
 def test_rep5_fez_staged_bundle_integrity() -> None:
     exp_dir = REPO_ROOT / "experiments" / "rep5_fez_staged"
     man = json.loads((exp_dir / "rep5_fez_staging_manifest.json").read_text(encoding="utf-8"))
+    res = json.loads((exp_dir / "physical_rep5_fez_results.json").read_text(encoding="utf-8"))
+    job = json.loads((exp_dir / "rep5_fez_submitted_job.json").read_text(encoding="utf-8"))
+
     assert man["protocol_id"] == "OSIRIS-QEC-REP5-FEZ"
-    assert man["execution_tier"] == "OFFLINE_STAGED"
-    assert man["provider_job_id"] is None
     assert man["total_pubs"] == 72
     assert man["total_shots"] == 36864
     assert man["chain_9q"] == [120, 121, 122, 123, 136, 143, 142, 141, 140]
@@ -254,3 +255,15 @@ def test_rep5_fez_staged_bundle_integrity() -> None:
         hashlib.sha256((exp_dir / "PRE_REGISTRATION.md").read_bytes()).hexdigest()
         == man["preregistration_md_sha256"]
     )
+
+    raw_sha = hashlib.sha256(
+        (exp_dir / "physical_rep5_fez_raw_counts.json.gz").read_bytes()
+    ).hexdigest()
+    assert res["execution_tier"] == "HARDWARE_ATTESTED"
+    assert res["provider_job_id"] == "dc3bmlinj2vs73di19s0"
+    assert job["job_id"] == "dc3bmlinj2vs73di19s0"
+    assert res["raw_counts_gz_sha256"] == raw_sha
+    assert abs(res["ro_cal_5d_assignment_fidelity"] - 0.947754) < 1e-5
+    assert abs(res["peak_lambda_3_to_5_mwpm_r3"] - 2.8333) < 1e-3
+    assert abs(res["mean_lambda_3_to_5_mwpm"] - 2.1209) < 1e-3
+    assert abs(res["slope_per_round"]["lambda_3_to_5_slope_ratio"] - 1.5) < 1e-3
