@@ -1014,14 +1014,22 @@ def probe_git(workspace_root: Path | str | None = None) -> ProbeReceipt:
         except (OSError, subprocess.SubprocessError) as exc:
             return 1, str(exc)
 
-    rc_sha, sha = _git("rev-parse", "--short", "HEAD")
+    rc_sha, sha = _git("rev-parse", "HEAD")
     rc_branch, branch = _git("rev-parse", "--abbrev-ref", "HEAD")
-    if rc_sha != 0 and rc_branch != 0:
+    if rc_sha != 0 or not sha.strip():
+        detail = sha or branch or "not a git repository"
         return _make_receipt(
             "git",
             str(ws),
             1,
-            f"git probe failed in {ws}: {sha or branch or 'not a git repository'}",
+            f"strict git alignment failed closed in {ws}: commit info missing ({detail})",
+        )
+    if rc_branch != 0:
+        return _make_receipt(
+            "git",
+            str(ws),
+            1,
+            f"strict git alignment failed closed in {ws}: branch info missing ({branch})",
         )
 
     _, status_out = _git("status", "--short")

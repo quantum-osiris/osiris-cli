@@ -72,6 +72,7 @@ PY39_MODULES = {
     "test_proof_carrying_evolution.py": "dnalang",
     "test_trio_authz.py": "dnalang",
     "test_trio_command.py": "dnalang",
+    "test_node_beta.py": "dnalang",
     "test_xtop005_arms.py": "qiskit",
     "test_xtop005_code422.py": "qiskit",
 }
