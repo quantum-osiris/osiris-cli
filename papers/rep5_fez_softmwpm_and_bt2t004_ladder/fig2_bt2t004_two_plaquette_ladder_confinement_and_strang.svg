@@ -1,0 +1,117 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="576" height="332" viewBox="0 0 576 332">
+<rect x="0" y="0" width="576" height="332" fill="#ffffff"/>
+<text x="288.00" y="15.00" font-family="Helvetica, Arial, sans-serif" font-size="8.7" font-weight="bold" fill="#111827" text-anchor="middle">OSIRIS-BT2T-004 (SIMULATED/PROXY, 0 s QPU): 10-Qubit 2-Plaquette 2T subset SU(2) Ladder (7,962,624x Reduction, 76-D Orbit Basis)</text>
+<text x="288.00" y="27.00" font-family="Helvetica, Arial, sans-serif" font-size="6.9" font-weight="normal" fill="#475569" text-anchor="middle">37/37 Formal Checks | U_B^(2P) = 32 CZ (All-to-All) / 38 CZ (2xT5 Heavy-Hex) | &gt;117x Compression vs 10Q QSD (479,063 CZ)</text>
+<text x="46.00" y="40.00" font-family="Helvetica, Arial, sans-serif" font-size="7.2" font-weight="bold" fill="#0f172a" text-anchor="start">(a) Wilson-Loop Confinement Crossover &amp; String Tension sigma_eff</text>
+<rect x="46.00" y="46.00" width="236.00" height="198.00" fill="#fafafa" stroke="#334155" stroke-width="0.90"/>
+<line x1="46.00" y1="244.00" x2="282.00" y2="244.00" stroke="#e2e8f0" stroke-width="0.60"/>
+<text x="42.00" y="246.30" font-family="monospace" font-size="6.0" font-weight="normal" fill="#334155" text-anchor="end">0.00</text>
+<line x1="46.00" y1="196.86" x2="282.00" y2="196.86" stroke="#e2e8f0" stroke-width="0.60"/>
+<text x="42.00" y="199.16" font-family="monospace" font-size="6.0" font-weight="normal" fill="#334155" text-anchor="end">0.25</text>
+<line x1="46.00" y1="149.71" x2="282.00" y2="149.71" stroke="#e2e8f0" stroke-width="0.60"/>
+<text x="42.00" y="152.01" font-family="monospace" font-size="6.0" font-weight="normal" fill="#334155" text-anchor="end">0.50</text>
+<line x1="46.00" y1="102.57" x2="282.00" y2="102.57" stroke="#e2e8f0" stroke-width="0.60"/>
+<text x="42.00" y="104.87" font-family="monospace" font-size="6.0" font-weight="normal" fill="#334155" text-anchor="end">0.75</text>
+<line x1="46.00" y1="55.43" x2="282.00" y2="55.43" stroke="#e2e8f0" stroke-width="0.60"/>
+<text x="42.00" y="57.73" font-family="monospace" font-size="6.0" font-weight="normal" fill="#334155" text-anchor="end">1.00</text>
+<line x1="62.00" y1="244.00" x2="62.00" y2="247.00" stroke="#334155" stroke-width="0.70"/>
+<text x="62.00" y="255.00" font-family="monospace" font-size="5.9" font-weight="bold" fill="#111827" text-anchor="middle">0.25</text>
+<line x1="102.80" y1="244.00" x2="102.80" y2="247.00" stroke="#334155" stroke-width="0.70"/>
+<text x="102.80" y="255.00" font-family="monospace" font-size="5.9" font-weight="bold" fill="#111827" text-anchor="middle">1.00</text>
+<line x1="157.20" y1="244.00" x2="157.20" y2="247.00" stroke="#334155" stroke-width="0.70"/>
+<text x="157.20" y="255.00" font-family="monospace" font-size="5.9" font-weight="bold" fill="#111827" text-anchor="middle">2.00</text>
+<line x1="211.60" y1="244.00" x2="211.60" y2="247.00" stroke="#334155" stroke-width="0.70"/>
+<text x="211.60" y="255.00" font-family="monospace" font-size="5.9" font-weight="bold" fill="#111827" text-anchor="middle">3.00</text>
+<line x1="266.00" y1="244.00" x2="266.00" y2="247.00" stroke="#334155" stroke-width="0.70"/>
+<text x="266.00" y="255.00" font-family="monospace" font-size="5.9" font-weight="bold" fill="#111827" text-anchor="middle">4.00</text>
+<text x="164.00" y="265.50" font-family="Helvetica, Arial, sans-serif" font-size="6.1" font-weight="bold" fill="#111827" text-anchor="middle">Yang-Mills Coupling g_YM^2 in [0.25, 4.0]</text>
+<polyline points="62.00,55.70 75.60,62.10 102.80,144.99 130.00,191.70 157.20,213.27 211.60,230.10 266.00,236.15" fill="none" stroke="#2563eb" stroke-width="1.60"/>
+<circle cx="62.00" cy="55.70" r="2.20" fill="#2563eb" stroke="#0f172a" stroke-width="0.60"/>
+<circle cx="75.60" cy="62.10" r="2.20" fill="#2563eb" stroke="#0f172a" stroke-width="0.60"/>
+<circle cx="102.80" cy="144.99" r="2.20" fill="#2563eb" stroke="#0f172a" stroke-width="0.60"/>
+<circle cx="130.00" cy="191.70" r="2.20" fill="#2563eb" stroke="#0f172a" stroke-width="0.60"/>
+<circle cx="157.20" cy="213.27" r="2.20" fill="#2563eb" stroke="#0f172a" stroke-width="0.60"/>
+<circle cx="211.60" cy="230.10" r="2.20" fill="#2563eb" stroke="#0f172a" stroke-width="0.60"/>
+<circle cx="266.00" cy="236.15" r="2.20" fill="#2563eb" stroke="#0f172a" stroke-width="0.60"/>
+<polyline points="62.00,55.96 75.60,67.91 102.80,187.03 130.00,227.40 157.20,238.20 211.60,242.81 266.00,243.62" fill="none" stroke="#059669" stroke-width="1.60"/>
+<circle cx="62.00" cy="55.96" r="2.20" fill="#059669" stroke="#0f172a" stroke-width="0.60"/>
+<circle cx="75.60" cy="67.91" r="2.20" fill="#059669" stroke="#0f172a" stroke-width="0.60"/>
+<circle cx="102.80" cy="187.03" r="2.20" fill="#059669" stroke="#0f172a" stroke-width="0.60"/>
+<circle cx="130.00" cy="227.40" r="2.20" fill="#059669" stroke="#0f172a" stroke-width="0.60"/>
+<circle cx="157.20" cy="238.20" r="2.20" fill="#059669" stroke="#0f172a" stroke-width="0.60"/>
+<circle cx="211.60" cy="242.81" r="2.20" fill="#059669" stroke="#0f172a" stroke-width="0.60"/>
+<circle cx="266.00" cy="243.62" r="2.20" fill="#059669" stroke="#0f172a" stroke-width="0.60"/>
+<polyline points="62.00,243.92 75.60,242.09 102.80,211.43 130.00,176.37 157.20,145.77 211.60,99.36 266.00,65.69" fill="none" stroke="#dc2626" stroke-width="1.60" stroke-dasharray="5,3"/>
+<circle cx="62.00" cy="243.92" r="2.20" fill="#dc2626" stroke="#0f172a" stroke-width="0.60"/>
+<circle cx="75.60" cy="242.09" r="2.20" fill="#dc2626" stroke="#0f172a" stroke-width="0.60"/>
+<circle cx="102.80" cy="211.43" r="2.20" fill="#dc2626" stroke="#0f172a" stroke-width="0.60"/>
+<circle cx="130.00" cy="176.37" r="2.20" fill="#dc2626" stroke="#0f172a" stroke-width="0.60"/>
+<circle cx="157.20" cy="145.77" r="2.20" fill="#dc2626" stroke="#0f172a" stroke-width="0.60"/>
+<circle cx="211.60" cy="99.36" r="2.20" fill="#dc2626" stroke="#0f172a" stroke-width="0.60"/>
+<circle cx="266.00" cy="65.69" r="2.20" fill="#dc2626" stroke="#0f172a" stroke-width="0.60"/>
+<polyline points="62.00,243.83 75.60,237.79 102.80,194.18 130.00,223.05 157.20,236.05 211.60,242.31 266.00,243.46" fill="none" stroke="#7c3aed" stroke-width="1.60" stroke-dasharray="5,3"/>
+<circle cx="62.00" cy="243.83" r="2.20" fill="#7c3aed" stroke="#0f172a" stroke-width="0.60"/>
+<circle cx="75.60" cy="237.79" r="2.20" fill="#7c3aed" stroke="#0f172a" stroke-width="0.60"/>
+<circle cx="102.80" cy="194.18" r="2.20" fill="#7c3aed" stroke="#0f172a" stroke-width="0.60"/>
+<circle cx="130.00" cy="223.05" r="2.20" fill="#7c3aed" stroke="#0f172a" stroke-width="0.60"/>
+<circle cx="157.20" cy="236.05" r="2.20" fill="#7c3aed" stroke="#0f172a" stroke-width="0.60"/>
+<circle cx="211.60" cy="242.31" r="2.20" fill="#7c3aed" stroke="#0f172a" stroke-width="0.60"/>
+<circle cx="266.00" cy="243.46" r="2.20" fill="#7c3aed" stroke="#0f172a" stroke-width="0.60"/>
+<text x="53.00" y="57.50" font-family="Helvetica, Arial, sans-serif" font-size="5.5" font-weight="bold" fill="#1e3a8a" text-anchor="start">Blue: &lt;W_{1x1}&gt; (0.9986 -&gt; 0.0416)</text>
+<text x="53.00" y="66.50" font-family="Helvetica, Arial, sans-serif" font-size="5.5" font-weight="bold" fill="#065f46" text-anchor="start">Green: &lt;W_{1x2}&gt; (0.9972 -&gt; 0.0020)</text>
+<text x="53.00" y="75.50" font-family="Helvetica, Arial, sans-serif" font-size="5.5" font-weight="bold" fill="#dc2626" text-anchor="start">Red (scaled /3.2): sigma_eff (0.0014 -&gt; 3.0258)</text>
+<text x="53.00" y="84.50" font-family="Helvetica, Arial, sans-serif" font-size="5.5" font-weight="bold" fill="#5b21b6" text-anchor="start">Purple (x10): C_12 = &lt;W_{1x2}&gt; - &lt;W_{1x1}&gt;^2 &gt; 0 (peak 0.0264)</text>
+<text x="318.00" y="40.00" font-family="Helvetica, Arial, sans-serif" font-size="7.2" font-weight="bold" fill="#0f172a" text-anchor="start">(b) Coupled 2-Plaquette Strang O(dt^2) vs Lie-Trotter O(dt)</text>
+<rect x="318.00" y="46.00" width="242.00" height="198.00" fill="#fafafa" stroke="#334155" stroke-width="0.90"/>
+<line x1="318.00" y1="232.35" x2="560.00" y2="232.35" stroke="#e2e8f0" stroke-width="0.60"/>
+<text x="314.00" y="234.65" font-family="monospace" font-size="5.9" font-weight="normal" fill="#334155" text-anchor="end">1e-6</text>
+<line x1="318.00" y1="193.53" x2="560.00" y2="193.53" stroke="#e2e8f0" stroke-width="0.60"/>
+<text x="314.00" y="195.83" font-family="monospace" font-size="5.9" font-weight="normal" fill="#334155" text-anchor="end">1e-5</text>
+<line x1="318.00" y1="154.71" x2="560.00" y2="154.71" stroke="#e2e8f0" stroke-width="0.60"/>
+<text x="314.00" y="157.01" font-family="monospace" font-size="5.9" font-weight="normal" fill="#334155" text-anchor="end">1e-4</text>
+<line x1="318.00" y1="115.88" x2="560.00" y2="115.88" stroke="#e2e8f0" stroke-width="0.60"/>
+<text x="314.00" y="118.18" font-family="monospace" font-size="5.9" font-weight="normal" fill="#334155" text-anchor="end">1e-3</text>
+<line x1="318.00" y1="77.06" x2="560.00" y2="77.06" stroke="#e2e8f0" stroke-width="0.60"/>
+<text x="314.00" y="79.36" font-family="monospace" font-size="5.9" font-weight="normal" fill="#334155" text-anchor="end">1e-2</text>
+<line x1="334.00" y1="244.00" x2="334.00" y2="247.00" stroke="#334155" stroke-width="0.70"/>
+<text x="334.00" y="255.00" font-family="monospace" font-size="5.7" font-weight="bold" fill="#111827" text-anchor="middle">N=4</text>
+<line x1="376.00" y1="244.00" x2="376.00" y2="247.00" stroke="#334155" stroke-width="0.70"/>
+<text x="376.00" y="255.00" font-family="monospace" font-size="5.7" font-weight="bold" fill="#111827" text-anchor="middle">N=8</text>
+<line x1="418.00" y1="244.00" x2="418.00" y2="247.00" stroke="#334155" stroke-width="0.70"/>
+<text x="418.00" y="255.00" font-family="monospace" font-size="5.7" font-weight="bold" fill="#111827" text-anchor="middle">N=16</text>
+<line x1="460.00" y1="244.00" x2="460.00" y2="247.00" stroke="#334155" stroke-width="0.70"/>
+<text x="460.00" y="255.00" font-family="monospace" font-size="5.7" font-weight="bold" fill="#111827" text-anchor="middle">N=32</text>
+<line x1="502.00" y1="244.00" x2="502.00" y2="247.00" stroke="#334155" stroke-width="0.70"/>
+<text x="502.00" y="255.00" font-family="monospace" font-size="5.7" font-weight="bold" fill="#111827" text-anchor="middle">N=64</text>
+<line x1="544.00" y1="244.00" x2="544.00" y2="247.00" stroke="#334155" stroke-width="0.70"/>
+<text x="544.00" y="255.00" font-family="monospace" font-size="5.7" font-weight="bold" fill="#111827" text-anchor="middle">N=128</text>
+<text x="439.00" y="265.50" font-family="Helvetica, Arial, sans-serif" font-size="6.1" font-weight="bold" fill="#111827" text-anchor="middle">Trotter Steps N_steps (dt = 0.5 / N_steps, Log-Log)</text>
+<polyline points="334.00,55.58 376.00,67.27 418.00,78.96 460.00,90.65 502.00,102.34 544.00,114.02" fill="none" stroke="#dc2626" stroke-width="1.60" stroke-dasharray="5,3"/>
+<circle cx="334.00" cy="55.58" r="2.20" fill="#dc2626" stroke="#0f172a" stroke-width="0.60"/>
+<circle cx="376.00" cy="67.27" r="2.20" fill="#dc2626" stroke="#0f172a" stroke-width="0.60"/>
+<circle cx="418.00" cy="78.96" r="2.20" fill="#dc2626" stroke="#0f172a" stroke-width="0.60"/>
+<circle cx="460.00" cy="90.65" r="2.20" fill="#dc2626" stroke="#0f172a" stroke-width="0.60"/>
+<circle cx="502.00" cy="102.34" r="2.20" fill="#dc2626" stroke="#0f172a" stroke-width="0.60"/>
+<circle cx="544.00" cy="114.02" r="2.20" fill="#dc2626" stroke="#0f172a" stroke-width="0.60"/>
+<polyline points="334.00,116.03 376.00,139.42 418.00,162.80 460.00,186.18 502.00,209.55 544.00,232.93" fill="none" stroke="#2563eb" stroke-width="1.60"/>
+<circle cx="334.00" cy="116.03" r="2.20" fill="#2563eb" stroke="#0f172a" stroke-width="0.60"/>
+<circle cx="376.00" cy="139.42" r="2.20" fill="#2563eb" stroke="#0f172a" stroke-width="0.60"/>
+<circle cx="418.00" cy="162.80" r="2.20" fill="#2563eb" stroke="#0f172a" stroke-width="0.60"/>
+<circle cx="460.00" cy="186.18" r="2.20" fill="#2563eb" stroke="#0f172a" stroke-width="0.60"/>
+<circle cx="502.00" cy="209.55" r="2.20" fill="#2563eb" stroke="#0f172a" stroke-width="0.60"/>
+<circle cx="544.00" cy="232.93" r="2.20" fill="#2563eb" stroke="#0f172a" stroke-width="0.60"/>
+<polyline points="334.00,107.70 376.00,131.10 418.00,154.48 460.00,177.86 502.00,201.23 544.00,224.60" fill="none" stroke="#059669" stroke-width="1.60"/>
+<circle cx="334.00" cy="107.70" r="2.20" fill="#059669" stroke="#0f172a" stroke-width="0.60"/>
+<circle cx="376.00" cy="131.10" r="2.20" fill="#059669" stroke="#0f172a" stroke-width="0.60"/>
+<circle cx="418.00" cy="154.48" r="2.20" fill="#059669" stroke="#0f172a" stroke-width="0.60"/>
+<circle cx="460.00" cy="177.86" r="2.20" fill="#059669" stroke="#0f172a" stroke-width="0.60"/>
+<circle cx="502.00" cy="201.23" r="2.20" fill="#059669" stroke="#0f172a" stroke-width="0.60"/>
+<circle cx="544.00" cy="224.60" r="2.20" fill="#059669" stroke="#0f172a" stroke-width="0.60"/>
+<text x="325.00" y="57.50" font-family="Helvetica, Arial, sans-serif" font-size="5.4" font-weight="bold" fill="#dc2626" text-anchor="start">Red: Lie-Trotter g^2=1.0 (slope 1.0000, N=128 err 1.12e-3)</text>
+<text x="325.00" y="66.50" font-family="Helvetica, Arial, sans-serif" font-size="5.4" font-weight="bold" fill="#1e3a8a" text-anchor="start">Blue: Strang g^2=1.0 (slope 2.0000, N=128 err 9.66e-7)</text>
+<text x="325.00" y="75.50" font-family="Helvetica, Arial, sans-serif" font-size="5.4" font-weight="bold" fill="#065f46" text-anchor="start">Green: Strang g^2=2.0 (slope 2.0001, N=128 err 1.58e-6)</text>
+<rect x="46.00" y="278.00" width="514.00" height="44.00" fill="#f8fafc" stroke="#cbd5e1" stroke-width="0.70"/>
+<text x="288.00" y="289.50" font-family="Helvetica, Arial, sans-serif" font-size="5.8" font-weight="bold" fill="#0f172a" text-anchor="middle">Spanning-Tree Gauge Reduction: 7-Link 35Q (24^7 = 4,586,471,424) -&gt; 2-Holonomy (W_1, W_B) 10Q (24^2 = 576 Active + 448 Padded, 7,962,624x)</text>
+<text x="288.00" y="301.00" font-family="Helvetica, Arial, sans-serif" font-size="5.8" font-weight="bold" fill="#1e293b" text-anchor="middle">76-D Gauss-Law-Invariant Subspace H_phys^(2P): Burnside 1824/24 = 76 | Centralizer Sum 24+24+4+6+6+6+6 = 76 | Clebsch-Gordan = 76 | Orbits = 76</text>
+<text x="288.00" y="312.50" font-family="Helvetica, Arial, sans-serif" font-size="5.7" font-weight="normal" fill="#334155" text-anchor="middle">Shared-Link Kinetic T_E^(shared) = M_2T^dagger (T_E^(1) (x) I) M_2T (&lt;1e-14 Error) | Structured 10Q Strang = 4,125 CZ (All-to-All) / 9,438 CZ (Heavy-Hex, &gt;11x vs 35Q)</text>
+</svg>
