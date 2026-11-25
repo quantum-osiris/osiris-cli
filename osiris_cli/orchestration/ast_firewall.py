@@ -18,6 +18,11 @@ What is refused, wherever it appears in the tree:
 
 Names are resolved statically from the module's own imports. The check never imports or runs the
 code it inspects. A file that does not parse is refused.
+
+This module is static policy validation only. ``IS_SANDBOX`` is false. It is not an OS
+sandbox, a container, or a microVM. Importing an untrusted module executes that module, so
+:func:`refuse_untrusted_dynamic_import` fails closed until a real OS-level isolation
+boundary exists. Passing ``ast_firewall.check`` does not authorize execution.
 """
 
 from __future__ import annotations
@@ -163,3 +168,26 @@ def controller_message(v: Violation) -> str:
 def critic_token(v: Violation) -> str:
     kind = {"builtin": "banned_primitive", "call": "banned_call", "import": "banned_import"}.get(v.kind, v.kind)
     return f"{kind}:{v.name}:L{v.line}"
+
+
+# Static policy only. Do not treat a clean scan as permission to exec or import.
+IS_SANDBOX = False
+
+
+class UntrustedArtifactError(RuntimeError):
+    """An untrusted module was refused because no OS-level isolation is available."""
+
+
+def refuse_untrusted_dynamic_import(path: object) -> Dict[str, str]:
+    """Refuse to import ``path``. The returned record is the whole result.
+
+    The path is not opened and is not loaded. Dynamic import executes top-level
+    code, and this firewall does not contain that execution.
+    """
+    reason = (
+        "AST firewall is static policy validation only and is not an OS sandbox. "
+        "Refusing to import an untrusted artifact until OS-level isolation exists."
+    )
+    if IS_SANDBOX:
+        raise UntrustedArtifactError("IS_SANDBOX was set; this firewall still must not import untrusted code")
+    return {"error": "untrusted_artifact_refused", "reason": reason, "path": str(path)}
