@@ -1,0 +1,147 @@
+\documentclass[aps,prx,twocolumn,superscriptaddress,nofootinbib]{revtex4-2}
+\usepackage{amsmath,amssymb,bm}
+\usepackage{graphicx}
+\usepackage{hyperref}
+
+\input{generated.tex}
+
+\begin{document}
+
+\title{Hardware-Attested $[[3,1,3]]$ Mid-Circuit Feed-Forward Crossing and 50-Transmon Stabilizer-Reflected Placement Pilot on \texttt{ibm\_fez} with Simulated Multi-Distance ($d \in \{3, 5, 7\}$) Threshold Scaling}
+
+\author{Devin Phillip Davis}
+\affiliation{Agile Defense Systems LLC, Lexington, Kentucky, USA}
+\date{November 25, 2026}
+
+\begin{abstract}
+We report the write-ahead preregistered superconducting hardware execution of repeated syndrome extraction with real-time conditional feed-forward (\texttt{OSIRIS-QEC-REP3-FEZ}) and fifty-transmon stabilizer-reflected placement screening (\texttt{OSIRIS-ECHO-FEZ}) on the \remHeronQubits-qubit IBM Heron~r2 processor \remBackend\ (\remTotalPhysicalShots\ total physical shots across \remTotalPhysicalPubs\ dynamic and probe PUBs, \remTotalQpuSec\,s combined QPU charge time, $>\remWriteAheadGateHours$\,h write-ahead server-clock margins of $+\remRepWriteAheadHours$\,h and $+\remEchoWriteAheadHours$\,h between frozen QPY staging and IBM \texttt{timestamps.created}), paired with an offline \remSimTier\ (\texttt{provider\_job\_id}: \remSimJobId, \remSimQpuSec\,s QPU) multi-distance ($d \in \{3, 5, 7\}$) threshold and $\Lambda_d$ error-suppression study (\texttt{OSIRIS-QEC-MULTIDISTANCE}, manuscript \remPaperId). First, in \texttt{OSIRIS-QEC-REP3-FEZ} (\remHwTier, \texttt{job\_id} = \remRepJobId, \remRepQpuSec\,s QPU, \remRepTotalPubs\ PUBs, \remRepTotalShots\ shots on chain \remRepChain), $[[3,1,3]]$ repetition memory across $R \in \{1, 3, 5\}$ rounds ($\remRepRoundDt\,\mathrm{dt} = \remRepRoundUs\,\mu\mathrm{s}$/round) crosses below both bare unencoded idling (\texttt{Arm 1}: $\remRepArmOneROne, \remRepArmOneRThree, \remRepArmOneRFive$; linear slope $+\remRepSlopeArmOne$/round) and encoded no-correction majority memory (\texttt{Arm 2}: $\remRepArmTwoROne, \remRepArmTwoRThree, \remRepArmTwoRFive$; slope $+\remRepSlopeArmTwo$/round) at $R_{\mathrm{cross}} = 3$ in both auditable Pauli-frame minimum-weight perfect matching (\texttt{Arm 4a}: $\remRepArmFourAROne, \remRepArmFourARThree, \remRepArmFourARFive$; slope $+\remRepSlopeArmFourA$/round) and real-time hardware \texttt{if\_test} feed-forward (\texttt{Arm 4b}: $\remRepArmFourBROne, \remRepArmFourBRThree, \remRepArmFourBRFive$; slope $+\remRepSlopeArmFourB$/round), winning $3/3$ randomized blocks at $R = 3$ and $R = 5$ (paired block-$t = \remRepRFiveTFourB$, one-sided $p = \remRepRFivePFourB$ for \texttt{Arm 4b} $< \texttt{Arm 2}$ at $R = 5$; $t = \remRepRFiveTFourA$, $p = \remRepRFivePFourA$ for \texttt{Arm 4a} $< \texttt{Arm 2}$ at $R = 5$), while postselected detection (\texttt{Arm 3}) yields $\remRepArmThreeROne, \remRepArmThreeRThree, \remRepArmThreeRFive$ at $\remRepArmThreeROneAccPct, \remRepArmThreeRThreeAccPct, \remRepArmThreeRFiveAccPct$ acceptance and mid-circuit ancilla streams exhibit $\remRepStreakMinX$--$\remRepStreakMaxX$ consecutive detector streak excess over independent Bernoulli noise. Second, in \texttt{OSIRIS-ECHO-FEZ} (\remHwTier, \texttt{job\_id} = \remEchoJobId, \remEchoQpuSec\,s QPU, \remEchoTotalPubs\ PUBs across $K = \remEchoPlacementsK$ disjoint $T_5$ subgraphs $= \remEchoTotalTransmons$ transmons, \remEchoTotalShots\ shots), the barrier-independent $16$-\texttt{CZ} echo probe selects oracle-best subgraph \texttt{pid=1} (\remEchoTopOneQubits) with $\remEchoTopOneRegret$ top-$1$ held-out composite regret ($\remEchoPidOneComposite$ composite, $\remEchoPidOneClifford$ Clifford, $\remEchoPidOneMirror$ Mirror) and achieves Spearman $\rho = +\remEchoMirrorRho$ ($p = \remEchoMirrorPEcho$) on non-Clifford \texttt{MIRROR\_24CZ} versus $+\remEchoMirrorCalRho$ for calibration; on the unweighted composite in this single well-calibrated window ($N_{\mathrm{windows}} = \remEchoWindowsN$), preregistered \texttt{H2} is honestly \texttt{REFUTED} ($+\remEchoCompRho$ versus $+\remEchoCompCalRho$ calibration, $\Delta\rho = \remEchoCompDeltaRho$), whereas post-hoc SPAM-normalized \texttt{ECHO/ID\_0CZ} elevates Spearman correlation to $+\remEchoNormCompRho$ ($p = \remEchoNormCompP$) on composite and $+\remEchoNormBtRho$ ($p = \remEchoNormBtPSci$) on $72$-\texttt{CZ} binary tetrahedral inversion (\texttt{BT2T\_72CZ}). Third, in \texttt{OSIRIS-QEC-MULTIDISTANCE} (\remSimTier, \remSimQpuSec\,s QPU), exact Edmonds Blossom \texttt{MWPM} (\remMultiBlossomMatchPct\ match across \remMultiBlossomSyndromes\ multi-defect syndromes) across $d \in \{3, 5, 7\}$ establishes circuit thresholds $p_{\mathrm{th}}^{\mathrm{surf}} = \remMultiSurfPthPct$ and $p_{\mathrm{th}}^{\mathrm{rep}} = \remMultiRepPthPct$, demonstrating that $\remDrfRoPct$ drifted readout collapses heavy-hex surface-code differential suppression to $\Lambda_{3\to 5}^{\mathrm{diff}} = \remMultiDrfSurfDiffLamThreeFive$ ($[\remMultiDrfSurfDiffCiLo, \remMultiDrfSurfDiffCiHi]$) while all-to-all \texttt{H2\_1\_PUBLISHED} achieves $\Lambda_{3\to 5} = \remMultiHtwoSurfLamThreeFive$ and $\Lambda_{5\to 7} = \remMultiHtwoSurfLamFiveSeven$.
+\end{abstract}
+
+\maketitle
+
+\section{Introduction and Write-Ahead Governance}
+Executing quantum error-correction (QEC) and layout-selection benchmarks on physical superconducting processors requires rigorous write-ahead preregistration so that physical qubit chains, dynamic mid-circuit branch conditions, decoder weights, and statistical decision rules are cryptographically frozen prior to hardware submission~\cite{GoogleSurface2023,GoogleWillow2025,MiaoLeakage2023,ChamberlandHeavyHex2020,QuantinuumLogical2024}. Following our offline \remSimTier\ \texttt{Card B} and \texttt{Card C} stop/go gates (\texttt{doi:\remPriorZenodoDoi})~\cite{DavisPaper8Zenodo2026} and multi-processor Heron~r2 readout staleness audits~\cite{DavisRO0607Zenodo2026}, we staged and SHA-256-locked two Qiskit QPY circuit payloads more than $\remWriteAheadGateHours$\,h ahead of live execution on the \remHeronQubits-qubit IBM Heron~r2 processor \remBackend:
+\begin{enumerate}
+  \item \texttt{OSIRIS-QEC-REP3-FEZ} (\remHwTier, \texttt{job\_id} = \remRepJobId, \remRepQpuSec\,s QPU, \remRepTotalPubs\ dynamic PUBs, \remRepTotalShots\ shots): QPY payload \remRepQpyShaPrefix\ and preregistration \remRepPreregShaPrefix\ frozen $+\remRepWriteAheadHours$\,h ($>\remWriteAheadGateHours$\,h) prior to IBM server creation timestamp, testing four-arm $[[3,1,3]]$ repeated syndrome extraction across $R \in \{1, 3, 5\}$ rounds on chain \remRepChain\ (raw counts SHA-256 prefix \remRepRawGzShaPrefix).
+  \item \texttt{OSIRIS-ECHO-FEZ} (\remHwTier, \texttt{job\_id} = \remEchoJobId, \remEchoQpuSec\,s QPU, \remEchoTotalPubs\ PUBs, \remEchoTotalShots\ shots): QPY payload \remEchoQpyShaPrefix\ and preregistration \remEchoPreregShaPrefix\ frozen $+\remEchoWriteAheadHours$\,h ($>\remWriteAheadGateHours$\,h) prior to IBM server creation timestamp, benchmarking the barrier-independent $16$-\texttt{CZ} stabilizer-reflected echo probe across $K = \remEchoPlacementsK$ vertex-disjoint five-qubit $T_5$ heavy-hex subgraphs (\remEchoTotalTransmons\ distinct transmons; raw counts SHA-256 prefix \remEchoRawGzShaPrefix).
+  \item \texttt{OSIRIS-QEC-MULTIDISTANCE} (\remSimTier, \texttt{provider\_job\_id}: \remSimJobId, \remSimQpuSec\,s QPU, seed \remMultiSeed): exact polynomial-time Edmonds Blossom~\cite{EdmondsBlossom1965} \texttt{MWPM} scaling across $d \in \{3, 5, 7\}$ repetition ($[[3,1,3]]$, $[[5,1,5]]$, $[[7,1,7]]$) and Tomita--Svore~\cite{TomitaSvore2014} rotated surface codes ($[[9,1,3]]$, $[[25,1,5]]$, $[[49,1,7]]$; artifact SHA-256 prefix \remMultidistRepShaPrefix).
+\end{enumerate}
+
+\section{Live \texttt{ibm\_fez} $[[3,1,3]]$ Mid-Circuit Feed-Forward Crossing (\texttt{OSIRIS-QEC-REP3-FEZ})}
+
+\subsection{Five-Transmon Chain and Real-Time \texttt{if\_test} Architecture}
+\texttt{OSIRIS-QEC-REP3-FEZ} pins the linear five-transmon chain $[d_0, a_0, d_1, a_1, d_2] = \remRepChain$ on \remBackend\ (calibration mean readout error $\remRepCalRoMean$, two-qubit \texttt{CZ} error sum $\remRepCalCzSum$) at matched per-round duration $\remRepRoundDt\,\mathrm{dt} = \remRepRoundUs\,\mu\mathrm{s}$ (two sequential \texttt{CX} check layers plus $\remRepMeasUs\,\mu\mathrm{s}$ dispersive mid-circuit \texttt{measure} and $\remRepResetUs\,\mu\mathrm{s}$ active \texttt{reset}). Across $N_{\mathrm{blocks}} = \remRepBlocks$ temporally interleaved randomized blocks ($\remRepPubsPerBlock$ PUBs/block $\times \remRepShotsPerPub$ shots/PUB $= \remRepTotalPubs$ PUBs, \remRepTotalShots\ total shots; \remRepShotsPerCell\ shots per $(R, \text{state}, \text{arm})$ cell), we evaluate logical inputs $|0_L\rangle$ and $|1_L\rangle$ at $R \in \{1, 3, 5\}$ across bare unencoded $d_1 = 70$ idling (\texttt{Arm 1}), passive three-qubit majority idling (\texttt{Arm 2}), postselected zero-detector syndrome streams (\texttt{Arm 3}), offline Pauli-frame space-time \texttt{MWPM} decoding (\texttt{Arm 4a}), and real-time hardware \texttt{if\_test} conditional feed-forward (\texttt{Arm 4b}), alongside all eight three-qubit basis states in \texttt{RO\_CAL} (three-qubit terminal assignment fidelity $\remRepRoCalFid$ or $\remRepRoCalFidPct$, condition number $\remRepRoCalCond$). In \texttt{Arm 4b}, each round applies real-time conditional $X$ pulses on the syndrome register $(m_{r,a_0}, m_{r,a_1})$ and we audit time-like detector streak excess $\Xi_k$ on each ancilla:
+\begin{align}
+  \texttt{if\_test}(s_r = 01) \Rightarrow X_{d_0}, \quad
+  \texttt{if\_test}(s_r = 11) &\Rightarrow X_{d_1}, \quad
+  \texttt{if\_test}(s_r = 10) \Rightarrow X_{d_2}, \nonumber\\
+  d_{r,k} = m_{r,k} \oplus m_{r-1,k}, \qquad
+  \Xi_k &= \frac{\Pr(d_{r,k}=1 \land d_{r+1,k}=1)}{\Pr(d_{r,k}=1)^2}.
+  \label{eq:rep3_feedforward_streaks}
+\end{align}
+
+\begin{table*}[t]
+\caption{\texttt{OSIRIS-QEC-REP3-FEZ} (\remHwTier, \texttt{job\_id} = \remRepJobId, \remRepQpuSec\,s QPU, \remRepTotalPubs\ PUBs, \remRepTotalShots\ shots on \remBackend\ chain \remRepChain; results SHA-256 prefix \remRepResultsShaPrefix). Mean logical failure probability $P_{\mathrm{fail}} \pm \mathrm{SE}$ across $N_{\mathrm{blocks}} = \remRepBlocks$ randomized blocks. Postselected \texttt{Arm 3} and its unconditional acceptance rate $A(R)$ are strictly isolated from unconditional \texttt{Arms 1}, \texttt{2}, \texttt{4a}, and \texttt{4b}.}
+\label{tab:rep3_fez_crossing}
+\begin{ruledtabular}
+\begin{tabular}{lrrrrrl}
+Rounds (Duration) & Arm 1 Bare & Arm 2 No-Corr & Arm 4a Pauli MWPM & Arm 4b Physical \texttt{if\_test} & Arm 3 Postsel ($A$) & Block Win Audit \\
+\hline
+\remTableRepThreeRows
+\end{tabular}
+\end{ruledtabular}
+\end{table*}
+
+\begin{figure*}[t]
+  \centering
+  \includegraphics[width=\textwidth]{fig1_rep3_fez_live_crossing_and_echo_10t5.pdf}
+  \caption{Live \remBackend\ \remHwTier\ execution across \remTotalPhysicalShots\ physical shots (\remTotalQpuSec\,s combined QPU). (a)~\texttt{OSIRIS-QEC-REP3-FEZ} (\texttt{job\_id} = \remRepJobId, \remRepTotalShots\ shots on \remRepChain): offline Pauli-frame \texttt{MWPM} (\texttt{Arm 4a}) and real-time hardware \texttt{if\_test} feed-forward (\texttt{Arm 4b}) cross below bare \texttt{Arm 1} at $R = 1$ and below no-correction \texttt{Arm 2} at $R_{\mathrm{cross}} = 3$, winning $3/3$ blocks at $R = 3$ and $R = 5$ ($t = \remRepRFiveTFourB$, $p = \remRepRFivePFourB$ for \texttt{Arm 4b} $< \texttt{Arm 2}$ at $R = 5$). (b)~\texttt{OSIRIS-ECHO-FEZ} (\texttt{job\_id} = \remEchoJobId, \remEchoTotalShots\ shots across $K = \remEchoPlacementsK$ disjoint $T_5$ subgraphs $= \remEchoTotalTransmons$ transmons): raw $16$-\texttt{CZ} echo return, SPAM-normalized \texttt{ECHO/ID\_0CZ}, held-out composite, and \texttt{BT2T\_72CZ} fidelity.}
+  \label{fig:rep3_echo_fez_live}
+\end{figure*}
+
+\subsection{Multi-Round Crossing and Ancilla Streak Diagnostics}
+Table~\ref{tab:rep3_fez_crossing} and Figure~\ref{fig:rep3_echo_fez_live}a confirm all three preregistered \texttt{OSIRIS-QEC-REP3-FEZ} hypotheses (\texttt{H1}, \texttt{H2}, \texttt{H3} = \texttt{SUPPORTED}):
+\begin{itemize}
+  \item \emph{Sustained crossing at $R_{\mathrm{cross}} = 3$ and $R = 5$}: At $R = 1$, mid-circuit measurement and conditional reset incur single-round overhead relative to passive majority decoding (\texttt{Arm 2}: $\remRepArmTwoROne \pm \remRepArmTwoROneSe$ versus \texttt{Arm 4a}: $\remRepArmFourAROne \pm \remRepArmFourAROneSe$ and \texttt{Arm 4b}: $\remRepArmFourBROne \pm \remRepArmFourBROneSe$, while all three beat bare \texttt{Arm 1}: $\remRepArmOneROne \pm \remRepArmOneROneSe$). By $R_{\mathrm{cross}} = 3$, passive \texttt{Arm 2} degrades to $\remRepArmTwoRThree \pm \remRepArmTwoRThreeSe$ ($\remRepArmTwoRThreeSix$), whereas \texttt{Arm 4a} suppresses logical failure to $\remRepArmFourARThree \pm \remRepArmFourARThreeSe$ ($\remRepArmFourARThreeSix$; $\Delta = \remRepRThreeDeltaFourA$, $3/3$ block wins, paired block-$t = \remRepRThreeTFourA$, one-sided $p = \remRepRThreePFourA$) and physical \texttt{if\_test} feed-forward \texttt{Arm 4b} achieves $\remRepArmFourBRThree \pm \remRepArmFourBRThreeSe$ ($\remRepArmFourBRThreeSix$; $\Delta = \remRepRThreeDeltaFourB$, $3/3$ block wins, $t = \remRepRThreeTFourB$, $p = \remRepRThreePFourB$). At $R = 5$ ($\remRepRFiveUs\,\mu\mathrm{s}$), \texttt{Arm 2} reaches $\remRepArmTwoRFive \pm \remRepArmTwoRFiveSe$ ($\remRepArmTwoRFiveSix$) and bare \texttt{Arm 1} reaches $\remRepArmOneRFive \pm \remRepArmOneRFiveSe$ ($\remRepArmOneRFiveSix$), while \texttt{Arm 4a} holds at $\remRepArmFourARFive \pm \remRepArmFourARFiveSe$ ($\remRepArmFourARFiveSix$; $\Delta = \remRepRFiveDeltaFourA$, $3/3$ block wins, $t = \remRepRFiveTFourA$, $p = \remRepRFivePFourA$) and real-time \texttt{Arm 4b} holds at $\remRepArmFourBRFive \pm \remRepArmFourBRFiveSe$ ($\remRepArmFourBRFiveSix$; $\Delta = \remRepRFiveDeltaFourB$, $3/3$ block wins, $t = \remRepRFiveTFourB$, $p = \remRepRFivePFourB$). Fitted linear failure growth drops from $+\remRepSlopeArmOne$/round ($\remRepSlopeArmOneSix$, \texttt{Arm 1}) and $+\remRepSlopeArmTwo$/round ($\remRepSlopeArmTwoSix$, \texttt{Arm 2}) to $+\remRepSlopeArmFourA$/round ($\remRepSlopeArmFourASix$, \texttt{Arm 4a}) and $+\remRepSlopeArmFourB$/round ($\remRepSlopeArmFourBSix$, \texttt{Arm 4b}), while postselected \texttt{Arm 3} achieves $\remRepArmThreeROne, \remRepArmThreeRThree$ ($\remRepArmThreeRThreeSix$), and $\remRepArmThreeRFive$ ($\remRepArmThreeRFiveSix$) conditional failure at $\remRepArmThreeROneAccPct, \remRepArmThreeRThreeAccPct$, and $\remRepArmThreeRFiveAccPct$ acceptance.
+  \item \emph{Empirical time-like detector streak excess}: Consecutive mid-circuit detector flips exceed independent Bernoulli coincidence rates by $\remRepStreakRThreeAZeroX$ ($a_0 = q_{71}$) and $\remRepStreakRThreeAOneX$ ($a_1 = q_{69}$) at $R = 3$, and by $\remRepStreakRFiveAZeroX$ ($a_0 = q_{71}$) and $\remRepStreakRFiveAOneX$ ($a_1 = q_{69}$) at $R = 5$ ($\remRepStreakMinX$--$\remRepStreakMaxX$ detector streak excess; $\remRepRawStreakMinX$--$\remRepRawStreakMaxX$ raw measurement coincidence excess), directly confirming the non-Markovian ancilla reset/leakage persistence predicted by our five-qutrit $|2\rangle$ model~\cite{DavisPaper8Zenodo2026}.
+\end{itemize}
+
+\section{50-Transmon 10-Placement $T_5$ Echo Pilot (\texttt{OSIRIS-ECHO-FEZ})}
+
+\begin{table*}[t]
+\caption{\texttt{OSIRIS-ECHO-FEZ} (\remHwTier, \texttt{job\_id} = \remEchoJobId, \remEchoQpuSec\,s QPU, \remEchoTotalPubs\ PUBs, \remEchoTotalShots\ shots across $K = \remEchoPlacementsK$ vertex-disjoint $T_5$ heavy-hex placements $= \remEchoTotalTransmons$ distinct transmons on \remBackend; results SHA-256 prefix \remEchoResultsShaPrefix). Each cell aggregates \remEchoShotsPerCell\ shots across $N_{\mathrm{blocks}} = \remRepBlocks$ interleaved blocks.}
+\label{tab:echo_fez_placements}
+\begin{ruledtabular}
+\begin{tabular}{lrrrrrrrrrr}
+Placement \texttt{[Qubits]} & Cal.\ Score & Cal.\ RO & \texttt{ID\_0CZ} & \texttt{ECHO\_16CZ} & \texttt{ECHO/ID} & \texttt{OVERROT} & Cliff 30 & Mirror 24 & \texttt{BT2T} 72 & Composite \\
+\hline
+\remTableEchoTenPlacementsRows
+\end{tabular}
+\end{ruledtabular}
+\end{table*}
+
+In \texttt{OSIRIS-ECHO-FEZ} (\texttt{job\_id} = \remEchoJobId, \remEchoQpuSec\,s QPU, \remEchoTotalPubs\ PUBs $\times \remEchoShotsPerPub$ shots $= \remEchoTotalShots$ shots), we benchmark $K = \remEchoPlacementsK$ vertex-disjoint $T_5$ subgraphs (\remEchoTotalTransmons\ transmons) across the barrier-independent $16$-\texttt{CZ} stabilizer-reflected echo probe (\texttt{ECHO\_PROBE\_16CZ}, $S = X_0 X_2 Z_3 Z_4$), the $0$-\texttt{CZ} SPAM control (\texttt{IDENTITY\_CTRL\_0CZ}), the deliberate $\mathrm{RZ}(\remEchoOverrotRad)+\mathrm{RX}(\remEchoOverrotRad)$ perturbation control (\texttt{OVERROT\_CTRL\_016}), and held-out unseen \texttt{CLIFFORD\_30CZ}, \texttt{MIRROR\_24CZ}, and stratified \texttt{BT2T\_72CZ} ($x \in \{0, 2, 8\}$) workloads. To separate pure two-qubit entangling survival from local readout staleness in post-hoc analysis, we also define the SPAM-normalized echo ratio:
+\begin{equation}
+  R_{\mathrm{echo/ID}}(\mathrm{pid}) = \frac{F_{\mathrm{ECHO\_16CZ}}(\mathrm{pid})}{F_{\mathrm{ID\_0CZ}}(\mathrm{pid})}, \qquad
+  r_{\mathrm{top1}} = \max_{k} F_{\mathrm{heldout}}(k) - F_{\mathrm{heldout}}(\hat{k}_{\mathrm{echo}}).
+  \label{eq:echo_spam_norm}
+\end{equation}
+
+Table~\ref{tab:echo_fez_placements} and Figure~\ref{fig:rep3_echo_fez_live}b establish four hardware findings across the $K = \remEchoPlacementsK$ placements ($N_{\mathrm{windows}} = \remEchoWindowsN$):
+\begin{enumerate}
+  \item \emph{Zero top-$1$ selection regret}: Raw \texttt{ECHO\_PROBE\_16CZ} selects \texttt{pid=\remEchoTopOnePid} (\remEchoTopOneQubits, echo return $\remEchoPidOneEcho$), which achieves the $\#1$ oracle-best held-out composite fidelity ($\remEchoPidOneComposite$, top-$1$ regret $r_{\mathrm{top1}} = \remEchoTopOneRegret$), $\#1$ \texttt{CLIFFORD\_30CZ} fidelity ($\remEchoPidOneClifford$), and $\#1$ \texttt{MIRROR\_24CZ} fidelity ($\remEchoPidOneMirror$), while rejecting degraded subgraph \texttt{pid=4} (\remEchoWorstQubits, echo return $\remEchoPidFourEcho$, composite $\remEchoPidFourComposite$). Mandatory controls confirm $\bar{F}_{\mathrm{ID\_0CZ}} = \remEchoMeanIdReturn > \bar{F}_{\mathrm{ECHO}} = \remEchoMeanEchoReturn > \bar{F}_{\mathrm{OVERROT}} = \remEchoMeanOverrotReturn$.
+  \item \emph{Outperformance on non-Clifford mirror circuits}: On \texttt{MIRROR\_24CZ}, raw \texttt{ECHO\_PROBE\_16CZ} achieves Spearman $\rho = +\remEchoMirrorRho$ ($p = \remEchoMirrorPEcho$) versus $+\remEchoMirrorCalRho$ ($p = \remEchoMirrorPCal$) for calibration.
+  \item \emph{Honest single-window \texttt{H2} refutation on unweighted composite}: Because the backend calibration snapshot in this single window exhibited no major two-qubit coupler inversion outside readout-dominated \texttt{pid=5} (where $\remEchoPidFiveRoPct$ calibration readout error depressed \texttt{ID\_0CZ} to $\remEchoPidFiveId$), unweighted raw \texttt{ECHO\_PROBE\_16CZ} yields composite Spearman $\rho = +\remEchoCompRho$ ($p = \remEchoCompPEcho$) versus $+\remEchoCompCalRho$ ($p = \remEchoCompPCal$) for calibration ($\Delta\rho = \remEchoCompDeltaRho$; versus topology $\remEchoCompTopoRho$), so preregistered single-window \texttt{H2} is honestly reported as \texttt{REFUTED\_SINGLE\_WINDOW\_NO\_MAJOR\_CAL\_INVERSION} while \texttt{H1} is \texttt{SUPPORTED}.
+  \item \emph{Post-hoc SPAM-normalized \texttt{ECHO/ID\_0CZ} recovery}: Factoring out local readout heterogeneity via Eq.~\eqref{eq:echo_spam_norm} elevates Spearman correlation to $+\remEchoNormCompRho$ ($p = \remEchoNormCompP$) on the held-out composite, $+\remEchoNormCliffordRho$ ($p = \remEchoNormCliffordP$) on \texttt{CLIFFORD\_30CZ} (versus raw $+\remEchoCliffordRho$ and calibration $+\remEchoCliffordCalRho$), $+\remEchoNormMirrorRho$ ($p = \remEchoNormMirrorP$) on \texttt{MIRROR\_24CZ}, and $+\remEchoNormBtRho$ ($p = \remEchoNormBtPSci$) on $72$-\texttt{CZ} \texttt{BT2T\_72CZ} (versus raw $+\remEchoBtRho$ and calibration $+\remEchoBtCalRho$), ranking oracle-best \texttt{BT2T} placement \texttt{pid=6} (\remEchoBtBestQubits, ratio $\remEchoPidSixNorm$, \texttt{BT2T} fidelity $\remEchoPidSixBt$ versus \texttt{pid=1} at $\remEchoPidOneBt$ and ratio $\remEchoPidOneNorm$) at $\#1$.
+\end{enumerate}
+
+\section{Simulated Multi-Distance ($d \in \{3, 5, 7\}$) Threshold and $\Lambda_d$ Scaling (\texttt{OSIRIS-QEC-MULTIDISTANCE})}
+
+\begin{figure*}[t]
+  \centering
+  \includegraphics[width=\textwidth]{fig2_multidistance_d3_d5_d7_threshold_and_lambda.pdf}
+  \caption{\texttt{OSIRIS-QEC-MULTIDISTANCE} (\remSimTier, \texttt{provider\_job\_id}: \remSimJobId, \remSimQpuSec\,s QPU, \remMultiShotsPerCell\ shots/cell) multi-distance $d \in \{3, 5, 7\}$ threshold and $\Lambda_d$ scaling. (a)~Rotated surface code $[[9,1,3]]$, $[[25,1,5]]$, and $[[49,1,7]]$ per-round logical error $\epsilon_L$ across two-qubit gate error $p_{2\mathrm{q}}$, crossing at circuit threshold $p_{\mathrm{th}}^{\mathrm{surf}} = \remMultiSurfPthPct$ ($\remMultiSurfPthRaw$). (b)~Error-suppression factors $\Lambda_{3\to 5}$ and $\Lambda_{5\to 7}$ across \texttt{H2\_1\_PUBLISHED}, \texttt{FEZ\_PUBLISHED}, and \texttt{FEZ\_DRIFTED\_SPAM}.}
+  \label{fig:multidistance_threshold_lambda}
+\end{figure*}
+
+\begin{table*}[t]
+\caption{\texttt{OSIRIS-QEC-MULTIDISTANCE} (\remSimTier, \texttt{provider\_job\_id}: \remSimJobId, \remSimQpuSec\,s QPU; artifact SHA-256 prefix \remMultidistRepShaPrefix, JCS payload prefix \remMultidistJcsShaPrefix) multi-distance ($d \in \{3, 5, 7\}$) per-round logical error $\epsilon_L(d)$ and suppression factors $\Lambda_{3\to 5}$, $\Lambda_{5\to 7}$, and differential $\Lambda_{3\to 5}^{\mathrm{diff}}$ ($95\%$ CI) across all twelve operational hardware-profile cells.}
+\label{tab:multidistance_scaling}
+\begin{ruledtabular}
+\begin{tabular}{lllrrrrrrl}
+Target Profile & Code Family & Decoder Arm & $\epsilon_L(d=3)$ & $\epsilon_L(d=5)$ & $\epsilon_L(d=7)$ & $\Lambda_{3\to 5}$ & $\Lambda_{5\to 7}$ & $\Lambda_{3\to 5}^{\mathrm{diff}}$ ($95\%$ CI) & Regime \\
+\hline
+\remTableMultidistanceRows
+\end{tabular}
+\end{ruledtabular}
+\end{table*}
+
+To connect our $d = 3$ live \remBackend\ crossing to multi-distance fault tolerance without spending physical QPU quota or conflating simulation with hardware attestation, \texttt{OSIRIS-QEC-MULTIDISTANCE} (\remSimTier, \texttt{provider\_job\_id}: \remSimJobId, \remSimQpuSec\,s QPU) evaluates repetition codes $[[3,1,3]]$ (5Q), $[[5,1,5]]$ (9Q), and $[[7,1,7]]$ (13Q) and hook-safe rotated surface codes $[[9,1,3]]$ (17Q, $+8$ bridge \texttt{CZ}/round), $[[25,1,5]]$ (49Q, $+32$ bridge \texttt{CZ}/round), and $[[49,1,7]]$ (97Q, $+72$ bridge \texttt{CZ}/round) at $R = d$ rounds using an exact polynomial-time Edmonds Blossom \texttt{MWPM} decoder verified to \remMultiBlossomMatchPct\ equivalence ($0$ mismatches across \remMultiBlossomSyndromes\ multi-defect syndromes) against bitmask dynamic programming and verified for full hook-safe fault distance $d_{\mathrm{fault}} = d$ across all twelve $(\text{code}, d, \text{basis})$ pairs. Defining distance-step suppression factors
+\begin{equation}
+  \Lambda_{d\to d+2} = \frac{\epsilon_L(d)}{\epsilon_L(d+2)}, \qquad
+  \Lambda_{d\to d+2}^{\mathrm{diff}} = \frac{\epsilon_L^{\mathrm{diff}}(d)}{\epsilon_L^{\mathrm{diff}}(d+2)},
+  \label{eq:multidistance_lambda}
+\end{equation}
+Figure~\ref{fig:multidistance_threshold_lambda} and Table~\ref{tab:multidistance_scaling} establish circuit-level thresholds $p_{\mathrm{th}}^{\mathrm{surf}} = \remMultiSurfPthPct$ ($\remMultiSurfPthRaw$; $3\to 5$ crossing $\remMultiSurfPthThreeFivePct$, $5\to 7$ crossing $\remMultiSurfPthFiveSevenPct$) and $p_{\mathrm{th}}^{\mathrm{rep}} = \remMultiRepPthPct$ ($\remMultiRepPthRaw$; $3\to 5$ crossing $\remMultiRepPthThreeFivePct$, $5\to 7$ crossing $\remMultiRepPthFiveSevenPct$), revealing a sharp scaling bifurcation:
+\begin{itemize}
+  \item \emph{Deep subthreshold linear repetition}: $[[d,1,d]]$ achieves $\Lambda_{3\to 5} = \remMultiFezRepLamThreeFive$ ($\remMultiFezRepFFLamThreeFive$ feed-forward) and $\Lambda_{5\to 7} = \remMultiFezRepLamFiveSeven$ ($\remMultiFezRepFFLamFiveSeven$ feed-forward) on \texttt{FEZ\_PUBLISHED}, retains $\Lambda_{3\to 5} = \remMultiDrfRepLamThreeFive$ ($\remMultiDrfRepFFLamThreeFive$ feed-forward) and $\Lambda_{5\to 7} = \remMultiDrfRepLamFiveSeven$ ($\remMultiDrfRepFFLamFiveSeven$ feed-forward) under $\remDrfRoPct$ drifted readout (\texttt{FEZ\_DRIFTED\_SPAM}), and reaches $\Lambda_{3\to 5} = \remMultiHtwoRepLamThreeFive$ ($\remMultiHtwoRepFFLamThreeFive$ feed-forward) and $\Lambda_{5\to 7} = \remMultiHtwoRepLamFiveSeven$ ($\remMultiHtwoRepFFLamFiveSeven$ feed-forward) on \texttt{H2\_1\_PUBLISHED}.
+  \item \emph{Heavy-hex surface-code threshold collapse under $\remDrfRoPct$ SPAM drift}: On nominal \texttt{FEZ\_PUBLISHED}, heavy-hex bridge routing restricts rotated surface codes to marginal suppression ($\Lambda_{3\to 5} = \remMultiFezSurfLamThreeFive$, $\Lambda_{5\to 7} = \remMultiFezSurfLamFiveSeven$ Pauli-frame; $\remMultiFezSurfFFLamThreeFive$ and $\remMultiFezSurfFFLamFiveSeven$ feed-forward, where $\epsilon_L(d=3) = \remMultiFezSurfEpsDThree$ and $\epsilon_L(d=5) = \remMultiFezSurfEpsDFive$ vs bare $\remMultiFezBareEps$, crossing only at $d = 7$ with $\epsilon_L(d=7) = \remMultiFezSurfEpsDSeven$). Under $\remDrfRoPct$ SPAM drift (\texttt{FEZ\_DRIFTED\_SPAM}, $\epsilon_L = \remMultiDrfSurfEpsDThree, \remMultiDrfSurfEpsDFive, \remMultiDrfSurfEpsDSeven$, block $\Lambda_{3\to 5} = \remMultiDrfSurfLamThreeFive$, $\Lambda_{5\to 7} = \remMultiDrfSurfLamFiveSeven$), differential suppression collapses to $\Lambda_{3\to 5}^{\mathrm{diff}} = \remMultiDrfSurfDiffLamThreeFive$ ($95\%$ CI $[\remMultiDrfSurfDiffCiLo, \remMultiDrfSurfDiffCiHi]$ Pauli-frame; $\remMultiDrfSurfFFDiffLamThreeFive$ $[\remMultiDrfSurfFFDiffCiLo, \remMultiDrfSurfFFDiffCiHi]$ feed-forward), statistically indistinguishable from unity.
+  \item \emph{All-to-all QCCD exponential surface-code suppression}: Native \texttt{H2\_1\_PUBLISHED} achieves $\Lambda_{3\to 5} = \remMultiHtwoSurfLamThreeFive$ ($[\remMultiHtwoSurfLamThreeFiveCiLo, \remMultiHtwoSurfLamThreeFiveCiHi]$) and $\Lambda_{5\to 7} = \remMultiHtwoSurfLamFiveSeven$ ($[\remMultiHtwoSurfLamFiveSevenCiLo, \remMultiHtwoSurfLamFiveSevenCiHi]$ Pauli-frame; $\remMultiHtwoSurfFFLamThreeFive$ and $\remMultiHtwoSurfFFLamFiveSeven$ feed-forward), driving $\epsilon_L(d)$ from $\remMultiHtwoSurfEpsDThree$ ($d = 3$) to $\remMultiHtwoSurfEpsDFive$ ($d = 5$) and $\remMultiHtwoSurfEpsDSeven$ ($d = 7$; Helios-scale 97Q QCCD projection).
+\end{itemize}
+
+\section{Conclusion, Scope Limits, and Data Availability}
+These results bridge our offline verification gates to live superconducting hardware: \texttt{OSIRIS-QEC-REP3-FEZ} (\remRepJobId) demonstrates real-time \texttt{if\_test} feed-forward and Pauli-frame \texttt{MWPM} crossing on \remBackend\ at $R_{\mathrm{cross}} = 3$ while exposing $\remRepStreakMinX$--$\remRepStreakMaxX$ ancilla detector streaks; \texttt{OSIRIS-ECHO-FEZ} (\remEchoJobId) demonstrates $\remEchoTopOneRegret$ top-$1$ placement regret across \remEchoTotalTransmons\ transmons while motivating pre-registered SPAM-normalized \texttt{ECHO/ID\_0CZ} ranking ($+\remEchoNormBtRho$ on \texttt{BT2T\_72CZ}); and \texttt{OSIRIS-QEC-MULTIDISTANCE} (\remSimTier, \remSimQpuSec\,s QPU) establishes $d \in \{3, 5, 7\}$ thresholds and $\Lambda_d$ scaling. All artifacts (\remRepResultsShaPrefix, \remEchoResultsShaPrefix, \remMultidistRepShaPrefix, capsule \remCapsuleSha) are locked in \texttt{SHA256SUMS.txt}.
+
+\begin{thebibliography}{9}
+\bibitem{GoogleSurface2023} Google Quantum AI, Nature \textbf{614}, 676 (2023).
+\bibitem{GoogleWillow2025} Google Quantum AI, Nature \textbf{638}, 920 (2025).
+\bibitem{MiaoLeakage2023} K. C. Miao \emph{et al.} (Google Quantum AI), Nat. Phys. \textbf{19}, 1780 (2023).
+\bibitem{ChamberlandHeavyHex2020} C. Chamberland, G. Zhu, T. J. Yoder, J. B. Hertzberg, and A. W. Cross, Phys. Rev. X \textbf{10}, 011022 (2020).
+\bibitem{QuantinuumLogical2024} M. P. da Silva \emph{et al.}, arXiv:2404.02280 (2024).
+\bibitem{DavisPaper8Zenodo2026} D. P. Davis, \emph{Pre-Execution Stabilizer-Reflected Placement Screening, Auditable Space-Time QEC Crossing, and 5-Qutrit $|2\rangle$ Leakage Reduction Requirements on Heavy-Hex vs.\ QCCD Architectures}, Zenodo (2026), \texttt{doi:10.5281/zenodo.24520746}.
+\bibitem{DavisRO0607Zenodo2026} D. P. Davis, \emph{Transient Readout Staleness and Multiplexed Isolation on 156-Qubit IBM Heron r2 Processors (RO-06/RO-07)}, Zenodo (2026), \texttt{doi:10.5281/zenodo.24420902}.
+\bibitem{TomitaSvore2014} Y. Tomita and K. M. Svore, Phys. Rev. A \textbf{90}, 062320 (2014).
+\bibitem{EdmondsBlossom1965} J. Edmonds, Can. J. Math. \textbf{17}, 449 (1965).
+\end{thebibliography}
+
+\end{document}

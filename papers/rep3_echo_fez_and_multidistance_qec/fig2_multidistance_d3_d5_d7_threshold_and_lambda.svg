@@ -1,0 +1,110 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="576" height="332" viewBox="0 0 576 332">
+<rect x="0" y="0" width="576" height="332" fill="#ffffff"/>
+<text x="288.00" y="15.00" font-family="Helvetica, Arial, sans-serif" font-size="9.1" font-weight="bold" fill="#111827" text-anchor="middle">OSIRIS-QEC-MULTIDISTANCE (SIMULATED, 0 s QPU): d in {3, 5, 7} Thresholds (p_th^surf = 1.124%, p_th^rep = 13.81%)</text>
+<text x="288.00" y="27.00" font-family="Helvetica, Arial, sans-serif" font-size="7.1" font-weight="normal" fill="#475569" text-anchor="middle">Exact Polynomial Edmonds Blossom MWPM (3,600/3,600 = 100% Match vs Bitmask-DP) Across [[9,1,3]], [[25,1,5]], [[49,1,7]]</text>
+<text x="48.00" y="40.00" font-family="Helvetica, Arial, sans-serif" font-size="7.5" font-weight="bold" fill="#0f172a" text-anchor="start">(a) Rotated Surface Code d=3,5,7 Threshold Crossing</text>
+<rect x="48.00" y="46.00" width="236.00" height="198.00" fill="#fafafa" stroke="#334155" stroke-width="0.90"/>
+<line x1="48.00" y1="226.53" x2="284.00" y2="226.53" stroke="#e2e8f0" stroke-width="0.60"/>
+<text x="43.50" y="228.83" font-family="monospace" font-size="6.0" font-weight="normal" fill="#334155" text-anchor="end">1e-4</text>
+<line x1="48.00" y1="168.29" x2="284.00" y2="168.29" stroke="#e2e8f0" stroke-width="0.60"/>
+<text x="43.50" y="170.59" font-family="monospace" font-size="6.0" font-weight="normal" fill="#334155" text-anchor="end">1e-3</text>
+<line x1="48.00" y1="110.06" x2="284.00" y2="110.06" stroke="#e2e8f0" stroke-width="0.60"/>
+<text x="43.50" y="112.36" font-family="monospace" font-size="6.0" font-weight="normal" fill="#334155" text-anchor="end">1e-2</text>
+<line x1="48.00" y1="51.82" x2="284.00" y2="51.82" stroke="#e2e8f0" stroke-width="0.60"/>
+<text x="43.50" y="54.12" font-family="monospace" font-size="6.0" font-weight="normal" fill="#334155" text-anchor="end">1e-1</text>
+<line x1="74.23" y1="244.00" x2="74.23" y2="247.00" stroke="#334155" stroke-width="0.70"/>
+<text x="74.23" y="255.00" font-family="monospace" font-size="5.8" font-weight="bold" fill="#111827" text-anchor="middle">0.19%</text>
+<line x1="136.41" y1="244.00" x2="136.41" y2="247.00" stroke="#334155" stroke-width="0.70"/>
+<text x="136.41" y="255.00" font-family="monospace" font-size="5.8" font-weight="bold" fill="#111827" text-anchor="middle">0.38%</text>
+<line x1="198.59" y1="244.00" x2="198.59" y2="247.00" stroke="#334155" stroke-width="0.70"/>
+<text x="198.59" y="255.00" font-family="monospace" font-size="5.8" font-weight="bold" fill="#111827" text-anchor="middle">0.75%</text>
+<line x1="234.96" y1="244.00" x2="234.96" y2="247.00" stroke="#334155" stroke-width="0.70"/>
+<text x="234.96" y="255.00" font-family="monospace" font-size="5.8" font-weight="bold" fill="#111827" text-anchor="middle">1.12%</text>
+<line x1="260.77" y1="244.00" x2="260.77" y2="247.00" stroke="#334155" stroke-width="0.70"/>
+<text x="260.77" y="255.00" font-family="monospace" font-size="5.8" font-weight="bold" fill="#111827" text-anchor="middle">1.50%</text>
+<text x="166.00" y="265.50" font-family="Helvetica, Arial, sans-serif" font-size="6.2" font-weight="bold" fill="#111827" text-anchor="middle">Two-Qubit Fault Rate p_2q (Log Scale)</text>
+<line x1="234.89" y1="46.00" x2="234.89" y2="244.00" stroke="#dc2626" stroke-width="1.10" stroke-dasharray="5,3"/>
+<text x="230.89" y="59.00" font-family="Helvetica, Arial, sans-serif" font-size="5.8" font-weight="bold" fill="#dc2626" text-anchor="end">p_th = 1.124%</text>
+<polyline points="74.23,160.64 136.41,126.83 172.78,109.89 198.59,95.59 218.61,85.33 234.96,77.09 260.77,66.06" fill="none" stroke="#f59e0b" stroke-width="1.60"/>
+<circle cx="74.23" cy="160.64" r="2.20" fill="#f59e0b" stroke="#0f172a" stroke-width="0.60"/>
+<circle cx="136.41" cy="126.83" r="2.20" fill="#f59e0b" stroke="#0f172a" stroke-width="0.60"/>
+<circle cx="172.78" cy="109.89" r="2.20" fill="#f59e0b" stroke="#0f172a" stroke-width="0.60"/>
+<circle cx="198.59" cy="95.59" r="2.20" fill="#f59e0b" stroke="#0f172a" stroke-width="0.60"/>
+<circle cx="218.61" cy="85.33" r="2.20" fill="#f59e0b" stroke="#0f172a" stroke-width="0.60"/>
+<circle cx="234.96" cy="77.09" r="2.20" fill="#f59e0b" stroke="#0f172a" stroke-width="0.60"/>
+<circle cx="260.77" cy="66.06" r="2.20" fill="#f59e0b" stroke="#0f172a" stroke-width="0.60"/>
+<polyline points="74.23,198.71 136.41,147.67 172.78,120.64 198.59,102.70 218.61,88.58 234.96,78.39 260.77,62.88" fill="none" stroke="#2563eb" stroke-width="1.60"/>
+<circle cx="74.23" cy="198.71" r="2.20" fill="#2563eb" stroke="#0f172a" stroke-width="0.60"/>
+<circle cx="136.41" cy="147.67" r="2.20" fill="#2563eb" stroke="#0f172a" stroke-width="0.60"/>
+<circle cx="172.78" cy="120.64" r="2.20" fill="#2563eb" stroke="#0f172a" stroke-width="0.60"/>
+<circle cx="198.59" cy="102.70" r="2.20" fill="#2563eb" stroke="#0f172a" stroke-width="0.60"/>
+<circle cx="218.61" cy="88.58" r="2.20" fill="#2563eb" stroke="#0f172a" stroke-width="0.60"/>
+<circle cx="234.96" cy="78.39" r="2.20" fill="#2563eb" stroke="#0f172a" stroke-width="0.60"/>
+<circle cx="260.77" cy="62.88" r="2.20" fill="#2563eb" stroke="#0f172a" stroke-width="0.60"/>
+<polyline points="74.23,236.49 136.41,169.64 172.78,130.48 198.59,105.97 218.61,89.86 234.96,76.55 260.77,56.93" fill="none" stroke="#059669" stroke-width="1.60"/>
+<circle cx="74.23" cy="236.49" r="2.20" fill="#059669" stroke="#0f172a" stroke-width="0.60"/>
+<circle cx="136.41" cy="169.64" r="2.20" fill="#059669" stroke="#0f172a" stroke-width="0.60"/>
+<circle cx="172.78" cy="130.48" r="2.20" fill="#059669" stroke="#0f172a" stroke-width="0.60"/>
+<circle cx="198.59" cy="105.97" r="2.20" fill="#059669" stroke="#0f172a" stroke-width="0.60"/>
+<circle cx="218.61" cy="89.86" r="2.20" fill="#059669" stroke="#0f172a" stroke-width="0.60"/>
+<circle cx="234.96" cy="76.55" r="2.20" fill="#059669" stroke="#0f172a" stroke-width="0.60"/>
+<circle cx="260.77" cy="56.93" r="2.20" fill="#059669" stroke="#0f172a" stroke-width="0.60"/>
+<text x="55.00" y="58.00" font-family="Helvetica, Arial, sans-serif" font-size="5.7" font-weight="bold" fill="#b45309" text-anchor="start">Amber: d=3 [[9,1,3]]</text>
+<text x="55.00" y="67.00" font-family="Helvetica, Arial, sans-serif" font-size="5.7" font-weight="bold" fill="#1e3a8a" text-anchor="start">Blue: d=5 [[25,1,5]]</text>
+<text x="55.00" y="76.00" font-family="Helvetica, Arial, sans-serif" font-size="5.7" font-weight="bold" fill="#065f46" text-anchor="start">Green: d=7 [[49,1,7]]</text>
+<text x="318.00" y="40.00" font-family="Helvetica, Arial, sans-serif" font-size="7.5" font-weight="bold" fill="#0f172a" text-anchor="start">(b) Multi-Distance Suppression Factor Lambda_d (Log10)</text>
+<rect x="318.00" y="46.00" width="242.00" height="198.00" fill="#fafafa" stroke="#334155" stroke-width="0.90"/>
+<line x1="318.00" y1="231.62" x2="560.00" y2="231.62" stroke="#dc2626" stroke-width="1.00" stroke-dasharray="5,3"/>
+<text x="314.00" y="233.93" font-family="monospace" font-size="5.9" font-weight="bold" fill="#dc2626" text-anchor="end">1.0</text>
+<line x1="318.00" y1="206.79" x2="560.00" y2="206.79" stroke="#e2e8f0" stroke-width="0.60"/>
+<text x="314.00" y="209.09" font-family="monospace" font-size="5.9" font-weight="normal" fill="#334155" text-anchor="end">2.0</text>
+<line x1="318.00" y1="173.96" x2="560.00" y2="173.96" stroke="#e2e8f0" stroke-width="0.60"/>
+<text x="314.00" y="176.26" font-family="monospace" font-size="5.9" font-weight="normal" fill="#334155" text-anchor="end">5.0</text>
+<line x1="318.00" y1="149.12" x2="560.00" y2="149.12" stroke="#e2e8f0" stroke-width="0.60"/>
+<text x="314.00" y="151.43" font-family="monospace" font-size="5.9" font-weight="normal" fill="#334155" text-anchor="end">10</text>
+<line x1="318.00" y1="91.46" x2="560.00" y2="91.46" stroke="#e2e8f0" stroke-width="0.60"/>
+<text x="314.00" y="93.76" font-family="monospace" font-size="5.9" font-weight="normal" fill="#334155" text-anchor="end">50</text>
+<line x1="318.00" y1="66.62" x2="560.00" y2="66.62" stroke="#e2e8f0" stroke-width="0.60"/>
+<text x="314.00" y="68.92" font-family="monospace" font-size="5.9" font-weight="normal" fill="#334155" text-anchor="end">100</text>
+<rect x="325.17" y="162.09" width="12.00" height="69.53" fill="#2563eb" stroke="#1e3a8a" stroke-width="0.70"/>
+<text x="331.17" y="158.89" font-family="monospace" font-size="5.0" font-weight="bold" fill="#1e3a8a" text-anchor="middle">6.96</text>
+<rect x="339.17" y="137.65" width="12.00" height="93.98" fill="#059669" stroke="#065f46" stroke-width="0.70"/>
+<text x="345.17" y="134.45" font-family="monospace" font-size="5.0" font-weight="bold" fill="#065f46" text-anchor="middle">13.8</text>
+<line x1="338.17" y1="244.00" x2="338.17" y2="247.00" stroke="#334155" stroke-width="0.70"/>
+<text x="338.17" y="255.00" font-family="Helvetica, Arial, sans-serif" font-size="5.7" font-weight="bold" fill="#111827" text-anchor="middle">H2-1 Surf</text>
+<rect x="365.50" y="212.59" width="12.00" height="19.04" fill="#2563eb" stroke="#1e3a8a" stroke-width="0.70"/>
+<text x="371.50" y="209.39" font-family="monospace" font-size="5.0" font-weight="bold" fill="#1e3a8a" text-anchor="middle">1.70</text>
+<rect x="379.50" y="207.19" width="12.00" height="24.44" fill="#059669" stroke="#065f46" stroke-width="0.70"/>
+<text x="385.50" y="203.99" font-family="monospace" font-size="5.0" font-weight="bold" fill="#065f46" text-anchor="middle">1.98</text>
+<line x1="378.50" y1="244.00" x2="378.50" y2="247.00" stroke="#334155" stroke-width="0.70"/>
+<text x="378.50" y="255.00" font-family="Helvetica, Arial, sans-serif" font-size="5.7" font-weight="bold" fill="#111827" text-anchor="middle">FEZ Surf</text>
+<rect x="405.83" y="230.81" width="12.00" height="1.80" fill="#2563eb" stroke="#1e3a8a" stroke-width="0.70"/>
+<text x="411.83" y="227.61" font-family="monospace" font-size="5.0" font-weight="bold" fill="#1e3a8a" text-anchor="middle">1.02</text>
+<rect x="419.83" y="220.44" width="12.00" height="11.19" fill="#059669" stroke="#065f46" stroke-width="0.70"/>
+<text x="425.83" y="217.24" font-family="monospace" font-size="5.0" font-weight="bold" fill="#065f46" text-anchor="middle">1.37</text>
+<line x1="418.83" y1="244.00" x2="418.83" y2="247.00" stroke="#334155" stroke-width="0.70"/>
+<text x="418.83" y="255.00" font-family="Helvetica, Arial, sans-serif" font-size="5.7" font-weight="bold" fill="#111827" text-anchor="middle">Drf Surf(d)</text>
+<rect x="446.17" y="147.15" width="12.00" height="84.47" fill="#2563eb" stroke="#1e3a8a" stroke-width="0.70"/>
+<text x="452.17" y="143.95" font-family="monospace" font-size="5.0" font-weight="bold" fill="#1e3a8a" text-anchor="middle">10.6</text>
+<rect x="460.17" y="150.23" width="12.00" height="81.39" fill="#059669" stroke="#065f46" stroke-width="0.70"/>
+<text x="466.17" y="147.03" font-family="monospace" font-size="5.0" font-weight="bold" fill="#065f46" text-anchor="middle">9.70</text>
+<line x1="459.17" y1="244.00" x2="459.17" y2="247.00" stroke="#334155" stroke-width="0.70"/>
+<text x="459.17" y="255.00" font-family="Helvetica, Arial, sans-serif" font-size="5.7" font-weight="bold" fill="#111827" text-anchor="middle">FEZ Rep</text>
+<rect x="486.50" y="143.80" width="12.00" height="87.83" fill="#2563eb" stroke="#1e3a8a" stroke-width="0.70"/>
+<text x="492.50" y="140.60" font-family="monospace" font-size="5.0" font-weight="bold" fill="#1e3a8a" text-anchor="middle">11.6</text>
+<rect x="500.50" y="165.65" width="12.00" height="65.98" fill="#059669" stroke="#065f46" stroke-width="0.70"/>
+<text x="506.50" y="162.45" font-family="monospace" font-size="5.0" font-weight="bold" fill="#065f46" text-anchor="middle">6.31</text>
+<line x1="499.50" y1="244.00" x2="499.50" y2="247.00" stroke="#334155" stroke-width="0.70"/>
+<text x="499.50" y="255.00" font-family="Helvetica, Arial, sans-serif" font-size="5.7" font-weight="bold" fill="#111827" text-anchor="middle">Drf Rep</text>
+<rect x="526.83" y="85.62" width="12.00" height="146.01" fill="#2563eb" stroke="#1e3a8a" stroke-width="0.70"/>
+<text x="532.83" y="82.42" font-family="monospace" font-size="5.0" font-weight="bold" fill="#1e3a8a" text-anchor="middle">58.9</text>
+<rect x="540.83" y="61.64" width="12.00" height="169.99" fill="#059669" stroke="#065f46" stroke-width="0.70"/>
+<text x="546.83" y="58.44" font-family="monospace" font-size="5.0" font-weight="bold" fill="#065f46" text-anchor="middle">114.9</text>
+<line x1="539.83" y1="244.00" x2="539.83" y2="247.00" stroke="#334155" stroke-width="0.70"/>
+<text x="539.83" y="255.00" font-family="Helvetica, Arial, sans-serif" font-size="5.7" font-weight="bold" fill="#111827" text-anchor="middle">H2-1 Rep</text>
+<text x="439.00" y="265.50" font-family="Helvetica, Arial, sans-serif" font-size="5.9" font-weight="bold" fill="#111827" text-anchor="middle">Blue: Lambda_{3-&gt;5}  |  Green: Lambda_{5-&gt;7}  (Red dashed: Lambda = 1 break-even)</text>
+<rect x="48.00" y="278.00" width="512.00" height="44.00" fill="#f8fafc" stroke="#cbd5e1" stroke-width="0.70"/>
+<text x="288.00" y="289.50" font-family="Helvetica, Arial, sans-serif" font-size="6.0" font-weight="bold" fill="#0f172a" text-anchor="middle">Surface-Code Scaling Bifurcation: H2_1_PUBLISHED Lambda_{3-&gt;5} = 6.96, Lambda_{5-&gt;7} = 13.78 vs FEZ_PUBLISHED 1.70, 1.98 (Marginal)</text>
+<text x="288.00" y="301.00" font-family="Helvetica, Arial, sans-serif" font-size="5.9" font-weight="bold" fill="#dc2626" text-anchor="middle">FEZ_DRIFTED_SPAM (3.20% RO) Surface Collapse: Differential Lambda_{3-&gt;5}^diff = 1.023 [0.74, 1.33] (Statistically Indistinguishable from 1.0)</text>
+<text x="288.00" y="312.50" font-family="Helvetica, Arial, sans-serif" font-size="5.8" font-weight="normal" fill="#334155" text-anchor="middle">Native Linear Repetition [[3,1,3]]-&gt;[[5,1,5]]-&gt;[[7,1,7]] Deep Subthreshold (p_th^rep = 13.81%): FEZ Lambda_{3-&gt;5} = 10.57, Lambda_{5-&gt;7} = 9.70</text>
+</svg>
