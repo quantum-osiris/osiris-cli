@@ -1,0 +1,52 @@
+// DNA::}AI{::Lang 0.1 source exercising capability blocks (every class and authority, limits).
+// Compiled content id (pinned in tests/test_dna_ir_conformance.py):
+//   dna:sha256:d382bf96f22ae09d42c9e482146ea4c705d16ae725e85fc8e43bdc12bd762032
+organism capability_matrix {
+  meta {
+    schema "dna-lang/0.1"
+    title "Capability conformance organism"
+  }
+  identity {
+    organism_id "urn:osiris:organism:00000000-0000-0000-0000-000000000001"
+    species "test_species"
+    generation 0
+  }
+  intent {
+    objective "Exercise capability blocks in the dna-ir/0.1 conformance slice"
+  }
+  // Declared out of name order on purpose: canonical DNA-IR sorts object keys.
+  capability run_checks {
+    class "execution"
+    authority "sandbox_only"
+    description "Fixture request: run one fixed verification profile"
+    profile "unit_tests"
+    limits {
+      wall_seconds 300
+      memory_mb 512
+      network "deny"
+      native_execution "deny"
+    }
+  }
+  capability read_workspace {
+    class "read_only"
+    authority "model_adapter"
+  }
+  capability propose_patch {
+    class "proposal"
+    authority "model_adapter"
+    description "Fixture request: propose a change without applying it"
+  }
+  capability append_ledger {
+    class "append_only"
+    authority "trusted_runtime"
+  }
+  capability apply_patch {
+    class "controlled_write"
+    authority "operator_plus_runtime"
+  }
+  constraints {
+    require ["read_only"]
+    prohibit []
+    allowed_roots ["work"]
+  }
+}

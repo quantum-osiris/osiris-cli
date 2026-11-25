@@ -1,0 +1,51 @@
+// DNA::}AI{::Lang 0.1 source exercising evidence blocks (every kind, sorted ref sets).
+// Compiled content id (pinned in tests/test_dna_ir_conformance.py):
+//   dna:sha256:7a5c76e399cd3ddfd49696fff372b027db0e12eb9c4e64ecc5f3df87c5aa5c34
+organism evidence_kinds {
+  meta {
+    schema "dna-lang/0.1"
+    title "Evidence conformance organism"
+  }
+  identity {
+    organism_id "urn:osiris:organism:00000000-0000-0000-0000-000000000002"
+    species "test_species"
+    generation 0
+  }
+  intent {
+    objective "Exercise evidence blocks in the dna-ir/0.1 conformance slice"
+  }
+  // Every statement is fixture text and every ref is a synthetic digest:
+  // refs are format-checked only and resolve to no artifact.
+  evidence observed_pass {
+    kind "verified_observation"
+    statement "Fixture statement: a verified observation must cite at least one ref"
+    // Written out of order on purpose: refs is a set, canonical form is sorted.
+    refs ["dna:sha256:cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+          "dna:sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"]
+  }
+  evidence open_question {
+    kind "hypothesis"
+    statement "Fixture statement: a hypothesis may carry no refs"
+    refs []
+  }
+  evidence known_failure {
+    kind "failure_pattern"
+    statement "Fixture statement: a failure pattern citing one ref"
+    refs ["dna:sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"]
+  }
+  evidence operator_note {
+    kind "operator_preference"
+    statement "Fixture statement: an operator preference with no refs"
+    refs []
+  }
+  evidence external_claim {
+    kind "untrusted_reference"
+    statement "Fixture statement: an untrusted reference citing one ref"
+    refs ["dna:sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"]
+  }
+  constraints {
+    require ["read_only"]
+    prohibit []
+    allowed_roots ["work"]
+  }
+}
