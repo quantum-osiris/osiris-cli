@@ -12,6 +12,8 @@ from pathlib import Path
 import pytest
 from cryptography.hazmat.primitives.asymmetric.ed25519 import Ed25519PrivateKey
 
+pytest.importorskip("dnalang")
+
 from osiris_cli.node_beta import BetaSession, make_server, resolve_instruction
 
 
