@@ -38,17 +38,6 @@ jobs:
           # names the tests that leaves out, and they are reported as skipped with that reason.
           python -c 'import subprocess, sys; sys.version_info >= (3, 10) and subprocess.check_call([sys.executable, "-m", "pip", "install", "-e", ".[research]"])'
 
-      - name: Install dnalang-core (Python 3.10+)
-        run: |
-          python - << 'PY'
-          import subprocess, sys
-          if sys.version_info < (3, 10):
-              print("dnalang-core requires Python 3.10+; this job skips the research extra")
-              sys.exit(0)
-          import dnalang
-          print("dnalang", getattr(dnalang, "__version__", "unknown"), dnalang.__file__)
-          PY
-
       - name: Check the research packages are importable (Python 3.10+)
         run: |
           python -c 'import sys; sys.version_info < (3, 10) and sys.exit(0); import dnalang, organism_sim, osiris_governance, qiskit, qiskit_aer; print("dnalang", dnalang.__version__, "| organism_sim OK | osiris_governance OK | qiskit", qiskit.__version__, "| qiskit_aer", qiskit_aer.__version__)'

@@ -26,7 +26,6 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install numpy scipy requests PyYAML rich networkx cryptography rfc8785 pytest qiskit
-          pip install "dnalang @ git+https://github.com/quantum-osiris/dnalang-core.git@5ae0748918bec9c63628fed3b0260cdc9b4b4553"
           pip install -e ".[research]"
           python -c "import dnalang; print('dnalang', dnalang.__version__, dnalang.__file__)"
 

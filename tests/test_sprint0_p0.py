@@ -214,10 +214,73 @@ def test_executed_experiment_is_not_run_again_before_ack(tmp_path: Path) -> None
     assert second["replayed"] is True
     assert second["result"]["backend"] == "simulated"
     acknowledge(ledger, "exp-1", "key-1")
+    with pytest.raises(SubstrateGuardError, match="already acknowledged"):
+        acknowledge(ledger, "exp-1", "key-1")
     third = begin_experiment(ledger, "exp-1", "key-1", payload)
     assert third["execute"] is False and third["phase"] == "acked"
     with pytest.raises(SubstrateGuardError, match="different payload"):
         begin_experiment(ledger, "exp-1", "key-1", "cd" * 32)
+    with pytest.raises(SubstrateGuardError, match="64-hex"):
+        begin_experiment(ledger, "exp-2", "key-2", "g" * 64)
+    with pytest.raises(SubstrateGuardError, match="64-hex"):
+        begin_experiment(ledger, "exp-2", "key-2", " " * 64)
+
+
+def test_record_execution_and_acknowledge_serialize_under_chain_lock(tmp_path: Path) -> None:
+    missing = tmp_path / "missing.jsonl"
+    with pytest.raises(SubstrateGuardError, match="started row"):
+        record_execution(missing, "exp-1", "key-1", {"ok": True})
+    with pytest.raises(SubstrateGuardError, match="executed row"):
+        acknowledge(missing, "exp-1", "key-1")
+    assert not missing.exists()
+
+    ledger = tmp_path / "concurrent.jsonl"
+    payload = "ab" * 32
+    begin_experiment(ledger, "exp-1", "key-1", payload)
+
+    barrier = threading.Barrier(2)
+    exec_results: list[str] = []
+    exec_lock = threading.Lock()
+
+    def run_record() -> None:
+        barrier.wait(5)
+        try:
+            record_execution(ledger, "exp-1", "key-1", {"shots": 1})
+            outcome = "ok"
+        except SubstrateGuardError:
+            outcome = "rejected"
+        with exec_lock:
+            exec_results.append(outcome)
+
+    threads = [threading.Thread(target=run_record) for _ in range(2)]
+    for t in threads:
+        t.start()
+    for t in threads:
+        t.join(5)
+    assert sorted(exec_results) == ["ok", "rejected"]
+    assert sum(1 for row in load_chain(ledger) if row.get("phase") == "executed") == 1
+
+    ack_barrier = threading.Barrier(2)
+    ack_results: list[str] = []
+
+    def run_ack() -> None:
+        ack_barrier.wait(5)
+        try:
+            acknowledge(ledger, "exp-1", "key-1")
+            outcome = "ok"
+        except SubstrateGuardError:
+            outcome = "rejected"
+        with exec_lock:
+            ack_results.append(outcome)
+
+    ack_threads = [threading.Thread(target=run_ack) for _ in range(2)]
+    for t in ack_threads:
+        t.start()
+    for t in ack_threads:
+        t.join(5)
+    assert sorted(ack_results) == ["ok", "rejected"]
+    assert sum(1 for row in load_chain(ledger) if row.get("phase") == "acked") == 1
+    assert probes.verify_chain(str(ledger))["status"] == "INTACT"
 
 
 def test_manifest_rename_then_verify_does_not_delete_a_replacement(tmp_path: Path) -> None:
