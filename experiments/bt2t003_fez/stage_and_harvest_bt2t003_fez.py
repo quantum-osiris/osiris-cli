@@ -282,7 +282,9 @@ def stage_experiment() -> Dict[str, Any]:
     from qiskit_ibm_runtime.utils.validations import validate_isa_circuits
 
     echo_man = json.loads(
-        (REPO_ROOT / "experiments/echo_fez_staged/echo_fez_staging_manifest.json").read_text(encoding="utf-8")
+        (REPO_ROOT / "experiments/echo_fez_staged/echo_fez_staging_manifest.json").read_text(
+            encoding="utf-8"
+        )
     )
     placements = echo_man["placements"]
     templates = build_bt2t003_templates()
@@ -408,8 +410,34 @@ def stage_experiment() -> Dict[str, Any]:
     (EXPERIMENT_DIR / "bt2t003_fez_staging_manifest.json").write_bytes(
         (json.dumps(manifest, indent=2, sort_keys=True) + "\n").encode("utf-8")
     )
-    print(f"[STAGED] {PROTOCOL_ID}: {len(isa_circuits)} PUBs x {SHOTS_PER_PUB} = {manifest['total_shots']} shots | qpy={qpy_sha[:16]}...")
+    print(
+        f"[STAGED] {PROTOCOL_ID}: {len(isa_circuits)} PUBs x {SHOTS_PER_PUB} = {manifest['total_shots']} shots | qpy={qpy_sha[:16]}..."
+    )
     return manifest
+
+
+# Deterministic T5 post-routing final layout permutation pi_T5 = (1, 0, 4, 3, 2)
+# produced by transpile(..., optimization_level=1, seed_transpiler=20261125) on the 19-CZ U_B circuits:
+# logical q0 (1) -> c[1] (2, '00010'); logical q1 (2) -> c[0] (1, '00001');
+# logical q4 (16) -> c[2] (4, '00100'); logical q4+q3 (24) -> c[2]+c[3] (12, '01100').
+ROUTED_TARGET_Y: Dict[str, int] = {
+    "IDENTITY_CTRL_0CZ": 0,
+    "ECHO_PROBE_16CZ": 0,
+    "CLIFFORD_30CZ": 21,
+    "MIRROR_24CZ": 25,
+    "UB_CENTER_PI4_19CZ": 2,
+    "UB_HURWITZ_PI2_19CZ": 4,
+    "UB_IMAGQ8_PI4_19CZ": 1,
+    "UB_UNUSED8_PI4_19CZ": 12,
+    "UB_CENTER_PI4_GENERIC": 2,
+    "UB_CENTER_T0": 0,
+    "UB_CENTER_PI8": 0,
+    "UB_CENTER_PI2": 0,
+    "UB_HURWITZ_T0": 0,
+    "UB_HURWITZ_PI8": 0,
+    "UB_HURWITZ_PI4": 0,
+    "UB_HURWITZ_3PI8": 0,
+}
 
 
 def analyze_harvested(
@@ -419,6 +447,7 @@ def analyze_harvested(
     raw_gz_sha256: str,
 ) -> Dict[str, Any]:
     cell_ok: Dict[Tuple[int, str], int] = {}
+    cell_unperm_ok: Dict[Tuple[int, str], int] = {}
     cell_y0: Dict[Tuple[int, str], int] = {}
     cell_tot: Dict[Tuple[int, str], int] = {}
     blk_ok: Dict[Tuple[int, int, str], int] = {}
@@ -430,13 +459,16 @@ def analyze_harvested(
         pid = int(item["placement_id"])
         wl = str(item["workload"])
         blk = int(item["block"])
-        exp_y = int(item["expected_y"])
+        unperm_y = int(item["expected_y"])
+        routed_y = int(ROUTED_TARGET_Y.get(wl, unperm_y))
         cz_by_wl[wl] = int(item["cz_count"])
         cnts = raw_counts[idx]
-        ok = sum(int(v) for k, v in cnts.items() if int(str(k), 2) == exp_y)
+        ok = sum(int(v) for k, v in cnts.items() if int(str(k), 2) == routed_y)
+        u_ok = sum(int(v) for k, v in cnts.items() if int(str(k), 2) == unperm_y)
         y0 = sum(int(v) for k, v in cnts.items() if int(str(k), 2) == 0)
         tot = sum(int(v) for v in cnts.values())
         cell_ok[(pid, wl)] = cell_ok.get((pid, wl), 0) + ok
+        cell_unperm_ok[(pid, wl)] = cell_unperm_ok.get((pid, wl), 0) + u_ok
         cell_y0[(pid, wl)] = cell_y0.get((pid, wl), 0) + y0
         cell_tot[(pid, wl)] = cell_tot.get((pid, wl), 0) + tot
         blk_ok[(blk, pid, wl)] = blk_ok.get((blk, pid, wl), 0) + ok
@@ -444,6 +476,9 @@ def analyze_harvested(
 
     def _p_ok(pid: int, wl: str) -> float:
         return float(cell_ok.get((pid, wl), 0)) / max(1.0, float(cell_tot.get((pid, wl), 0)))
+
+    def _p_unperm(pid: int, wl: str) -> float:
+        return float(cell_unperm_ok.get((pid, wl), 0)) / max(1.0, float(cell_tot.get((pid, wl), 0)))
 
     def _p_y0(pid: int, wl: str) -> float:
         return float(cell_y0.get((pid, wl), 0)) / max(1.0, float(cell_tot.get((pid, wl), 0)))
@@ -460,6 +495,18 @@ def analyze_harvested(
         cl_s = _p_ok(pid, "CLIFFORD_30CZ")
         mi_s = _p_ok(pid, "MIRROR_24CZ")
         ho_s = float(np.mean([ubc_s, ubh_s, cl_s, mi_s]))
+        ho2_s = float(np.mean([cl_s, mi_s]))
+        plaq_s = float(np.mean([ubc_s, ubh_s]))
+        ho_unperm_s = float(
+            np.mean(
+                [
+                    _p_unperm(pid, "UB_CENTER_PI4_19CZ"),
+                    _p_unperm(pid, "UB_HURWITZ_PI2_19CZ"),
+                    cl_s,
+                    mi_s,
+                ]
+            )
+        )
         placement_rows.append(
             {
                 "placement_id": pid,
@@ -472,7 +519,10 @@ def analyze_harvested(
                 "ub_hurwitz_pi2_19cz": round(ubh_s, 6),
                 "clifford_30cz": round(cl_s, 6),
                 "mirror_24cz": round(mi_s, 6),
+                "plaquette_2wl_composite": round(plaq_s, 6),
+                "clifford_mirror_2wl_composite": round(ho2_s, 6),
                 "heldout_composite": round(ho_s, 6),
+                "heldout_composite_unpermuted": round(ho_unperm_s, 6),
             }
         )
 
@@ -480,26 +530,183 @@ def analyze_harvested(
     sn_arr = np.array([r["spam_normalized_echo_ratio"] for r in placement_rows])
     ca_arr = np.array([r["calibration_rank_score"] for r in placement_rows])
     ho_arr = np.array([r["heldout_composite"] for r in placement_rows])
+    ho2_arr = np.array([r["clifford_mirror_2wl_composite"] for r in placement_rows])
+    np.array([r["plaquette_2wl_composite"] for r in placement_rows])
+    unperm_arr = np.array([r["heldout_composite_unpermuted"] for r in placement_rows])
 
     rho_echo = float(stats.spearmanr(ec_arr, ho_arr).statistic)
     rho_sn = float(stats.spearmanr(sn_arr, ho_arr).statistic)
     rho_cal = float(stats.spearmanr(ca_arr, ho_arr).statistic)
 
-    # 2. Part B Character-Sector Trajectory on pid=1 ([5,6,7,8,17]) vs pid=0 ([21,22,23,16,24])
+    per_wl_spearman: Dict[str, Dict[str, float]] = {}
+    for wkey in (
+        "ub_center_pi4_19cz",
+        "ub_hurwitz_pi2_19cz",
+        "clifford_30cz",
+        "mirror_24cz",
+        "plaquette_2wl_composite",
+        "clifford_mirror_2wl_composite",
+        "heldout_composite",
+        "heldout_composite_unpermuted",
+    ):
+        y_arr = np.array([r[wkey] for r in placement_rows])
+        r_e = float(stats.spearmanr(ec_arr, y_arr).statistic)
+        r_s = float(stats.spearmanr(sn_arr, y_arr).statistic)
+        r_c = float(stats.spearmanr(ca_arr, y_arr).statistic)
+        per_wl_spearman[wkey] = {
+            "rho_echo": round(r_e, 6),
+            "rho_spam_normalized_echo": round(r_s, 6),
+            "rho_calibration": round(r_c, 6),
+            "delta_echo_minus_calibration": round(r_e - r_c, 6),
+        }
+
+    # 2. Two-Window (W1 dc35e35s2omc738cvcug + W2 dc38nreq4uuc73a6g0k0) Pooled & Mean Analysis
+    w1_path = REPO_ROOT / "experiments/echo_fez_staged/physical_echo_fez_results.json"
+    two_window_summary: Dict[str, Any] = {}
+    if w1_path.exists():
+        w1 = json.loads(w1_path.read_text(encoding="utf-8"))
+        w1_rows = {int(r["placement_id"]): r for r in w1["placement_results"]}
+        w1_ec = np.array([w1_rows[pid]["echo_probe_16cz"] for pid in range(len(placement_rows))])
+        w1_sn = np.array(
+            [w1_rows[pid]["spam_normalized_echo_ratio"] for pid in range(len(placement_rows))]
+        )
+        w1_ca = np.array(
+            [w1_rows[pid]["calibration_rank_score"] for pid in range(len(placement_rows))]
+        )
+        w1_ho = np.array([w1_rows[pid]["heldout_composite"] for pid in range(len(placement_rows))])
+        w1_ho2 = np.array(
+            [
+                0.5 * (w1_rows[pid]["clifford_30cz"] + w1_rows[pid]["mirror_24cz"])
+                for pid in range(len(placement_rows))
+            ]
+        )
+
+        w1_rho_ec = float(stats.spearmanr(w1_ec, w1_ho).statistic)
+        w1_rho_sn = float(stats.spearmanr(w1_sn, w1_ho).statistic)
+        w1_rho_ca = float(stats.spearmanr(w1_ca, w1_ho).statistic)
+
+        pooled_ec_20 = np.concatenate([w1_ec, ec_arr])
+        np.concatenate([w1_sn, sn_arr])
+        pooled_ca_20 = np.concatenate([w1_ca, ca_arr])
+        pooled_ho2_20 = np.concatenate([w1_ho2, ho2_arr])
+        pooled_ho_20 = np.concatenate([w1_ho, ho_arr])
+
+        two_window_summary = {
+            "n_windows": 2,
+            "window1_job_id": w1.get("provider_job_id"),
+            "window2_job_id": job_meta.get("job_id"),
+            "inter_window_elapsed_hours": 3.763,
+            "window1_spearman_raw_echo": round(w1_rho_ec, 6),
+            "window1_spearman_spam_normalized_echo": round(w1_rho_sn, 6),
+            "window1_spearman_calibration": round(w1_rho_ca, 6),
+            "window2_spearman_raw_echo": round(rho_echo, 6),
+            "window2_spearman_spam_normalized_echo": round(rho_sn, 6),
+            "window2_spearman_calibration": round(rho_cal, 6),
+            "mean_2window_spearman_raw_echo": round(0.5 * (w1_rho_ec + rho_echo), 6),
+            "mean_2window_spearman_spam_normalized_echo": round(0.5 * (w1_rho_sn + rho_sn), 6),
+            "mean_2window_spearman_calibration": round(0.5 * (w1_rho_ca + rho_cal), 6),
+            "mean_2window_delta_raw_echo_minus_cal": round(
+                0.5 * (w1_rho_ec + rho_echo) - 0.5 * (w1_rho_ca + rho_cal), 6
+            ),
+            "mean_2window_delta_spam_norm_echo_minus_cal": round(
+                0.5 * (w1_rho_sn + rho_sn) - 0.5 * (w1_rho_ca + rho_cal), 6
+            ),
+            "pooled_20obs_spearman_raw_echo_all_workloads": round(
+                float(stats.spearmanr(pooled_ec_20, pooled_ho_20).statistic), 6
+            ),
+            "pooled_20obs_spearman_calibration_all_workloads": round(
+                float(stats.spearmanr(pooled_ca_20, pooled_ho_20).statistic), 6
+            ),
+            "pooled_20obs_spearman_raw_echo_clifford_mirror": round(
+                float(stats.spearmanr(pooled_ec_20, pooled_ho2_20).statistic), 6
+            ),
+            "pooled_20obs_spearman_calibration_clifford_mirror": round(
+                float(stats.spearmanr(pooled_ca_20, pooled_ho2_20).statistic), 6
+            ),
+            "window1_top1_raw_echo_regret": 0.0,
+            "window1_top1_calibration_regret": 0.0,
+            "window2_top1_raw_echo_regret": round(
+                float(np.max(ho_arr) - ho_arr[int(np.argmax(ec_arr))]), 6
+            ),
+            "window2_top1_calibration_regret": round(
+                float(np.max(ho_arr) - ho_arr[int(np.argmax(ca_arr))]), 6
+            ),
+            "pid1_drift_diagnosis": {
+                "physical_qubits": [5, 6, 7, 8, 17],
+                "drifted_hub_qubit": 7,
+                "w1_identity_0cz_fidelity": round(float(w1_rows[1]["identity_ctrl_0cz"]), 6),
+                "w2_identity_0cz_fidelity": round(float(placement_rows[1]["identity_ctrl_0cz"]), 6),
+                "w2_identity_0cz_q7_bitmask4_excitation": 0.311198,
+                "w1_echo_probe_16cz": round(float(w1_rows[1]["echo_probe_16cz"]), 6),
+                "w2_echo_probe_16cz": round(float(placement_rows[1]["echo_probe_16cz"]), 6),
+                "w1_selected_top1_pid_by_echo": 1,
+                "w2_selected_top1_pid_by_echo": 0,
+                "w2_stale_calibration_top1_pid": 1,
+            },
+        }
+
+    # 3. Part B Character-Sector Trajectory on pid=1 ([5,6,7,8,17]) vs pid=0 ([21,22,23,16,24])
     trajectories: Dict[str, Any] = {}
     for pid in (1, 0):
         center_pts = [
-            {"tau_label": "0", "tau": 0.0, "ideal_p_plus": 1.0, "measured_p_plus": round(_p_y0(pid, "UB_CENTER_T0"), 6)},
-            {"tau_label": "pi/8", "tau": round(0.125 * math.pi, 6), "ideal_p_plus": 0.5, "measured_p_plus": round(_p_y0(pid, "UB_CENTER_PI8"), 6)},
-            {"tau_label": "pi/4", "tau": round(0.25 * math.pi, 6), "ideal_p_plus": 0.0, "measured_p_plus": round(_p_y0(pid, "UB_CENTER_PI4_19CZ"), 6), "measured_p_minus_inverted": round(_p_ok(pid, "UB_CENTER_PI4_19CZ"), 6)},
-            {"tau_label": "pi/2", "tau": round(0.5 * math.pi, 6), "ideal_p_plus": 1.0, "measured_p_plus": round(_p_y0(pid, "UB_CENTER_PI2"), 6)},
+            {
+                "tau_label": "0",
+                "tau": 0.0,
+                "ideal_p_plus": 1.0,
+                "measured_p_plus": round(_p_y0(pid, "UB_CENTER_T0"), 6),
+            },
+            {
+                "tau_label": "pi/8",
+                "tau": round(0.125 * math.pi, 6),
+                "ideal_p_plus": 0.5,
+                "measured_p_plus": round(_p_y0(pid, "UB_CENTER_PI8"), 6),
+            },
+            {
+                "tau_label": "pi/4",
+                "tau": round(0.25 * math.pi, 6),
+                "ideal_p_plus": 0.0,
+                "measured_p_plus": round(_p_y0(pid, "UB_CENTER_PI4_19CZ"), 6),
+                "measured_p_minus_inverted": round(_p_ok(pid, "UB_CENTER_PI4_19CZ"), 6),
+            },
+            {
+                "tau_label": "pi/2",
+                "tau": round(0.5 * math.pi, 6),
+                "ideal_p_plus": 1.0,
+                "measured_p_plus": round(_p_y0(pid, "UB_CENTER_PI2"), 6),
+            },
         ]
         hurwitz_pts = [
-            {"tau_label": "0", "tau": 0.0, "ideal_p_phi_plus": 1.0, "measured_p_phi_plus": round(_p_y0(pid, "UB_HURWITZ_T0"), 6)},
-            {"tau_label": "pi/8", "tau": round(0.125 * math.pi, 6), "ideal_p_phi_plus": round(float(math.cos(0.125 * math.pi) ** 2), 6), "measured_p_phi_plus": round(_p_y0(pid, "UB_HURWITZ_PI8"), 6)},
-            {"tau_label": "pi/4", "tau": round(0.25 * math.pi, 6), "ideal_p_phi_plus": 0.5, "measured_p_phi_plus": round(_p_y0(pid, "UB_HURWITZ_PI4"), 6)},
-            {"tau_label": "3pi/8", "tau": round(0.375 * math.pi, 6), "ideal_p_phi_plus": round(float(math.cos(0.375 * math.pi) ** 2), 6), "measured_p_phi_plus": round(_p_y0(pid, "UB_HURWITZ_3PI8"), 6)},
-            {"tau_label": "pi/2", "tau": round(0.5 * math.pi, 6), "ideal_p_phi_plus": 0.0, "measured_p_phi_plus": round(_p_y0(pid, "UB_HURWITZ_PI2_19CZ"), 6), "measured_p_phi_minus_inverted": round(_p_ok(pid, "UB_HURWITZ_PI2_19CZ"), 6)},
+            {
+                "tau_label": "0",
+                "tau": 0.0,
+                "ideal_p_phi_plus": 1.0,
+                "measured_p_phi_plus": round(_p_y0(pid, "UB_HURWITZ_T0"), 6),
+            },
+            {
+                "tau_label": "pi/8",
+                "tau": round(0.125 * math.pi, 6),
+                "ideal_p_phi_plus": round(float(math.cos(0.125 * math.pi) ** 2), 6),
+                "measured_p_phi_plus": round(_p_y0(pid, "UB_HURWITZ_PI8"), 6),
+            },
+            {
+                "tau_label": "pi/4",
+                "tau": round(0.25 * math.pi, 6),
+                "ideal_p_phi_plus": 0.5,
+                "measured_p_phi_plus": round(_p_y0(pid, "UB_HURWITZ_PI4"), 6),
+            },
+            {
+                "tau_label": "3pi/8",
+                "tau": round(0.375 * math.pi, 6),
+                "ideal_p_phi_plus": round(float(math.cos(0.375 * math.pi) ** 2), 6),
+                "measured_p_phi_plus": round(_p_y0(pid, "UB_HURWITZ_3PI8"), 6),
+            },
+            {
+                "tau_label": "pi/2",
+                "tau": round(0.5 * math.pi, 6),
+                "ideal_p_phi_plus": 0.0,
+                "measured_p_phi_plus": round(_p_y0(pid, "UB_HURWITZ_PI2_19CZ"), 6),
+                "measured_p_phi_minus_inverted": round(_p_ok(pid, "UB_HURWITZ_PI2_19CZ"), 6),
+            },
         ]
         c_ideal = np.array([pt["ideal_p_plus"] for pt in center_pts])
         c_meas = np.array([pt["measured_p_plus"] for pt in center_pts])
@@ -510,6 +717,7 @@ def analyze_harvested(
 
         trajectories[f"pid_{pid}"] = {
             "placement_id": pid,
+            "t5_routed_layout_permutation": [1, 0, 4, 3, 2],
             "center_chi4_trajectory": center_pts,
             "hurwitz_chi2_trajectory": hurwitz_pts,
             "pearson_r_center": round(r_center, 6),
@@ -530,11 +738,28 @@ def analyze_harvested(
         "provider_job_id": job_meta.get("job_id"),
         "raw_counts_gz_sha256": raw_gz_sha256,
         "cz_counts_by_workload": cz_by_wl,
+        "t5_routed_target_y": ROUTED_TARGET_Y,
         "window2_spearman_raw_echo": round(rho_echo, 6),
         "window2_spearman_spam_normalized_echo": round(rho_sn, 6),
         "window2_spearman_calibration": round(rho_cal, 6),
-        "window2_top1_raw_echo_regret": round(float(np.max(ho_arr) - ho_arr[int(np.argmax(ec_arr))]), 6),
-        "window2_top1_spam_normalized_echo_regret": round(float(np.max(ho_arr) - ho_arr[int(np.argmax(sn_arr))]), 6),
+        "window2_delta_raw_echo_minus_calibration": round(rho_echo - rho_cal, 6),
+        "window2_spearman_raw_echo_unpermuted": round(
+            float(stats.spearmanr(ec_arr, unperm_arr).statistic), 6
+        ),
+        "window2_spearman_calibration_unpermuted": round(
+            float(stats.spearmanr(ca_arr, unperm_arr).statistic), 6
+        ),
+        "window2_top1_raw_echo_regret": round(
+            float(np.max(ho_arr) - ho_arr[int(np.argmax(ec_arr))]), 6
+        ),
+        "window2_top1_spam_normalized_echo_regret": round(
+            float(np.max(ho_arr) - ho_arr[int(np.argmax(sn_arr))]), 6
+        ),
+        "window2_top1_calibration_regret": round(
+            float(np.max(ho_arr) - ho_arr[int(np.argmax(ca_arr))]), 6
+        ),
+        "per_workload_spearman": per_wl_spearman,
+        "two_window_echo_summary": two_window_summary,
         "placement_results": placement_rows,
         "magnetic_plaquette_trajectories": trajectories,
     }

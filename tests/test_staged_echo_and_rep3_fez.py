@@ -41,7 +41,11 @@ def test_rep3_fez_live_hardware_attested_results_and_write_ahead() -> None:
     assert res["execution_tier"] == "HARDWARE_ATTESTED"
     assert res["provider_job_id"] == "dc35d4inj2vs73dhmsog"
     assert sub["job_id"] == "dc35d4inj2vs73dhmsog"
-    assert res["qpy_sha256"] == man["qpy_sha256"] == "f240d445acc36a69ab2a2604132fa8fc8a0dd5c45130cd8d641b6780fcecc83a"
+    assert (
+        res["qpy_sha256"]
+        == man["qpy_sha256"]
+        == "f240d445acc36a69ab2a2604132fa8fc8a0dd5c45130cd8d641b6780fcecc83a"
+    )
     assert hashlib.sha256(raw_gz.read_bytes()).hexdigest() == res["raw_counts_gz_sha256"]
 
     # Write-ahead server-clock check (> 9 hours margin)
@@ -58,8 +62,16 @@ def test_rep3_fez_live_hardware_attested_results_and_write_ahead() -> None:
     by_r = {int(row["rounds"]): row for row in res["rounds_summary"]}
     for r in (3, 5):
         row = by_r[r]
-        assert row["arm4a_decoded_pauli_frame_p_fail"] < row["arm2_encoded_no_corr_p_fail"] < row["arm1_unencoded_p_fail"]
-        assert row["arm4b_physical_feedforward_p_fail"] < row["arm2_encoded_no_corr_p_fail"] < row["arm1_unencoded_p_fail"]
+        assert (
+            row["arm4a_decoded_pauli_frame_p_fail"]
+            < row["arm2_encoded_no_corr_p_fail"]
+            < row["arm1_unencoded_p_fail"]
+        )
+        assert (
+            row["arm4b_physical_feedforward_p_fail"]
+            < row["arm2_encoded_no_corr_p_fail"]
+            < row["arm1_unencoded_p_fail"]
+        )
     assert res["paired_block_tests"]["R5_arm2_minus_arm4b"]["p_one_sided"] < 0.01
     assert res["ro_cal_3q_assignment_fidelity"] > 0.97
 
@@ -73,7 +85,11 @@ def test_echo_fez_live_hardware_attested_results_and_write_ahead() -> None:
     assert res["execution_tier"] == "HARDWARE_ATTESTED"
     assert res["provider_job_id"] == "dc35e35s2omc738cvcug"
     assert sub["job_id"] == "dc35e35s2omc738cvcug"
-    assert res["qpy_sha256"] == man["qpy_sha256"] == "538af9bec5fd1ab2536272e5b33c50021d4e87247cb6f84cbbb415df3b406011"
+    assert (
+        res["qpy_sha256"]
+        == man["qpy_sha256"]
+        == "538af9bec5fd1ab2536272e5b33c50021d4e87247cb6f84cbbb415df3b406011"
+    )
     assert hashlib.sha256(raw_gz.read_bytes()).hexdigest() == res["raw_counts_gz_sha256"]
 
     staged_dt = _parse_iso(man["staged_utc"])
@@ -160,15 +176,18 @@ def test_rep3_fez_staged_manifest_qpy_noiseless_and_mwpm_decode() -> None:
         if arm == "ARM1_UNENCODED":
             fake_counts[str(item["pub_index"])] = {str(lb ^ 1): 50, str(lb): 462}
         elif arm == "ARM2_ENCODED_NO_CORR":
-            fake_counts[str(item["pub_index"])] = {f"{lb}{lb}{lb}": 490, f"{lb^1}{lb^1}{lb^1}": 22}
+            fake_counts[str(item["pub_index"])] = {
+                f"{lb}{lb}{lb}": 490,
+                f"{lb ^ 1}{lb ^ 1}{lb ^ 1}": 22,
+            }
         elif arm == "ARM4B_PHYSICAL_FEEDFORWARD":
             fake_counts[str(item["pub_index"])] = {
                 f"{lb}{lb}{lb} " + " ".join(["00"] * r): 508,
-                f"{lb^1}{lb^1}{lb^1} " + " ".join(["00"] * r): 4,
+                f"{lb ^ 1}{lb ^ 1}{lb ^ 1} " + " ".join(["00"] * r): 4,
             }
         elif arm == "ARM3_4A_SYNDROME_STREAM":
             clean_key = f"{lb}{lb}{lb} " + " ".join(["00"] * r)
-            d0_flipped_out = f"{lb}{lb}{lb^1}"
+            d0_flipped_out = f"{lb}{lb}{lb ^ 1}"
             fault_key = f"{d0_flipped_out} " + " ".join(["01"] * r)
             fake_counts[str(item["pub_index"])] = {clean_key: 450, fault_key: 62}
 
@@ -178,3 +197,60 @@ def test_rep3_fez_staged_manifest_qpy_noiseless_and_mwpm_decode() -> None:
         assert row["arm4a_decoded_pauli_frame_p_fail"] == 0.0
         assert abs(row["arm3_postselected_acceptance_rate"] - (450.0 / 512.0)) < 1e-5
         assert row["arm3_postselected_conditional_p_fail"] == 0.0
+
+
+def test_bt2t003_fez_harvested_bundle_integrity() -> None:
+    exp_dir = REPO_ROOT / "experiments" / "bt2t003_fez"
+    man = json.loads((exp_dir / "bt2t003_fez_staging_manifest.json").read_text(encoding="utf-8"))
+    res = json.loads((exp_dir / "physical_bt2t003_fez_results.json").read_text(encoding="utf-8"))
+    job = json.loads((exp_dir / "bt2t003_fez_submitted_job.json").read_text(encoding="utf-8"))
+
+    assert man["protocol_id"] == "OSIRIS-BT2T-003-FEZ"
+    assert man["total_pubs"] == 240
+    assert man["total_shots"] == 61440
+    assert (
+        hashlib.sha256((exp_dir / "bt2t003_fez_staged_circuits.qpy").read_bytes()).hexdigest()
+        == man["qpy_sha256"]
+    )
+    assert (
+        hashlib.sha256((exp_dir / "PRE_REGISTRATION.md").read_bytes()).hexdigest()
+        == man["preregistration_md_sha256"]
+    )
+
+    raw_sha = hashlib.sha256(
+        (exp_dir / "physical_bt2t003_fez_raw_counts.json.gz").read_bytes()
+    ).hexdigest()
+    assert res["execution_tier"] == "HARDWARE_ATTESTED"
+    assert res["provider_job_id"] == "dc38nreq4uuc73a6g0k0"
+    assert job["job_id"] == "dc38nreq4uuc73a6g0k0"
+    assert res["raw_counts_gz_sha256"] == raw_sha
+    assert abs(res["window2_spearman_raw_echo"] - 0.948333) < 1e-5
+    assert abs(res["window2_spearman_calibration"] - 0.454545) < 1e-5
+    assert res["window2_top1_raw_echo_regret"] == 0.0
+    assert abs(res["window2_top1_calibration_regret"] - 0.361002) < 1e-5
+
+    p0 = res["magnetic_plaquette_trajectories"]["pid_0"]
+    assert abs(p0["pearson_r_center"] - 0.997576) < 1e-5
+    assert abs(p0["pearson_r_hurwitz"] - 0.997940) < 1e-5
+    assert abs(p0["ub_center_pi4_structured_19cz_inversion"] - 0.850260) < 1e-5
+    assert abs(p0["ub_center_pi4_generic_dense_inversion"] - 0.041667) < 1e-5
+    assert abs(p0["structured_minus_generic_pi4_advantage"] - 0.808594) < 1e-5
+
+
+def test_rep5_fez_staged_bundle_integrity() -> None:
+    exp_dir = REPO_ROOT / "experiments" / "rep5_fez_staged"
+    man = json.loads((exp_dir / "rep5_fez_staging_manifest.json").read_text(encoding="utf-8"))
+    assert man["protocol_id"] == "OSIRIS-QEC-REP5-FEZ"
+    assert man["execution_tier"] == "OFFLINE_STAGED"
+    assert man["provider_job_id"] is None
+    assert man["total_pubs"] == 72
+    assert man["total_shots"] == 36864
+    assert man["chain_9q"] == [120, 121, 122, 123, 136, 143, 142, 141, 140]
+    assert (
+        hashlib.sha256((exp_dir / "rep5_fez_staged_circuits.qpy").read_bytes()).hexdigest()
+        == man["qpy_sha256"]
+    )
+    assert (
+        hashlib.sha256((exp_dir / "PRE_REGISTRATION.md").read_bytes()).hexdigest()
+        == man["preregistration_md_sha256"]
+    )
