@@ -75,6 +75,13 @@ PAPER_ALIASES: Dict[str, str] = {
     "echo_qec": "echo_and_card_c_qec_gates",
     "card_bc": "echo_and_card_c_qec_gates",
     "echo_and_card_c_qec_gates": "echo_and_card_c_qec_gates",
+    "rep3_echo_multidist": "rep3_echo_fez_and_multidistance_qec",
+    "rep3_echo_fez_and_multidistance_qec": "rep3_echo_fez_and_multidistance_qec",
+    "bt2t003": "bt2t003_kogut_susskind_plaquette",
+    "bt2t003_plaquette": "bt2t003_kogut_susskind_plaquette",
+    "bt2t003_kogut_susskind_plaquette": "bt2t003_kogut_susskind_plaquette",
+    "rep5_softmwpm_bt2t004": "rep5_fez_softmwpm_and_bt2t004_ladder",
+    "rep5_fez_softmwpm_and_bt2t004_ladder": "rep5_fez_softmwpm_and_bt2t004_ladder",
 }
 
 PAPER_ORDER: Tuple[str, ...] = (
@@ -85,6 +92,9 @@ PAPER_ORDER: Tuple[str, ...] = (
     "bt2t001_binary_tetrahedral_fez",
     "bt2t002_mul_and_nonabelian_qft",
     "echo_and_card_c_qec_gates",
+    "rep3_echo_fez_and_multidistance_qec",
+    "bt2t003_kogut_susskind_plaquette",
+    "rep5_fez_softmwpm_and_bt2t004_ladder",
 )
 
 PAPERS: Dict[str, Dict[str, Any]] = {
@@ -699,6 +709,345 @@ PAPERS: Dict[str, Dict[str, Any]] = {
                 "placement screening",
                 "OSIRIS-ECHO",
                 "OSIRIS-QEC",
+            ],
+        },
+    },
+    "rep3_echo_fez_and_multidistance_qec": {
+        "dir": "papers/rep3_echo_fez_and_multidistance_qec",
+        "tex_file": "rep3_echo_fez_and_multidistance_qec.tex",
+        "publication_type": "preprint",
+        "version": "1.0.0",
+        "related": [
+            {
+                "identifier": "10.5281/zenodo.24520746",
+                "relation": "continues",
+                "scheme": "doi",
+            },
+            {
+                "identifier": "10.5281/zenodo.24486962",
+                "relation": "references",
+                "scheme": "doi",
+            },
+        ],
+        "files": [
+            ("papers/rep3_echo_fez_and_multidistance_qec/rep3_echo_fez_and_multidistance_qec.tex", None),
+            ("papers/rep3_echo_fez_and_multidistance_qec/generated.tex", None),
+            ("papers/rep3_echo_fez_and_multidistance_qec/generate_rep3_echo_multidist_paper_assets.py", None),
+            ("papers/rep3_echo_fez_and_multidistance_qec/fig1_rep3_fez_live_crossing_and_echo_10t5.svg", None),
+            ("papers/rep3_echo_fez_and_multidistance_qec/fig1_rep3_fez_live_crossing_and_echo_10t5.pdf", None),
+            ("papers/rep3_echo_fez_and_multidistance_qec/fig2_multidistance_d3_d5_d7_threshold_and_lambda.svg", None),
+            ("papers/rep3_echo_fez_and_multidistance_qec/fig2_multidistance_d3_d5_d7_threshold_and_lambda.pdf", None),
+            ("papers/rep3_echo_fez_and_multidistance_qec/reproducibility_capsule.json", None),
+            ("papers/rep3_echo_fez_and_multidistance_qec/SHA256SUMS.txt", None),
+            ("experiments/rep3_fez_staged/PRE_REGISTRATION.md", "rep3_fez_PRE_REGISTRATION.md"),
+            ("experiments/rep3_fez_staged/stage_and_harvest_rep3_fez.py", None),
+            ("experiments/rep3_fez_staged/physical_rep3_fez_results.json", None),
+            ("experiments/rep3_fez_staged/rep3_fez_submitted_job.json", None),
+            ("experiments/rep3_fez_staged/rep3_fez_staging_manifest.json", None),
+            ("experiments/rep3_fez_staged/rep3_fez_calibration_snapshot.json", None),
+            ("experiments/rep3_fez_staged/physical_rep3_fez_raw_counts.json.gz", None),
+            ("experiments/rep3_fez_staged/rep3_fez_staged_circuits.qpy", None),
+            ("experiments/echo_fez_staged/PRE_REGISTRATION.md", "echo_fez_PRE_REGISTRATION.md"),
+            ("experiments/echo_fez_staged/stage_and_harvest_echo_fez.py", None),
+            ("experiments/echo_fez_staged/physical_echo_fez_results.json", None),
+            ("experiments/echo_fez_staged/echo_fez_submitted_job.json", None),
+            ("experiments/echo_fez_staged/echo_fez_staging_manifest.json", None),
+            ("experiments/echo_fez_staged/echo_fez_calibration_snapshot.json", None),
+            ("experiments/echo_fez_staged/physical_echo_fez_raw_counts.json.gz", None),
+            ("experiments/echo_fez_staged/echo_fez_staged_circuits.qpy", None),
+            ("experiments/qec_card_c/qec_multidistance_scaling.py", None),
+            ("experiments/qec_card_c/artifacts/card_c_multidistance_threshold_report.json", None),
+        ],
+        "optional_files": [
+            ("papers/rep3_echo_fez_and_multidistance_qec/rep3_echo_fez_and_multidistance_qec.pdf", None),
+        ],
+        "meta": {
+            "title": (
+                "Write-Ahead Dynamic Repetition-Code Crossing, 10-Patch Stabilizer-Reflected "
+                "Placement Screening on 156-Qubit ibm_fez, and Multi-Distance d in {3, 5, 7} "
+                "Surface-Code Threshold Scaling (OSIRIS-QEC-REP3-FEZ / OSIRIS-ECHO-FEZ)"
+            ),
+            "description": (
+                "<p>Two write-ahead preregistered <code>HARDWARE_ATTESTED</code> experiments on "
+                "the 156-qubit IBM Heron r2 processor <code>ibm_fez</code> (110,592 total physical "
+                "circuit shots, 35 s QPU) paired with exact Edmonds Blossom multi-distance "
+                "<code>d in {3, 5, 7}</code> surface-code threshold and error-suppression factor "
+                "<code>Lambda_{d -&gt; d+2}</code> scaling simulations (<code>SIMULATED</code>, "
+                "<code>provider_job_id: null</code>).</p><ul>"
+                "<li>In <code>OSIRIS-QEC-REP3-FEZ</code> (job <code>dc35d4inj2vs73dhmsog</code>, "
+                "96 dynamic <code>measure + reset + if_test</code> PUBs x 512 = 49,152 shots on "
+                "5-qubit chain <code>[58, 71, 70, 69, 78]</code>, 16 s QPU), both offline "
+                "space-time MWPM Pauli-frame tracking (Arm 4a = 0.0872 at R = 5) and real-time "
+                "hardware <code>if_test</code> conditional X feed-forward (Arm 4b = 0.0980 at R = 5) "
+                "cross below Arm 1 unencoded transport (0.2770) and Arm 2 no-correction MCMR "
+                "(0.1230, paired t = 9.0131, p = 0.006043) across 3 of 3 randomized blocks at R = 3 "
+                "and R = 5, while consecutive ancilla detector streaks exceed independent Bernoulli "
+                "predictions by 2.34x to 2.90x.</li>"
+                "<li>In <code>OSIRIS-ECHO-FEZ</code> (job <code>dc35e35s2omc738cvcug</code>, 240 "
+                "PUBs x 256 = 61,440 shots across 10 disjoint 5-qubit <code>T5</code> subgraphs = "
+                "50 transmons, 19 s QPU), the 16-<code>CZ</code> stabilizer-reflected echo probe "
+                "selects the true oracle-best subgraph <code>pid = 1</code> (<code>[5, 6, 7, 8, 17]</code>) "
+                "with 0.0000 top-1 regret (0.6594 composite), outperforms published calibration on "
+                "24-<code>CZ</code> non-Clifford mirror circuits (+0.9030 vs +0.7576), and under "
+                "post-hoc SPAM normalization (<code>ECHO / ID_0CZ</code>) achieves Spearman rank "
+                "correlation +0.9030 composite and +0.9515 (p = 2.28e-5) on 72-<code>CZ</code> "
+                "<code>2T</code> group inversion.</li>"
+                "<li>Exact Edmonds Blossom polynomial MWPM decoding (0 / 3,600 mismatches vs exact "
+                "bitmask-DP on d = 3) across hook-safe rotated surface codes <code>[[9,1,3]]</code>, "
+                "<code>[[25,1,5]]</code>, and <code>[[49,1,7]]</code> yields circuit-level threshold "
+                "1.124% (13.81% for repetition codes), with <code>Lambda_{3-&gt;5} = 6.96</code> and "
+                "<code>Lambda_{5-&gt;7} = 13.78</code> on <code>H2-1</code> versus threshold collapse "
+                "<code>Lambda_{3-&gt;5} = 1.023</code> under 3.2% heavy-hex readout drift.</li></ul>"
+            ),
+            "keywords": [
+                "quantum error correction",
+                "mid-circuit measurement and reset",
+                "real-time feed-forward",
+                "surface code threshold",
+                "minimum-weight perfect matching",
+                "Edmonds Blossom algorithm",
+                "placement screening",
+                "IBM Heron r2",
+                "ibm_fez",
+                "OSIRIS-QEC-REP3-FEZ",
+                "OSIRIS-ECHO-FEZ",
+            ],
+        },
+    },
+    "bt2t003_kogut_susskind_plaquette": {
+        "dir": "papers/bt2t003_kogut_susskind_plaquette",
+        "tex_file": "main.tex",
+        "publication_type": "preprint",
+        "version": "1.0.0",
+        "related": [
+            {
+                "identifier": "10.5281/zenodo.24520723",
+                "relation": "continues",
+                "scheme": "doi",
+            },
+            {
+                "identifier": "10.5281/zenodo.24520738",
+                "relation": "continues",
+                "scheme": "doi",
+            },
+            {
+                "identifier": "10.5281/zenodo.24524910",
+                "relation": "references",
+                "scheme": "doi",
+            },
+        ],
+        "files": [
+            ("papers/bt2t003_kogut_susskind_plaquette/main.tex", "bt2t003_kogut_susskind_plaquette.tex"),
+            ("papers/bt2t003_kogut_susskind_plaquette/generated.tex", None),
+            ("papers/bt2t003_kogut_susskind_plaquette/generated_macros.tex", None),
+            ("papers/bt2t003_kogut_susskind_plaquette/references.bib", None),
+            ("papers/bt2t003_kogut_susskind_plaquette/README.md", "bt2t003_README.md"),
+            ("papers/bt2t003_kogut_susskind_plaquette/build_paper_assets.py", None),
+            ("papers/bt2t003_kogut_susskind_plaquette/tables/table1_conjugacy_magnetic_potential.tex", None),
+            ("papers/bt2t003_kogut_susskind_plaquette/tables/table2_strang_scaling_and_gate_compression.tex", None),
+            ("papers/bt2t003_kogut_susskind_plaquette/tables/table3_fez_10placement_echo_and_plaquette.tex", None),
+            ("papers/bt2t003_kogut_susskind_plaquette/tables/table4_fez_character_sector_trajectories.tex", None),
+            ("papers/bt2t003_kogut_susskind_plaquette/figures/fig1_magnetic_potential_and_strang_scaling.pdf", None),
+            ("papers/bt2t003_kogut_susskind_plaquette/figures/fig1_magnetic_potential_and_strang_scaling.png", None),
+            ("papers/bt2t003_kogut_susskind_plaquette/figures/fig2_fez_character_sector_trajectories.pdf", None),
+            ("papers/bt2t003_kogut_susskind_plaquette/figures/fig2_fez_character_sector_trajectories.png", None),
+            ("papers/bt2t003_kogut_susskind_plaquette/figures/fig3_two_window_echo_drift_catch.pdf", None),
+            ("papers/bt2t003_kogut_susskind_plaquette/figures/fig3_two_window_echo_drift_catch.png", None),
+            ("papers/bt2t003_kogut_susskind_plaquette/reproducibility_capsule.json", None),
+            ("papers/bt2t003_kogut_susskind_plaquette/SHA256SUMS.txt", None),
+            ("experiments/bt2t_plaquette/bt2t_plaquette_dynamics.py", None),
+            ("experiments/bt2t_plaquette/verify_bt2t003.py", None),
+            ("experiments/bt2t_plaquette/manifest_bt2t003.json", None),
+            ("experiments/bt2t003_fez/PRE_REGISTRATION.md", "bt2t003_fez_PRE_REGISTRATION.md"),
+            ("experiments/bt2t003_fez/stage_and_harvest_bt2t003_fez.py", None),
+            ("experiments/bt2t003_fez/physical_bt2t003_fez_results.json", None),
+            ("experiments/bt2t003_fez/bt2t003_fez_submitted_job.json", None),
+            ("experiments/bt2t003_fez/bt2t003_fez_staging_manifest.json", None),
+            ("experiments/bt2t003_fez/bt2t003_fez_calibration_snapshot.json", None),
+            ("experiments/bt2t003_fez/physical_bt2t003_fez_raw_counts.json.gz", None),
+            ("experiments/bt2t003_fez/bt2t003_fez_staged_circuits.qpy", None),
+        ],
+        "optional_files": [
+            ("papers/bt2t003_kogut_susskind_plaquette/bt2t003_kogut_susskind_plaquette_preprint.pdf", None),
+        ],
+        "meta": {
+            "title": (
+                "Gauge-Fixed 5-Qubit Kogut-Susskind Lattice Gauge Plaquette Dynamics over the "
+                "Binary Tetrahedral Group 2T and Two-Window Intra-Calibration Drift Catch on "
+                "156-Qubit ibm_fez (OSIRIS-BT2T-003 / OSIRIS-BT2T-003-FEZ)"
+            ),
+            "description": (
+                "<p>Exact 5-qubit maximal-tree gauge-fixed Kogut-Susskind lattice gauge single-plaquette "
+                "Hamiltonian synthesis over the non-abelian binary tetrahedral group "
+                "<code>2T = Q_8 |x Z_3 subset SU(2)</code> (<code>OSIRIS-BT2T-003</code>, "
+                "<code>SIMULATED</code>, 34/34 algebraic checks) paired with write-ahead "
+                "preregistered hardware execution and Window-2 stabilizer-reflected placement "
+                "screening on the 156-qubit IBM Heron r2 processor <code>ibm_fez</code> "
+                "(<code>OSIRIS-BT2T-003-FEZ</code>, job <code>dc38nreq4uuc73a6g0k0</code>, "
+                "240 PUBs x 256 = 61,440 shots across 10 disjoint <code>T5</code> subgraphs = "
+                "50 transmons, 19 s QPU).</p><ul>"
+                "<li>Maximal-tree gauge fixing collapses the 4-link single-plaquette configuration "
+                "space from <code>|2T|^4 = 331,776</code> (20 qubits) to <code>|2T| = 24</code> "
+                "physical holonomy states in 5 qubits (<code>bt2t-enc-1</code>) matching unfixed "
+                "4-link Gauss-law-invariant evolution across 20 random gauge transforms to 2.27e-15; "
+                "the 7-class magnetic plaquette potential compiles to a 16-<code>CZ</code> all-to-all "
+                "(19-<code>CZ</code> heavy-hex <code>T5</code> core; 40 <code>CZ</code> total with "
+                "state prep/readout vs 2,727 <code>CZ</code> generic dense QFT-conjugated synthesis, "
+                "a 68.18x native <code>CZ</code> reduction), and second-order Strang splitting "
+                "compiles to 209 <code>CZ</code> all-to-all (350 <code>CZ</code> on <code>T5</code>, "
+                "104.33x-178.31x compression vs unfixed 20Q/25Q 4-link Trotterization, log-log "
+                "Strang error slope 2.000008).</li>"
+                "<li>On top Echo-selected <code>pid = 0</code> (<code>[21, 22, 23, 16, 24]</code>) "
+                "of <code>ibm_fez</code>, the 40-<code>CZ</code> structured magnetic plaquette "
+                "propagator reproduces the <code>Delta-chi_2D = 4</code> Center oscillation "
+                "<code>cos^2(2*tau)</code> with Pearson r = 0.997576 (<code>[0.8763, 0.4115, "
+                "0.0573, 0.8411]</code>) and 0.8503 inversion fidelity at <code>tau = pi/4</code> "
+                "versus 0.0417 for the 2,727-<code>CZ</code> generic dense comparator (+80.86 pp / "
+                "20.41x structured compiler advantage), the half-frequency <code>Delta-chi_2D = 2</code> "
+                "Hurwitz decay <code>cos^2(tau)</code> with Pearson r = 0.997940 (<code>[0.8294, "
+                "0.6693, 0.4049, 0.1302, 0.0508]</code>) and 0.7969 inversion at <code>tau = pi/2</code>, "
+                "and <code>Delta-chi_2D = 0</code> null persistence 0.8620 (imaginary <code>Q_8</code>) "
+                "and 0.7852 (unused-8 subspace).</li>"
+                "<li>Between Window 1 (job <code>dc35e35s2omc738cvcug</code>) and Window 2 "
+                "(job <code>dc38nreq4uuc73a6g0k0</code>, +3.763 h), hub qubit Q7 of formerly top-ranked "
+                "<code>pid = 1</code> (<code>[5, 6, 7, 8, 17]</code>) suffered an unflagged 31.12% "
+                "<code>|0&gt; -&gt; |1&gt;</code> SPAM/readout drift excursion; frozen published "
+                "calibration collapsed to Spearman rho_cal = +0.4545 with 0.3610 top-1 regret, "
+                "whereas live <code>ECHO_PROBE_16CZ</code> switched top-1 selection to "
+                "<code>pid = 0</code> with rho_echo = +0.9483 (Delta-rho = +0.4938) and 0.0000 "
+                "top-1 selection regret across both windows (2-window mean rho_echo = +0.8348 vs "
+                "rho_cal = +0.6182, Delta = +0.2166).</li></ul>"
+            ),
+            "keywords": [
+                "lattice gauge theory",
+                "Kogut-Susskind Hamiltonian",
+                "binary tetrahedral group",
+                "Strang splitting",
+                "Trotterization",
+                "placement screening",
+                "calibration staleness",
+                "IBM Heron r2",
+                "ibm_fez",
+                "OSIRIS-BT2T-003",
+                "OSIRIS-BT2T-003-FEZ",
+            ],
+        },
+    },
+    "rep5_fez_softmwpm_and_bt2t004_ladder": {
+        "dir": "papers/rep5_fez_softmwpm_and_bt2t004_ladder",
+        "tex_file": "rep5_fez_softmwpm_and_bt2t004_ladder.tex",
+        "publication_type": "preprint",
+        "version": "1.0.0",
+        "related": [
+            {
+                "identifier": "10.5281/zenodo.24524910",
+                "relation": "continues",
+                "scheme": "doi",
+            },
+            {
+                "identifier": "10.5281/zenodo.24525501",
+                "relation": "continues",
+                "scheme": "doi",
+            },
+        ],
+        "files": [
+            ("papers/rep5_fez_softmwpm_and_bt2t004_ladder/rep5_fez_softmwpm_and_bt2t004_ladder.tex", None),
+            ("papers/rep5_fez_softmwpm_and_bt2t004_ladder/generated.tex", None),
+            ("papers/rep5_fez_softmwpm_and_bt2t004_ladder/generate_rep5_softmwpm_bt2t004_paper_assets.py", None),
+            ("papers/rep5_fez_softmwpm_and_bt2t004_ladder/fig1_rep5_fez_lambda35_and_soft_drift_mwpm.svg", None),
+            ("papers/rep5_fez_softmwpm_and_bt2t004_ladder/fig1_rep5_fez_lambda35_and_soft_drift_mwpm.pdf", None),
+            ("papers/rep5_fez_softmwpm_and_bt2t004_ladder/fig2_bt2t004_two_plaquette_ladder_confinement_and_strang.svg", None),
+            ("papers/rep5_fez_softmwpm_and_bt2t004_ladder/fig2_bt2t004_two_plaquette_ladder_confinement_and_strang.pdf", None),
+            ("papers/rep5_fez_softmwpm_and_bt2t004_ladder/reproducibility_capsule.json", None),
+            ("papers/rep5_fez_softmwpm_and_bt2t004_ladder/SHA256SUMS.txt", None),
+            ("experiments/rep5_fez_staged/PRE_REGISTRATION.md", "rep5_fez_PRE_REGISTRATION.md"),
+            ("experiments/rep5_fez_staged/stage_and_harvest_rep5_fez.py", None),
+            ("experiments/rep5_fez_staged/physical_rep5_fez_results.json", None),
+            ("experiments/rep5_fez_staged/rep5_fez_submitted_job.json", None),
+            ("experiments/rep5_fez_staged/rep5_fez_staging_manifest.json", None),
+            ("experiments/rep5_fez_staged/rep5_fez_calibration_snapshot.json", None),
+            ("experiments/rep5_fez_staged/physical_rep5_fez_raw_counts.json.gz", None),
+            ("experiments/rep5_fez_staged/rep5_fez_staged_circuits.qpy", None),
+            ("experiments/qec_card_c/qec_soft_drift_mwpm.py", None),
+            ("experiments/qec_card_c/artifacts/card_c_soft_drift_mwpm_report.json", None),
+            ("experiments/bt2t_multiplaquette/bt2t_two_plaquette_ladder.py", None),
+            ("experiments/bt2t_multiplaquette/verify_bt2t004.py", None),
+            ("experiments/bt2t_multiplaquette/manifest_bt2t004.json", None),
+        ],
+        "optional_files": [
+            ("papers/rep5_fez_softmwpm_and_bt2t004_ladder/rep5_fez_softmwpm_and_bt2t004_ladder.pdf", None),
+        ],
+        "meta": {
+            "title": (
+                "Write-Ahead 9-Qubit [[5,1,5]] vs. [[3,1,3]] Dynamic QEC Suppression on 156-Qubit "
+                "ibm_fez, Drift- and Streak-Aware Soft-Weight Blossom Decoding, and 10-Qubit "
+                "Coupled Two-Plaquette 2T Lattice Gauge Confinement (OSIRIS-QEC-REP5-FEZ / "
+                "OSIRIS-QEC-SOFTMWPM / OSIRIS-BT2T-004)"
+            ),
+            "description": (
+                "<p>Write-ahead preregistered multi-distance dynamic repetition-code execution on "
+                "the 156-qubit IBM Heron r2 processor <code>ibm_fez</code> (<code>OSIRIS-QEC-REP5-FEZ</code>, "
+                "job <code>dc3bmlinj2vs73di19s0</code>, 72 dynamic PUBs x 512 = 36,864 shots on "
+                "9-qubit chain <code>[120, 121, 122, 123, 136, 143, 142, 141, 140]</code>, 12 s QPU) "
+                "paired with drift- and streak-aware soft-weight Edmonds Blossom decoding "
+                "(<code>OSIRIS-QEC-SOFTMWPM</code>, offline re-scoring of live job "
+                "<code>dc35d4inj2vs73dhmsog</code> plus <code>[[9,1,3]] -&gt; [[25,1,5]] -&gt; [[49,1,7]]</code> "
+                "surface-code threshold recovery) and 10-qubit gauge-fixed coupled two-plaquette "
+                "<code>2T subset SU(2)</code> Kogut-Susskind lattice gauge ladder synthesis "
+                "(<code>OSIRIS-BT2T-004</code>, 37/37 formal checks).</p><ul>"
+                "<li>In <code>OSIRIS-QEC-REP5-FEZ</code> (job <code>dc3bmlinj2vs73di19s0</code>, "
+                "write-ahead QPY <code>da806163...</code> committed at <code>82cfd46a</code>; 5-data-qubit "
+                "<code>RO_CAL_5D</code> assignment fidelity 0.947754), 9-qubit <code>[[5,1,5]]</code> "
+                "space-time Blossom MWPM crosses below 5-qubit <code>[[3,1,3]]</code> MWPM, "
+                "<code>[[5,1,5]]</code> no-correction, and unencoded transport across all round "
+                "depths R in {1, 3, 5} and 2 of 2 randomized blocks: 0.000488 vs 0.000977 at R = 1 "
+                "(<code>Lambda_{3-&gt;5} = 2.0000</code>, 48.0x below unencoded 0.023438), 0.002930 "
+                "vs 0.008301 at R = 3 (<code>Lambda_{3-&gt;5} = 2.8333</code>, 13.33x below unencoded "
+                "0.039062), and 0.008301 vs 0.012695 at R = 5 (<code>Lambda_{3-&gt;5} = 1.5294</code>, "
+                "2.06x below <code>[[5,1,5]]</code> no-correction 0.017090; mean "
+                "<code>Lambda_{3-&gt;5} = 2.1209</code>, per-round slope ratio 1.5000 = 0.002930 vs "
+                "0.001953/round), while zero-detector postselection yields 0.000000 logical error "
+                "across all rounds and 4-ancilla consecutive detector streaks exceed Bernoulli by "
+                "4.21x to 7.74x.</li>"
+                "<li><code>SoftDriftBlossomDecoder</code> (600/600 exact Edmonds Blossom equivalence, "
+                "38/38 sinkhole triangle resolution) combines per-qubit live drift priors with "
+                "non-Markovian consecutive-streak edge reweighting, restoring rotated surface-code "
+                "<code>[[9,1,3]] -&gt; [[25,1,5]]</code> suppression under 25% heterogeneous hot "
+                "ancilla drift from <code>Lambda_{3-&gt;5} = 1.269</code> (stale uniform MWPM) to "
+                "<code>3.537</code> [2.57, 5.21] at 3.2% drift (<code>3.633</code> at 6.0%, "
+                "<code>3.334</code> at 10.0%), and cutting live <code>ibm_fez</code> job "
+                "<code>dc35d4inj2vs73dhmsog</code> per-round logical error slope by 73.91% "
+                "(0.018717 to 0.004883/round, advancing QEC crossing from R = 3 to R = 1 at "
+                "0.003255 vs 0.009766 no-correction).</li>"
+                "<li>Maximal spanning-tree gauge fixing compresses the 7-link two-plaquette "
+                "<code>2T</code> Kogut-Susskind ladder from <code>|2T|^7 = 4,586,471,424</code> "
+                "states (35 qubits) to <code>|2T|^2 = 576</code> holonomy pairs in 10 qubits "
+                "(7,962,624x reduction, 3.5x fewer qubits) spanning an exact 76-dimensional "
+                "Gauss-law-invariant physical orbit subspace; shared-link inter-plaquette electric "
+                "coupling via 10-qubit reversible multiplication <code>M_{2T}</code> drives a "
+                "positive connected Wilson-loop correlator <code>C_{12} in [8.80e-5, 0.026418]</code> "
+                "and monotone string tension <code>sigma_eff</code> from 0.00136 to 3.02580 across "
+                "<code>g_YM^2 in [0.25, 4.0]</code> with Strang slope 2.00005-2.00017 and 116.14x "
+                "native <code>CZ</code> compression vs 10-qubit dense QSD (4,125 vs 479,063 "
+                "<code>CZ</code>; 10.65x-11.01x fewer <code>CZ</code> than unfixed 35-qubit "
+                "7-link Trotterization).</li></ul>"
+            ),
+            "keywords": [
+                "quantum error correction",
+                "multi-distance repetition code",
+                "minimum-weight perfect matching",
+                "Edmonds Blossom algorithm",
+                "non-Markovian readout streaks",
+                "surface code threshold",
+                "lattice gauge theory",
+                "Kogut-Susskind Hamiltonian",
+                "binary tetrahedral group",
+                "Wilson loop confinement",
+                "IBM Heron r2",
+                "ibm_fez",
+                "OSIRIS-QEC-REP5-FEZ",
+                "OSIRIS-QEC-SOFTMWPM",
+                "OSIRIS-BT2T-004",
             ],
         },
     },

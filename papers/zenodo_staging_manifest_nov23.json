@@ -1,8 +1,8 @@
 {
-  "manifest_sha256": "1d7b4d8b2074e5291bdfbe63536cd68cd4d91b243fddaad731ef9eee7928d815",
+  "manifest_sha256": "eadde46380c3e341b7c3ee63b43b38805a1da1a20c95b28732786bf8caf7c426",
   "mode": "DRY_RUN_STAGED",
   "network_calls": 0,
-  "paper_count": 7,
+  "paper_count": 10,
   "paper_order": [
     "xtop006_non_clifford_kraus_fez",
     "wp2_27q_debiased_ot_fez",
@@ -10,7 +10,10 @@
     "heron_r2_calibration_staleness_and_colored_nulls",
     "bt2t001_binary_tetrahedral_fez",
     "bt2t002_mul_and_nonabelian_qft",
-    "echo_and_card_c_qec_gates"
+    "echo_and_card_c_qec_gates",
+    "rep3_echo_fez_and_multidistance_qec",
+    "bt2t003_kogut_susskind_plaquette",
+    "rep5_fez_softmwpm_and_bt2t004_ladder"
   ],
   "papers": {
     "bt2t001_binary_tetrahedral_fez": {
@@ -423,6 +426,295 @@
       },
       "total_bytes": 429404,
       "total_files": 16
+    },
+    "bt2t003_kogut_susskind_plaquette": {
+      "bundle_sha256": "c3e75e6c06be070448e74dd008e52f73a6004aea5932c9a2bd4fbde1b4579f00",
+      "files": [
+        {
+          "required": true,
+          "sha256": "7106932697c92d79931b116d9735646f0a5b39a88b2d771d6c5250b583c75239",
+          "size_bytes": 43326,
+          "source_relpath": "papers/bt2t003_kogut_susskind_plaquette/main.tex",
+          "upload_name": "bt2t003_kogut_susskind_plaquette.tex"
+        },
+        {
+          "required": true,
+          "sha256": "4df6704f053fd1c3978e7a2a760b65bd1711c862dbe12b2cc079a7c8c793fae7",
+          "size_bytes": 21939,
+          "source_relpath": "papers/bt2t003_kogut_susskind_plaquette/generated.tex",
+          "upload_name": "generated.tex"
+        },
+        {
+          "required": true,
+          "sha256": "4df6704f053fd1c3978e7a2a760b65bd1711c862dbe12b2cc079a7c8c793fae7",
+          "size_bytes": 21939,
+          "source_relpath": "papers/bt2t003_kogut_susskind_plaquette/generated_macros.tex",
+          "upload_name": "generated_macros.tex"
+        },
+        {
+          "required": true,
+          "sha256": "d33091dac017f66d6e88c4703992f9c45066da0ef5ba6ff8db89d2a04aa63699",
+          "size_bytes": 2793,
+          "source_relpath": "papers/bt2t003_kogut_susskind_plaquette/references.bib",
+          "upload_name": "references.bib"
+        },
+        {
+          "required": true,
+          "sha256": "b97a51d3813e3586b0436061ad424b7fe5385c373c84dab42225082b2868ab76",
+          "size_bytes": 5034,
+          "source_relpath": "papers/bt2t003_kogut_susskind_plaquette/README.md",
+          "upload_name": "bt2t003_README.md"
+        },
+        {
+          "required": true,
+          "sha256": "78cd24dac08aa8d2d9f012e88c70a1a6646cdb04f3dd4434de4e2893c7351db3",
+          "size_bytes": 126704,
+          "source_relpath": "papers/bt2t003_kogut_susskind_plaquette/build_paper_assets.py",
+          "upload_name": "build_paper_assets.py"
+        },
+        {
+          "required": true,
+          "sha256": "4ba6e2664b5288b2606a6451b838f8f7b0d4fe6b71a3c3b90594e5df99175805",
+          "size_bytes": 3092,
+          "source_relpath": "papers/bt2t003_kogut_susskind_plaquette/tables/table1_conjugacy_magnetic_potential.tex",
+          "upload_name": "table1_conjugacy_magnetic_potential.tex"
+        },
+        {
+          "required": true,
+          "sha256": "62e222f3c78c57dfa5f671214f7059101628fecaa9aaba132b7ac2a617c31aaf",
+          "size_bytes": 4827,
+          "source_relpath": "papers/bt2t003_kogut_susskind_plaquette/tables/table2_strang_scaling_and_gate_compression.tex",
+          "upload_name": "table2_strang_scaling_and_gate_compression.tex"
+        },
+        {
+          "required": true,
+          "sha256": "1fa1338c02a8ea795e992e6934111c15c465e235bc282b5e5ad283ff3af5be46",
+          "size_bytes": 6470,
+          "source_relpath": "papers/bt2t003_kogut_susskind_plaquette/tables/table3_fez_10placement_echo_and_plaquette.tex",
+          "upload_name": "table3_fez_10placement_echo_and_plaquette.tex"
+        },
+        {
+          "required": true,
+          "sha256": "e135ff6687ebcc185ee5213bdf267aeecef4d6ad80c5a4bc1088566afad069ee",
+          "size_bytes": 4497,
+          "source_relpath": "papers/bt2t003_kogut_susskind_plaquette/tables/table4_fez_character_sector_trajectories.tex",
+          "upload_name": "table4_fez_character_sector_trajectories.tex"
+        },
+        {
+          "required": true,
+          "sha256": "ec3fc435b0b8985b872c7bb0ecd735f0d358bc2eed7dab5bfb05743f4c0afb3c",
+          "size_bytes": 13470,
+          "source_relpath": "papers/bt2t003_kogut_susskind_plaquette/figures/fig1_magnetic_potential_and_strang_scaling.pdf",
+          "upload_name": "fig1_magnetic_potential_and_strang_scaling.pdf"
+        },
+        {
+          "required": true,
+          "sha256": "620d04c5624425e5ba6da472c20a210e6a2a3fcbb8829c8c49e58d9ecb0f8235",
+          "size_bytes": 20999,
+          "source_relpath": "papers/bt2t003_kogut_susskind_plaquette/figures/fig1_magnetic_potential_and_strang_scaling.png",
+          "upload_name": "fig1_magnetic_potential_and_strang_scaling.png"
+        },
+        {
+          "required": true,
+          "sha256": "76d07d8e362d941d53dca4ea45d58c57a5da26ca330788533ade71e0b6dce40b",
+          "size_bytes": 14656,
+          "source_relpath": "papers/bt2t003_kogut_susskind_plaquette/figures/fig2_fez_character_sector_trajectories.pdf",
+          "upload_name": "fig2_fez_character_sector_trajectories.pdf"
+        },
+        {
+          "required": true,
+          "sha256": "dca49210326aa7bdecbe1d52d5048872b359dc01ccd359456662c98967e1f53b",
+          "size_bytes": 24005,
+          "source_relpath": "papers/bt2t003_kogut_susskind_plaquette/figures/fig2_fez_character_sector_trajectories.png",
+          "upload_name": "fig2_fez_character_sector_trajectories.png"
+        },
+        {
+          "required": true,
+          "sha256": "37a0778dee276815cc2c5808aa50c6490663b2c09f5837ccf1f33708d6b527cc",
+          "size_bytes": 9446,
+          "source_relpath": "papers/bt2t003_kogut_susskind_plaquette/figures/fig3_two_window_echo_drift_catch.pdf",
+          "upload_name": "fig3_two_window_echo_drift_catch.pdf"
+        },
+        {
+          "required": true,
+          "sha256": "ee088d4db68c241f740e3d2fc65ea501f8ee1165fc4ced0f980b27e76093ff67",
+          "size_bytes": 21965,
+          "source_relpath": "papers/bt2t003_kogut_susskind_plaquette/figures/fig3_two_window_echo_drift_catch.png",
+          "upload_name": "fig3_two_window_echo_drift_catch.png"
+        },
+        {
+          "required": true,
+          "sha256": "d45f7562e72880ff769dea69405ede9e27f2356d43a51ecd72387e5903ba49d8",
+          "size_bytes": 1093,
+          "source_relpath": "papers/bt2t003_kogut_susskind_plaquette/reproducibility_capsule.json",
+          "upload_name": "reproducibility_capsule.json"
+        },
+        {
+          "required": true,
+          "sha256": "541f842b8ad9c048d136538e9dce07df0315fcf4bfd3819e68096a4a3d1ff497",
+          "size_bytes": 2113,
+          "source_relpath": "papers/bt2t003_kogut_susskind_plaquette/SHA256SUMS.txt",
+          "upload_name": "SHA256SUMS.txt"
+        },
+        {
+          "required": true,
+          "sha256": "733b59206463ce8e3a363fd1b9d3b93d39e0e888d690fbf0267c4290affed591",
+          "size_bytes": 68226,
+          "source_relpath": "experiments/bt2t_plaquette/bt2t_plaquette_dynamics.py",
+          "upload_name": "bt2t_plaquette_dynamics.py"
+        },
+        {
+          "required": true,
+          "sha256": "f8285d3b8001a827daac104d8a343bc3fad3a86c1174f8714e0e0983ea245f24",
+          "size_bytes": 9552,
+          "source_relpath": "experiments/bt2t_plaquette/verify_bt2t003.py",
+          "upload_name": "verify_bt2t003.py"
+        },
+        {
+          "required": true,
+          "sha256": "39b1c7206ba983444785f0e6a7d86e01e779a54b296c8ff06b1813230f395b77",
+          "size_bytes": 30114,
+          "source_relpath": "experiments/bt2t_plaquette/manifest_bt2t003.json",
+          "upload_name": "manifest_bt2t003.json"
+        },
+        {
+          "required": true,
+          "sha256": "da07a4f45ff994421c1c5802a1e83d526a56e6f328910fc8609a146907d6d497",
+          "size_bytes": 5279,
+          "source_relpath": "experiments/bt2t003_fez/PRE_REGISTRATION.md",
+          "upload_name": "bt2t003_fez_PRE_REGISTRATION.md"
+        },
+        {
+          "required": true,
+          "sha256": "6d498edb40fc40df6f708a4d1fbab091f3c778b346965fa2a63f7e33945baab3",
+          "size_bytes": 30742,
+          "source_relpath": "experiments/bt2t003_fez/stage_and_harvest_bt2t003_fez.py",
+          "upload_name": "stage_and_harvest_bt2t003_fez.py"
+        },
+        {
+          "required": true,
+          "sha256": "316dafb39c83b86f6d6bd4dac358e4a97d2b492d6fde8b6573e282f518a7f0d1",
+          "size_bytes": 15130,
+          "source_relpath": "experiments/bt2t003_fez/physical_bt2t003_fez_results.json",
+          "upload_name": "physical_bt2t003_fez_results.json"
+        },
+        {
+          "required": true,
+          "sha256": "e4c0cb82fd2fff78cd97c389e8762ca5adc2e1df4bdd42fc6b727542b78d1ebe",
+          "size_bytes": 1545,
+          "source_relpath": "experiments/bt2t003_fez/bt2t003_fez_submitted_job.json",
+          "upload_name": "bt2t003_fez_submitted_job.json"
+        },
+        {
+          "required": true,
+          "sha256": "501bea949f66b0a87ae2cc0f0c04db0031fd08f23ab4840fe2b1078d1160a95e",
+          "size_bytes": 70629,
+          "source_relpath": "experiments/bt2t003_fez/bt2t003_fez_staging_manifest.json",
+          "upload_name": "bt2t003_fez_staging_manifest.json"
+        },
+        {
+          "required": true,
+          "sha256": "e3adc30810a22e9df7f7d2d60f532a53c4ee0c122baf6dfc5e9d377f35084374",
+          "size_bytes": 3610,
+          "source_relpath": "experiments/bt2t003_fez/bt2t003_fez_calibration_snapshot.json",
+          "upload_name": "bt2t003_fez_calibration_snapshot.json"
+        },
+        {
+          "required": true,
+          "sha256": "4667adc71b3af9b7dd3c9dff1fde9d4d6acaf768597992bfbc39bbde2c0abeb3",
+          "size_bytes": 7515,
+          "source_relpath": "experiments/bt2t003_fez/physical_bt2t003_fez_raw_counts.json.gz",
+          "upload_name": "physical_bt2t003_fez_raw_counts.json.gz"
+        },
+        {
+          "required": true,
+          "sha256": "349a7ab40a1a55db6ca85dbfd27c24f75aa3e4c67c20accad82a7a41b2c87b9a",
+          "size_bytes": 6805688,
+          "source_relpath": "experiments/bt2t003_fez/bt2t003_fez_staged_circuits.qpy",
+          "upload_name": "bt2t003_fez_staged_circuits.qpy"
+        },
+        {
+          "required": false,
+          "sha256": "1778126fa96bdd7ac0a09a75b010021208c2b6c4b38abf22b12ae3930262114a",
+          "size_bytes": 99126,
+          "source_relpath": "papers/bt2t003_kogut_susskind_plaquette/bt2t003_kogut_susskind_plaquette_preprint.pdf",
+          "upload_name": "bt2t003_kogut_susskind_plaquette_preprint.pdf"
+        }
+      ],
+      "metadata": {
+        "access_right": "open",
+        "creators": [
+          {
+            "affiliation": "Agile Defense Systems LLC",
+            "name": "Davis, Devin Phillip"
+          }
+        ],
+        "description": "<p>Exact 5-qubit maximal-tree gauge-fixed Kogut-Susskind lattice gauge single-plaquette Hamiltonian synthesis over the non-abelian binary tetrahedral group <code>2T = Q_8 |x Z_3 subset SU(2)</code> (<code>OSIRIS-BT2T-003</code>, <code>SIMULATED</code>, 34/34 algebraic checks) paired with write-ahead preregistered hardware execution and Window-2 stabilizer-reflected placement screening on the 156-qubit IBM Heron r2 processor <code>ibm_fez</code> (<code>OSIRIS-BT2T-003-FEZ</code>, job <code>dc38nreq4uuc73a6g0k0</code>, 240 PUBs x 256 = 61,440 shots across 10 disjoint <code>T5</code> subgraphs = 50 transmons, 19 s QPU).</p><ul><li>Maximal-tree gauge fixing collapses the 4-link single-plaquette configuration space from <code>|2T|^4 = 331,776</code> (20 qubits) to <code>|2T| = 24</code> physical holonomy states in 5 qubits (<code>bt2t-enc-1</code>) matching unfixed 4-link Gauss-law-invariant evolution across 20 random gauge transforms to 2.27e-15; the 7-class magnetic plaquette potential compiles to a 16-<code>CZ</code> all-to-all (19-<code>CZ</code> heavy-hex <code>T5</code> core; 40 <code>CZ</code> total with state prep/readout vs 2,727 <code>CZ</code> generic dense QFT-conjugated synthesis, a 68.18x native <code>CZ</code> reduction), and second-order Strang splitting compiles to 209 <code>CZ</code> all-to-all (350 <code>CZ</code> on <code>T5</code>, 104.33x-178.31x compression vs unfixed 20Q/25Q 4-link Trotterization, log-log Strang error slope 2.000008).</li><li>On top Echo-selected <code>pid = 0</code> (<code>[21, 22, 23, 16, 24]</code>) of <code>ibm_fez</code>, the 40-<code>CZ</code> structured magnetic plaquette propagator reproduces the <code>Delta-chi_2D = 4</code> Center oscillation <code>cos^2(2*tau)</code> with Pearson r = 0.997576 (<code>[0.8763, 0.4115, 0.0573, 0.8411]</code>) and 0.8503 inversion fidelity at <code>tau = pi/4</code> versus 0.0417 for the 2,727-<code>CZ</code> generic dense comparator (+80.86 pp / 20.41x structured compiler advantage), the half-frequency <code>Delta-chi_2D = 2</code> Hurwitz decay <code>cos^2(tau)</code> with Pearson r = 0.997940 (<code>[0.8294, 0.6693, 0.4049, 0.1302, 0.0508]</code>) and 0.7969 inversion at <code>tau = pi/2</code>, and <code>Delta-chi_2D = 0</code> null persistence 0.8620 (imaginary <code>Q_8</code>) and 0.7852 (unused-8 subspace).</li><li>Between Window 1 (job <code>dc35e35s2omc738cvcug</code>) and Window 2 (job <code>dc38nreq4uuc73a6g0k0</code>, +3.763 h), hub qubit Q7 of formerly top-ranked <code>pid = 1</code> (<code>[5, 6, 7, 8, 17]</code>) suffered an unflagged 31.12% <code>|0&gt; -&gt; |1&gt;</code> SPAM/readout drift excursion; frozen published calibration collapsed to Spearman rho_cal = +0.4545 with 0.3610 top-1 regret, whereas live <code>ECHO_PROBE_16CZ</code> switched top-1 selection to <code>pid = 0</code> with rho_echo = +0.9483 (Delta-rho = +0.4938) and 0.0000 top-1 selection regret across both windows (2-window mean rho_echo = +0.8348 vs rho_cal = +0.6182, Delta = +0.2166).</li></ul>",
+        "keywords": [
+          "lattice gauge theory",
+          "Kogut-Susskind Hamiltonian",
+          "binary tetrahedral group",
+          "Strang splitting",
+          "Trotterization",
+          "placement screening",
+          "calibration staleness",
+          "IBM Heron r2",
+          "ibm_fez",
+          "OSIRIS-BT2T-003",
+          "OSIRIS-BT2T-003-FEZ"
+        ],
+        "language": "eng",
+        "license": "cc-by-4.0",
+        "publication_date": "2026-11-23",
+        "publication_type": "preprint",
+        "related_identifiers": [
+          {
+            "identifier": "https://github.com/quantum-osiris/osiris-cli",
+            "relation": "isSupplementedBy",
+            "scheme": "url"
+          },
+          {
+            "identifier": "10.5281/zenodo.24520723",
+            "relation": "continues",
+            "scheme": "doi"
+          },
+          {
+            "identifier": "10.5281/zenodo.24520738",
+            "relation": "continues",
+            "scheme": "doi"
+          },
+          {
+            "identifier": "10.5281/zenodo.24524910",
+            "relation": "references",
+            "scheme": "doi"
+          }
+        ],
+        "title": "Gauge-Fixed 5-Qubit Kogut-Susskind Lattice Gauge Plaquette Dynamics over the Binary Tetrahedral Group 2T and Two-Window Intra-Calibration Drift Catch on 156-Qubit ibm_fez (OSIRIS-BT2T-003 / OSIRIS-BT2T-003-FEZ)",
+        "upload_type": "publication",
+        "version": "1.0.0"
+      },
+      "paper_dir": "papers/bt2t003_kogut_susskind_plaquette",
+      "paper_key": "bt2t003_kogut_susskind_plaquette",
+      "pdf_compiled": false,
+      "sha256sums_check": {
+        "capsule_sha256": "d45f7562e72880ff769dea69405ede9e27f2356d43a51ecd72387e5903ba49d8",
+        "passed": true,
+        "sha256sums_sha256": "541f842b8ad9c048d136538e9dce07df0315fcf4bfd3819e68096a4a3d1ff497",
+        "verified_count": 20
+      },
+      "sys024_check": {
+        "flagged_claims": [],
+        "passed": true,
+        "quarantined_constants": [],
+        "surfaces_checked": [
+          "raw_tex",
+          "generated_tex",
+          "expanded_tex",
+          "zenodo_metadata"
+        ]
+      },
+      "total_bytes": 7495524,
+      "total_files": 30
     },
     "echo_and_card_c_qec_gates": {
       "bundle_sha256": "17ed2083e62f81abcc5f5e4fc7994e12541442a973ec3bf37f84ce13939823de",
@@ -983,6 +1275,515 @@
       },
       "total_bytes": 370206,
       "total_files": 15
+    },
+    "rep3_echo_fez_and_multidistance_qec": {
+      "bundle_sha256": "a13a7ea5f8545b93bb048f6fb534f59ce83033c5e1dafd7ee11b8bfaeb9d57bc",
+      "files": [
+        {
+          "required": true,
+          "sha256": "da82b4138a52784103ebc19e7c52f76f67bb13154a17fa3625debb78204db62c",
+          "size_bytes": 28858,
+          "source_relpath": "papers/rep3_echo_fez_and_multidistance_qec/rep3_echo_fez_and_multidistance_qec.tex",
+          "upload_name": "rep3_echo_fez_and_multidistance_qec.tex"
+        },
+        {
+          "required": true,
+          "sha256": "3e32f13bed4f8d8e2d9564392fd69cfc5380f153140c44724ed30921693538ee",
+          "size_bytes": 14366,
+          "source_relpath": "papers/rep3_echo_fez_and_multidistance_qec/generated.tex",
+          "upload_name": "generated.tex"
+        },
+        {
+          "required": true,
+          "sha256": "406bd0d809b8db7211b2c2fb0272b2a27676e1aada416043447e871fea976d91",
+          "size_bytes": 93309,
+          "source_relpath": "papers/rep3_echo_fez_and_multidistance_qec/generate_rep3_echo_multidist_paper_assets.py",
+          "upload_name": "generate_rep3_echo_multidist_paper_assets.py"
+        },
+        {
+          "required": true,
+          "sha256": "50e90c963990f9dcf6e92a0b40b6d4e60f6fa2026325535d7815586bf76e9c94",
+          "size_bytes": 17660,
+          "source_relpath": "papers/rep3_echo_fez_and_multidistance_qec/fig1_rep3_fez_live_crossing_and_echo_10t5.svg",
+          "upload_name": "fig1_rep3_fez_live_crossing_and_echo_10t5.svg"
+        },
+        {
+          "required": true,
+          "sha256": "dc6fd4c70f7ee3fe91d20ebd24b0acd7bbb138fc1b450f075c82a991f3422cb5",
+          "size_bytes": 15223,
+          "source_relpath": "papers/rep3_echo_fez_and_multidistance_qec/fig1_rep3_fez_live_crossing_and_echo_10t5.pdf",
+          "upload_name": "fig1_rep3_fez_live_crossing_and_echo_10t5.pdf"
+        },
+        {
+          "required": true,
+          "sha256": "1afc6ed6a5bd4e3fbc29b57d4a53289e47e3c842f144f24719dd500e70bb473f",
+          "size_bytes": 13847,
+          "source_relpath": "papers/rep3_echo_fez_and_multidistance_qec/fig2_multidistance_d3_d5_d7_threshold_and_lambda.svg",
+          "upload_name": "fig2_multidistance_d3_d5_d7_threshold_and_lambda.svg"
+        },
+        {
+          "required": true,
+          "sha256": "b66b94cc745169903044c7d97b883569d86813022fa76fb3c5ab9b76c8cc8d8d",
+          "size_bytes": 13483,
+          "source_relpath": "papers/rep3_echo_fez_and_multidistance_qec/fig2_multidistance_d3_d5_d7_threshold_and_lambda.pdf",
+          "upload_name": "fig2_multidistance_d3_d5_d7_threshold_and_lambda.pdf"
+        },
+        {
+          "required": true,
+          "sha256": "698bb2e0a0b294f95bf92e70ba2ef809809d8096f5d198739beaee8f8c767790",
+          "size_bytes": 5058,
+          "source_relpath": "papers/rep3_echo_fez_and_multidistance_qec/reproducibility_capsule.json",
+          "upload_name": "reproducibility_capsule.json"
+        },
+        {
+          "required": true,
+          "sha256": "7e3a8879a3300820eec21e064b1a823c9aa67c5e92489c887a37f92daf374554",
+          "size_bytes": 3593,
+          "source_relpath": "papers/rep3_echo_fez_and_multidistance_qec/SHA256SUMS.txt",
+          "upload_name": "SHA256SUMS.txt"
+        },
+        {
+          "required": true,
+          "sha256": "291c3c363983a2169537fda159fc668763d55ae36a6864db55c3c8a3e48032d3",
+          "size_bytes": 2287,
+          "source_relpath": "experiments/rep3_fez_staged/PRE_REGISTRATION.md",
+          "upload_name": "rep3_fez_PRE_REGISTRATION.md"
+        },
+        {
+          "required": true,
+          "sha256": "f675af6568c83160caceecc6bb7dc6c4f9eb105dccd69a3ffd104ab28b9f0467",
+          "size_bytes": 20045,
+          "source_relpath": "experiments/rep3_fez_staged/stage_and_harvest_rep3_fez.py",
+          "upload_name": "stage_and_harvest_rep3_fez.py"
+        },
+        {
+          "required": true,
+          "sha256": "332fe7728e990e3ca8aa9204c734b0129469ade5fe99c07115c80804103cd2dc",
+          "size_bytes": 7223,
+          "source_relpath": "experiments/rep3_fez_staged/physical_rep3_fez_results.json",
+          "upload_name": "physical_rep3_fez_results.json"
+        },
+        {
+          "required": true,
+          "sha256": "7144531ba363b0097fbe7202d2b5ad15dd7430011d79275286cefaff2ae17753",
+          "size_bytes": 1473,
+          "source_relpath": "experiments/rep3_fez_staged/rep3_fez_submitted_job.json",
+          "upload_name": "rep3_fez_submitted_job.json"
+        },
+        {
+          "required": true,
+          "sha256": "f67c41a2ac6735ea8e9fd512a5c3d8e601352ce2037fce8abc2abcc110ad49c1",
+          "size_bytes": 18168,
+          "source_relpath": "experiments/rep3_fez_staged/rep3_fez_staging_manifest.json",
+          "upload_name": "rep3_fez_staging_manifest.json"
+        },
+        {
+          "required": true,
+          "sha256": "428275ded50d8bc0c29e409b153657c2d087df4784b774f488c5bc5dc8d2b6de",
+          "size_bytes": 761,
+          "source_relpath": "experiments/rep3_fez_staged/rep3_fez_calibration_snapshot.json",
+          "upload_name": "rep3_fez_calibration_snapshot.json"
+        },
+        {
+          "required": true,
+          "sha256": "2af0e73634a873bff1429e5369f969b58ea19fac5ed57128dfd030e5df28f067",
+          "size_bytes": 8150,
+          "source_relpath": "experiments/rep3_fez_staged/physical_rep3_fez_raw_counts.json.gz",
+          "upload_name": "physical_rep3_fez_raw_counts.json.gz"
+        },
+        {
+          "required": true,
+          "sha256": "f240d445acc36a69ab2a2604132fa8fc8a0dd5c45130cd8d641b6780fcecc83a",
+          "size_bytes": 396620,
+          "source_relpath": "experiments/rep3_fez_staged/rep3_fez_staged_circuits.qpy",
+          "upload_name": "rep3_fez_staged_circuits.qpy"
+        },
+        {
+          "required": true,
+          "sha256": "fa43b80df1aa9078995da59806fe5f72d906294fea73be83a3bdc0705bb8b331",
+          "size_bytes": 2437,
+          "source_relpath": "experiments/echo_fez_staged/PRE_REGISTRATION.md",
+          "upload_name": "echo_fez_PRE_REGISTRATION.md"
+        },
+        {
+          "required": true,
+          "sha256": "94fb5406475c5cc6c1efe72bb185f589873ba86d14474de347131515d24f28f4",
+          "size_bytes": 15359,
+          "source_relpath": "experiments/echo_fez_staged/stage_and_harvest_echo_fez.py",
+          "upload_name": "stage_and_harvest_echo_fez.py"
+        },
+        {
+          "required": true,
+          "sha256": "8c9340dd6e7c158e8b8111ed044e58bdb8ed391fcfa6836038b8c03adcfcf440",
+          "size_bytes": 8143,
+          "source_relpath": "experiments/echo_fez_staged/physical_echo_fez_results.json",
+          "upload_name": "physical_echo_fez_results.json"
+        },
+        {
+          "required": true,
+          "sha256": "4505461eef4f020c0d902d0db0e85a186811814dff416e82b92ea5b3565d956d",
+          "size_bytes": 1470,
+          "source_relpath": "experiments/echo_fez_staged/echo_fez_submitted_job.json",
+          "upload_name": "echo_fez_submitted_job.json"
+        },
+        {
+          "required": true,
+          "sha256": "c1445a0c32f22fd3859ff5362f5e92fd9d1fb673fcbfbc57306b2daa600a3845",
+          "size_bytes": 82726,
+          "source_relpath": "experiments/echo_fez_staged/echo_fez_staging_manifest.json",
+          "upload_name": "echo_fez_staging_manifest.json"
+        },
+        {
+          "required": true,
+          "sha256": "df7a01b97598e9c525d1386a3f7f1ad46e89611191182ee8f6490269f74f23d1",
+          "size_bytes": 3360,
+          "source_relpath": "experiments/echo_fez_staged/echo_fez_calibration_snapshot.json",
+          "upload_name": "echo_fez_calibration_snapshot.json"
+        },
+        {
+          "required": true,
+          "sha256": "db19dfe6dd7604305cabfb5d1f430c722aaf7fbb019df554d6dd1a06d0793e53",
+          "size_bytes": 8850,
+          "source_relpath": "experiments/echo_fez_staged/physical_echo_fez_raw_counts.json.gz",
+          "upload_name": "physical_echo_fez_raw_counts.json.gz"
+        },
+        {
+          "required": true,
+          "sha256": "538af9bec5fd1ab2536272e5b33c50021d4e87247cb6f84cbbb415df3b406011",
+          "size_bytes": 2593970,
+          "source_relpath": "experiments/echo_fez_staged/echo_fez_staged_circuits.qpy",
+          "upload_name": "echo_fez_staged_circuits.qpy"
+        },
+        {
+          "required": true,
+          "sha256": "941aff7ced0eff5c4697933f7ca161bd67573f0ba2bd062a2c04e7e4ec5d669d",
+          "size_bytes": 83852,
+          "source_relpath": "experiments/qec_card_c/qec_multidistance_scaling.py",
+          "upload_name": "qec_multidistance_scaling.py"
+        },
+        {
+          "required": true,
+          "sha256": "7cda9f4ac37aec94326dd8ff7a262078f535d67296e4c641f1904f4965e1e8a1",
+          "size_bytes": 102980,
+          "source_relpath": "experiments/qec_card_c/artifacts/card_c_multidistance_threshold_report.json",
+          "upload_name": "card_c_multidistance_threshold_report.json"
+        },
+        {
+          "required": false,
+          "sha256": "e36002ade9e4ccfa35d1765178693241e2cd1e21b4d93b4cf967a2a342d4750c",
+          "size_bytes": 92248,
+          "source_relpath": "papers/rep3_echo_fez_and_multidistance_qec/rep3_echo_fez_and_multidistance_qec.pdf",
+          "upload_name": "rep3_echo_fez_and_multidistance_qec.pdf"
+        }
+      ],
+      "metadata": {
+        "access_right": "open",
+        "creators": [
+          {
+            "affiliation": "Agile Defense Systems LLC",
+            "name": "Davis, Devin Phillip"
+          }
+        ],
+        "description": "<p>Two write-ahead preregistered <code>HARDWARE_ATTESTED</code> experiments on the 156-qubit IBM Heron r2 processor <code>ibm_fez</code> (110,592 total physical circuit shots, 35 s QPU) paired with exact Edmonds Blossom multi-distance <code>d in {3, 5, 7}</code> surface-code threshold and error-suppression factor <code>Lambda_{d -&gt; d+2}</code> scaling simulations (<code>SIMULATED</code>, <code>provider_job_id: null</code>).</p><ul><li>In <code>OSIRIS-QEC-REP3-FEZ</code> (job <code>dc35d4inj2vs73dhmsog</code>, 96 dynamic <code>measure + reset + if_test</code> PUBs x 512 = 49,152 shots on 5-qubit chain <code>[58, 71, 70, 69, 78]</code>, 16 s QPU), both offline space-time MWPM Pauli-frame tracking (Arm 4a = 0.0872 at R = 5) and real-time hardware <code>if_test</code> conditional X feed-forward (Arm 4b = 0.0980 at R = 5) cross below Arm 1 unencoded transport (0.2770) and Arm 2 no-correction MCMR (0.1230, paired t = 9.0131, p = 0.006043) across 3 of 3 randomized blocks at R = 3 and R = 5, while consecutive ancilla detector streaks exceed independent Bernoulli predictions by 2.34x to 2.90x.</li><li>In <code>OSIRIS-ECHO-FEZ</code> (job <code>dc35e35s2omc738cvcug</code>, 240 PUBs x 256 = 61,440 shots across 10 disjoint 5-qubit <code>T5</code> subgraphs = 50 transmons, 19 s QPU), the 16-<code>CZ</code> stabilizer-reflected echo probe selects the true oracle-best subgraph <code>pid = 1</code> (<code>[5, 6, 7, 8, 17]</code>) with 0.0000 top-1 regret (0.6594 composite), outperforms published calibration on 24-<code>CZ</code> non-Clifford mirror circuits (+0.9030 vs +0.7576), and under post-hoc SPAM normalization (<code>ECHO / ID_0CZ</code>) achieves Spearman rank correlation +0.9030 composite and +0.9515 (p = 2.28e-5) on 72-<code>CZ</code> <code>2T</code> group inversion.</li><li>Exact Edmonds Blossom polynomial MWPM decoding (0 / 3,600 mismatches vs exact bitmask-DP on d = 3) across hook-safe rotated surface codes <code>[[9,1,3]]</code>, <code>[[25,1,5]]</code>, and <code>[[49,1,7]]</code> yields circuit-level threshold 1.124% (13.81% for repetition codes), with <code>Lambda_{3-&gt;5} = 6.96</code> and <code>Lambda_{5-&gt;7} = 13.78</code> on <code>H2-1</code> versus threshold collapse <code>Lambda_{3-&gt;5} = 1.023</code> under 3.2% heavy-hex readout drift.</li></ul>",
+        "keywords": [
+          "quantum error correction",
+          "mid-circuit measurement and reset",
+          "real-time feed-forward",
+          "surface code threshold",
+          "minimum-weight perfect matching",
+          "Edmonds Blossom algorithm",
+          "placement screening",
+          "IBM Heron r2",
+          "ibm_fez",
+          "OSIRIS-QEC-REP3-FEZ",
+          "OSIRIS-ECHO-FEZ"
+        ],
+        "language": "eng",
+        "license": "cc-by-4.0",
+        "publication_date": "2026-11-23",
+        "publication_type": "preprint",
+        "related_identifiers": [
+          {
+            "identifier": "https://github.com/quantum-osiris/osiris-cli",
+            "relation": "isSupplementedBy",
+            "scheme": "url"
+          },
+          {
+            "identifier": "10.5281/zenodo.24520746",
+            "relation": "continues",
+            "scheme": "doi"
+          },
+          {
+            "identifier": "10.5281/zenodo.24486962",
+            "relation": "references",
+            "scheme": "doi"
+          }
+        ],
+        "title": "Write-Ahead Dynamic Repetition-Code Crossing, 10-Patch Stabilizer-Reflected Placement Screening on 156-Qubit ibm_fez, and Multi-Distance d in {3, 5, 7} Surface-Code Threshold Scaling (OSIRIS-QEC-REP3-FEZ / OSIRIS-ECHO-FEZ)",
+        "upload_type": "publication",
+        "version": "1.0.0"
+      },
+      "paper_dir": "papers/rep3_echo_fez_and_multidistance_qec",
+      "paper_key": "rep3_echo_fez_and_multidistance_qec",
+      "pdf_compiled": true,
+      "sha256sums_check": {
+        "capsule_sha256": "698bb2e0a0b294f95bf92e70ba2ef809809d8096f5d198739beaee8f8c767790",
+        "passed": true,
+        "sha256sums_sha256": "7e3a8879a3300820eec21e064b1a823c9aa67c5e92489c887a37f92daf374554",
+        "verified_count": 27
+      },
+      "sys024_check": {
+        "flagged_claims": [],
+        "passed": true,
+        "quarantined_constants": [],
+        "surfaces_checked": [
+          "raw_tex",
+          "generated_tex",
+          "expanded_tex",
+          "zenodo_metadata"
+        ]
+      },
+      "total_bytes": 3655519,
+      "total_files": 28
+    },
+    "rep5_fez_softmwpm_and_bt2t004_ladder": {
+      "bundle_sha256": "b2cdf37b77f453ebad22d6ee9bbe883d537bd34374d691b5e6b484fcc3df1c1c",
+      "files": [
+        {
+          "required": true,
+          "sha256": "c8818827d49f9b527542f9f02ae22e2484abd11ca807a51a3786c7c468d7c585",
+          "size_bytes": 34178,
+          "source_relpath": "papers/rep5_fez_softmwpm_and_bt2t004_ladder/rep5_fez_softmwpm_and_bt2t004_ladder.tex",
+          "upload_name": "rep5_fez_softmwpm_and_bt2t004_ladder.tex"
+        },
+        {
+          "required": true,
+          "sha256": "8bbc044a8249cda1ce90344d67d3ca0193a012265bf0edfbe103649c089f205d",
+          "size_bytes": 14600,
+          "source_relpath": "papers/rep5_fez_softmwpm_and_bt2t004_ladder/generated.tex",
+          "upload_name": "generated.tex"
+        },
+        {
+          "required": true,
+          "sha256": "620cf0c193dec3f62f6861a18f4a241af9af3bbfe0871fc8f456b184925f9efb",
+          "size_bytes": 97653,
+          "source_relpath": "papers/rep5_fez_softmwpm_and_bt2t004_ladder/generate_rep5_softmwpm_bt2t004_paper_assets.py",
+          "upload_name": "generate_rep5_softmwpm_bt2t004_paper_assets.py"
+        },
+        {
+          "required": true,
+          "sha256": "c807beb59c12c899c367c699a21b0ca9d1392aabdfe0daa7ce2fbfff413e0f33",
+          "size_bytes": 13065,
+          "source_relpath": "papers/rep5_fez_softmwpm_and_bt2t004_ladder/fig1_rep5_fez_lambda35_and_soft_drift_mwpm.svg",
+          "upload_name": "fig1_rep5_fez_lambda35_and_soft_drift_mwpm.svg"
+        },
+        {
+          "required": true,
+          "sha256": "ed53efec34daac5ec7b4420a92e6cef753a979a58017d35da20b22b969d35bb6",
+          "size_bytes": 11927,
+          "source_relpath": "papers/rep5_fez_softmwpm_and_bt2t004_ladder/fig1_rep5_fez_lambda35_and_soft_drift_mwpm.pdf",
+          "upload_name": "fig1_rep5_fez_lambda35_and_soft_drift_mwpm.pdf"
+        },
+        {
+          "required": true,
+          "sha256": "e4f5fe5ef8e8030f74ab2ab4f42e947672f973ab6f8a6f495a018efdd9d43a4d",
+          "size_bytes": 14470,
+          "source_relpath": "papers/rep5_fez_softmwpm_and_bt2t004_ladder/fig2_bt2t004_two_plaquette_ladder_confinement_and_strang.svg",
+          "upload_name": "fig2_bt2t004_two_plaquette_ladder_confinement_and_strang.svg"
+        },
+        {
+          "required": true,
+          "sha256": "ce9639be67523d532ee6a2f2c32beebbc1dd9d23a29d5a5c557bb08f09409e8e",
+          "size_bytes": 18690,
+          "source_relpath": "papers/rep5_fez_softmwpm_and_bt2t004_ladder/fig2_bt2t004_two_plaquette_ladder_confinement_and_strang.pdf",
+          "upload_name": "fig2_bt2t004_two_plaquette_ladder_confinement_and_strang.pdf"
+        },
+        {
+          "required": true,
+          "sha256": "5d69f875f1335902d986a41fead18b94b0cc0c2cd3eeec0d5761b3a451d8a321",
+          "size_bytes": 5389,
+          "source_relpath": "papers/rep5_fez_softmwpm_and_bt2t004_ladder/reproducibility_capsule.json",
+          "upload_name": "reproducibility_capsule.json"
+        },
+        {
+          "required": true,
+          "sha256": "2b241c26e7518858b8a47e241d38df925bb61c8dea533e6d4cb266df3ba79e9f",
+          "size_bytes": 2980,
+          "source_relpath": "papers/rep5_fez_softmwpm_and_bt2t004_ladder/SHA256SUMS.txt",
+          "upload_name": "SHA256SUMS.txt"
+        },
+        {
+          "required": true,
+          "sha256": "18af4ae9aa2e0560475d25239a61dcc4a93e99216c8168822de22c3520d98214",
+          "size_bytes": 1968,
+          "source_relpath": "experiments/rep5_fez_staged/PRE_REGISTRATION.md",
+          "upload_name": "rep5_fez_PRE_REGISTRATION.md"
+        },
+        {
+          "required": true,
+          "sha256": "05f347abbd4d0ac6c9d11a72d0c69057e60850f794be70f701a58d83cab99f15",
+          "size_bytes": 22031,
+          "source_relpath": "experiments/rep5_fez_staged/stage_and_harvest_rep5_fez.py",
+          "upload_name": "stage_and_harvest_rep5_fez.py"
+        },
+        {
+          "required": true,
+          "sha256": "9e6ce1adbce6b1d0ae0f51541b81369e0ca51b3a81343476738ccce2671a853f",
+          "size_bytes": 3717,
+          "source_relpath": "experiments/rep5_fez_staged/physical_rep5_fez_results.json",
+          "upload_name": "physical_rep5_fez_results.json"
+        },
+        {
+          "required": true,
+          "sha256": "d37f242f762be71c80f8364649c8f1833fa663969e729ab2ac788b496f59d2b4",
+          "size_bytes": 929,
+          "source_relpath": "experiments/rep5_fez_staged/rep5_fez_submitted_job.json",
+          "upload_name": "rep5_fez_submitted_job.json"
+        },
+        {
+          "required": true,
+          "sha256": "643e818a4a2310cd461961e952386027b73e8c05db2a2bece16198f9fc751fef",
+          "size_bytes": 13544,
+          "source_relpath": "experiments/rep5_fez_staged/rep5_fez_staging_manifest.json",
+          "upload_name": "rep5_fez_staging_manifest.json"
+        },
+        {
+          "required": true,
+          "sha256": "2b90b6475c079b1b4cb37b98cdf75d9f54256208980aa3b8b79aa61751f5767a",
+          "size_bytes": 482,
+          "source_relpath": "experiments/rep5_fez_staged/rep5_fez_calibration_snapshot.json",
+          "upload_name": "rep5_fez_calibration_snapshot.json"
+        },
+        {
+          "required": true,
+          "sha256": "d73bd9c153d2feddc7e403455b6b725630106ee3b09d8d4f103bdb83fcadea56",
+          "size_bytes": 6706,
+          "source_relpath": "experiments/rep5_fez_staged/physical_rep5_fez_raw_counts.json.gz",
+          "upload_name": "physical_rep5_fez_raw_counts.json.gz"
+        },
+        {
+          "required": true,
+          "sha256": "da8061639e8eaa7e708f506095c590f69dc39ec5573f67edebadbb6f9416aee1",
+          "size_bytes": 234628,
+          "source_relpath": "experiments/rep5_fez_staged/rep5_fez_staged_circuits.qpy",
+          "upload_name": "rep5_fez_staged_circuits.qpy"
+        },
+        {
+          "required": true,
+          "sha256": "6b2d22eef3e7a187a6d9bdfcd7d074f3dce9ff12318f14916656826064c8d23f",
+          "size_bytes": 70002,
+          "source_relpath": "experiments/qec_card_c/qec_soft_drift_mwpm.py",
+          "upload_name": "qec_soft_drift_mwpm.py"
+        },
+        {
+          "required": true,
+          "sha256": "86c6f35b813f6b218ce1113df516ed061acbda9c8a0f577b10c0451953522ff1",
+          "size_bytes": 79924,
+          "source_relpath": "experiments/qec_card_c/artifacts/card_c_soft_drift_mwpm_report.json",
+          "upload_name": "card_c_soft_drift_mwpm_report.json"
+        },
+        {
+          "required": true,
+          "sha256": "b12a49857ba7f9bfe07504b37f135fc57cb68990642a2397b37b4975d0eb75fa",
+          "size_bytes": 79203,
+          "source_relpath": "experiments/bt2t_multiplaquette/bt2t_two_plaquette_ladder.py",
+          "upload_name": "bt2t_two_plaquette_ladder.py"
+        },
+        {
+          "required": true,
+          "sha256": "fde9959e3a6495dfc160ffd3dfbd45bee3d7bfb61a5dd83808c994c5c2b790c0",
+          "size_bytes": 10438,
+          "source_relpath": "experiments/bt2t_multiplaquette/verify_bt2t004.py",
+          "upload_name": "verify_bt2t004.py"
+        },
+        {
+          "required": true,
+          "sha256": "622aed61ae37961c2b0c72803570c85f5e5223f6a644b6cd55ee687cec63ca53",
+          "size_bytes": 24583,
+          "source_relpath": "experiments/bt2t_multiplaquette/manifest_bt2t004.json",
+          "upload_name": "manifest_bt2t004.json"
+        },
+        {
+          "required": false,
+          "sha256": "6f484e052231f18bbbe19bbcb19cd4b8a5e116f7414514340117ff7fc795e936",
+          "size_bytes": 93808,
+          "source_relpath": "papers/rep5_fez_softmwpm_and_bt2t004_ladder/rep5_fez_softmwpm_and_bt2t004_ladder.pdf",
+          "upload_name": "rep5_fez_softmwpm_and_bt2t004_ladder.pdf"
+        }
+      ],
+      "metadata": {
+        "access_right": "open",
+        "creators": [
+          {
+            "affiliation": "Agile Defense Systems LLC",
+            "name": "Davis, Devin Phillip"
+          }
+        ],
+        "description": "<p>Write-ahead preregistered multi-distance dynamic repetition-code execution on the 156-qubit IBM Heron r2 processor <code>ibm_fez</code> (<code>OSIRIS-QEC-REP5-FEZ</code>, job <code>dc3bmlinj2vs73di19s0</code>, 72 dynamic PUBs x 512 = 36,864 shots on 9-qubit chain <code>[120, 121, 122, 123, 136, 143, 142, 141, 140]</code>, 12 s QPU) paired with drift- and streak-aware soft-weight Edmonds Blossom decoding (<code>OSIRIS-QEC-SOFTMWPM</code>, offline re-scoring of live job <code>dc35d4inj2vs73dhmsog</code> plus <code>[[9,1,3]] -&gt; [[25,1,5]] -&gt; [[49,1,7]]</code> surface-code threshold recovery) and 10-qubit gauge-fixed coupled two-plaquette <code>2T subset SU(2)</code> Kogut-Susskind lattice gauge ladder synthesis (<code>OSIRIS-BT2T-004</code>, 37/37 formal checks).</p><ul><li>In <code>OSIRIS-QEC-REP5-FEZ</code> (job <code>dc3bmlinj2vs73di19s0</code>, write-ahead QPY <code>da806163...</code> committed at <code>82cfd46a</code>; 5-data-qubit <code>RO_CAL_5D</code> assignment fidelity 0.947754), 9-qubit <code>[[5,1,5]]</code> space-time Blossom MWPM crosses below 5-qubit <code>[[3,1,3]]</code> MWPM, <code>[[5,1,5]]</code> no-correction, and unencoded transport across all round depths R in {1, 3, 5} and 2 of 2 randomized blocks: 0.000488 vs 0.000977 at R = 1 (<code>Lambda_{3-&gt;5} = 2.0000</code>, 48.0x below unencoded 0.023438), 0.002930 vs 0.008301 at R = 3 (<code>Lambda_{3-&gt;5} = 2.8333</code>, 13.33x below unencoded 0.039062), and 0.008301 vs 0.012695 at R = 5 (<code>Lambda_{3-&gt;5} = 1.5294</code>, 2.06x below <code>[[5,1,5]]</code> no-correction 0.017090; mean <code>Lambda_{3-&gt;5} = 2.1209</code>, per-round slope ratio 1.5000 = 0.002930 vs 0.001953/round), while zero-detector postselection yields 0.000000 logical error across all rounds and 4-ancilla consecutive detector streaks exceed Bernoulli by 4.21x to 7.74x.</li><li><code>SoftDriftBlossomDecoder</code> (600/600 exact Edmonds Blossom equivalence, 38/38 sinkhole triangle resolution) combines per-qubit live drift priors with non-Markovian consecutive-streak edge reweighting, restoring rotated surface-code <code>[[9,1,3]] -&gt; [[25,1,5]]</code> suppression under 25% heterogeneous hot ancilla drift from <code>Lambda_{3-&gt;5} = 1.269</code> (stale uniform MWPM) to <code>3.537</code> [2.57, 5.21] at 3.2% drift (<code>3.633</code> at 6.0%, <code>3.334</code> at 10.0%), and cutting live <code>ibm_fez</code> job <code>dc35d4inj2vs73dhmsog</code> per-round logical error slope by 73.91% (0.018717 to 0.004883/round, advancing QEC crossing from R = 3 to R = 1 at 0.003255 vs 0.009766 no-correction).</li><li>Maximal spanning-tree gauge fixing compresses the 7-link two-plaquette <code>2T</code> Kogut-Susskind ladder from <code>|2T|^7 = 4,586,471,424</code> states (35 qubits) to <code>|2T|^2 = 576</code> holonomy pairs in 10 qubits (7,962,624x reduction, 3.5x fewer qubits) spanning an exact 76-dimensional Gauss-law-invariant physical orbit subspace; shared-link inter-plaquette electric coupling via 10-qubit reversible multiplication <code>M_{2T}</code> drives a positive connected Wilson-loop correlator <code>C_{12} in [8.80e-5, 0.026418]</code> and monotone string tension <code>sigma_eff</code> from 0.00136 to 3.02580 across <code>g_YM^2 in [0.25, 4.0]</code> with Strang slope 2.00005-2.00017 and 116.14x native <code>CZ</code> compression vs 10-qubit dense QSD (4,125 vs 479,063 <code>CZ</code>; 10.65x-11.01x fewer <code>CZ</code> than unfixed 35-qubit 7-link Trotterization).</li></ul>",
+        "keywords": [
+          "quantum error correction",
+          "multi-distance repetition code",
+          "minimum-weight perfect matching",
+          "Edmonds Blossom algorithm",
+          "non-Markovian readout streaks",
+          "surface code threshold",
+          "lattice gauge theory",
+          "Kogut-Susskind Hamiltonian",
+          "binary tetrahedral group",
+          "Wilson loop confinement",
+          "IBM Heron r2",
+          "ibm_fez",
+          "OSIRIS-QEC-REP5-FEZ",
+          "OSIRIS-QEC-SOFTMWPM",
+          "OSIRIS-BT2T-004"
+        ],
+        "language": "eng",
+        "license": "cc-by-4.0",
+        "publication_date": "2026-11-23",
+        "publication_type": "preprint",
+        "related_identifiers": [
+          {
+            "identifier": "https://github.com/quantum-osiris/osiris-cli",
+            "relation": "isSupplementedBy",
+            "scheme": "url"
+          },
+          {
+            "identifier": "10.5281/zenodo.24524910",
+            "relation": "continues",
+            "scheme": "doi"
+          },
+          {
+            "identifier": "10.5281/zenodo.24525501",
+            "relation": "continues",
+            "scheme": "doi"
+          }
+        ],
+        "title": "Write-Ahead 9-Qubit [[5,1,5]] vs. [[3,1,3]] Dynamic QEC Suppression on 156-Qubit ibm_fez, Drift- and Streak-Aware Soft-Weight Blossom Decoding, and 10-Qubit Coupled Two-Plaquette 2T Lattice Gauge Confinement (OSIRIS-QEC-REP5-FEZ / OSIRIS-QEC-SOFTMWPM / OSIRIS-BT2T-004)",
+        "upload_type": "publication",
+        "version": "1.0.0"
+      },
+      "paper_dir": "papers/rep5_fez_softmwpm_and_bt2t004_ladder",
+      "paper_key": "rep5_fez_softmwpm_and_bt2t004_ladder",
+      "pdf_compiled": true,
+      "sha256sums_check": {
+        "capsule_sha256": "5d69f875f1335902d986a41fead18b94b0cc0c2cd3eeec0d5761b3a451d8a321",
+        "passed": true,
+        "sha256sums_sha256": "2b241c26e7518858b8a47e241d38df925bb61c8dea533e6d4cb266df3ba79e9f",
+        "verified_count": 22
+      },
+      "sys024_check": {
+        "flagged_claims": [],
+        "passed": true,
+        "quarantined_constants": [],
+        "surfaces_checked": [
+          "raw_tex",
+          "generated_tex",
+          "expanded_tex",
+          "zenodo_metadata"
+        ]
+      },
+      "total_bytes": 854915,
+      "total_files": 23
     },
     "wp2_27q_debiased_ot_fez": {
       "bundle_sha256": "c2996cc33fd246acae25bb47c346b14f1bcf50e845eacb37009fce0a27f4aebe",

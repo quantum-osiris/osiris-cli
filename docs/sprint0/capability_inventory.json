@@ -1,0 +1,205 @@
+{
+  "schema": "osiris.capability_inventory/1",
+  "audited_at": "2026-11-25",
+  "primary_repo": {
+    "name": "quantum-osiris/osiris-cli",
+    "commit": "c1f0444cf2ac3b10cf6aec69ed0964e229e036e3",
+    "version": "6.2.2"
+  },
+  "method": "Source was read or executed. A passing test is execution evidence for that test. Documentation and generated receipts were not treated as verification. No QPU, GPU, or Zenodo publish call was made.",
+  "pytest_full_suite": {
+    "command": "python3 -m pytest -o cache_dir=/tmp/osiris_pytest_cache -q tests/ --tb=line -rfE",
+    "python": "3.12.3",
+    "result": "1 failed, 3166 passed, 97 skipped, 12 collection skips, exit code 1",
+    "duration_s": 417.32,
+    "remaining_failure": "tests/test_exec_policy.py::test_active_interpreters_own_environment_is_a_resolution_source",
+    "remaining_failure_cause": "The interpreter is /usr/bin/python3 and pytest is not installed in /usr/bin. The test looks beside sys.executable. This is the runner layout, not a Sprint 0 logic change."
+  },
+  "repos_reached": [
+    {
+      "name": "quantum-osiris/osiris-cli",
+      "access": "local checkout",
+      "note": "Full tree at c1f0444. Remote has only main."
+    },
+    {
+      "name": "quantum-osiris/osiris-governance",
+      "access": "GitHub API tree",
+      "note": "Installed from pin 78b1fbe481df98ec14ae92ca73c7feb43d372714 during the suite. Tests that import it ran."
+    },
+    {
+      "name": "quantum-osiris/dnalang-core",
+      "access": "GitHub API tree and pip install of the pyproject pin",
+      "note": "Installed pin 5ae0748918bec9c63628fed3b0260cdc9b4b4553 reports dnalang 0.4.0. The main tree observed during the audit was 90b68053959f4e31627e746facc5dbde68c32e14, which is not the pin."
+    },
+    {
+      "name": "quantum-osiris/organism_sim",
+      "access": "pip install of pin 3935af1cfdb5394b68a502d77f84c6af583f6e8c",
+      "note": "Importable. Source was not reviewed line by line."
+    },
+    {
+      "name": "quantum-osiris/bridge",
+      "access": "pip install of pin 6f43f307cdca04f8ac00f8f1e68a0b7e980863df as aegis-bridge",
+      "note": "Installed for the suite. Source was not reviewed line by line."
+    },
+    {
+      "name": "quantum-osiris/quantum-ide",
+      "access": "GitHub API; worker/osiris_cli_worker.py read in full",
+      "note": "Private. This is the IDE repo. There is no repository named quantum-ide/osiris-ide."
+    },
+    {
+      "name": "quantum-osiris/osiris-edge-bridge",
+      "access": "GitHub API tree",
+      "note": "Private Kotlin Android loopback bridge. Sources were not executed."
+    },
+    {
+      "name": "devinphillipdavis/osiris-android",
+      "access": "GitHub API top-level tree",
+      "note": "Public Kotlin tree (app, runtime-bridge, dnalang-adapter). Not built."
+    },
+    {
+      "name": "quantum-osiris/osiris-research-archive",
+      "access": "GitHub API top-level tree",
+      "note": "Private historical copy of earlier OSIRIS trees and Zenodo deposit files. Not executed."
+    }
+  ],
+  "repos_not_reached": [
+    {
+      "name": "quantum-ide/osiris-ide",
+      "reason": "No such repository. The IDE checkout is quantum-osiris/quantum-ide."
+    },
+    {
+      "name": "claude/wave0-1",
+      "reason": "Not present on origin or locally. Nothing was deleted."
+    }
+  ],
+  "entrypoints": [
+    {"name": "osiris", "where": "pyproject [project.scripts] -> osiris_cli.osiris_repl:main"},
+    {"name": "osiris-nclm", "where": "pyproject [project.scripts] -> osiris_nclm_cli:main"},
+    {"name": "node beta acceptor", "where": "python -m osiris_cli.node_beta"},
+    {"name": "dual-node sync runbook", "where": "osiris_cli/sync_bridge.py DualNodeSyncBridge.format_runbook"},
+    {"name": "key sync", "where": "python -m osiris_cli.key_sync"},
+    {"name": "IDE sim worker", "where": "quantum-osiris/quantum-ide worker/osiris_cli_worker.py"}
+  ],
+  "capabilities": [
+    {
+      "id": "repl-entrypoint",
+      "status": "IMPLEMENTED_UNVERIFIED",
+      "evidence": ["osiris_cli/osiris_repl.py"],
+      "note": "The console entrypoint exists. This run did not start an interactive session."
+    },
+    {
+      "id": "dual-substrate-watcher-daemon",
+      "status": "NOT_IMPLEMENTED",
+      "evidence": ["osiris_cli/sync_bridge.py", "osiris_cli/node_beta.py"],
+      "note": "No Alpha/Beta watcher daemon is in this repo. sync_bridge is a runbook and port probe. node_beta accepts one signed SHA-256 challenge. The IDE worker is a separate local sim HTTP service."
+    },
+    {
+      "id": "node-beta-sha256-acceptor",
+      "status": "VERIFIED",
+      "evidence": ["osiris_cli/node_beta.py", "tests/test_node_beta.py passed in the full suite"],
+      "note": "Verified for the signed digest challenge and replay of a request id. It does not run experiments."
+    },
+    {
+      "id": "alpha-state-probe",
+      "status": "VERIFIED",
+      "evidence": ["osiris_cli/remote_helpers/alpha_state_v1.py", "osiris_cli/substrate_guard.py probe_alpha_state", "tests/test_sprint0_p0.py"],
+      "note": "The named probe_alpha_state did not exist on main. The replacement is argv-only and version 1. The helper was executed in-process and printed JSON. A compound for-statement after a semicolon does not parse and is rejected."
+    },
+    {
+      "id": "ast-firewall",
+      "status": "VERIFIED",
+      "evidence": ["osiris_cli/orchestration/ast_firewall.py", "tests/test_wave1_gates.py", "tests/test_sprint0_p0.py"],
+      "note": "Static policy only. IS_SANDBOX is false. refuse_untrusted_dynamic_import does not load the file. Home-directory fallbacks in the REPL no longer call exec_module."
+    },
+    {
+      "id": "os-sandbox",
+      "status": "NOT_IMPLEMENTED",
+      "evidence": ["osiris/runtime/worker.py IsolationUnavailable", "quantum-ide worker/osiris_cli_worker.py lines 26-31"],
+      "note": "Both this repo and the IDE worker say a working directory is not a sandbox. Candidate execution still needs an OS boundary."
+    },
+    {
+      "id": "wal-hash-chain",
+      "status": "VERIFIED",
+      "evidence": ["osiris_cli/chain_lock.py", "osiris_cli/probes.py verify_chain", "tests/test_chain_lock.py", "tests/test_sprint0_p0.py"],
+      "note": "append_chained plus verify_chain accepted a three-entry chain written by the return-sync guard. This is internal consistency, not an external anchor."
+    },
+    {
+      "id": "return-chain-ancestry",
+      "status": "VERIFIED",
+      "evidence": ["osiris_cli/substrate_guard.py accept_return_chain"],
+      "note": "No previous function replaced an evidence chain. The new guard refuses an older tip and a divergent tip, and leaves the local file unchanged when the chains are identical."
+    },
+    {
+      "id": "exactly-once-experiment",
+      "status": "VERIFIED",
+      "evidence": ["osiris_cli/substrate_guard.py begin_experiment"],
+      "note": "A JSONL idempotency ledger records started, executed, and acked. A second begin after executed and before ack does not ask for another run."
+    },
+    {
+      "id": "manifest-retirement",
+      "status": "VERIFIED",
+      "evidence": ["osiris_cli/substrate_guard.py retire_manifest"],
+      "note": "The manifest is renamed into quarantine before verify. A file created at the old path during verify is not deleted."
+    },
+    {
+      "id": "strict-git-alignment",
+      "status": "VERIFIED",
+      "evidence": ["osiris_cli/probes.py probe_git", "osiris_cli/substrate_guard.py assert_strict_git_alignment"],
+      "note": "Missing commit info fails closed. A non-repository probe returned exit code 1 in the Sprint 0 test."
+    },
+    {
+      "id": "success-telemetry-binding",
+      "status": "VERIFIED",
+      "evidence": ["osiris_cli/substrate_guard.py verify_success_telemetry"],
+      "note": "Both dispatch and result must be present on the current experiment id. Another experiment's rows do not count."
+    },
+    {
+      "id": "zenodo-publisher",
+      "status": "IMPLEMENTED_UNVERIFIED",
+      "evidence": ["osiris_zenodo_publisher.py", "papers/publish_v620_papers_to_zenodo.py"],
+      "note": "HTTP publish code exists. This run did not call Zenodo."
+    },
+    {
+      "id": "zenodo-mock-fixture-quarantine",
+      "status": "VERIFIED",
+      "evidence": ["osiris_cli/substrate_guard.py classify_zenodo_evidence", "osiris_zenodo_publisher.py PublishingWorkflow.publish_result"],
+      "note": "A record marked mock or fixture is not production evidence. The fixture confidence 0.6 named in the brief is recorded on that quarantine reason. Unmarked records are not given a confidence."
+    },
+    {
+      "id": "qbyte",
+      "status": "SIMULATED",
+      "evidence": ["osiris/qbyte/__init__.py", "qbyte_system/qbyte.py", "tests/test_qbyte_correctness.py passed in the full suite"],
+      "note": "Classical in-process code. The passing tests are not a quantum-advantage result and not a QPU run."
+    },
+    {
+      "id": "organism",
+      "status": "EXPERIMENTAL",
+      "evidence": ["osiris/organisms/", "organism/", "osiris_cli/dnalang/edge_organism.py"],
+      "note": "In-repo organism and DNA fixtures exist. organism_sim is an optional sibling and was importable after the pin install. No organism run was treated as physical evidence."
+    },
+    {
+      "id": "ide-sim-worker",
+      "status": "IMPLEMENTED_UNVERIFIED",
+      "evidence": ["quantum-osiris/quantum-ide worker/osiris_cli_worker.py"],
+      "note": "Read in full. It runs dnalang.cli run and labels stdout SIMULATED. It was not started here. It states it is not a filesystem sandbox."
+    },
+    {
+      "id": "edge-bridge-android",
+      "status": "IMPLEMENTED_UNVERIFIED",
+      "evidence": ["quantum-osiris/osiris-edge-bridge", "devinphillipdavis/osiris-android"],
+      "note": "Kotlin trees were listed. They were not built or installed."
+    },
+    {
+      "id": "rtx5050-bench-script",
+      "status": "SIMULATED",
+      "evidence": ["scripts/bench_rtx5050_multimentor.py"],
+      "note": "A local mentor bench script exists. It was not run. A GPU timing would be hardware timing, not quantum advantage."
+    },
+    {
+      "id": "speaking-gate-sys026",
+      "status": "IMPLEMENTED_UNVERIFIED",
+      "evidence": ["osiris_cli/living.py"],
+      "note": "The gate remains in the living console. This run did not score a held-out exchange."
+    }
+  ]
+}

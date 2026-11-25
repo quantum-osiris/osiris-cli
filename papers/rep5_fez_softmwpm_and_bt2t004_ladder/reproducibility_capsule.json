@@ -1,0 +1,114 @@
+{
+  "affiliation": "Agile Defense Systems LLC",
+  "author": "Devin Phillip Davis",
+  "backend": "ibm_fez",
+  "combined_new_qpu_seconds": 12,
+  "combined_rep5_physical_pubs": 72,
+  "combined_rep5_physical_shots": 36864,
+  "combined_rescored_rep3_physical_shots": 49152,
+  "execution_tier": "HARDWARE_ATTESTED_PLUS_SIMULATED_AND_PROXY",
+  "hardware_jobs": {
+    "OSIRIS-QEC-REP3-FEZ-OFFLINE-RESCORED": {
+      "arm4a_shots_rescored": 9216,
+      "chain_5q": [
+        58,
+        71,
+        70,
+        69,
+        78
+      ],
+      "crossing_round_uniform_to_soft_drift": [
+        3,
+        1
+      ],
+      "execution_tier": "HARDWARE_ATTESTED",
+      "new_qpu_seconds": 0,
+      "provider_job_id": "dc35d4inj2vs73dhmsog",
+      "raw_counts_gz_sha256": "2af0e73634a873bff1429e5369f969b58ea19fac5ed57128dfd030e5df28f067",
+      "slope_reduction_pct": "73.91",
+      "total_pubs": 96,
+      "total_shots": 49152
+    },
+    "OSIRIS-QEC-REP5-FEZ": {
+      "calibration_snapshot_sha256": "2b90b6475c079b1b4cb37b98cdf75d9f54256208980aa3b8b79aa61751f5767a",
+      "chain_9q": [
+        120,
+        121,
+        122,
+        123,
+        136,
+        143,
+        142,
+        141,
+        140
+      ],
+      "created_utc": "2026-11-25T10:41:26.925226Z",
+      "execution_tier": "HARDWARE_ATTESTED",
+      "mean_lambda_3_to_5_mwpm": "2.1209",
+      "peak_lambda_3_to_5_mwpm_r3": "2.8333",
+      "preregistration_md_sha256": "18af4ae9aa2e0560475d25239a61dcc4a93e99216c8168822de22c3520d98214",
+      "provider_job_id": "dc3bmlinj2vs73di19s0",
+      "qpu_seconds": 12,
+      "qpy_sha256": "da8061639e8eaa7e708f506095c590f69dc39ec5573f67edebadbb6f9416aee1",
+      "raw_counts_gz_sha256": "d73bd9c153d2feddc7e403455b6b725630106ee3b09d8d4f103bdb83fcadea56",
+      "ro_cal_5d_assignment_fidelity": "0.947754",
+      "shots_per_pub": 512,
+      "staged_commit": "82cfd46a",
+      "staged_utc": "2026-11-25T07:18:08.540387+00:00",
+      "total_pubs": 72,
+      "total_shots": 36864,
+      "write_ahead_margin_hours": "3.3884"
+    }
+  },
+  "paper_id": "OSIRIS-REP5-SOFTMWPM-BT2T004-2026",
+  "rfc8785_canonical_sha256": "e5deeb52f80b19d82e5e5ec9e4cd8a707d76321fdf179f3c16c10e45c60a5451",
+  "schema": "osiris.reproducibility_capsule/1",
+  "simulated_companions": {
+    "OSIRIS-BT2T-004": {
+      "encoding_sha256": "3e3b02d13539daaf431af39056d031f777a785a556eb9da21ef4ea6097dfc4c5",
+      "encoding_version": "bt2t-enc-1",
+      "execution_tier": "SIMULATED",
+      "experiment_id": "OSIRIS-BT2T-004",
+      "formal_checks_passed": 37,
+      "gauge_fixed_qubits": 10,
+      "hilbert_space_config_reduction_factor": 7962624,
+      "physical_subspace_dim": 76,
+      "provider_job_id": null,
+      "qpu_seconds": 0,
+      "rfc8785_canonical_sha256": "348269c2f51dc63cae0216a20bb3100c544540564b9acf99033bed5e7c22d791",
+      "seed": 20261124,
+      "unfixed_qubits": 35
+    },
+    "OSIRIS-QEC-SOFTMWPM": {
+      "edmonds_blossom_mismatches": 0,
+      "edmonds_blossom_syndromes_tested": 600,
+      "execution_tier": "HYBRID_SIMULATED_AND_HARDWARE_ATTESTED_OFFLINE_RESCORING",
+      "jcs_payload_sha256": "af64f3e1e968ae09c65153f7f8f88f66f3d825296e122e6046bd8b4f0d6afcfe",
+      "new_qpu_seconds": 0,
+      "provider_job_id": "dc35d4inj2vs73dhmsog",
+      "seed": 20261124,
+      "sinkhole_triangles_resolved": 38
+    }
+  },
+  "source_artifacts": {
+    "experiments/bt2t_multiplaquette/bt2t_two_plaquette_ladder.py": "b12a49857ba7f9bfe07504b37f135fc57cb68990642a2397b37b4975d0eb75fa",
+    "experiments/bt2t_multiplaquette/manifest_bt2t004.json": "622aed61ae37961c2b0c72803570c85f5e5223f6a644b6cd55ee687cec63ca53",
+    "experiments/bt2t_multiplaquette/verify_bt2t004.py": "fde9959e3a6495dfc160ffd3dfbd45bee3d7bfb61a5dd83808c994c5c2b790c0",
+    "experiments/qec_card_c/artifacts/card_c_soft_drift_mwpm_report.json": "86c6f35b813f6b218ce1113df516ed061acbda9c8a0f577b10c0451953522ff1",
+    "experiments/qec_card_c/qec_soft_drift_mwpm.py": "6b2d22eef3e7a187a6d9bdfcd7d074f3dce9ff12318f14916656826064c8d23f",
+    "experiments/rep5_fez_staged/PRE_REGISTRATION.md": "18af4ae9aa2e0560475d25239a61dcc4a93e99216c8168822de22c3520d98214",
+    "experiments/rep5_fez_staged/physical_rep5_fez_raw_counts.json.gz": "d73bd9c153d2feddc7e403455b6b725630106ee3b09d8d4f103bdb83fcadea56",
+    "experiments/rep5_fez_staged/physical_rep5_fez_results.json": "9e6ce1adbce6b1d0ae0f51541b81369e0ca51b3a81343476738ccce2671a853f",
+    "experiments/rep5_fez_staged/rep5_fez_calibration_snapshot.json": "2b90b6475c079b1b4cb37b98cdf75d9f54256208980aa3b8b79aa61751f5767a",
+    "experiments/rep5_fez_staged/rep5_fez_staged_circuits.qpy": "da8061639e8eaa7e708f506095c590f69dc39ec5573f67edebadbb6f9416aee1",
+    "experiments/rep5_fez_staged/rep5_fez_staging_manifest.json": "643e818a4a2310cd461961e952386027b73e8c05db2a2bece16198f9fc751fef",
+    "experiments/rep5_fez_staged/rep5_fez_submitted_job.json": "d37f242f762be71c80f8364649c8f1833fa663969e729ab2ac788b496f59d2b4",
+    "experiments/rep5_fez_staged/stage_and_harvest_rep5_fez.py": "05f347abbd4d0ac6c9d11a72d0c69057e60850f794be70f701a58d83cab99f15"
+  },
+  "verdicts": {
+    "bt2t004_all_37_formal_checks_passed": "PASS_37_OF_37_CHECKS_VERIFIED",
+    "rep5_arm3_zero_postselected_errors_all_rounds": "SUPPORTED",
+    "rep5_multidistance_lambda_3_to_5_gt_1_all_rounds": "SUPPORTED",
+    "soft_drift_mwpm_verdict": "PASS_SOFT_DRIFT_STREAK_MWPM_LAMBDA_RECOVERY_AND_FEZ_RESCORING_VERIFIED"
+  }
+}

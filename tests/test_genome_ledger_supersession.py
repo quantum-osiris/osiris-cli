@@ -118,3 +118,35 @@ def test_real_ledger_copy_verifies_with_notes(tmp_path):
         pytest.skip("this machine's ledger has no correction record")
     assert led.verify(), led.problem()
     assert led.notes()
+
+
+def test_genome_ledger_emits_v2_and_validates_semantic_versions(tmp_path):
+    path = str(tmp_path / "v2_ledger.jsonl")
+    led = gl.GenomeLedger(path)
+    # Append legacy v1 entry directly through underlying ledger
+    e1 = led._ledger.append("LEGACY_OP", {"payload": {"step": 1}})
+    assert "v" not in e1
+    assert gl.entry_version(e1) == 1
+
+    # Append via GenomeLedger.append -> emits "v": 2
+    e2 = led.append("MODERN_OP", {"step": 2, "ratio": 1.0})
+    assert e2["v"] == 2
+    assert gl.entry_version(e2) == 2
+    assert led.verify()
+    assert len(led.validated_entries()) == 2
+
+    # A future v=99 record with valid hash chain passes check_chain() / verify()
+    # but fails semantic version validation (UnsupportedVersionError).
+    e99 = led._ledger.append("FUTURE_OP", {"v": 99, "payload": {"step": 3}})
+    assert e99["v"] == 99
+    assert led.verify()
+    with pytest.raises(gl.UnsupportedVersionError):
+        led.validated_entries()
+    import run_record
+    with pytest.raises(gl.UnsupportedVersionError):
+        run_record.orphans(led.chain, runs_dir=str(tmp_path))
+    with pytest.raises(gl.UnsupportedVersionError):
+        run_record.stats(led.chain, runs_dir=str(tmp_path))
+    for bad_v in (0, 3, -1, True, False, "2", None, 2.0):
+        with pytest.raises(gl.UnsupportedVersionError):
+            gl.check_version(bad_v)

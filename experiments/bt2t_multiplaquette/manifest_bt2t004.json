@@ -1,0 +1,676 @@
+{
+  "all_checks_passed": true,
+  "all_passed": true,
+  "checks": {
+    "compilation_all_10q_qiskit_compilations_unitary_equivalent": true,
+    "compilation_gauge_fixed_10q_over_10x_cz_reduction_vs_unfixed_35q_7link": true,
+    "compilation_pytket_10q_ub_32_zzphase_and_structured_fewer_than_dense5q": true,
+    "compilation_qsd_exact_recurrence_verified_and_over_100x_compression_vs_10q_dense": true,
+    "compilation_strang_structured_10q_circuit_exact_below_1e14": true,
+    "compilation_structured_10q_fewer_cz_than_dense_5q_block_synthesis": true,
+    "compilation_ub_10q_circuit_exact_below_1e14": true,
+    "compilation_ub_10q_compiles_to_32_cz_all_to_all_and_38_cz_on_2xT5": true,
+    "compilation_ue_structured_10q_circuit_exact_below_1e14": true,
+    "confinement_connected_correlator_c12_positive_from_shared_link_coupling": true,
+    "confinement_exact_plaquette_exchange_symmetry_and_zero_padded_leakage": true,
+    "confinement_ground_state_lies_in_76d_physical_subspace_below_1e14": true,
+    "confinement_string_tension_increases_monotonically_across_crossover": true,
+    "confinement_strong_coupling_area_law_ratio_near_unity": true,
+    "confinement_weak_coupling_perimeter_law_w1x1_and_w1x2_above_0_99": true,
+    "confinement_wilson_1x1_and_1x2_decrease_monotonically_with_coupling": true,
+    "confinement_wilson_loops_in_unit_interval_and_w1x2_below_w1x1": true,
+    "encoding_sha256_verified": true,
+    "hamiltonian_active_576_subspace_zero_leakage_to_448_padded": true,
+    "hamiltonian_shared_and_rectangular_laplacians_isospectral_below_1e13": true,
+    "hamiltonian_te1_te2_and_te_shared_mutually_commute_below_1e14": true,
+    "hamiltonian_te_shared_and_h2p_commute_with_global_gauge_conjugation_below_1e14": true,
+    "hamiltonian_te_shared_and_h2p_hermitian_and_psd": true,
+    "hamiltonian_te_shared_matches_direct_opposite_orientation_cayley_shift": true,
+    "hamiltonian_ub_and_ue_10q_factorized_propagators_match_expm_below_1e14": true,
+    "hamiltonian_unfixed_3link_13824_intertwines_with_10q_gauge_fixed_below_1e13": true,
+    "reduction_active_576_plus_padded_448_equals_1024": true,
+    "reduction_burnside_class_clebsch_gordan_and_orbits_equal_76": true,
+    "reduction_hilbert_reduction_factor_equals_7962624": true,
+    "reduction_physical_76d_orbit_basis_orthonormal_and_gauge_invariant": true,
+    "reduction_qubit_reduction_35q_to_10q_equals_3_5x": true,
+    "reduction_trivial_fusion_pair_count_equals_7": true,
+    "trotter_lie_trotter_first_order_slope_near_1": true,
+    "trotter_realtime_10q_zero_padded_448_leakage_and_gauss_invariant": true,
+    "trotter_strang_n128_error_below_1e5": true,
+    "trotter_strang_n64_error_below_1e4": true,
+    "trotter_strang_second_order_slope_near_2": true
+  },
+  "encoding_sha256": "3e3b02d13539daaf431af39056d031f777a785a556eb9da21ef4ea6097dfc4c5",
+  "encoding_version": "bt2t-enc-1",
+  "evidence_class": "SIMULATED",
+  "execution_class": "NO_EXECUTION (exact linear algebra and local PROXY compilation only)",
+  "execution_tier": "SIMULATED",
+  "experiment_id": "OSIRIS-BT2T-004",
+  "governance_note": "Offline exact non-abelian 2-plaquette lattice gauge simulation and local PROXY circuit compilation only; no quantum hardware or cloud emulator was invoked (0 QPU seconds, provider_job_id=null).",
+  "milestone": "M4: 10-qubit coupled 2-plaquette 2T subset SU(2) Kogut-Susskind lattice gauge ladder (offline)",
+  "part1_gauge_reduction_and_76d_physical_subspace": {
+    "active_2t_x_2t_subspace_dim": 576,
+    "burnside_physical_subspace_dim": 76,
+    "burnside_sum_centralizer_squared": 1824,
+    "class_centralizer_sizes": [
+      24,
+      24,
+      4,
+      6,
+      6,
+      6,
+      6
+    ],
+    "class_centralizer_sum_dim": 76,
+    "clebsch_gordan_endomorphism_dim": 76,
+    "conjugacy_class_sizes": [
+      1,
+      1,
+      6,
+      4,
+      4,
+      4,
+      4
+    ],
+    "decoupled_padded_subspace_dim": 448,
+    "explicit_conjugation_orbit_count": 76,
+    "gauge_fixed_active_configurations": 576,
+    "gauge_fixed_qubits": 10,
+    "hilbert_space_config_reduction_factor": 7962624,
+    "lattice_geometry": "2x1_coupled_two_plaquette_ladder",
+    "num_directed_links_unfixed": 7,
+    "num_independent_plaquette_holonomies": 2,
+    "num_spanning_tree_fixed_links": 5,
+    "num_vertices": 6,
+    "orbit_size_histogram": {
+      "1": 4,
+      "12": 34,
+      "4": 32,
+      "6": 6
+    },
+    "padded_10q_hilbert_dim": 1024,
+    "physical_basis_76_global_conjugation_max_error": 0.0,
+    "physical_basis_76_orthonormality_max_error": 2.22044604925e-16,
+    "qubit_reduction_factor": 3.5,
+    "trivial_irrep_pair_count": 7,
+    "unfixed_group_configurations": 4586471424,
+    "unfixed_qubits": 35
+  },
+  "part2_coupled_hamiltonian_and_shared_link_electric_operator": {
+    "active_576_to_padded_448_hamiltonian_leakage_norm": 0.0,
+    "active_576_to_padded_448_strang_leakage_norm": 0.0,
+    "active_576_to_padded_448_te_shared_leakage_norm": 0.0,
+    "dt": 0.2,
+    "g_ym_sq": 1.0,
+    "hamiltonian_hermiticity_2norm_error": 0.0,
+    "max_commutator_h2p_global_adjoint_2norm": 0.0,
+    "max_commutator_hb_global_adjoint_2norm": 0.0,
+    "max_commutator_he_global_adjoint_2norm": 0.0,
+    "max_commutator_te_shared_global_adjoint_2norm": 0.0,
+    "max_electric_mutual_commutator_2norm": 0.0,
+    "outer_links_per_plaquette": 3,
+    "shared_central_links": 1,
+    "shared_electric_max_eigenvalue": 2.25,
+    "shared_electric_min_eigenvalue": -2.292581147605e-15,
+    "shared_link_mul_vs_direct_cayley_2norm_error": 0.0,
+    "shared_link_vs_rectangular_isospectral_max_diff": 2.491062911503e-15,
+    "total_electric_max_eigenvalue": 7.875,
+    "total_electric_min_eigenvalue": 4.433807697312e-15,
+    "total_ladder_links": 7,
+    "ub_10q_vs_expm_2norm_error": 1.570092458684e-16,
+    "ue_10q_factorized_vs_expm_2norm_error": 2.9499359079e-15,
+    "unfixed_3link_13824_laplacian_intertwining_l2_error": 2.779001003107e-15
+  },
+  "part3_wilson_loop_confinement_crossover_and_string_tension": {
+    "couplings": [
+      0.25,
+      0.5,
+      1.0,
+      1.5,
+      2.0,
+      3.0,
+      4.0
+    ],
+    "max_1024_padded_448_leakage": 0.0,
+    "max_576_vs_76_ground_energy_abs_diff": 2.48689957516e-14,
+    "max_connected_correlator_c12": 0.0264177016487,
+    "max_ground_state_outside_76d_phys_l2": 1.016163047785e-15,
+    "max_plaquette_exchange_asymmetry": 3.330669073875e-16,
+    "min_connected_correlator_c12": 8.804440293242e-05,
+    "strong_coupling_g2_4_0_sigma_area_pred": 3.179497638403,
+    "strong_coupling_g2_4_0_sigma_eff": 3.025799818823,
+    "strong_coupling_g2_4_0_wilson_1x1": 0.04160655140559,
+    "strong_coupling_g2_4_0_wilson_1x2": 0.002018708240099,
+    "sweep": [
+      {
+        "area_law_ratio_w1x2_over_w1x1_sq": 1.000088299842,
+        "connected_correlator_c12": 8.804440293242e-05,
+        "effective_string_tension_sigma_eff": 0.001360230863148,
+        "full_576_first_excitation_gap": 3.765906424652,
+        "g_ym_sq": 0.25,
+        "ground_energy_576": -14.7091947844,
+        "ground_energy_76_phys": -14.7091947844,
+        "padded_448_subspace_leakage_prob": 0.0,
+        "physical_76d_subspace_leakage_l2": 5.848739860189e-18,
+        "physical_mass_gap_76": 3.765906424652,
+        "single_plaquette_area_law_sigma": 0.001448526807067,
+        "wilson_1x1": 0.9985525218015,
+        "wilson_1x1_plaquette2": 0.9985525218015,
+        "wilson_1x1_squared_area_law_pred": 0.9971071387962,
+        "wilson_1x2_rectangular": 0.9971951831991
+      },
+      {
+        "area_law_ratio_w1x2_over_w1x1_sq": 1.003536364078,
+        "connected_correlator_c12": 0.003290578338319,
+        "effective_string_tension_sigma_eff": 0.03248775745354,
+        "full_576_first_excitation_gap": 1.582469777305,
+        "g_ym_sq": 0.5,
+        "ground_energy_576": -5.591275915763,
+        "ground_energy_76_phys": -5.591275915763,
+        "padded_448_subspace_leakage_prob": 0.0,
+        "physical_76d_subspace_leakage_l2": 4.805534967053e-17,
+        "physical_mass_gap_76": 1.582469777305,
+        "single_plaquette_area_law_sigma": 0.03601788329866,
+        "wilson_1x1": 0.9646230426869,
+        "wilson_1x1_plaquette2": 0.9646230426869,
+        "wilson_1x1_squared_area_law_pred": 0.9304976144825,
+        "wilson_1x2_rectangular": 0.9337881928209
+      },
+      {
+        "area_law_ratio_w1x2_over_w1x1_sq": 1.09582825645,
+        "connected_correlator_c12": 0.0264177016487,
+        "effective_string_tension_sigma_eff": 0.5527511698422,
+        "full_576_first_excitation_gap": 1.548072204006,
+        "g_ym_sq": 1.0,
+        "ground_energy_576": -1.165439976957,
+        "ground_energy_76_phys": -1.165439976957,
+        "padded_448_subspace_leakage_prob": 0.0,
+        "physical_76d_subspace_leakage_l2": 3.815694244303e-16,
+        "physical_mass_gap_76": 1.625088822353,
+        "single_plaquette_area_law_sigma": 0.6442616457699,
+        "wilson_1x1": 0.5250500719635,
+        "wilson_1x1_plaquette2": 0.5250500719635,
+        "wilson_1x1_squared_area_law_pred": 0.2756775780688,
+        "wilson_1x2_rectangular": 0.3020952797175
+      },
+      {
+        "area_law_ratio_w1x2_over_w1x1_sq": 1.14445767234,
+        "connected_correlator_c12": 0.01111045917911,
+        "effective_string_tension_sigma_eff": 1.147618927117,
+        "full_576_first_excitation_gap": 2.236667024338,
+        "g_ym_sq": 1.5,
+        "ground_energy_576": -0.3818492867292,
+        "ground_energy_76_phys": -0.3818492867292,
+        "padded_448_subspace_leakage_prob": 0.0,
+        "physical_76d_subspace_leakage_l2": 9.682212654975e-16,
+        "physical_mass_gap_76": 2.34060193363,
+        "single_plaquette_area_law_sigma": 1.282549803305,
+        "wilson_1x1": 0.2773292630873,
+        "wilson_1x1_plaquette2": 0.2773292630873,
+        "wilson_1x1_squared_area_law_pred": 0.07691152016454,
+        "wilson_1x2_rectangular": 0.08802197934364
+      },
+      {
+        "area_law_ratio_w1x2_over_w1x1_sq": 1.158716768588,
+        "connected_correlator_c12": 0.004215570390556,
+        "effective_string_tension_sigma_eff": 1.666855030115,
+        "full_576_first_excitation_gap": 2.98936185111,
+        "g_ym_sq": 2.0,
+        "ground_energy_576": -0.1647930721126,
+        "ground_energy_76_phys": -0.1647930721126,
+        "padded_448_subspace_leakage_prob": 0.0,
+        "physical_76d_subspace_leakage_l2": 6.296640002227e-16,
+        "physical_mass_gap_76": 3.041067255678,
+        "single_plaquette_area_law_sigma": 1.814168188929,
+        "wilson_1x1": 0.1629734151153,
+        "wilson_1x1_plaquette2": 0.1629734151153,
+        "wilson_1x1_squared_area_law_pred": 0.02656033403436,
+        "wilson_1x2_rectangular": 0.03077590442491
+      },
+      {
+        "area_law_ratio_w1x2_over_w1x1_sq": 1.165012432401,
+        "connected_correlator_c12": 0.0008972284928354,
+        "effective_string_tension_sigma_eff": 2.454501010591,
+        "full_576_first_excitation_gap": 4.496094358901,
+        "g_ym_sq": 3.0,
+        "ground_energy_576": -0.04927047001379,
+        "ground_energy_76_phys": -0.04927047001378,
+        "padded_448_subspace_leakage_prob": 0.0,
+        "physical_76d_subspace_leakage_l2": 7.169593448425e-16,
+        "physical_mass_gap_76": 4.512325662998,
+        "single_plaquette_area_law_sigma": 2.60723276914,
+        "wilson_1x1": 0.07373831262953,
+        "wilson_1x1_plaquette2": 0.07373831262953,
+        "wilson_1x1_squared_area_law_pred": 0.00543733874945,
+        "wilson_1x2_rectangular": 0.006334567242285
+      },
+      {
+        "area_law_ratio_w1x2_over_w1x1_sq": 1.166138449325,
+        "connected_correlator_c12": 0.0002876031202332,
+        "effective_string_tension_sigma_eff": 3.025799818823,
+        "full_576_first_excitation_gap": 5.998292356051,
+        "g_ym_sq": 4.0,
+        "ground_energy_576": -0.02081829066887,
+        "ground_energy_76_phys": -0.02081829066885,
+        "padded_448_subspace_leakage_prob": 0.0,
+        "physical_76d_subspace_leakage_l2": 1.016163047785e-15,
+        "physical_mass_gap_76": 6.005206042484,
+        "single_plaquette_area_law_sigma": 3.179497638403,
+        "wilson_1x1": 0.04160655140559,
+        "wilson_1x1_plaquette2": 0.04160655140559,
+        "wilson_1x1_squared_area_law_pred": 0.001731105119866,
+        "wilson_1x2_rectangular": 0.002018708240099
+      }
+    ],
+    "weak_coupling_g2_0_25_sigma_eff": 0.001360230863148,
+    "weak_coupling_g2_0_25_wilson_1x1": 0.9985525218015,
+    "weak_coupling_g2_0_25_wilson_1x2": 0.9971951831991
+  },
+  "part4_coupled_strang_trotter_convergence_and_dynamics": {
+    "by_coupling": {
+      "g_ym_sq_0.5": {
+        "g_ym_sq": 0.5,
+        "lie_loglog_slope": 1.00004757141,
+        "series": [
+          {
+            "dt": 0.125,
+            "lie_2norm_error": 0.03373364543092,
+            "n_steps": 4,
+            "strang_2norm_error": 0.001072685962773
+          },
+          {
+            "dt": 0.0625,
+            "lie_2norm_error": 0.01684545332659,
+            "n_steps": 8,
+            "strang_2norm_error": 0.0002669924872116
+          },
+          {
+            "dt": 0.03125,
+            "lie_2norm_error": 0.008420070658859,
+            "n_steps": 16,
+            "strang_2norm_error": 6.667508258024e-05
+          },
+          {
+            "dt": 0.015625,
+            "lie_2norm_error": 0.004209703798368,
+            "n_steps": 32,
+            "strang_2norm_error": 1.666421569115e-05
+          },
+          {
+            "dt": 0.0078125,
+            "lie_2norm_error": 0.002104810472438,
+            "n_steps": 64,
+            "strang_2norm_error": 4.165769393899e-06
+          },
+          {
+            "dt": 0.00390625,
+            "lie_2norm_error": 0.001052400058333,
+            "n_steps": 128,
+            "strang_2norm_error": 1.04142456784e-06
+          }
+        ],
+        "strang_loglog_slope": 2.000165090072
+      },
+      "g_ym_sq_1.0": {
+        "g_ym_sq": 1.0,
+        "lie_loglog_slope": 1.000016918029,
+        "series": [
+          {
+            "dt": 0.125,
+            "lie_2norm_error": 0.03575010371763,
+            "n_steps": 4,
+            "strang_2norm_error": 0.0009912873498841
+          },
+          {
+            "dt": 0.0625,
+            "lie_2norm_error": 0.01786703205806,
+            "n_steps": 8,
+            "strang_2norm_error": 0.0002475136469587
+          },
+          {
+            "dt": 0.03125,
+            "lie_2norm_error": 0.008932515060526,
+            "n_steps": 16,
+            "strang_2norm_error": 6.185921187142e-05
+          },
+          {
+            "dt": 0.015625,
+            "lie_2norm_error": 0.004466132456036,
+            "n_steps": 32,
+            "strang_2norm_error": 1.54636039393e-05
+          },
+          {
+            "dt": 0.0078125,
+            "lie_2norm_error": 0.002233050595201,
+            "n_steps": 64,
+            "strang_2norm_error": 3.865826061078e-06
+          },
+          {
+            "dt": 0.00390625,
+            "lie_2norm_error": 0.001116523343544,
+            "n_steps": 128,
+            "strang_2norm_error": 9.664518318883e-07
+          }
+        ],
+        "strang_loglog_slope": 2.000046839762
+      },
+      "g_ym_sq_2.0": {
+        "g_ym_sq": 2.0,
+        "lie_loglog_slope": 1.000029122341,
+        "series": [
+          {
+            "dt": 0.125,
+            "lie_2norm_error": 0.03502117011144,
+            "n_steps": 4,
+            "strang_2norm_error": 0.001624493095717
+          },
+          {
+            "dt": 0.0625,
+            "lie_2norm_error": 0.01749705225087,
+            "n_steps": 8,
+            "strang_2norm_error": 0.0004055510768381
+          },
+          {
+            "dt": 0.03125,
+            "lie_2norm_error": 0.008746838527218,
+            "n_steps": 16,
+            "strang_2norm_error": 0.00010135211076
+          },
+          {
+            "dt": 0.015625,
+            "lie_2norm_error": 0.004373208438369,
+            "n_steps": 32,
+            "strang_2norm_error": 2.53358006511e-05
+          },
+          {
+            "dt": 0.0078125,
+            "lie_2norm_error": 0.002186577869917,
+            "n_steps": 64,
+            "strang_2norm_error": 6.333810998487e-06
+          },
+          {
+            "dt": 0.00390625,
+            "lie_2norm_error": 0.001093285641422,
+            "n_steps": 128,
+            "strang_2norm_error": 1.583444057225e-06
+          }
+        ],
+        "strang_loglog_slope": 2.000053097708
+      }
+    },
+    "max_lie_slope": 1.00004757141,
+    "max_strang_error_n128": 1.583444057225e-06,
+    "max_strang_error_n64": 6.333810998487e-06,
+    "max_strang_slope": 2.000165090072,
+    "min_lie_slope": 1.000016918029,
+    "min_strang_slope": 2.000046839762,
+    "realtime_10q_global_gauss_conjugation_drift": 5.851061701092e-15,
+    "realtime_10q_padded_448_leakage": 0.0,
+    "realtime_10q_strang_32step_state_l2_error": 3.919110937016e-05,
+    "step_counts": [
+      4,
+      8,
+      16,
+      32,
+      64,
+      128
+    ],
+    "t_final": 0.5
+  },
+  "part5_native_10q_and_35q_circuit_compilations": {
+    "direct_circuit_errors": {
+      "strang_structured_10q_2norm_error": 2.475749179747e-15,
+      "ub_10q_2norm_error": 3.77483640925e-15,
+      "ue_structured_10q_2norm_error": 3.784808092931e-15
+    },
+    "dt": 0.2,
+    "g_ym_sq": 1.0,
+    "gate_count_summary": {
+      "cz_compression_dense5q_blocks_vs_structured_10q_all_to_all": 1.1818,
+      "cz_compression_dense5q_blocks_vs_structured_10q_heavy_hex_10Q": 1.1016,
+      "cz_compression_generic_dense_10q_vs_structured_10q_all_to_all": 116.1365,
+      "cz_compression_unfixed_35q_vs_10q_all_to_all": 10.6499,
+      "cz_compression_unfixed_35q_vs_10q_heavy_hex": 11.0138,
+      "cz_generic_dense_1024x1024_qsd_exact_all_to_all": 479063,
+      "cz_generic_dense_1024x1024_sbm_lower_bound_all_to_all": 500908,
+      "cz_strang_7link_inplace_35q_all_to_all": 43931,
+      "cz_strang_7link_inplace_35q_heavy_hex_35Q": 103948,
+      "cz_strang_dense5q_blocks_10q_all_to_all": 4875,
+      "cz_strang_dense5q_blocks_10q_heavy_hex_10Q": 10397,
+      "cz_strang_structured_10q_all_to_all": 4125,
+      "cz_strang_structured_10q_heavy_hex_10Q": 9438,
+      "cz_ub_structured_10q_all_to_all": 32,
+      "cz_ub_structured_10q_heavy_hex_2xT5_patches": 38,
+      "cz_ue_structured_10q_all_to_all": 4061,
+      "cz_ue_structured_10q_heavy_hex_10Q": 9362,
+      "zzphase_strang_dense5q_blocks_10q": 4875,
+      "zzphase_strang_structured_10q": 4113,
+      "zzphase_ub_structured_10q": 32
+    },
+    "proxy_compilations_10q": [
+      {
+        "circuit": "ub_structured_10q",
+        "depth": 77,
+        "equivalent_up_to_global_phase": true,
+        "execution_tier": "PROXY",
+        "num_qubits": 10,
+        "optimization_level": 3,
+        "phase_aligned_2norm_error": 2.321435824431e-14,
+        "provider_job_id": null,
+        "seed": 20261124,
+        "size": 158,
+        "target": "all_to_all",
+        "toolchain": "qiskit",
+        "two_qubit_gates": {
+          "cz": 32
+        }
+      },
+      {
+        "circuit": "ub_structured_10q",
+        "depth": 88,
+        "equivalent_up_to_global_phase": true,
+        "execution_tier": "PROXY",
+        "num_qubits": 10,
+        "optimization_level": 3,
+        "phase_aligned_2norm_error": 1.890566477137e-14,
+        "provider_job_id": null,
+        "seed": 20261124,
+        "size": 206,
+        "target": "heavy_hex_2xT5_patches",
+        "toolchain": "qiskit",
+        "two_qubit_gates": {
+          "cz": 38
+        }
+      },
+      {
+        "circuit": "ue_structured_10q",
+        "depth": 16127,
+        "equivalent_up_to_global_phase": true,
+        "execution_tier": "PROXY",
+        "num_qubits": 10,
+        "optimization_level": 3,
+        "phase_aligned_2norm_error": 3.784808092931e-15,
+        "provider_job_id": null,
+        "seed": 20261124,
+        "size": 24653,
+        "target": "all_to_all",
+        "toolchain": "qiskit",
+        "two_qubit_gates": {
+          "cz": 4061
+        }
+      },
+      {
+        "circuit": "strang_structured_10q",
+        "depth": 16281,
+        "equivalent_up_to_global_phase": true,
+        "execution_tier": "PROXY",
+        "num_qubits": 10,
+        "optimization_level": 3,
+        "phase_aligned_2norm_error": 2.475749179747e-15,
+        "provider_job_id": null,
+        "seed": 20261124,
+        "size": 24969,
+        "target": "all_to_all",
+        "toolchain": "qiskit",
+        "two_qubit_gates": {
+          "cz": 4125
+        }
+      },
+      {
+        "circuit": "strang_dense5q_blocks_10q",
+        "depth": 19052,
+        "equivalent_up_to_global_phase": true,
+        "execution_tier": "PROXY",
+        "num_qubits": 10,
+        "optimization_level": 3,
+        "phase_aligned_2norm_error": 2.475749179747e-15,
+        "provider_job_id": null,
+        "seed": 20261124,
+        "size": 31543,
+        "target": "all_to_all",
+        "toolchain": "qiskit",
+        "two_qubit_gates": {
+          "cz": 4875
+        }
+      },
+      {
+        "circuit": "ue_structured_10q",
+        "depth": 24944,
+        "equivalent_up_to_global_phase": true,
+        "execution_tier": "PROXY",
+        "num_qubits": 10,
+        "optimization_level": 3,
+        "phase_aligned_2norm_error": 3.784808092931e-15,
+        "provider_job_id": null,
+        "seed": 20261124,
+        "size": 39738,
+        "target": "heavy_hex_10Q",
+        "toolchain": "qiskit",
+        "two_qubit_gates": {
+          "cz": 9362
+        }
+      },
+      {
+        "circuit": "strang_structured_10q",
+        "depth": 25118,
+        "equivalent_up_to_global_phase": true,
+        "execution_tier": "PROXY",
+        "num_qubits": 10,
+        "optimization_level": 3,
+        "phase_aligned_2norm_error": 2.475749179747e-15,
+        "provider_job_id": null,
+        "seed": 20261124,
+        "size": 40142,
+        "target": "heavy_hex_10Q",
+        "toolchain": "qiskit",
+        "two_qubit_gates": {
+          "cz": 9438
+        }
+      },
+      {
+        "circuit": "strang_dense5q_blocks_10q",
+        "depth": 28381,
+        "equivalent_up_to_global_phase": true,
+        "execution_tier": "PROXY",
+        "num_qubits": 10,
+        "optimization_level": 3,
+        "phase_aligned_2norm_error": 2.475749179747e-15,
+        "provider_job_id": null,
+        "seed": 20261124,
+        "size": 48788,
+        "target": "heavy_hex_10Q",
+        "toolchain": "qiskit",
+        "two_qubit_gates": {
+          "cz": 10397
+        }
+      }
+    ],
+    "proxy_compilations_35q": [
+      {
+        "circuit": "strang_7link_inplace_35q",
+        "depth": 178460,
+        "execution_tier": "PROXY",
+        "num_qubits": 35,
+        "optimization_level": 3,
+        "provider_job_id": null,
+        "seed": 20261124,
+        "size": 267068,
+        "target": "all_to_all",
+        "toolchain": "qiskit",
+        "two_qubit_gates": {
+          "cz": 43931
+        }
+      },
+      {
+        "circuit": "strang_7link_inplace_35q",
+        "depth": 277340,
+        "execution_tier": "PROXY",
+        "num_qubits": 35,
+        "optimization_level": 3,
+        "provider_job_id": null,
+        "seed": 20261124,
+        "size": 429692,
+        "target": "heavy_hex_35Q",
+        "toolchain": "qiskit",
+        "two_qubit_gates": {
+          "cz": 103948
+        }
+      }
+    ],
+    "proxy_compilations_pytket": [
+      {
+        "FullPeepholeOptimise": true,
+        "circuit": "ub_structured_10q",
+        "depth": 64,
+        "execution_tier": "PROXY",
+        "num_qubits": 10,
+        "provider_job_id": null,
+        "size": 160,
+        "toolchain": "pytket",
+        "two_qubit_gates": {
+          "ZZPhase": 32
+        }
+      },
+      {
+        "FullPeepholeOptimise": false,
+        "circuit": "strang_structured_10q",
+        "depth": 12978,
+        "execution_tier": "PROXY",
+        "num_qubits": 10,
+        "provider_job_id": null,
+        "size": 22375,
+        "toolchain": "pytket",
+        "two_qubit_gates": {
+          "ZZPhase": 4113
+        }
+      },
+      {
+        "FullPeepholeOptimise": false,
+        "circuit": "strang_dense5q_blocks_10q",
+        "depth": 15272,
+        "execution_tier": "PROXY",
+        "num_qubits": 10,
+        "provider_job_id": null,
+        "size": 28252,
+        "toolchain": "pytket",
+        "two_qubit_gates": {
+          "ZZPhase": 4875
+        }
+      }
+    ],
+    "pytket_available": true,
+    "qiskit_available": true,
+    "qsd_dense_unitary_recurrence_verification": {
+      "10Q_exact_recurrence": 479063,
+      "5Q": 423,
+      "6Q": 1783,
+      "7Q": 7319
+    },
+    "status": "OK"
+  },
+  "preregistration": null,
+  "provider_job_id": null,
+  "qpu_seconds": 0,
+  "rfc8785_canonical_sha256": "348269c2f51dc63cae0216a20bb3100c544540564b9acf99033bed5e7c22d791",
+  "seed": 20261124
+}
