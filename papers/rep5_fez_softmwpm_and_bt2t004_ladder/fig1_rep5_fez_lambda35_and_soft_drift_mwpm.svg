@@ -1,0 +1,99 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="576" height="332" viewBox="0 0 576 332">
+<rect x="0" y="0" width="576" height="332" fill="#ffffff"/>
+<text x="288.00" y="15.00" font-family="Helvetica, Arial, sans-serif" font-size="8.9" font-weight="bold" fill="#111827" text-anchor="middle">Live ibm_fez [[5,1,5]] vs [[3,1,3]] Scaling (dc3bmlinj2vs73di19s0) &amp; Soft-Drift Blossom MWPM (dc35d4inj2vs73dhmsog Re-Scoring)</text>
+<text x="288.00" y="27.00" font-family="Helvetica, Arial, sans-serif" font-size="7.0" font-weight="normal" fill="#475569" text-anchor="middle">HARDWARE_ATTESTED 9-Qubit Chain [120..140] (36,864 Shots, 12 s QPU) + SoftDriftBlossomDecoder (600/600 Exact Blossom, 0 s New QPU)</text>
+<text x="46.00" y="40.00" font-family="Helvetica, Arial, sans-serif" font-size="7.1" font-weight="bold" fill="#0f172a" text-anchor="start">(a) OSIRIS-QEC-REP5-FEZ Live P_fail(R) on [120,121,122,123,136,143,142,141,140]</text>
+<rect x="46.00" y="46.00" width="236.00" height="198.00" fill="#fafafa" stroke="#334155" stroke-width="0.90"/>
+<line x1="46.00" y1="244.00" x2="282.00" y2="244.00" stroke="#e2e8f0" stroke-width="0.60"/>
+<text x="41.50" y="246.30" font-family="monospace" font-size="6.0" font-weight="normal" fill="#334155" text-anchor="end">0.00</text>
+<line x1="46.00" y1="215.71" x2="282.00" y2="215.71" stroke="#e2e8f0" stroke-width="0.60"/>
+<text x="41.50" y="218.01" font-family="monospace" font-size="6.0" font-weight="normal" fill="#334155" text-anchor="end">0.01</text>
+<line x1="46.00" y1="187.43" x2="282.00" y2="187.43" stroke="#e2e8f0" stroke-width="0.60"/>
+<text x="41.50" y="189.73" font-family="monospace" font-size="6.0" font-weight="normal" fill="#334155" text-anchor="end">0.02</text>
+<line x1="46.00" y1="159.14" x2="282.00" y2="159.14" stroke="#e2e8f0" stroke-width="0.60"/>
+<text x="41.50" y="161.44" font-family="monospace" font-size="6.0" font-weight="normal" fill="#334155" text-anchor="end">0.03</text>
+<line x1="46.00" y1="130.86" x2="282.00" y2="130.86" stroke="#e2e8f0" stroke-width="0.60"/>
+<text x="41.50" y="133.16" font-family="monospace" font-size="6.0" font-weight="normal" fill="#334155" text-anchor="end">0.04</text>
+<line x1="46.00" y1="102.57" x2="282.00" y2="102.57" stroke="#e2e8f0" stroke-width="0.60"/>
+<text x="41.50" y="104.87" font-family="monospace" font-size="6.0" font-weight="normal" fill="#334155" text-anchor="end">0.05</text>
+<line x1="46.00" y1="74.29" x2="282.00" y2="74.29" stroke="#e2e8f0" stroke-width="0.60"/>
+<text x="41.50" y="76.59" font-family="monospace" font-size="6.0" font-weight="normal" fill="#334155" text-anchor="end">0.06</text>
+<line x1="46.00" y1="46.00" x2="282.00" y2="46.00" stroke="#e2e8f0" stroke-width="0.60"/>
+<text x="41.50" y="48.30" font-family="monospace" font-size="6.0" font-weight="normal" fill="#334155" text-anchor="end">0.07</text>
+<line x1="68.00" y1="244.00" x2="68.00" y2="247.00" stroke="#334155" stroke-width="0.70"/>
+<text x="68.00" y="255.00" font-family="monospace" font-size="6.3" font-weight="bold" fill="#111827" text-anchor="middle">R=1</text>
+<line x1="164.00" y1="244.00" x2="164.00" y2="247.00" stroke="#334155" stroke-width="0.70"/>
+<text x="164.00" y="255.00" font-family="monospace" font-size="6.3" font-weight="bold" fill="#111827" text-anchor="middle">R=3</text>
+<line x1="260.00" y1="244.00" x2="260.00" y2="247.00" stroke="#334155" stroke-width="0.70"/>
+<text x="260.00" y="255.00" font-family="monospace" font-size="6.3" font-weight="bold" fill="#111827" text-anchor="middle">R=5</text>
+<text x="164.00" y="265.50" font-family="Helvetica, Arial, sans-serif" font-size="6.1" font-weight="bold" fill="#111827" text-anchor="middle">Syndrome Extraction Rounds R (904 dt = 3.616 us/round)</text>
+<polyline points="68.00,177.70 164.00,133.51 260.00,58.93" fill="none" stroke="#475569" stroke-width="1.60" stroke-dasharray="5,3"/>
+<circle cx="68.00" cy="177.70" r="2.30" fill="#475569" stroke="#0f172a" stroke-width="0.60"/>
+<circle cx="164.00" cy="133.51" r="2.30" fill="#475569" stroke="#0f172a" stroke-width="0.60"/>
+<circle cx="260.00" cy="58.93" r="2.30" fill="#475569" stroke="#0f172a" stroke-width="0.60"/>
+<polyline points="68.00,238.48 164.00,210.85 260.00,187.37" fill="none" stroke="#dc2626" stroke-width="1.60" stroke-dasharray="5,3"/>
+<circle cx="68.00" cy="238.48" r="2.30" fill="#dc2626" stroke="#0f172a" stroke-width="0.60"/>
+<circle cx="164.00" cy="210.85" r="2.30" fill="#dc2626" stroke="#0f172a" stroke-width="0.60"/>
+<circle cx="260.00" cy="187.37" r="2.30" fill="#dc2626" stroke="#0f172a" stroke-width="0.60"/>
+<polyline points="68.00,241.24 164.00,227.43 260.00,195.66" fill="none" stroke="#f59e0b" stroke-width="1.60" stroke-dasharray="5,3"/>
+<circle cx="68.00" cy="241.24" r="2.30" fill="#f59e0b" stroke="#0f172a" stroke-width="0.60"/>
+<circle cx="164.00" cy="227.43" r="2.30" fill="#f59e0b" stroke="#0f172a" stroke-width="0.60"/>
+<circle cx="260.00" cy="195.66" r="2.30" fill="#f59e0b" stroke="#0f172a" stroke-width="0.60"/>
+<polyline points="68.00,241.24 164.00,220.52 260.00,208.09" fill="none" stroke="#2563eb" stroke-width="1.60"/>
+<circle cx="68.00" cy="241.24" r="2.30" fill="#2563eb" stroke="#0f172a" stroke-width="0.60"/>
+<circle cx="164.00" cy="220.52" r="2.30" fill="#2563eb" stroke="#0f172a" stroke-width="0.60"/>
+<circle cx="260.00" cy="208.09" r="2.30" fill="#2563eb" stroke="#0f172a" stroke-width="0.60"/>
+<polyline points="68.00,242.62 164.00,235.71 260.00,220.52" fill="none" stroke="#059669" stroke-width="1.60"/>
+<circle cx="68.00" cy="242.62" r="2.30" fill="#059669" stroke="#0f172a" stroke-width="0.60"/>
+<circle cx="164.00" cy="235.71" r="2.30" fill="#059669" stroke="#0f172a" stroke-width="0.60"/>
+<circle cx="260.00" cy="220.52" r="2.30" fill="#059669" stroke="#0f172a" stroke-width="0.60"/>
+<text x="52.50" y="57.50" font-family="Helvetica, Arial, sans-serif" font-size="5.5" font-weight="bold" fill="#334155" text-anchor="start">Slate: Arm 1 Unencoded (0.0234-&gt;0.0654, +0.0105/r)</text>
+<text x="52.50" y="66.50" font-family="Helvetica, Arial, sans-serif" font-size="5.5" font-weight="bold" fill="#dc2626" text-anchor="start">Red: Arm 2 d=3 No-Corr (0.0020-&gt;0.0200, +0.0045/r)</text>
+<text x="52.50" y="75.50" font-family="Helvetica, Arial, sans-serif" font-size="5.5" font-weight="bold" fill="#b45309" text-anchor="start">Amber: Arm 2 d=5 No-Corr (0.0010-&gt;0.0171, +0.0040/r)</text>
+<text x="52.50" y="84.50" font-family="Helvetica, Arial, sans-serif" font-size="5.5" font-weight="bold" fill="#1e3a8a" text-anchor="start">Blue: Arm 4a d=3 MWPM (0.0010-&gt;0.0127, +0.0029/r)</text>
+<text x="52.50" y="93.50" font-family="Helvetica, Arial, sans-serif" font-size="5.5" font-weight="bold" fill="#065f46" text-anchor="start">Green: Arm 4a d=5 MWPM (0.0005-&gt;0.0083, +0.0020/r)</text>
+<text x="52.50" y="102.50" font-family="Helvetica, Arial, sans-serif" font-size="5.4" font-weight="bold" fill="#0f172a" text-anchor="start">Lambda_{3-&gt;5}(R=1,3,5) = 2.0000, 2.8333, 1.5294 (mean 2.1209)</text>
+<text x="318.00" y="40.00" font-family="Helvetica, Arial, sans-serif" font-size="7.1" font-weight="bold" fill="#0f172a" text-anchor="start">(b) Soft-Drift Streak MWPM: Surface Lambda_{3-&gt;5} &amp; Live Fez Re-Scoring</text>
+<rect x="318.00" y="46.00" width="242.00" height="198.00" fill="#fafafa" stroke="#334155" stroke-width="0.90"/>
+<line x1="318.00" y1="244.00" x2="560.00" y2="244.00" stroke="#e2e8f0" stroke-width="0.60"/>
+<text x="314.00" y="246.30" font-family="monospace" font-size="6.0" font-weight="normal" fill="#334155" text-anchor="end">0.0</text>
+<line x1="318.00" y1="200.00" x2="560.00" y2="200.00" stroke="#dc2626" stroke-width="1.00" stroke-dasharray="5,3"/>
+<text x="314.00" y="202.30" font-family="monospace" font-size="6.0" font-weight="bold" fill="#dc2626" text-anchor="end">1.0</text>
+<line x1="318.00" y1="156.00" x2="560.00" y2="156.00" stroke="#e2e8f0" stroke-width="0.60"/>
+<text x="314.00" y="158.30" font-family="monospace" font-size="6.0" font-weight="normal" fill="#334155" text-anchor="end">2.0</text>
+<line x1="318.00" y1="112.00" x2="560.00" y2="112.00" stroke="#e2e8f0" stroke-width="0.60"/>
+<text x="314.00" y="114.30" font-family="monospace" font-size="6.0" font-weight="normal" fill="#334155" text-anchor="end">3.0</text>
+<line x1="318.00" y1="68.00" x2="560.00" y2="68.00" stroke="#e2e8f0" stroke-width="0.60"/>
+<text x="314.00" y="70.30" font-family="monospace" font-size="6.0" font-weight="normal" fill="#334155" text-anchor="end">4.0</text>
+<rect x="331.75" y="188.16" width="9.80" height="55.84" fill="#dc2626" stroke="#991b1b" stroke-width="0.60"/>
+<rect x="342.75" y="156.48" width="9.80" height="87.52" fill="#f59e0b" stroke="#b45309" stroke-width="0.60"/>
+<rect x="353.75" y="88.39" width="9.80" height="155.61" fill="#059669" stroke="#065f46" stroke-width="0.60"/>
+<text x="359.25" y="84.89" font-family="Helvetica, Arial, sans-serif" font-size="5.2" font-weight="bold" fill="#065f46" text-anchor="middle">3.54x</text>
+<line x1="348.25" y1="244.00" x2="348.25" y2="247.00" stroke="#334155" stroke-width="0.70"/>
+<text x="348.25" y="255.00" font-family="monospace" font-size="5.6" font-weight="bold" fill="#111827" text-anchor="middle">Surf 3.2% Hot</text>
+<rect x="392.25" y="188.00" width="9.80" height="56.00" fill="#dc2626" stroke="#991b1b" stroke-width="0.60"/>
+<rect x="403.25" y="155.14" width="9.80" height="88.86" fill="#f59e0b" stroke="#b45309" stroke-width="0.60"/>
+<rect x="414.25" y="84.13" width="9.80" height="159.87" fill="#059669" stroke="#065f46" stroke-width="0.60"/>
+<text x="419.75" y="80.63" font-family="Helvetica, Arial, sans-serif" font-size="5.2" font-weight="bold" fill="#065f46" text-anchor="middle">3.63x</text>
+<line x1="408.75" y1="244.00" x2="408.75" y2="247.00" stroke="#334155" stroke-width="0.70"/>
+<text x="408.75" y="255.00" font-family="monospace" font-size="5.6" font-weight="bold" fill="#111827" text-anchor="middle">Surf 6.0% Hot</text>
+<rect x="452.75" y="189.65" width="9.80" height="54.35" fill="#dc2626" stroke="#991b1b" stroke-width="0.60"/>
+<rect x="463.75" y="164.80" width="9.80" height="79.20" fill="#f59e0b" stroke="#b45309" stroke-width="0.60"/>
+<rect x="474.75" y="97.31" width="9.80" height="146.69" fill="#059669" stroke="#065f46" stroke-width="0.60"/>
+<text x="480.25" y="93.81" font-family="Helvetica, Arial, sans-serif" font-size="5.2" font-weight="bold" fill="#065f46" text-anchor="middle">3.33x</text>
+<line x1="469.25" y1="244.00" x2="469.25" y2="247.00" stroke="#334155" stroke-width="0.70"/>
+<text x="469.25" y="255.00" font-family="monospace" font-size="5.6" font-weight="bold" fill="#111827" text-anchor="middle">Surf 10% Hot</text>
+<rect x="513.25" y="200.00" width="9.80" height="44.00" fill="#dc2626" stroke="#991b1b" stroke-width="0.60"/>
+<rect x="524.25" y="179.95" width="9.80" height="64.05" fill="#f59e0b" stroke="#b45309" stroke-width="0.60"/>
+<rect x="535.25" y="75.34" width="9.80" height="168.66" fill="#059669" stroke="#065f46" stroke-width="0.60"/>
+<text x="540.75" y="71.84" font-family="Helvetica, Arial, sans-serif" font-size="5.2" font-weight="bold" fill="#065f46" text-anchor="middle">3.83x</text>
+<line x1="529.75" y1="244.00" x2="529.75" y2="247.00" stroke="#334155" stroke-width="0.70"/>
+<text x="529.75" y="255.00" font-family="monospace" font-size="5.6" font-weight="bold" fill="#111827" text-anchor="middle">Fez Slope Gain</text>
+<text x="439.00" y="265.50" font-family="Helvetica, Arial, sans-serif" font-size="5.8" font-weight="bold" fill="#111827" text-anchor="middle">Red: Stale Uniform | Amber: Drift-Prior | Green: Soft-Drift Streak MWPM</text>
+<text x="324.00" y="57.50" font-family="Helvetica, Arial, sans-serif" font-size="5.3" font-weight="bold" fill="#065f46" text-anchor="start">Surface [[9,1,3]]-&gt;[[25,1,5]]: Stale 1.27-&gt;Soft 3.54 (3.2%), 3.63 (6.0%), 3.33 (10%)</text>
+<text x="324.00" y="66.00" font-family="Helvetica, Arial, sans-serif" font-size="5.3" font-weight="bold" fill="#1e3a8a" text-anchor="start">Live Fez REP3 (dc35d4inj2vs73dhmsog): Slope 0.018717-&gt;0.004883/r (-73.91%, 3.83x)</text>
+<rect x="46.00" y="278.00" width="514.00" height="44.00" fill="#f8fafc" stroke="#cbd5e1" stroke-width="0.70"/>
+<text x="288.00" y="289.50" font-family="Helvetica, Arial, sans-serif" font-size="5.8" font-weight="bold" fill="#0f172a" text-anchor="middle">OSIRIS-QEC-REP5-FEZ (dc3bmlinj2vs73di19s0): Lambda_{3-&gt;5} &gt; 1 Across 3/3 Rounds &amp; 2/2 Blocks | Arm 3 Postsel = 0.000000 (0 Errors) | RO_CAL_5D = 0.947754</text>
+<text x="288.00" y="301.00" font-family="Helvetica, Arial, sans-serif" font-size="5.8" font-weight="bold" fill="#1e293b" text-anchor="middle">4-Ancilla Streak Ratios [121,123,143,141]: [4.6282, 5.3589, 7.7350, 5.9285] at R=3 &amp; [4.2123, 5.2718, 6.6705, 4.8683] at R=5</text>
+<text x="288.00" y="312.50" font-family="Helvetica, Arial, sans-serif" font-size="5.7" font-weight="normal" fill="#334155" text-anchor="middle">OSIRIS-QEC-SOFTMWPM Live Fez Re-Scoring: R=1 0.012370-&gt;0.003255 (-73.68%, R_cross 3-&gt;1), R=3 0.054036-&gt;0.011719 (-78.31%), R=5 0.087240-&gt;0.022786 (-73.88%)</text>
+</svg>
