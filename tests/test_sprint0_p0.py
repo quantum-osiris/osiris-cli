@@ -6,11 +6,12 @@ import ast
 import json
 import subprocess
 import sys
+import threading
 from pathlib import Path
 
 import pytest
 
-from osiris_cli import probes
+from osiris_cli import chain_lock, probes
 from osiris_cli.orchestration import ast_firewall
 from osiris_cli.osiris_repl import execute_mutate, execute_tetra1d
 from osiris_cli.substrate_guard import (
@@ -107,6 +108,54 @@ def test_return_sync_rejects_older_and_divergent_chains(tmp_path: Path) -> None:
     report = probes.verify_chain(str(target))
     assert report["status"] == "INTACT"
     assert report["entries"] == 3
+    assert list(target.parent.glob(target.name + ".*.tmp")) == []
+
+
+def test_apply_waits_for_the_chain_lock_and_keeps_a_newer_tip(tmp_path: Path) -> None:
+    """An append that commits before the rewrite must still be on the ledger."""
+    target = tmp_path / "alpha.jsonl"
+    local = _chain(tmp_path, "local.jsonl", [{"kind": "a"}, {"kind": "b"}])
+    target.write_text((tmp_path / "local.jsonl").read_text(encoding="utf-8"), encoding="utf-8")
+    extended = _chain(tmp_path, "ext.jsonl", [{"kind": "a"}, {"kind": "b"}, {"kind": "d"}])
+    held = threading.Event()
+    release = threading.Event()
+
+    def append_under_lock() -> None:
+        with chain_lock.locked_tail(str(target)) as (handle, last):
+            entry = {
+                "kind": "c",
+                "prev": last["hash"],
+                "seq": int(last["seq"]) + 1,
+            }
+            from osiris_cli.substrate_guard import _entry_hash
+
+            entry["hash"] = _entry_hash(entry)
+            chain_lock.write_line(handle, entry, sort_keys=True, ensure_ascii=False)
+            held.set()
+            assert release.wait(5)
+
+    worker = threading.Thread(target=append_under_lock)
+    worker.start()
+    assert held.wait(5)
+    outcome: dict = {}
+
+    def apply() -> None:
+        try:
+            outcome["decision"] = apply_return_chain(target, extended)
+        except SubstrateGuardError as exc:
+            outcome["error"] = str(exc)
+
+    applier = threading.Thread(target=apply)
+    applier.start()
+    applier.join(0.2)
+    assert applier.is_alive()
+    release.set()
+    applier.join(5)
+    worker.join(5)
+    assert "error" in outcome
+    assert "does not extend" in outcome["error"] or "divergent" in outcome["error"]
+    assert [row["kind"] for row in load_chain(target)] == ["a", "b", "c"]
+    assert local[0]["hash"] == load_chain(target)[0]["hash"]
 
 
 def test_executed_experiment_is_not_run_again_before_ack(tmp_path: Path) -> None:

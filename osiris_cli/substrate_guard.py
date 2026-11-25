@@ -198,17 +198,72 @@ def accept_return_chain(
     raise SubstrateGuardError("divergent chain: local tip is not an ancestor of the incoming tip")
 
 
+def _durable_write(fd: int, payload: bytes) -> None:
+    """Write ``payload`` and make those bytes durable before returning."""
+    view = payload
+    offset = 0
+    while view:
+        wrote = os.pwrite(fd, view, offset)
+        if wrote <= 0:
+            raise SubstrateGuardError("ledger rewrite wrote no bytes")
+        view = view[wrote:]
+        offset += wrote
+    os.ftruncate(fd, offset)
+    os.fsync(fd)
+
+
+def _fsync_dir(directory: Path) -> None:
+    fd = os.open(str(directory), os.O_RDONLY)
+    try:
+        os.fsync(fd)
+    finally:
+        os.close(fd)
+
+
 def apply_return_chain(local_path: Path, incoming: Sequence[Mapping[str, Any]]) -> str:
-    """Replace ``local_path`` only when :func:`accept_return_chain` allows it."""
-    local_rows = load_chain(local_path)
-    decision = accept_return_chain(local_rows, incoming)
-    if decision == "identical":
-        return decision
-    payload = "".join(json.dumps(row, sort_keys=True, ensure_ascii=False) + "\n" for row in verify_rows(list(incoming)))
+    """Replace ``local_path`` only when :func:`accept_return_chain` allows it.
+
+    The read, the ancestry decision, and the rewrite share one ``chain_lock``
+    on the ledger inode. ``append_chained`` takes that same lock, so an append
+    cannot land between the check and the write. The file is rewritten in
+    place: replacing the path would leave the lock on the unlinked inode and
+    let a newer tip through. A unique temp file is fsynced first so a crash
+    during the rewrite still has the accepted bytes beside the ledger.
+    """
+    incoming_rows = verify_rows(list(incoming))
+    if not incoming_rows:
+        raise SubstrateGuardError("incoming chain is empty")
+    payload = "".join(
+        json.dumps(row, sort_keys=True, ensure_ascii=False) + "\n" for row in incoming_rows
+    ).encode("utf-8")
     local_path.parent.mkdir(parents=True, exist_ok=True)
-    temporary = local_path.with_name(local_path.name + ".tmp")
-    temporary.write_text(payload, encoding="utf-8")
-    os.replace(temporary, local_path)
+    with chain_lock.locked_tail(str(local_path)) as (handle, _last):
+        handle.seek(0)
+        raw = handle.read().decode("utf-8")
+        rows = [json.loads(line) for line in raw.splitlines() if line.strip()]
+        local_rows = verify_rows(rows) if rows else []
+        decision = accept_return_chain(local_rows, incoming_rows)
+        if decision == "identical":
+            return decision
+        temporary = local_path.with_name(local_path.name + "." + secrets.token_hex(8) + ".tmp")
+        fd = os.open(str(temporary), os.O_WRONLY | os.O_CREAT | os.O_EXCL, 0o600)
+        try:
+            os.write(fd, payload)
+            os.fsync(fd)
+        finally:
+            os.close(fd)
+        try:
+            _fsync_dir(local_path.parent)
+            # The lock fd is O_APPEND. On Linux pwrite appends anyway, so the
+            # rewrite goes through a second descriptor on the same inode.
+            rewrite = os.open(str(local_path), os.O_RDWR)
+            try:
+                _durable_write(rewrite, payload)
+            finally:
+                os.close(rewrite)
+        finally:
+            temporary.unlink(missing_ok=True)
+            _fsync_dir(local_path.parent)
     return decision
 
 
