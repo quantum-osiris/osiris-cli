@@ -212,6 +212,29 @@ def _durable_write(fd: int, payload: bytes) -> None:
     os.fsync(fd)
 
 
+def _fd_matches(fd: int, payload: bytes) -> bool:
+    """True when ``fd`` is exactly ``payload`` after a durable write."""
+    try:
+        size = os.lseek(fd, 0, os.SEEK_END)
+    except OSError:
+        return False
+    if size != len(payload):
+        return False
+    try:
+        return os.pread(fd, len(payload), 0) == payload
+    except OSError:
+        return False
+
+
+def _try_restore(fd: int, original: bytes) -> bool:
+    """Put ``original`` back. False when the live inode still cannot be trusted."""
+    try:
+        _durable_write(fd, original)
+    except (OSError, SubstrateGuardError):
+        return False
+    return _fd_matches(fd, original)
+
+
 def _fsync_dir(directory: Path) -> None:
     fd = os.open(str(directory), os.O_RDONLY)
     try:
@@ -239,8 +262,9 @@ def apply_return_chain(local_path: Path, incoming: Sequence[Mapping[str, Any]]) 
     local_path.parent.mkdir(parents=True, exist_ok=True)
     with chain_lock.locked_tail(str(local_path)) as (handle, _last):
         handle.seek(0)
-        raw = handle.read().decode("utf-8")
-        rows = [json.loads(line) for line in raw.splitlines() if line.strip()]
+        original = handle.read()
+        text = original.decode("utf-8")
+        rows = [json.loads(line) for line in text.splitlines() if line.strip()]
         local_rows = verify_rows(rows) if rows else []
         decision = accept_return_chain(local_rows, incoming_rows)
         if decision == "identical":
@@ -252,17 +276,34 @@ def apply_return_chain(local_path: Path, incoming: Sequence[Mapping[str, Any]]) 
             os.fsync(fd)
         finally:
             os.close(fd)
+        _fsync_dir(local_path.parent)
+        # The lock fd is O_APPEND. On Linux pwrite appends anyway, so the
+        # rewrite goes through a second descriptor on the same inode.
+        # The temp file is removed only after that inode matches either the
+        # accepted payload or the bytes we read under this lock. A failed
+        # rewrite must not delete the only intact copy.
+        rewrite = os.open(str(local_path), os.O_RDWR)
+        live_intact = False
         try:
-            _fsync_dir(local_path.parent)
-            # The lock fd is O_APPEND. On Linux pwrite appends anyway, so the
-            # rewrite goes through a second descriptor on the same inode.
-            rewrite = os.open(str(local_path), os.O_RDWR)
             try:
                 _durable_write(rewrite, payload)
-            finally:
-                os.close(rewrite)
+                if not _fd_matches(rewrite, payload):
+                    raise SubstrateGuardError("ledger rewrite did not match the accepted bytes")
+                live_intact = True
+            except (OSError, SubstrateGuardError) as exc:
+                if _try_restore(rewrite, original):
+                    live_intact = True
+                    raise SubstrateGuardError(
+                        "ledger rewrite failed; the previous chain was restored"
+                    ) from exc
+                raise SubstrateGuardError(
+                    "ledger rewrite failed and the previous chain could not be restored; "
+                    f"intact accepted bytes remain at {temporary}"
+                ) from exc
         finally:
-            temporary.unlink(missing_ok=True)
+            os.close(rewrite)
+            if live_intact:
+                temporary.unlink(missing_ok=True)
             _fsync_dir(local_path.parent)
     return decision
 

@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import ast
 import json
+import os
 import subprocess
 import sys
 import threading
@@ -156,6 +157,49 @@ def test_apply_waits_for_the_chain_lock_and_keeps_a_newer_tip(tmp_path: Path) ->
     assert "does not extend" in outcome["error"] or "divergent" in outcome["error"]
     assert [row["kind"] for row in load_chain(target)] == ["a", "b", "c"]
     assert local[0]["hash"] == load_chain(target)[0]["hash"]
+
+
+def test_failed_rewrite_restores_the_previous_chain(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    target = tmp_path / "alpha.jsonl"
+    _chain(tmp_path, "local.jsonl", [{"kind": "a"}, {"kind": "b"}])
+    before = (tmp_path / "local.jsonl").read_bytes()
+    target.write_bytes(before)
+    extended = _chain(tmp_path, "ext.jsonl", [{"kind": "a"}, {"kind": "b"}, {"kind": "d"}])
+    real_pwrite = os.pwrite
+    state = {"calls": 0}
+
+    def fail_once(fd: int, data: bytes, offset: int) -> int:
+        state["calls"] += 1
+        if state["calls"] == 1:
+            real_pwrite(fd, data[:4], offset)
+            raise OSError("short write")
+        return real_pwrite(fd, data, offset)
+
+    monkeypatch.setattr(os, "pwrite", fail_once)
+    with pytest.raises(SubstrateGuardError, match="previous chain was restored"):
+        apply_return_chain(target, extended)
+    assert target.read_bytes() == before
+    assert list(target.parent.glob(target.name + ".*.tmp")) == []
+
+
+def test_failed_restore_keeps_the_intact_temp_copy(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    target = tmp_path / "alpha.jsonl"
+    _chain(tmp_path, "local.jsonl", [{"kind": "a"}, {"kind": "b"}])
+    before = (tmp_path / "local.jsonl").read_bytes()
+    target.write_bytes(before)
+    extended = _chain(tmp_path, "ext.jsonl", [{"kind": "a"}, {"kind": "b"}, {"kind": "d"}])
+
+    def fail_pwrite(fd: int, data: bytes, offset: int) -> int:
+        raise OSError("disk full")
+
+    monkeypatch.setattr(os, "pwrite", fail_pwrite)
+    with pytest.raises(SubstrateGuardError, match="intact accepted bytes remain"):
+        apply_return_chain(target, extended)
+    temps = list(target.parent.glob(target.name + ".*.tmp"))
+    assert len(temps) == 1
+    assert temps[0].read_bytes()
+    reloaded = [json.loads(line)["kind"] for line in temps[0].read_text(encoding="utf-8").splitlines() if line.strip()]
+    assert reloaded == ["a", "b", "d"]
 
 
 def test_executed_experiment_is_not_run_again_before_ack(tmp_path: Path) -> None:
