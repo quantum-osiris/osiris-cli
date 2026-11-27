@@ -84,6 +84,7 @@ class BetaSession:
         journal_path: Path,
         artifacts_dir: Path,
         runner: Callable[..., Any] = run,
+        idempotency_path: Optional[Path] = None,
     ) -> None:
         self.peer_public = peer_public
         self.fingerprint = hashlib.sha256(peer_public).hexdigest()
@@ -94,6 +95,7 @@ class BetaSession:
         self.artifacts_dir = Path(artifacts_dir)
         self.artifacts_dir.mkdir(parents=True, exist_ok=True)
         self.runner = runner
+        self.idempotency_path = Path(idempotency_path) if idempotency_path is not None else Path(ledger_path).with_name("beta_idempotency.jsonl")
         self._lock = threading.Lock()
 
     def _rows(self, request_id: str) -> list:
@@ -177,6 +179,10 @@ class BetaSession:
                          "ledger_hash": row["hash"], "replayed": False,
                          "peer_fingerprint_sha256": self.fingerprint}
 
+        claimed = self._claim_request(request_id, body_sha)
+        if claimed is not None:
+            return claimed
+
         self.ledger.append(
             "beta_execute_write_ahead",
             {"request_id": request_id, "body_sha256": body_sha, "route_rule": reason,
@@ -204,7 +210,9 @@ class BetaSession:
                 "beta_execute_failed",
                 {"request_id": request_id, "body_sha256": body_sha, "error": f"kernel raised {exc.__class__.__name__}"},
             )
-            return 422, {"ok": False, "error": "KERNEL_ERROR", "request_id": request_id, "ledger_hash": row["hash"]}
+            response = {"ok": False, "error": "KERNEL_ERROR", "request_id": request_id, "ledger_hash": row["hash"]}
+            self._remember(request_id, 422, response)
+            return 422, response
 
         digest = _digest_token(result.stdout_view or "")
         preimage = hashlib.sha256(challenge.encode("ascii")).hexdigest()
@@ -217,8 +225,10 @@ class BetaSession:
                  "kernel_decision": result.decision, "kernel_exit": result.exit_code,
                  "kernel_receipt": result.receipt_id},
             )
-            return 422, {"ok": False, "error": error, "request_id": request_id,
-                         "kernel_decision": result.decision, "ledger_hash": row["hash"], "replayed": False}
+            response = {"ok": False, "error": error, "request_id": request_id,
+                        "kernel_decision": result.decision, "ledger_hash": row["hash"], "replayed": False}
+            self._remember(request_id, 422, response)
+            return 422, response
 
         row = self.ledger.append(
             "beta_execute_completed",
@@ -228,7 +238,7 @@ class BetaSession:
              "stdout_sha256": result.stdout_sha256, "route_rule": reason,
              "peer_fingerprint_sha256": self.fingerprint},
         )
-        return 200, {
+        response = {
             "ok": True,
             "replayed": False,
             "request_id": request_id,
@@ -239,6 +249,33 @@ class BetaSession:
             "route_rule": reason,
             "peer_fingerprint_sha256": self.fingerprint,
         }
+        self._remember(request_id, 200, response)
+        return 200, response
+
+    def _claim_request(self, request_id: str, body_sha: str) -> Optional[Tuple[int, Dict[str, Any]]]:
+        """Bind this Node Beta request id in the idempotency ledger before execution."""
+        from osiris_cli.substrate_guard import SubstrateGuardError, begin_experiment
+
+        try:
+            claim = begin_experiment(self.idempotency_path, request_id, request_id, body_sha)
+        except SubstrateGuardError:
+            return 409, {"ok": False, "error": "REQUEST_ID_REUSED", "request_id": request_id}
+        if claim["execute"]:
+            return None
+        stored = claim.get("result")
+        if claim.get("replayed") and isinstance(stored, dict) and isinstance(stored.get("body"), dict):
+            body = dict(stored["body"])
+            body["replayed"] = True
+            return int(stored.get("http_status", 200)), body
+        return 409, {"ok": False, "error": "PRIOR_ATTEMPT_INCOMPLETE", "request_id": request_id}
+
+    def _remember(self, request_id: str, status: int, body: Dict[str, Any]) -> None:
+        from osiris_cli.substrate_guard import acknowledge, record_execution
+
+        record_execution(
+            self.idempotency_path, request_id, request_id, {"http_status": status, "body": body},
+        )
+        acknowledge(self.idempotency_path, request_id, request_id)
 
     def ledger_ok(self) -> bool:
         return self.ledger.verify() is None

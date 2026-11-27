@@ -94,8 +94,11 @@ def verify_rows(rows: Sequence[Mapping[str, Any]]) -> List[Dict[str, Any]]:
             raise SubstrateGuardError(f"entry {index} links to no ancestor")
         if link != prev:
             raise SubstrateGuardError(f"entry {index} diverges from the previous hash")
+        # Historical exchange rows (Osiris._record) carry prev/hash and no seq.
+        # Requiring seq would reject a valid living ledger and rewriting it to add
+        # seq would change the recorded hashes. Order is the hash link.
         seq = row.get("seq")
-        if not isinstance(seq, int) or seq != index + 1:
+        if seq is not None and (not isinstance(seq, int) or seq != index + 1):
             raise SubstrateGuardError(f"entry {index} sequence {seq!r} is not {index + 1}")
         seen.add(recorded)
         prev = recorded
@@ -116,7 +119,10 @@ def load_chain(path: Path) -> List[Dict[str, Any]]:
 def _next_entry(prev: Optional[Mapping[str, Any]], fields: Mapping[str, Any]) -> Dict[str, Any]:
     entry = dict(fields)
     entry["prev"] = prev["hash"] if prev else GENESIS
-    entry["seq"] = (int(prev["seq"]) + 1) if prev else 1
+    if prev is None:
+        entry["seq"] = 1
+    elif isinstance(prev.get("seq"), int):
+        entry["seq"] = int(prev["seq"]) + 1
     entry["hash"] = _entry_hash(entry)
     return entry
 
@@ -211,7 +217,9 @@ def accept_return_chain(
     if incoming_head == local_head and incoming_hashes == local_hashes:
         return "identical"
     if local_head in incoming_hashes and incoming_hashes[: len(local_hashes)] == local_hashes:
-        if len(incoming_rows) > len(local_rows) and incoming_rows[-1]["seq"] > local_rows[-1]["seq"]:
+        local_order = local_rows[-1]["seq"] if isinstance(local_rows[-1].get("seq"), int) else len(local_rows)
+        incoming_order = incoming_rows[-1]["seq"] if isinstance(incoming_rows[-1].get("seq"), int) else len(incoming_rows)
+        if len(incoming_rows) > len(local_rows) and incoming_order > local_order:
             return "extend"
         raise SubstrateGuardError("incoming chain does not extend the local tip")
     if incoming_head in local_hashes:
@@ -301,6 +309,15 @@ def apply_return_chain(local_path: Path, incoming: Sequence[Mapping[str, Any]]) 
             raise
         else:
             os.close(fd)
+        read_fd = os.open(str(temporary), os.O_RDONLY)
+        try:
+            if not _fd_matches(read_fd, payload):
+                temporary.unlink(missing_ok=True)
+                raise SubstrateGuardError(
+                    "recovery file is incomplete; the live ledger was not modified"
+                )
+        finally:
+            os.close(read_fd)
         _fsync_dir(local_path.parent)
         # The lock fd is O_APPEND. On Linux pwrite appends anyway, so the
         # rewrite goes through a second descriptor on the same inode.
@@ -477,6 +494,18 @@ def verify_success_telemetry(entries: Iterable[Mapping[str, Any]], experiment_id
         )
 
 
+def execution_evidence_class(job_ids: Iterable[Any]) -> str:
+    """Classify discovery job ids. ``qvm_`` and ``fallback_`` are local simulation."""
+    simulated = False
+    for job_id in job_ids:
+        text = str(job_id)
+        if text.startswith("qvm_") or text.startswith("fallback_"):
+            simulated = True
+    if simulated:
+        return "SIMULATED"
+    return ""
+
+
 def classify_zenodo_evidence(record: Mapping[str, Any]) -> Dict[str, Any]:
     """Quarantine mock or fixture Zenodo records, including fixture confidence 0.6.
 
@@ -486,18 +515,29 @@ def classify_zenodo_evidence(record: Mapping[str, Any]) -> Dict[str, Any]:
     """
     evidence_class = str(record.get("evidence_class") or "").upper()
     source = str(record.get("source") or "").lower()
-    mockish = bool(record.get("mock") or record.get("fixture") or evidence_class in _MOCK_CLASSES or source in _MOCK_SOURCES)
+    jobs = record.get("job_ids") or []
+    if not isinstance(jobs, (list, tuple)):
+        jobs = [jobs]
+    simulated = evidence_class == "SIMULATED" or execution_evidence_class(jobs) == "SIMULATED"
+    mockish = bool(
+        record.get("mock") or record.get("fixture")
+        or evidence_class in _MOCK_CLASSES or source in _MOCK_SOURCES or simulated
+    )
     confidence = record.get("confidence")
     if mockish:
-        marked = confidence == MOCK_FIXTURE_CONFIDENCE
-        return {
-            "admitted": False,
-            "quarantine": True,
-            "reason": (
+        marked = (not simulated) and confidence == MOCK_FIXTURE_CONFIDENCE
+        if simulated and evidence_class not in _MOCK_CLASSES and source not in _MOCK_SOURCES and not record.get("mock") and not record.get("fixture"):
+            reason = "simulated execution (qvm or fallback) is not production evidence"
+        else:
+            reason = (
                 "mock Zenodo fixture"
                 + (f" with fixture confidence {MOCK_FIXTURE_CONFIDENCE}" if marked else "")
                 + " is not production evidence"
-            ),
+            )
+        return {
+            "admitted": False,
+            "quarantine": True,
+            "reason": reason,
             "confidence": confidence if "confidence" in record else None,
         }
     return {
@@ -513,7 +553,7 @@ def evidence_view(result: Any) -> Dict[str, Any]:
     if isinstance(result, Mapping):
         return dict(result)
     view: Dict[str, Any] = {}
-    for key in ("confidence", "mock", "fixture", "evidence_class", "source", "doi"):
+    for key in ("confidence", "mock", "fixture", "evidence_class", "source", "doi", "job_ids", "backend"):
         if hasattr(result, key):
             view[key] = getattr(result, key)
     return view

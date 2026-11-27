@@ -1180,7 +1180,8 @@ def _refuse_untrusted_home_module(module_name: str) -> Dict[str, Any]:
 def execute_tetra1d(state: Optional[OsirisReplState] = None, verbose: bool = True) -> Dict[str, Any]:
     """Execute TETRA-1D SWAP_01 analytical phase-lock & Strang compilation benchmark."""
     try:
-        from osiris_tetra1d_benchmark import run_tetra1d_benchmark
+        from osiris_cli.paths import import_trusted_attr
+        run_tetra1d_benchmark = import_trusted_attr("osiris_tetra1d_benchmark", "run_tetra1d_benchmark")
     except ImportError:
         return _refuse_untrusted_home_module("osiris_tetra1d_benchmark")
 
@@ -1199,7 +1200,8 @@ def execute_tetra1d(state: Optional[OsirisReplState] = None, verbose: bool = Tru
 def execute_closure_verify(state: Optional[OsirisReplState] = None, target_dir: str = ".") -> Dict[str, Any]:
     """Verify claim pack closure.json and artifact hashes against disk artifacts."""
     try:
-        from osiris_claim_closure import ClaimPackClosureVerifier
+        from osiris_cli.paths import import_trusted_attr
+        ClaimPackClosureVerifier = import_trusted_attr("osiris_claim_closure", "ClaimPackClosureVerifier")
     except ImportError:
         return _refuse_untrusted_home_module("osiris_claim_closure")
 
@@ -1214,15 +1216,15 @@ def execute_closure_verify(state: Optional[OsirisReplState] = None, target_dir: 
     if not (p / "closure.json").exists():
         if "tetra1d_swap01_phase_lock" in str(p):
             try:
-                from osiris_tetra1d_benchmark import run_tetra1d_benchmark
-                run_tetra1d_benchmark(verbose=False)
-            except Exception:
+                from osiris_cli.paths import import_trusted_attr
+                import_trusted_attr("osiris_tetra1d_benchmark", "run_tetra1d_benchmark")(verbose=False)
+            except ImportError:
                 pass
         elif "crsm_11d_wdw_xy4_closure" in str(p):
             try:
-                from osiris_autonomous_mutation import run_autonomous_mutation_loop
-                run_autonomous_mutation_loop(verbose=False)
-            except Exception:
+                from osiris_cli.paths import import_trusted_attr
+                import_trusted_attr("osiris_autonomous_mutation", "run_autonomous_mutation_loop")(verbose=False)
+            except ImportError:
                 pass
 
     if not p.exists():
@@ -1254,7 +1256,9 @@ def execute_closure_verify(state: Optional[OsirisReplState] = None, target_dir: 
 def execute_mutate(state: Optional[OsirisReplState] = None, verbose: bool = True) -> Dict[str, Any]:
     """Execute autonomous W2 mutation, Wheeler-DeWitt/XY4 injection, and claim pack closure."""
     try:
-        from osiris_autonomous_mutation import run_autonomous_mutation_loop
+        from osiris_cli.paths import import_trusted_attr
+        run_autonomous_mutation_loop = import_trusted_attr(
+            "osiris_autonomous_mutation", "run_autonomous_mutation_loop")
     except ImportError:
         return _refuse_untrusted_home_module("osiris_autonomous_mutation")
 
