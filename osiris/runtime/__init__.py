@@ -43,6 +43,8 @@ from .worker import (
     WorkerResult,
     WorkerRunner,
 )
+from .isolation import IS_SANDBOX as ISOLATION_IS_SANDBOX
+from .isolation import RlimitSubprocessBackend, run_untrusted, verified_backend
 
 __all__ = [
     "ActionClass",
@@ -90,4 +92,8 @@ __all__ = [
     "WorkerRequest",
     "WorkerResult",
     "WorkerRunner",
+    "ISOLATION_IS_SANDBOX",
+    "RlimitSubprocessBackend",
+    "run_untrusted",
+    "verified_backend",
 ]

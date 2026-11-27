@@ -117,6 +117,9 @@ class ExperimentResult:
     # Falsification
     falsifiable: bool = False
     rejection_reason: str = ""
+    # SIMULATED when any job id came from the local QVM or the product-state fallback.
+    # Empty means the caller did not classify the execution.
+    evidence_class: str = ""
     
     # Metadata
     result_id: str = field(
@@ -476,6 +479,8 @@ class AutoDiscoveryPipeline:
         
         result.execution_time = time.time() - start_time
         result.job_ids = all_job_ids
+        from osiris_cli.substrate_guard import execution_evidence_class
+        result.evidence_class = execution_evidence_class(all_job_ids)
         
         # Statistical summary
         all_xeb_arr = np.array(all_xeb)
